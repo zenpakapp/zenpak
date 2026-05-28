@@ -1,97 +1,54 @@
-LighterPack
-===========
-LighterPack helps you track the gear you bring on adventures.
+# LighterPack+
 
-How to run LighterPack locally
------------
+> The actively maintained fork of LighterPack — plan lighter, share better, stay open.
 
-1. Install Node.js, npm, and MongoDB.
-2. Install dependencies:
+[![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![Version](https://img.shields.io/badge/version-2.0.0-green.svg)](https://github.com/fxbenard/lighterpack/releases)
 
-   ```bash
-   npm install
-   ```
+## Why this fork
 
-3. Start MongoDB locally. The default config expects MongoDB at `localhost/lighterpack`.
+LighterPack hasn't seen active development in years. This fork picks up where it left off — same familiar tool, new features the community has been asking for, and a commitment to keeping it running long-term.
 
-   ```bash
-   mongod
-   ```
+## What's new
 
-4. Start the development server:
+- **Image upload** — attach photos to any gear item
+- **Advanced gear library** — search, filter, and reuse items across lists
+- **Gear room** — shared gear modal for quick item management
+- **Public sharing controls** — private, link-only, or discoverable
+- **Public profiles** — showcase your gear philosophy and featured lists
+- **Improved CSV import/export** — full round-trip fidelity
+- **Visual refresh** — cleaner UI, fixed popovers, consistent controls
 
-   ```bash
-   npm run dev
-   ```
+## Coming soon
 
-5. Open the app at:
+LighterPack+ will offer optional paid plans on the hosted service at **lighterpack.app** (coming soon):
 
-   ```text
-   http://localhost:8080
-   ```
+- **Supporter** (~3 €/month) — managed backups, enhanced public profile, supporter badge
+- **Creator** (~8 €/month) — affiliate links per item, public collections, lightweight insights
 
-Local ports
------------
+Self-hosting remains fully free and open-source. Paid plans are for the hosted service only.
 
-- `8080`: webpack development server and browser entrypoint.
-- `3001`: Express API server when `config/local.json` is present.
-- `3000`: Express API default from `config/default.json`.
+## Migrating from lighterpack.com
 
-If login shows `NetworkError when attempting to fetch resource`, verify that both the webpack dev server and the Express API are running.
+1. On lighterpack.com, go to **Settings → Export CSV** and download your library.
+2. Create an account on LighterPack+.
+3. Go to **Settings → Import CSV** and upload the file.
 
-Critical checks
------------
+Your lists, items, weights, and notes will carry over.
 
-Run the production build:
+## Self-hosting
+
+Requirements: Node.js, npm, MongoDB.
 
 ```bash
-npm run build
+npm install
+npm run dev
 ```
 
-Run the Playwright end-to-end tests:
+Open `http://localhost:8080`. The app expects MongoDB at `localhost/lighterpack` by default.
 
-```bash
-npm run test:e2e
-```
+For extended setup, ports, test commands, and the library export script, see the `docs/` folder.
 
-Verify library fixtures:
+## License
 
-```bash
-npm run verify:fixtures
-```
-
-Verify CSV import/export fixtures:
-
-```bash
-npm run verify:csv
-npm run verify:csv:export
-```
-
-Run the CSV browser workflow:
-
-```bash
-npm run test:e2e:csv -- --project=chromium --reporter=line
-```
-
-Run the visual refresh browser workflow:
-
-```bash
-npm run test:e2e:visual -- --project=chromium --reporter=line
-```
-
-The CSV checks protect item name, category, description, quantity, weight, unit, URL, price, worn, and consumable fields.
-
-Export a user's library for backup:
-
-```bash
-node scripts/export-user-library.js <username> <output-file>
-```
-
-The export script writes only the user's `library` document. It does not export password hashes, tokens, email addresses, or account metadata.
-It fails if the output file already exists.
-
-Example:
-
-```bash
-node scripts/export-user-library.js testuser ./backup-testuser-library.json
-```
+LighterPack+ is an independent open-source fork built from [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly. Licensed under [GPL v2](LICENSE). Not affiliated with lighterpack.com.
