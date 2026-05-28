@@ -92,7 +92,21 @@ function rejectRow(importData, rowNumber, reason) {
 }
 
 function parseImportCsv(input, name) {
-    const csv = parseCsvRows(input);
+    // Extract comment lines before parsing
+    const lines = input.split(/\r?\n/);
+    let listDescription = '';
+    const contentLines = [];
+
+    for (const line of lines) {
+        const descMatch = line.match(/^#\s*List description:\s*(.*)$/i);
+        if (descMatch) {
+            listDescription = descMatch[1].trim();
+        } else if (!line.startsWith('#')) {
+            contentLines.push(line);
+        }
+    }
+
+    const csv = parseCsvRows(contentLines.join('\n'));
     const firstRow = csv[0] || [];
     const hasHeader = normalizeHeader(firstRow[0]) === 'item name';
     const columnIndexes = hasHeader ? getColumnIndexes(firstRow) : {};
@@ -100,6 +114,7 @@ function parseImportCsv(input, name) {
     const importData = {
         data: [],
         name,
+        listDescription,
         acceptedRows: 0,
         rejectedRows: [],
         errors: [],

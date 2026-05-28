@@ -308,6 +308,10 @@ const store = createStore({
             const previousItemUnit = state.library.itemUnit;
 
             list.name = importData.name;
+            if (importData.listDescription) {
+                list.description = importData.listDescription;
+                state.library.optionalFields.listDescription = true;
+            }
 
             importData.data.forEach((row) => {
                 if (row.unit) {

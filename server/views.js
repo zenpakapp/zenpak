@@ -256,7 +256,11 @@ router.get('/csv/:id', (req, res) => {
         const fullUnits = {
             oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
         };
-        let out = 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,image_url\n';
+        let out = '';
+        if (list.description && list.description.trim()) {
+            out += `# List description: ${list.description.replace(/\r?\n/g, ' ')}\n`;
+        }
+        out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,image_url\n';
 
         for (var i in list.categoryIds) {
             const category = library.getCategoryById(list.categoryIds[i]);
