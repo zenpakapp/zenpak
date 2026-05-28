@@ -350,7 +350,7 @@
                     {{ item.description }}
                 </span>
                 <a class="lpRemove lpRemoveLibraryItem speedbump" title="Delete this item permanently" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
-                <button class="lpLibraryItemEdit" title="Edit item details" @click.stop="openDetail(item)">⋯</button>
+                <button class="lpLibraryItemEdit" title="Edit item details" @click.stop="openDetail(item, true)">⋯</button>
                 <div v-if="!item.inCurrentList" class="lpHandle lpLibraryItemHandle" title="Reorder this item" />
             </li>
         </ul>
@@ -468,8 +468,8 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
-        openDetail(item) {
-            openDialog('itemDetail', { item, categoryItem: null, category: null });
+        openDetail(item, startEditing = false) {
+            openDialog('itemDetail', { item, categoryItem: null, category: null, startEditing });
         },
         addFilterTag() {
             const tag = this.tagInput.trim().toLowerCase();

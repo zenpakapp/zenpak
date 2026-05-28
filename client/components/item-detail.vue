@@ -894,12 +894,16 @@ export default {
         },
     },
     mounted() {
-        registerDialogOpener('itemDetail', ({ item, categoryItem, category }) => {
+        registerDialogOpener('itemDetail', ({ item, categoryItem, category, startEditing }) => {
             this.item = { ...item };
             this.categoryItem = categoryItem ? { ...categoryItem } : null;
             this.category = category || null;
-            this.editing = false;
             this.shown = true;
+            if (startEditing) {
+                this.startEdit();
+            } else {
+                this.editing = false;
+            }
         });
     },
     beforeUnmount() {

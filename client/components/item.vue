@@ -96,7 +96,7 @@
             <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
             <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
             <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Star this item" @click="cycleStar" />
-            <i class="lpSprite lpEdit" title="Edit item details" @click="openDetail" />
+            <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
             <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @keydown.up="incrementPrice($event)" @keydown.down="decrementPrice($event)" @blur="setDisplayPrice">
@@ -253,6 +253,14 @@ export default {
                 item: this.item,
                 categoryItem: this.categoryItem,
                 category: this.category,
+            });
+        },
+        openDetailEdit() {
+            openDialog('itemDetail', {
+                item: this.item,
+                categoryItem: this.categoryItem,
+                category: this.category,
+                startEditing: true,
             });
         },
         updateItemLink() {
