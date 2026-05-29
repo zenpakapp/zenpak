@@ -80,7 +80,9 @@ Category.prototype.addItem = function (partialCategoryItem) {
 
 Category.prototype.updateCategoryItem = function (categoryItem) {
     const oldCategoryItem = this.getCategoryItemById(categoryItem.itemId);
-    assignIn(oldCategoryItem, categoryItem);
+    const newCategoryItem = assignIn({}, oldCategoryItem, categoryItem);
+    const idx = this.categoryItems.indexOf(oldCategoryItem);
+    if (idx !== -1) this.categoryItems.splice(idx, 1, newCategoryItem);
 };
 
 Category.prototype.removeItem = function (itemId) {

@@ -23,6 +23,7 @@ const createInitialState = () => ({
     loggedIn: false,
     globalAlerts: [],
     itemVersion: 0,
+    categoryItemVersion: 0,
 });
 
 const store = createStore({
@@ -308,6 +309,7 @@ const store = createStore({
         updateCategoryItem(state, args) {
             args.category.updateCategoryItem(args.categoryItem);
             state.library.getListById(state.library.defaultListId).calculateTotals();
+            state.categoryItemVersion += 1;
         },
         removeItemFromCategory(state, args) {
             args.category.removeItem(args.itemId);

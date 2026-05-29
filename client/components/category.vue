@@ -148,6 +148,7 @@ export default {
         },
         itemContainers() {
             void this.$store.state.itemVersion;
+            void this.$store.state.categoryItemVersion;
             return this.category.categoryItems.map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }));
         },
         displayUnit() {
