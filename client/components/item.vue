@@ -146,7 +146,7 @@ export default {
             return this.$store.state.library;
         },
         item() {
-            return { ...this.itemContainer.item };
+            return this.itemContainer.item;
         },
         categoryItem() {
             return { ...this.itemContainer.categoryItem };
