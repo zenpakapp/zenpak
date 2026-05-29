@@ -543,7 +543,7 @@
         <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
             <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
             <span class="lpGearRoomBatchSep">|</span>
-            <button v-if="selected.length === 2" class="lpGearRoomBatchAction" @click="toggleBatchPanel('merge')">⇄ Merge</button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="toggleBatchPanel('merge')">⇄ Merge</button>
             <button class="lpGearRoomBatchAction" @click="batchSwapNameDesc">Swap name ↔ desc</button>
             <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('category')">Set category</button>
             <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('tag')">Add tag</button>
@@ -582,7 +582,7 @@
         </div>
 
         <!-- Merge panel -->
-        <div v-if="activeBatchPanel === 'merge' && selected.length === 2" class="lpGearRoomBatchPanel">
+        <div v-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
             <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
                 <button
@@ -791,16 +791,18 @@ export default {
             return this.library.getItemById(id);
         },
         applyMerge() {
-            if (!this.mergeKeepId || this.selected.length !== 2) return;
-            const removeId = this.selected.find(id => id !== this.mergeKeepId);
+            if (!this.mergeKeepId || this.selected.length < 2) return;
+            const removeIds = this.selected.filter(id => id !== this.mergeKeepId);
             openSpeedbump(
                 () => {
-                    this.$store.commit('mergeItems', { keepId: this.mergeKeepId, removeId });
+                    removeIds.forEach(removeId => {
+                        this.$store.commit('mergeItems', { keepId: this.mergeKeepId, removeId });
+                    });
                     this.selected = [];
                     this.activeBatchPanel = null;
                     this.mergeKeepId = null;
                 },
-                { body: 'Merge items? The duplicate will be deleted from all lists.' },
+                { body: `Merge ${this.selected.length} items into one? The others will be deleted from all lists.` },
             );
         },
     },
