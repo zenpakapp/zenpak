@@ -344,7 +344,6 @@ import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils.js';
 
 const { displayWeight } = useUtils();
-const weightUtils = require('../utils/weight.js');
 
 export default {
     name: 'GearRoom',
