@@ -368,6 +368,12 @@
     }
 }
 
+.lpGearRoomMergeKeep {
+    background: rgba(var(--color-accent-rgb), 0.15) !important;
+    border-color: $color-accent !important;
+    color: $color-accent !important;
+}
+
 .lpGearRoomBatchApply {
     background: $color-accent;
     border: none;
@@ -537,6 +543,7 @@
         <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
             <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
             <span class="lpGearRoomBatchSep">|</span>
+            <button v-if="selected.length === 2" class="lpGearRoomBatchAction" @click="toggleBatchPanel('merge')">⇄ Merge</button>
             <button class="lpGearRoomBatchAction" @click="batchSwapNameDesc">Swap name ↔ desc</button>
             <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('category')">Set category</button>
             <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('tag')">Add tag</button>
@@ -573,6 +580,24 @@
             </div>
             <button class="lpGearRoomBatchApply" @click="applyBatchTag">Apply</button>
         </div>
+
+        <!-- Merge panel -->
+        <div v-if="activeBatchPanel === 'merge' && selected.length === 2" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
+            <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
+                <button
+                    v-for="id in selected"
+                    :key="id"
+                    :class="['lpGearRoomBatchAction', { 'lpGearRoomMergeKeep': mergeKeepId === id }]"
+                    style="text-align:left"
+                    @click="mergeKeepId = id"
+                >
+                    <strong>{{ itemDisplayName(getItemById(id)) }}</strong>
+                    <span style="color:#aaa;margin-left:8px;font-size:11px">{{ getItemById(id).description }}</span>
+                </button>
+            </div>
+            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">Merge &amp; delete duplicate</button>
+        </div>
     </div>
 </template>
 <script>
@@ -597,6 +622,7 @@ export default {
             activeBatchPanel: null,
             batchCategory: '',
             batchTag: '',
+            mergeKeepId: null,
             filtersOpen: false,
         };
     },
@@ -759,6 +785,22 @@ export default {
                     this.selected = [];
                 },
                 { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
+            );
+        },
+        getItemById(id) {
+            return this.library.getItemById(id);
+        },
+        applyMerge() {
+            if (!this.mergeKeepId || this.selected.length !== 2) return;
+            const removeId = this.selected.find(id => id !== this.mergeKeepId);
+            openSpeedbump(
+                () => {
+                    this.$store.commit('mergeItems', { keepId: this.mergeKeepId, removeId });
+                    this.selected = [];
+                    this.activeBatchPanel = null;
+                    this.mergeKeepId = null;
+                },
+                { body: 'Merge items? The duplicate will be deleted from all lists.' },
             );
         },
     },

@@ -256,6 +256,28 @@ const store = createStore({
             state.library.updateItem(item);
             state.library.getListById(state.library.defaultListId).calculateTotals();
         },
+        mergeItems(state, { keepId, removeId }) {
+            for (const list of state.library.lists) {
+                for (const categoryId of list.categoryIds) {
+                    const category = state.library.getCategoryById(categoryId);
+                    if (!category) continue;
+                    const removeCI = category.getCategoryItemById(removeId);
+                    if (!removeCI) continue;
+                    const keepCI = category.getCategoryItemById(keepId);
+                    if (keepCI) {
+                        category.removeItem(removeId);
+                    } else {
+                        removeCI.itemId = keepId;
+                    }
+                }
+            }
+            const removeItem = state.library.getItemById(removeId);
+            if (removeItem) {
+                state.library.items.splice(state.library.items.indexOf(removeItem), 1);
+                delete state.library.idMap[removeId];
+            }
+            state.library.getListById(state.library.defaultListId).calculateTotals();
+        },
         updateItemLink(state, args) {
             const item = state.library.getItemById(args.item.id);
             item.url = args.url;
