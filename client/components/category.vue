@@ -147,6 +147,7 @@ export default {
             return this.$store.state.library;
         },
         itemContainers() {
+            void this.library.items;
             return this.category.categoryItems.map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }));
         },
         displayUnit() {
