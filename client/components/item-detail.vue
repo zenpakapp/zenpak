@@ -212,7 +212,15 @@
     border-radius: 999px;
     color: $color-text-muted;
     font-size: $fontSize-sm;
+    font-family: $font-family-base;
     padding: 2px 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(var(--color-accent-rgb), 0.16);
+        border-color: rgba(var(--color-accent-rgb), 0.4);
+        color: $color-accent;
+    }
 }
 
 .itemDetailDivider {
@@ -663,9 +671,14 @@
                     <div v-if="itemUsedInLists.length" class="itemDetailSection">
                         <div class="itemDetailSectionLabel">Used in</div>
                         <div class="itemDetailUsedInLists">
-                            <span v-for="listName in itemUsedInLists" :key="listName" class="itemDetailUsedInBadge">
-                                {{ listName }}
-                            </span>
+                            <button
+                                v-for="list in itemUsedInLists"
+                                :key="list.id"
+                                class="itemDetailUsedInBadge"
+                                @click="navigateToList(list)"
+                            >
+                                {{ list.name || 'Unnamed list' }}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -926,7 +939,7 @@ export default {
                     const cat = library.getCategoryById(catId);
                     return cat && cat.categoryItems.some(ci => ci.itemId === this.item.id);
                 })
-            ).map(list => list.name || 'Unnamed list');
+            );
         },
     },
     mounted() {
@@ -951,6 +964,10 @@ export default {
             this.editing = false;
             this.addToListOpen = false;
             this.newCategoryName = '';
+        },
+        navigateToList(list) {
+            this.$store.commit('setDefaultList', list);
+            this.close();
         },
         viewImage() {
             const full = this.item.image
