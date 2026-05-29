@@ -1057,6 +1057,7 @@ export default {
                     category: this.category,
                     categoryItem: updatedCategoryItem,
                 });
+                this.categoryItem = { ...updatedCategoryItem };
             }
 
             this.item = { ...updatedItem };
