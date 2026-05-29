@@ -81,7 +81,6 @@
             <img class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <span v-if="item.starred" class="lpItemStarred" title="Favorite">★</span>
             <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" placeholder="Name" @input="saveItem">
             <input v-model="item.description" type="text" class="lpDescription lpSilent" placeholder="Description" @input="saveItem">
             <span v-if="item.brand || item.category" class="lpItemMeta">
@@ -97,6 +96,7 @@
             <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
             <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
             <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Star this item" @click="cycleStar" />
+            <span v-if="item.starred" class="lpItemStarred" title="Favorite">★</span>
             <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
