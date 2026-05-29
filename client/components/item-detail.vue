@@ -165,6 +165,24 @@
     }
 }
 
+.itemDetailStarRow {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.itemDetailStarBtn {
+    color: $color-border;
+    cursor: pointer;
+    font-size: 20px;
+    transition: color $transitionDurationFast ease;
+
+    &:hover,
+    &.active {
+        color: #f59e0b;
+    }
+}
+
 .itemDetailBody {
     display: flex;
     flex-direction: column;
@@ -661,6 +679,18 @@
                         <div class="itemDetailStatLabel">Qty</div>
                         <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
                     </div>
+                    <div v-if="categoryItem" class="itemDetailStat">
+                        <div class="itemDetailStatLabel">Priority</div>
+                        <div class="itemDetailStatValue itemDetailStarRow">
+                            <span
+                                v-for="n in 3"
+                                :key="n"
+                                class="itemDetailStarBtn"
+                                :class="{ active: categoryItem.star >= n }"
+                                @click="setCategoryStar(n)"
+                            >★</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="itemDetailBody">
@@ -991,6 +1021,13 @@ export default {
             const starred = !this.item.starred;
             this.$store.commit('updateItem', { ...this.item, starred });
             this.item = { ...this.item, starred };
+        },
+        setCategoryStar(n) {
+            if (!this.categoryItem || !this.category) return;
+            const star = this.categoryItem.star === n ? 0 : n;
+            const updatedCategoryItem = { ...this.categoryItem, star };
+            this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: updatedCategoryItem });
+            this.categoryItem = { ...updatedCategoryItem };
         },
         close() {
             this.shown = false;
