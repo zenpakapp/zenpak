@@ -379,6 +379,57 @@
         opacity: 0.9;
     }
 }
+
+.lpGearRoomFiltersToggle {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    cursor: pointer;
+    display: none;
+    font-family: $font-family-base;
+    font-size: $fontSize-sm;
+    margin: 8px 16px 0;
+    padding: 6px 12px;
+}
+
+@media (max-width: 768px) {
+    .lpGearRoomFilters {
+        border-bottom: 1px solid $color-border;
+        border-right: none;
+        display: none;
+        padding: 12px 16px;
+        width: 100%;
+
+        &.open {
+            display: flex;
+        }
+    }
+
+    .lpGearRoomBody {
+        flex-direction: column;
+    }
+
+    .lpGearRoomFiltersToggle {
+        display: block;
+    }
+
+    .lpGearRoomTable {
+        th.lpGRCategoryCol,
+        td.lpGRCategoryCol,
+        th.lpGRPriceCol,
+        td.lpGRPriceCol {
+            display: none;
+        }
+    }
+
+    .lpGearRoomBatchBar {
+        left: 16px;
+        right: 16px;
+        transform: none;
+        width: auto;
+    }
+}
 </style>
 <template>
     <div class="lpGearRoom">
@@ -388,8 +439,12 @@
             <button class="lpButton lpSmall" @click="createItem">+ New item</button>
         </div>
 
+        <button class="lpGearRoomFiltersToggle" @click="filtersOpen = !filtersOpen">
+            {{ filtersOpen ? 'Hide filters' : 'Filters' }}
+        </button>
+
         <div class="lpGearRoomBody">
-            <div class="lpGearRoomFilters">
+            <div :class="['lpGearRoomFilters', { open: filtersOpen }]">
                 <div>
                     <div class="lpGearRoomFiltersLabel">Search</div>
                     <input v-model="search" class="lpGearRoomSearch" type="text" placeholder="Name, brand, description…">
@@ -537,6 +592,7 @@ export default {
             activeBatchPanel: null,
             batchCategory: '',
             batchTag: '',
+            filtersOpen: false,
         };
     },
     computed: {
