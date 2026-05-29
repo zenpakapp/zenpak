@@ -200,6 +200,21 @@
     }
 }
 
+.itemDetailUsedInLists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.itemDetailUsedInBadge {
+    background: rgba(var(--color-accent-rgb), 0.08);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.18);
+    border-radius: 999px;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    padding: 2px 10px;
+}
+
 .itemDetailDivider {
     border: none;
     border-top: 1px solid $color-border;
@@ -642,6 +657,17 @@
                             <span v-for="tag in item.tags" :key="tag" class="itemDetailTag">{{ tag }}</span>
                         </div>
                     </div>
+
+                    <hr v-if="itemUsedInLists.length" class="itemDetailDivider">
+
+                    <div v-if="itemUsedInLists.length" class="itemDetailSection">
+                        <div class="itemDetailSectionLabel">Used in</div>
+                        <div class="itemDetailUsedInLists">
+                            <span v-for="listName in itemUsedInLists" :key="listName" class="itemDetailUsedInBadge">
+                                {{ listName }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="itemDetailFooter">
@@ -891,6 +917,16 @@ export default {
             const list = library.getListById(library.defaultListId);
             if (!list) return [];
             return list.categoryIds.map((id) => library.getCategoryById(id)).filter(Boolean);
+        },
+        itemUsedInLists() {
+            const library = this.$store.state.library;
+            if (!library || !this.item) return [];
+            return library.lists.filter(list =>
+                list.categoryIds.some(catId => {
+                    const cat = library.getCategoryById(catId);
+                    return cat && cat.categoryItems.some(ci => ci.itemId === this.item.id);
+                })
+            ).map(list => list.name || 'Unnamed list');
         },
     },
     mounted() {
