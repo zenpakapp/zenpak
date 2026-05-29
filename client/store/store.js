@@ -22,6 +22,7 @@ const createInitialState = () => ({
     lastSaveData: null,
     loggedIn: false,
     globalAlerts: [],
+    itemVersion: 0,
 });
 
 const store = createStore({
@@ -255,6 +256,7 @@ const store = createStore({
         updateItem(state, item) {
             state.library.updateItem(item);
             state.library.lists.forEach(list => list.calculateTotals());
+            state.itemVersion += 1;
         },
         mergeItems(state, { keepId, removeId }) {
             for (const list of state.library.lists) {
