@@ -244,6 +244,141 @@
     padding: 2px 8px;
     white-space: nowrap;
 }
+
+.lpGearRoomBatchBar {
+    align-items: center;
+    background: #1a1a1a;
+    border-radius: 12px;
+    bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-sm;
+    gap: 8px;
+    left: 50%;
+    padding: 10px 16px;
+    position: fixed;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: $belowDialog;
+}
+
+.lpGearRoomBatchCount {
+    background: $color-accent;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: $fontWeight-bold;
+    padding: 2px 8px;
+}
+
+.lpGearRoomBatchSep {
+    color: #555;
+}
+
+.lpGearRoomBatchAction {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: $radius-sm;
+    color: #eee;
+    cursor: pointer;
+    font-family: $font-family-base;
+    font-size: $fontSize-sm;
+    padding: 5px 12px;
+
+    &:hover {
+        background: #3a3a3a;
+    }
+
+    &.danger {
+        border-color: #882222;
+        color: #ff7070;
+    }
+}
+
+.lpGearRoomBatchCancel {
+    background: none;
+    border: none;
+    color: #777;
+    cursor: pointer;
+    font-family: $font-family-base;
+    font-size: $fontSize-sm;
+    padding: 4px;
+
+    &:hover {
+        color: #aaa;
+    }
+}
+
+.lpGearRoomBatchPanel {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    bottom: 72px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    left: 50%;
+    padding: 16px;
+    position: fixed;
+    transform: translateX(-50%);
+    width: 300px;
+    z-index: $belowDialog;
+}
+
+.lpGearRoomBatchPanelTitle {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.lpGearRoomBatchPanelRow {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.lpGearRoomBatchPanelLabel {
+    color: $color-text-muted;
+    flex-shrink: 0;
+    font-size: $fontSize-sm;
+    width: 70px;
+}
+
+.lpGearRoomBatchPanelInput,
+.lpGearRoomBatchPanelSelect {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    flex: 1;
+    font-size: $fontSize-sm;
+    min-height: 32px;
+    padding: 0 8px;
+
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
+}
+
+.lpGearRoomBatchApply {
+    background: $color-accent;
+    border: none;
+    border-radius: $radius-sm;
+    color: #fff;
+    cursor: pointer;
+    font-family: $font-family-base;
+    font-size: $fontSize-sm;
+    margin-top: 4px;
+    padding: 7px 16px;
+    width: 100%;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
 </style>
 <template>
     <div class="lpGearRoom">
@@ -337,11 +472,53 @@
                 </div>
             </div>
         </div>
+
+        <!-- Batch actions bar — appears when items are selected -->
+        <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
+            <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
+            <span class="lpGearRoomBatchSep">|</span>
+            <button class="lpGearRoomBatchAction" @click="batchSwapNameDesc">Swap name ↔ desc</button>
+            <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('category')">Set category</button>
+            <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('tag')">Add tag</button>
+            <button class="lpGearRoomBatchAction danger" @click="batchDelete">Delete</button>
+            <span class="lpGearRoomBatchSep">|</span>
+            <button class="lpGearRoomBatchCancel" @click="selected = []">✕ Cancel</button>
+        </div>
+
+        <!-- Category panel -->
+        <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelTitle">Set category for {{ selected.length }} items</div>
+            <div class="lpGearRoomBatchPanelRow">
+                <span class="lpGearRoomBatchPanelLabel">Category</span>
+                <select v-model="batchCategory" class="lpGearRoomBatchPanelSelect">
+                    <option value="">— none —</option>
+                    <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
+                </select>
+            </div>
+            <button class="lpGearRoomBatchApply" @click="applyBatchCategory">Apply</button>
+        </div>
+
+        <!-- Tag panel -->
+        <div v-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelTitle">Add tag to {{ selected.length }} items</div>
+            <div class="lpGearRoomBatchPanelRow">
+                <span class="lpGearRoomBatchPanelLabel">Tag</span>
+                <input
+                    v-model="batchTag"
+                    class="lpGearRoomBatchPanelInput"
+                    type="text"
+                    placeholder="ex: bikepacking"
+                    @keydown.enter="applyBatchTag"
+                >
+            </div>
+            <button class="lpGearRoomBatchApply" @click="applyBatchTag">Apply</button>
+        </div>
     </div>
 </template>
 <script>
 import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils.js';
+import { openSpeedbump } from '../services/speedbump';
 
 const { displayWeight } = useUtils();
 
@@ -357,6 +534,9 @@ export default {
             selected: [],
             sortKey: 'name',
             sortAsc: true,
+            activeBatchPanel: null,
+            batchCategory: '',
+            batchTag: '',
         };
     },
     computed: {
@@ -465,6 +645,60 @@ export default {
             this.$store.commit('newItem', { _isNew: true, name: '' });
             const newItem = this.library.items[this.library.items.length - 1];
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, startEditing: true });
+        },
+        toggleBatchPanel(panel) {
+            this.activeBatchPanel = this.activeBatchPanel === panel ? null : panel;
+        },
+        batchSwapNameDesc() {
+            const ids = new Set(this.selected);
+            this.allItems
+                .filter(i => ids.has(i.id))
+                .forEach(item => {
+                    this.$store.commit('updateItem', { ...item, name: item.description, description: item.name });
+                });
+            this.selected = [];
+            this.activeBatchPanel = null;
+        },
+        applyBatchCategory() {
+            const ids = new Set(this.selected);
+            this.allItems
+                .filter(i => ids.has(i.id))
+                .forEach(item => {
+                    this.$store.commit('updateItem', { ...item, category: this.batchCategory });
+                });
+            this.selected = [];
+            this.activeBatchPanel = null;
+            this.batchCategory = '';
+        },
+        applyBatchTag() {
+            if (!this.batchTag.trim()) return;
+            const tag = this.batchTag.trim().toLowerCase();
+            const ids = new Set(this.selected);
+            this.allItems
+                .filter(i => ids.has(i.id))
+                .forEach(item => {
+                    const tags = [...(item.tags || [])];
+                    if (!tags.includes(tag)) tags.push(tag);
+                    this.$store.commit('updateItem', { ...item, tags });
+                });
+            this.selected = [];
+            this.activeBatchPanel = null;
+            this.batchTag = '';
+        },
+        batchDelete() {
+            const count = this.selected.length;
+            const ids = new Set(this.selected);
+            openSpeedbump(
+                () => {
+                    this.allItems
+                        .filter(i => ids.has(i.id))
+                        .forEach(item => {
+                            this.$store.commit('removeItem', item);
+                        });
+                    this.selected = [];
+                },
+                { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
+            );
         },
     },
 };
