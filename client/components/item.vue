@@ -95,7 +95,7 @@
             <i class="lpSprite lpTag" :class="{lpActive: item.brand || item.category || (item.tags && item.tags.length)}" title="Edit brand, category and tags" @click="updateItemMeta" />
             <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
             <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
-            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Star this item" @click="cycleStar" />
+            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Rate this item" @click="cycleStar" />
             <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">

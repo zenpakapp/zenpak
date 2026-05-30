@@ -680,7 +680,7 @@
                         <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
                     </div>
                     <div v-if="categoryItem" class="itemDetailStat">
-                        <div class="itemDetailStatLabel">Priority</div>
+                        <div class="itemDetailStatLabel">Rating</div>
                         <div class="itemDetailStatValue itemDetailStarRow">
                             <span
                                 v-for="n in 3"
