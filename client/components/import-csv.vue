@@ -146,7 +146,7 @@
                 <ul class="lpTable lpDataTable">
                     <li class="lpRow lpHeader">
                         <span class="lpCell">Item Name</span>
-                        <span class="lpCell">Category</span>
+                        <span class="lpCell">Type</span>
                         <span class="lpCell">Description</span>
                         <span class="lpCell lpNumber">Qty</span>
                         <span class="lpCell lpNumber">Weight</span>

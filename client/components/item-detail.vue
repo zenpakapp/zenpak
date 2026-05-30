@@ -899,7 +899,7 @@
                     </div>
 
                     <div class="itemDetailField">
-                        <label>Category</label>
+                        <label>Type</label>
                         <div class="itemDetailSelectWrap">
                             <select v-model="editCategory">
                                 <option value="">— none —</option>

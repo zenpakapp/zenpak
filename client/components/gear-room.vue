@@ -637,7 +637,7 @@
                     <input v-model="search" class="lpGearRoomSearch" type="text" placeholder="Name, brand, description…">
                 </div>
                 <div>
-                    <div class="lpGearRoomFiltersLabel">Category</div>
+                    <div class="lpGearRoomFiltersLabel">Type</div>
                     <div class="lpGearRoomCategoryChips">
                         <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">All</button>
                         <button
@@ -749,7 +749,7 @@
         <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelTitle">Set category for {{ selected.length }} items</div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Category</span>
+                <span class="lpGearRoomBatchPanelLabel">Type</span>
                 <select v-model="batchCategory" class="lpGearRoomBatchPanelSelect">
                     <option value="">— none —</option>
                     <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
@@ -838,7 +838,7 @@
                         </tr>
                         <!-- Category row -->
                         <tr>
-                            <td class="lpGearRoomCompareAttrCell">Category</td>
+                            <td class="lpGearRoomCompareAttrCell">Type</td>
                             <td v-for="item in compareItems" :key="item.id" class="lpGearRoomCompareValueCell">
                                 <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
                                 <span v-else class="lpGearRoomCompareMuted">—</span>

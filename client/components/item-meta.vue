@@ -183,7 +183,7 @@
             </div>
 
             <div class="itemMetaField">
-                <span class="itemMetaLabel">Category</span>
+                <span class="itemMetaLabel">Type</span>
                 <div class="itemMetaSelectWrap">
                     <select id="itemMetaCategory" v-model="category" class="itemMetaSelect">
                         <option value="">— none —</option>
