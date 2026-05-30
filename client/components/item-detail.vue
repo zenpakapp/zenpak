@@ -756,9 +756,9 @@
 
                 <div class="itemDetailBody">
                     <div class="itemDetailSection">
-                        <div class="itemDetailSectionLabel">Notes</div>
+                        <div class="itemDetailSectionLabel">Description</div>
                         <div :class="['itemDetailSectionValue', { muted: !item.description }]">
-                            {{ item.description || 'No notes added' }}
+                            {{ item.description || 'No description added' }}
                         </div>
                     </div>
 
@@ -869,8 +869,8 @@
                     </div>
 
                     <div class="itemDetailField">
-                        <label>Notes</label>
-                        <textarea v-model="editDescription" placeholder="Notes about this item"></textarea>
+                        <label>Description</label>
+                        <textarea v-model="editDescription" placeholder="Description"></textarea>
                     </div>
 
                     <div class="itemDetailField itemDetailFieldBrand">
