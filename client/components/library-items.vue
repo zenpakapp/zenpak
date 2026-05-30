@@ -33,6 +33,11 @@
     position: relative;
 }
 
+.librarySearchInline {
+    flex: 1;
+    padding: 0;
+}
+
 .librarySearch {
     appearance: none;
     background: $color-surface;
@@ -40,11 +45,11 @@
     border-radius: $radius-md;
     box-sizing: border-box;
     color: $color-text;
-    font-size: $fontSize-md;
+    font-size: $fontSize-sm;
     line-height: 1.2;
     margin: 0;
-    min-height: $control-height-md;
-    padding: 0 36px 0 12px;
+    min-height: 32px;
+    padding: 0 28px 0 8px;
     width: 100%;
 
     &::placeholder {
@@ -53,7 +58,7 @@
 
     &:focus {
         border-color: $color-accent;
-        box-shadow: 0 0 0 6px rgba(var(--color-accent-rgb), 0.08);
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.08);
         outline: none;
     }
 }
@@ -66,16 +71,16 @@
     color: $color-text-muted;
     cursor: pointer;
     display: inline-flex;
-    font-size: 18px;
-    height: 28px;
+    font-size: 16px;
+    height: 22px;
     justify-content: center;
     padding: 0;
     position: absolute;
-    right: 22px;
+    right: 6px;
     top: 50%;
     transform: translateY(-50%);
     transition: background-color $transitionDurationFast ease, color $transitionDurationFast ease;
-    width: 28px;
+    width: 22px;
 
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.08);
@@ -194,9 +199,9 @@
 
 .lpLibraryFilters {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 10px;
+    flex-direction: row;
+    gap: 6px;
+    margin-bottom: 6px;
     padding: 0 10px;
 }
 
@@ -207,30 +212,31 @@
     border-radius: $radius-md;
     box-sizing: border-box;
     color: $color-text;
-    font-size: $fontSize-md;
+    font-size: $fontSize-sm;
     line-height: 1.2;
-    min-height: $control-height-md;
-    padding: 0 36px 0 12px;
+    min-height: 32px;
+    padding: 0 24px 0 8px;
     width: 100%;
     &:focus {
         border-color: $color-accent;
-        box-shadow: 0 0 0 6px rgba(var(--color-accent-rgb), 0.08);
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.08);
         outline: none;
     }
 }
 
 .lpLibraryFilterSelectWrap {
+    flex: 1;
     position: relative;
 }
 
 .lpLibraryFilterSelectWrap::after {
     color: $color-text-muted;
     content: "⌄";
-    font-size: 24px;
+    font-size: 18px;
     line-height: 1;
     pointer-events: none;
     position: absolute;
-    right: 22px;
+    right: 8px;
     top: 50%;
     transform: translateY(-54%);
 }
@@ -243,13 +249,14 @@
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    min-height: $control-height-md;
-    padding: 6px 12px;
-    width: 100%;
+    gap: 4px;
+    margin: 0 10px 6px;
+    min-height: 32px;
+    padding: 4px 8px;
+    width: calc(100% - 20px);
     &:focus-within {
         border-color: $color-accent;
-        box-shadow: 0 0 0 6px rgba(var(--color-accent-rgb), 0.08);
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.08);
     }
 }
 
@@ -282,11 +289,11 @@
     box-shadow: none;
     color: $color-text;
     flex: 1;
-    font-size: $fontSize-md;
+    font-size: $fontSize-sm;
     line-height: 1.2;
     margin: 0;
-    min-height: 38px;
-    min-width: 140px;
+    min-height: 24px;
+    min-width: 100px;
     padding: 0;
     width: auto;
     &:focus { outline: none; }
@@ -307,36 +314,38 @@
                     <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
                 </select>
             </div>
-            <div class="lpTagFilter">
-                <span v-for="tag in filterTags" :key="tag" class="lpTagChip">
-                    {{ tag }}<button class="lpTagChipRemove" @click="removeFilterTag(tag)">×</button>
-                </span>
+            <div class="librarySearchWrap librarySearchInline">
                 <input
-                    v-model="tagInput"
+                    ref="searchInput"
+                    class="librarySearch"
+                    v-model="searchText"
                     type="text"
-                    class="lpTagInput"
-                    placeholder="Filter by tag..."
-                    @keydown.enter.prevent="addFilterTag"
-                />
+                    placeholder="Search..."
+                >
+                <button
+                    v-if="searchText"
+                    class="librarySearchClear"
+                    type="button"
+                    aria-label="Clear gear search"
+                    @click="clearSearch"
+                >
+                    ×
+                </button>
             </div>
         </div>
-        <div class="librarySearchWrap">
+        <div v-if="filterTags.length || tagInputFocused" class="lpTagFilter">
+            <span v-for="tag in filterTags" :key="tag" class="lpTagChip">
+                {{ tag }}<button class="lpTagChipRemove" @click="removeFilterTag(tag)">×</button>
+            </span>
             <input
-                ref="searchInput"
-                class="librarySearch"
-                v-model="searchText"
+                v-model="tagInput"
                 type="text"
-                placeholder="search items"
-            >
-            <button
-                v-if="searchText"
-                class="librarySearchClear"
-                type="button"
-                aria-label="Clear gear search"
-                @click="clearSearch"
-            >
-                ×
-            </button>
+                class="lpTagInput"
+                placeholder="Filter by tag..."
+                @keydown.enter.prevent="addFilterTag"
+                @focus="tagInputFocused = true"
+                @blur="tagInputFocused = false"
+            />
         </div>
         <ul class="library" ref="library">
             <li v-for="item in filteredItems" :key="item.id" class="lpLibraryItem" :data-item-id="item.id" @dblclick="openDetail(item)">
@@ -390,6 +399,7 @@ export default {
             filterCategory: '',
             filterTags: [],
             tagInput: '',
+            tagInputFocused: false,
             itemDragId: false,
             drake: null,
         };
