@@ -77,8 +77,8 @@
         <span class="lpHandleCell">
             <div class="lpItemHandle lpHandle" title="Reorder this item" />
         </span>
-        <span v-if="library.optionalFields['images'] && thumbnailImage" class="lpImageCell">
-            <img class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
+        <span v-if="library.optionalFields['images']" class="lpImageCell">
+            <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
             <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" placeholder="Name" @input="saveItem">

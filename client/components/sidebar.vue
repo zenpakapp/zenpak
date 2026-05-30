@@ -163,8 +163,8 @@ $sidebarPadding: 20px;
             <libraryLists />
             <section class="lpGearSection">
                 <h2 class="lpGearSectionHeader">
-                    Gear
-                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">Gear Room</button>
+                    Items
+                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">Item Library</button>
                 </h2>
                 <libraryItems :show-title="false" />
             </section>

@@ -312,7 +312,7 @@
 <template>
     <section class="libraryContainer">
         <div v-if="showTitle" class="libraryHeader">
-            <h2>Gear</h2>
+            <h2>Items</h2>
             <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">New gear item</button>
         </div>
         <div class="lpLibraryFilters">

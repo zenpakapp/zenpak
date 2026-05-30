@@ -1225,7 +1225,7 @@ export default {
                 this.close();
             };
             const speedbumpOptions = {
-                body: `Delete "${this.item.name || 'this item'}" from your gear room? It will be removed from all lists.`,
+                body: `Delete "${this.item.name || 'this item'}" from your item library? It will be removed from all lists.`,
             };
             openSpeedbump(callback, speedbumpOptions);
         },
