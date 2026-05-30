@@ -138,11 +138,11 @@
 .itemDetailStats {
     border-bottom: 1px solid $color-border;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     .itemDetailStat {
         border-right: 1px solid $color-border;
-        padding: 14px 16px;
+        padding: 12px 8px;
         text-align: center;
 
         &:last-child {
@@ -174,12 +174,17 @@
 .itemDetailStarBtn {
     color: $color-border;
     cursor: pointer;
-    font-size: 20px;
+    font-size: 16px;
     transition: color $transitionDurationFast ease;
 
     &:hover,
     &.active {
         color: #f59e0b;
+    }
+
+    &.disabled {
+        cursor: default;
+        pointer-events: none;
     }
 }
 
@@ -735,14 +740,14 @@
                         <div class="itemDetailStatLabel">Qty</div>
                         <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
                     </div>
-                    <div v-if="categoryItem" class="itemDetailStat">
+                    <div class="itemDetailStat">
                         <div class="itemDetailStatLabel">Rating</div>
                         <div class="itemDetailStatValue itemDetailStarRow">
                             <span
                                 v-for="n in 3"
                                 :key="n"
                                 class="itemDetailStarBtn"
-                                :class="{ active: categoryItem.star >= n }"
+                                :class="{ active: categoryItem && categoryItem.star >= n, disabled: !categoryItem }"
                                 @click="setCategoryStar(n)"
                             >★</span>
                         </div>
