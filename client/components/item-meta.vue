@@ -4,85 +4,150 @@
 .itemMetaForm {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     min-width: 320px;
+}
 
-    label {
-        display: block;
-        font-size: $fontSize-sm;
-        font-weight: $fontWeight-medium;
-        margin-bottom: 4px;
+.itemMetaField {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+
+.itemMetaLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    text-transform: uppercase;
+}
+
+.itemMetaInput,
+.itemMetaSelect {
+    appearance: none;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-sizing: border-box;
+    color: $color-text;
+    font-family: $font-family-base;
+    font-size: $fontSize-base;
+    min-height: 38px;
+    padding: 0 12px;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        outline: none;
+    }
+}
+
+.itemMetaSelectWrap {
+    position: relative;
+
+    &::after {
+        color: $color-text-muted;
+        content: "⌄";
+        font-size: 18px;
+        line-height: 1;
+        pointer-events: none;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-54%);
     }
 
-    input[type="text"],
-    select {
-        border: 1px solid $color-border;
-        border-radius: $radius-sm;
-        font-size: $fontSize-base;
-        padding: 6px 8px;
-        width: 100%;
+    .itemMetaSelect {
+        padding-right: 30px;
+    }
+}
+
+.itemMetaBrandSuggestions {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-popover;
+    left: 0;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 10;
+}
+
+.itemMetaBrandSuggestion {
+    cursor: pointer;
+    font-size: $fontSize-base;
+    padding: 8px 12px;
+    transition: background $transitionDurationFast ease;
+
+    &:hover,
+    &.active {
+        background: rgba(var(--color-accent-rgb), 0.08);
+        color: $color-accent;
+    }
+}
+
+.itemMetaTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.itemMetaTag {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: 99px;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 4px;
+    padding: 2px 8px;
+
+    button {
+        background: none;
+        border: none;
+        color: $color-text-muted;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        padding: 0;
+
+        &:hover { color: $color-text; }
+    }
+}
+
+.itemMetaTagInput {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+
+    input {
+        flex: 1;
     }
 
-    .itemMetaTags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 4px;
-    }
-
-    .itemMetaTag {
-        align-items: center;
+    button {
         background: $color-surface;
         border: 1px solid $color-border;
-        border-radius: 99px;
-        display: flex;
+        border-radius: $radius-sm;
+        cursor: pointer;
         font-size: $fontSize-sm;
-        gap: 4px;
-        padding: 2px 8px;
+        padding: 4px 10px;
 
-        button {
-            background: none;
-            border: none;
-            color: $color-text-muted;
-            cursor: pointer;
-            font-size: 14px;
-            line-height: 1;
-            padding: 0;
-
-            &:hover {
-                color: $color-text;
-            }
-        }
+        &:hover { background: $color-bg; }
     }
+}
 
-    .itemMetaTagInput {
-        display: flex;
-        gap: 6px;
-
-        input {
-            flex: 1;
-        }
-
-        button {
-            background: $color-surface;
-            border: 1px solid $color-border;
-            border-radius: $radius-sm;
-            cursor: pointer;
-            font-size: $fontSize-sm;
-            padding: 4px 10px;
-
-            &:hover {
-                background: $color-bg;
-            }
-        }
-    }
-
-    .itemMetaActions {
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-        margin-top: 4px;
-    }
+.itemMetaActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 4px;
 }
 </style>
 
@@ -90,19 +155,45 @@
     <modal id="itemMetaDialog" :shown="shown" @hide="cancel">
         <h2>Edit gear details</h2>
         <form class="itemMetaForm" @submit.prevent="save">
-            <div>
-                <label for="itemMetaBrand">Brand</label>
-                <input id="itemMetaBrand" v-model="brand" type="text" placeholder="e.g. Sea to Summit">
+            <div class="itemMetaField">
+                <span class="itemMetaLabel">Brand</span>
+                <input
+                    id="itemMetaBrand"
+                    v-model="brand"
+                    type="text"
+                    class="itemMetaInput"
+                    placeholder="e.g. Sea to Summit"
+                    autocomplete="off"
+                    @focus="brandDropdownOpen = true; brandActiveIndex = -1"
+                    @blur="closeBrandDropdown"
+                    @keydown.down.prevent="brandActiveIndex = Math.min(brandActiveIndex + 1, brandSuggestionsFiltered.length - 1)"
+                    @keydown.up.prevent="brandActiveIndex = Math.max(brandActiveIndex - 1, -1)"
+                    @keydown.enter.prevent="selectBrandSuggestion(brandActiveIndex)"
+                    @keydown.escape="brandDropdownOpen = false; brandActiveIndex = -1"
+                >
+                <ul v-if="brandDropdownOpen && brandSuggestionsFiltered.length" class="itemMetaBrandSuggestions">
+                    <li
+                        v-for="(b, i) in brandSuggestionsFiltered"
+                        :key="b"
+                        class="itemMetaBrandSuggestion"
+                        :class="{ active: i === brandActiveIndex }"
+                        @mousedown.prevent="brand = b; brandDropdownOpen = false; brandActiveIndex = -1"
+                    >{{ b }}</li>
+                </ul>
             </div>
-            <div>
-                <label for="itemMetaCategory">Category</label>
-                <select id="itemMetaCategory" v-model="category">
-                    <option value="">— none —</option>
-                    <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
-                </select>
+
+            <div class="itemMetaField">
+                <span class="itemMetaLabel">Category</span>
+                <div class="itemMetaSelectWrap">
+                    <select id="itemMetaCategory" v-model="category" class="itemMetaSelect">
+                        <option value="">— none —</option>
+                        <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                    </select>
+                </div>
             </div>
-            <div>
-                <label>Tags</label>
+
+            <div class="itemMetaField">
+                <span class="itemMetaLabel">Tags</span>
                 <div class="itemMetaTags">
                     <span v-for="tag in tags" :key="tag" class="itemMetaTag">
                         {{ tag }}
@@ -110,10 +201,11 @@
                     </span>
                 </div>
                 <div class="itemMetaTagInput">
-                    <input v-model="tagInput" type="text" placeholder="Add a tag…" @keydown.enter.prevent="addTag">
+                    <input v-model="tagInput" type="text" class="itemMetaInput" placeholder="Add a tag…" @keydown.enter.prevent="addTag">
                     <button type="button" @click="addTag">Add</button>
                 </div>
             </div>
+
             <div class="itemMetaActions">
                 <a class="lpHref close" @click="cancel">Cancel</a>
                 <input type="submit" class="lpButton" value="Save">
@@ -142,11 +234,25 @@ export default {
             category: '',
             tags: [],
             tagInput: '',
+            brandDropdownOpen: false,
+            brandActiveIndex: -1,
         };
     },
     computed: {
         gearCategories() {
             return GEAR_CATEGORIES;
+        },
+        knownBrands() {
+            const library = this.$store.state.library;
+            if (!library || !library.items) return [];
+            return [...new Set(
+                library.items.map((i) => i.brand).filter(Boolean),
+            )].sort();
+        },
+        brandSuggestionsFiltered() {
+            if (!this.brand) return this.knownBrands.slice(0, 8);
+            const q = this.brand.toLowerCase();
+            return this.knownBrands.filter(b => b.toLowerCase().includes(q)).slice(0, 8);
         },
     },
     mounted() {
@@ -163,6 +269,16 @@ export default {
         unregisterDialogOpener('itemMeta');
     },
     methods: {
+        closeBrandDropdown() {
+            setTimeout(() => { this.brandDropdownOpen = false; this.brandActiveIndex = -1; }, 150);
+        },
+        selectBrandSuggestion(index) {
+            if (index >= 0 && index < this.brandSuggestionsFiltered.length) {
+                this.brand = this.brandSuggestionsFiltered[index];
+            }
+            this.brandDropdownOpen = false;
+            this.brandActiveIndex = -1;
+        },
         addTag() {
             const tag = this.tagInput.trim().toLowerCase();
             if (tag && !this.tags.includes(tag)) {

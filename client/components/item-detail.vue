@@ -338,6 +338,38 @@
     gap: 14px;
     padding: 20px;
 
+    .itemDetailFieldBrand {
+        position: relative;
+    }
+
+    .brandSuggestions {
+        background: $color-surface;
+        border: 1px solid $color-border;
+        border-radius: $radius-md;
+        box-shadow: $shadow-popover;
+        left: 0;
+        list-style: none;
+        margin: 0;
+        padding: 4px 0;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 4px);
+        z-index: 10;
+    }
+
+    .brandSuggestion {
+        cursor: pointer;
+        font-size: $fontSize-base;
+        padding: 8px 12px;
+        transition: background $transitionDurationFast ease;
+
+        &:hover,
+        &.active {
+            background: rgba(var(--color-accent-rgb), 0.08);
+            color: $color-accent;
+        }
+    }
+
     .itemDetailField {
         display: flex;
         flex-direction: column;
@@ -349,6 +381,34 @@
             font-weight: $fontWeight-medium;
             letter-spacing: $letterSpacing-caps;
             text-transform: uppercase;
+        }
+
+        .itemDetailSelectWrap {
+            position: relative;
+
+            &::after {
+                color: $color-text-muted;
+                content: "⌄";
+                font-size: 18px;
+                line-height: 1;
+                pointer-events: none;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-54%);
+            }
+
+            select {
+                appearance: none;
+                padding-right: 30px;
+                width: 100%;
+            }
+
+            &.itemDetailSelectUnit {
+                flex: 0 0 64px;
+
+                select { flex: none; }
+            }
         }
 
         input[type="text"],
@@ -385,10 +445,6 @@
 
         input {
             flex: 1;
-        }
-
-        select {
-            flex: 0 0 64px;
         }
     }
 
@@ -812,20 +868,39 @@
                         <textarea v-model="editDescription" placeholder="Notes about this item"></textarea>
                     </div>
 
-                    <div class="itemDetailField">
+                    <div class="itemDetailField itemDetailFieldBrand">
                         <label>Brand</label>
-                        <input v-model="editBrand" type="text" placeholder="e.g. Sea to Summit" list="brandSuggestions">
-                        <datalist id="brandSuggestions">
-                            <option v-for="brand in knownBrands" :key="brand" :value="brand" />
-                        </datalist>
+                        <input
+                            v-model="editBrand"
+                            type="text"
+                            placeholder="e.g. Sea to Summit"
+                            autocomplete="off"
+                            @focus="brandDropdownOpen = true; brandActiveIndex = -1"
+                            @blur="closeBrandDropdown"
+                            @keydown.down.prevent="brandActiveIndex = Math.min(brandActiveIndex + 1, brandSuggestionsFiltered.length - 1)"
+                            @keydown.up.prevent="brandActiveIndex = Math.max(brandActiveIndex - 1, -1)"
+                            @keydown.enter.prevent="selectBrandSuggestion(brandActiveIndex)"
+                            @keydown.escape="brandDropdownOpen = false; brandActiveIndex = -1"
+                        >
+                        <ul v-if="brandDropdownOpen && brandSuggestionsFiltered.length" class="brandSuggestions">
+                            <li
+                                v-for="(brand, i) in brandSuggestionsFiltered"
+                                :key="brand"
+                                class="brandSuggestion"
+                                :class="{ active: i === brandActiveIndex }"
+                                @mousedown.prevent="editBrand = brand; brandDropdownOpen = false; brandActiveIndex = -1"
+                            >{{ brand }}</li>
+                        </ul>
                     </div>
 
                     <div class="itemDetailField">
                         <label>Category</label>
-                        <select v-model="editCategory">
-                            <option value="">— none —</option>
-                            <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
-                        </select>
+                        <div class="itemDetailSelectWrap">
+                            <select v-model="editCategory">
+                                <option value="">— none —</option>
+                                <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="itemDetailFieldRow">
@@ -833,9 +908,11 @@
                             <label>Weight</label>
                             <div class="itemDetailUnitRow">
                                 <input v-model="editWeight" type="text" placeholder="0">
-                                <select v-model="editUnit">
-                                    <option v-for="u in units" :key="u" :value="u">{{ u }}</option>
-                                </select>
+                                <div class="itemDetailSelectWrap itemDetailSelectUnit">
+                                    <select v-model="editUnit">
+                                        <option v-for="u in units" :key="u" :value="u">{{ u }}</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="itemDetailField">
@@ -960,6 +1037,8 @@ export default {
             fetchSuccess: '',
             addToListOpen: false,
             newCategoryName: '',
+            brandDropdownOpen: false,
+            brandActiveIndex: -1,
         };
     },
     computed: {
@@ -971,6 +1050,11 @@ export default {
             return [...new Set(
                 library.items.map((i) => i.brand).filter(Boolean),
             )].sort();
+        },
+        brandSuggestionsFiltered() {
+            if (!this.editBrand) return this.knownBrands.slice(0, 8);
+            const q = this.editBrand.toLowerCase();
+            return this.knownBrands.filter(b => b.toLowerCase().includes(q)).slice(0, 8);
         },
         thumbnailImage() {
             if (this.item.image) return `https://i.imgur.com/${this.item.image}s.jpg`;
@@ -1017,6 +1101,16 @@ export default {
         unregisterDialogOpener('itemDetail');
     },
     methods: {
+        closeBrandDropdown() {
+            setTimeout(() => { this.brandDropdownOpen = false; this.brandActiveIndex = -1; }, 150);
+        },
+        selectBrandSuggestion(index) {
+            if (index >= 0 && index < this.brandSuggestionsFiltered.length) {
+                this.editBrand = this.brandSuggestionsFiltered[index];
+            }
+            this.brandDropdownOpen = false;
+            this.brandActiveIndex = -1;
+        },
         toggleStar() {
             const starred = !this.item.starred;
             this.$store.commit('updateItem', { ...this.item, starred });
