@@ -147,9 +147,15 @@
 
     .lpHandle {
         height: 80px;
-        left: 0;
+        left: 2px;
         position: absolute;
         top: 5px;
+        visibility: hidden;
+        width: 12px;
+    }
+
+    &:hover .lpHandle {
+        visibility: visible;
     }
 
     .lpRemove {
@@ -362,7 +368,7 @@
                 </span>
                 <a class="lpRemove lpRemoveLibraryItem speedbump" title="Delete this item permanently" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
                 <button class="lpLibraryItemEdit" title="View item details" @click.stop="openDetail(item)">⋯</button>
-                <div v-if="!item.inCurrentList" class="lpHandle lpLibraryItemHandle" title="Reorder this item" />
+                <div class="lpHandle lpLibraryItemHandle" title="Drag to add to list" />
             </li>
         </ul>
     </section>
@@ -467,6 +473,11 @@ export default {
                 this.handleItemDrag();
             });
         },
+        filteredItems() {
+            this.$nextTick(() => {
+                this.handleItemDrag();
+            });
+        },
     },
     mounted() {
         this.handleItemDrag();
@@ -521,10 +532,6 @@ export default {
             const drake = createDragDrop([this.$refs.library].concat(categoryItems), {
                 copy: true,
                 moves($el, $source, $handle, $sibling) {
-                    const items = self.library.getItemsInCurrentList();
-                    if (items.indexOf(parseInt($el.dataset.itemId)) > -1) {
-                        return false;
-                    }
                     return $handle.classList.contains('lpLibraryItemHandle');
                 },
                 accepts($el, $target, $source, $sibling) {
