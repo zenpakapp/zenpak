@@ -123,11 +123,12 @@ export default {
         const username = route.params.username;
         const {
             following,
+            mode,
             loading: followLoading,
             follow: followUser,
             unfollow: unfollowUser,
         } = useFollow(username);
-        return { following, followLoading, followUser, unfollowUser };
+        return { following, mode, followLoading, followUser, unfollowUser };
     },
     data() {
         return {
@@ -190,8 +191,13 @@ export default {
                 this.isLoggedIn = true;
                 this.following = data.following;
             })
-            .catch(() => {
-                // not authenticated — follow button stays hidden
+            .catch((err) => {
+                if (err && err.status !== 401) {
+                    // Authenticated but server error — show button in unknown state
+                    this.isLoggedIn = true;
+                    this.following = false;
+                }
+                // 401 = not logged in — leave isLoggedIn false (button hidden)
             });
     },
     methods: {
@@ -218,7 +224,8 @@ export default {
                 await this.unfollowUser();
                 this.followerCount = Math.max(0, this.followerCount - 1);
             } else {
-                await this.followUser('all');
+                const currentMode = this.mode || 'all';
+                await this.followUser(currentMode);
                 this.followerCount += 1;
             }
         },

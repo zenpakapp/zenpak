@@ -52,6 +52,26 @@
     padding: 10px 12px;
 }
 
+.lpBtn {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 16px;
+    transition: opacity $transitionDurationFast;
+
+    &:hover:not(:disabled) {
+        opacity: 0.8;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
 .lpFeedLoadMore {
     display: block;
     margin: 24px auto 0;
@@ -84,7 +104,7 @@
                 </div>
             </article>
 
-            <button v-if="hasMore" class="lpFollowBtn lpFeedLoadMore" :disabled="loading" @click="loadMore">
+            <button v-if="hasMore" class="lpBtn lpFeedLoadMore" :disabled="loading" @click="loadMore">
                 {{ loading ? 'Loading...' : 'Load more' }}
             </button>
         </template>
@@ -111,6 +131,7 @@ export default {
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();
             const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'just now';
             if (mins < 60) return `${mins}m ago`;
             const hours = Math.floor(mins / 60);
             if (hours < 24) return `${hours}h ago`;
