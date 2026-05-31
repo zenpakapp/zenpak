@@ -74,7 +74,7 @@ const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
 const views = require('./server/views.js');
 
-db.ensureIndexes().catch((err) => console.error('Index creation failed:', err));
+db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err }));
 
 app.use('/', endpoints);
 app.use('/', moderationEndpoints);

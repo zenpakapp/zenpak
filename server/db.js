@@ -53,9 +53,9 @@ function collection(name) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.find(query).toArray());
         },
-        findSorted(query, sort, limitN) {
+        findSorted(query, sort, limit) {
             return getCollection(name)
-                .then((mongoCollection) => mongoCollection.find(query).sort(sort).limit(limitN).toArray());
+                .then((mongoCollection) => mongoCollection.find(query).sort(sort).limit(limit).toArray());
         },
         findOne(query, callback) {
             const op = getCollection(name)
@@ -129,6 +129,7 @@ module.exports = {
     feedEvents: collection('feed_events'),
     async ensureIndexes() {
         await ready;
+        // createIndex is not exposed by the wrapper — use raw _db collections directly
         const follows = _db.collection('follows');
         await follows.createIndex({ followerId: 1, followedId: 1 }, { unique: true });
         await follows.createIndex({ followedId: 1 });
