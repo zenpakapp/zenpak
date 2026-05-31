@@ -452,25 +452,28 @@ router.post('/scrapeGear', async (req, res) => {
     }
 });
 
-router.get('/api/public/profile/:username', (req, res) => {
+router.get('/api/public/profile/:username', async (req, res) => {
     const username = String(req.params.username || '').toLowerCase().trim();
     if (!username) {
         return res.status(404).json({ message: 'Profile not found' });
     }
 
-    db.users.findOne({ username }, (err, user) => {
-        if (err) {
-            logWithRequest(req, { message: 'Public profile lookup error', username, error: err.message });
-            return res.status(500).json({ message: 'An error occurred' });
-        }
-
+    try {
+        const user = await db.users.findOne({ username });
         const payload = buildPublicProfile(user);
         if (!payload) {
             return res.status(404).json({ message: 'Profile not found' });
         }
 
+        const followerDocs = await db.follows.findMany({ followedId: user._id });
+        const followingDocs = await db.follows.findMany({ followerId: user._id });
+        payload.followerCount = followerDocs.length;
+        payload.followingCount = followingDocs.length;
+
         return res.json(payload);
-    });
+    } catch (err) {
+        return res.status(500).json({ message: 'An error occurred' });
+    }
 });
 
 router.get('/api/public/list/:externalId', (req, res) => {
@@ -543,5 +546,8 @@ router.post('/api/public/insight', (req, res) => {
         });
     });
 });
+
+const communityRouter = require('./community-endpoints.js');
+router.use('/api/community', communityRouter);
 
 module.exports = router;
