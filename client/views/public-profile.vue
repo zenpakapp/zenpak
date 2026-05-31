@@ -192,12 +192,12 @@ export default {
                 this.following = data.following;
             })
             .catch((err) => {
-                if (err && err.status !== 401) {
-                    // Authenticated but server error — show button in unknown state
+                // 401/403/404 = not logged in (404 = stale cookie via authenticateUser).
+                // Anything else = authenticated but server error — show button in safe state.
+                if (err && !(err.isUnauthorized || err.status === 404)) {
                     this.isLoggedIn = true;
                     this.following = false;
                 }
-                // 401 = not logged in — leave isLoggedIn false (button hidden)
             });
     },
     methods: {

@@ -134,6 +134,7 @@ router.get('/feed', (req, res) => {
                 author: authorMap[e.userId.toString()] || '',
                 listId: e.listId,
                 listName: listNameMap[e.listId] || '',
+                listDeleted: !listNameMap[e.listId],
             }));
 
             return res.json({ events: enriched, nextCursor });

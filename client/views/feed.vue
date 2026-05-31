@@ -77,6 +77,11 @@
     margin: 24px auto 0;
     padding: 8px 24px;
 }
+
+.lpFeedListDeleted {
+    color: $color-text-muted;
+    font-style: italic;
+}
 </style>
 
 <template>
@@ -99,6 +104,9 @@
                     </div>
                     <div v-if="event.listName" class="lpFeedListCard">
                         {{ event.listName }}
+                    </div>
+                    <div v-else-if="event.listDeleted" class="lpFeedListCard lpFeedListDeleted">
+                        List no longer available
                     </div>
                     <div class="lpFeedEventMeta">{{ timeAgo(event.createdAt) }}</div>
                 </div>
