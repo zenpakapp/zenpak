@@ -16,12 +16,12 @@ router.post('/follow/:username', (req, res) => {
 
         const mode = req.body && req.body.mode === 'new-only' ? 'new-only' : 'all';
 
-        try {
-            const target = await db.users.findOne({ username: targetUsername });
-            if (!target) {
-                return res.status(404).json({ message: 'User not found' });
-            }
+        const target = await db.users.findOne({ username: targetUsername });
+        if (!target) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
+        try {
             await db.follows.save({
                 followerId: new ObjectId(user._id),
                 followedId: new ObjectId(target._id),
