@@ -62,6 +62,19 @@
                         <span v-if="isSupporter" class="lpPublicBadge">Supporter</span>
                         <span v-if="isCreator" class="lpPublicBadge">Creator</span>
                     </div>
+                    <div class="lpPublicStats">
+                        <span><strong>{{ followerCount }}</strong> followers</span>
+                        <span><strong>{{ followingCount }}</strong> following</span>
+                    </div>
+                    <button
+                        v-if="isLoggedIn"
+                        class="lpFollowBtn"
+                        :class="{ lpFollowBtnActive: following }"
+                        :disabled="followLoading"
+                        @click="toggleFollow"
+                    >
+                        {{ following ? 'Following' : 'Follow' }}
+                    </button>
                 </div>
             </header>
 
@@ -99,10 +112,23 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
+import { useFollow } from '../composables/useFollow';
 
 export default {
     name: 'PublicProfile',
+    setup() {
+        const route = useRoute();
+        const username = route.params.username;
+        const {
+            following,
+            loading: followLoading,
+            follow: followUser,
+            unfollow: unfollowUser,
+        } = useFollow(username);
+        return { following, followLoading, followUser, unfollowUser };
+    },
     data() {
         return {
             isLoading: true,
@@ -111,6 +137,9 @@ export default {
             entitlements: null,
             lists: [],
             affiliateDisclosure: null,
+            followerCount: 0,
+            followingCount: 0,
+            isLoggedIn: false,
         };
     },
     computed: {
@@ -138,12 +167,15 @@ export default {
         },
     },
     created() {
-        fetchJson(`/api/public/profile/${this.$route.params.username}`)
+        const username = this.$route.params.username;
+        fetchJson(`/api/public/profile/${username}`)
             .then((payload) => {
                 this.profile = payload.profile;
                 this.entitlements = payload.entitlements;
                 this.lists = payload.lists || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
+                this.followerCount = payload.followerCount || 0;
+                this.followingCount = payload.followingCount || 0;
                 this.updateDocumentMeta();
             })
             .catch((err) => {
@@ -151,6 +183,15 @@ export default {
             })
             .finally(() => {
                 this.isLoading = false;
+            });
+
+        fetchJson(`/api/community/follow-status/${username}`)
+            .then((data) => {
+                this.isLoggedIn = true;
+                this.following = data.following;
+            })
+            .catch(() => {
+                // not authenticated — follow button stays hidden
             });
     },
     methods: {
@@ -169,6 +210,16 @@ export default {
                 robots.setAttribute('content', 'noindex');
             } else if (robots) {
                 robots.remove();
+            }
+        },
+        async toggleFollow() {
+            if (!this.isLoggedIn) return;
+            if (this.following) {
+                await this.unfollowUser();
+                this.followerCount = Math.max(0, this.followerCount - 1);
+            } else {
+                await this.followUser('all');
+                this.followerCount += 1;
             }
         },
     },

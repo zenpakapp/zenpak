@@ -480,3 +480,41 @@
 .lpCategory .lpHeader:hover .lpHandle {
     visibility: visible;
 }
+
+.lpPublicStats {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 14px;
+
+    strong {
+        font-weight: 600;
+    }
+}
+
+.lpFollowBtn {
+    background: $color-accent;
+    border: none;
+    border-radius: $radius-sm;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 12px;
+    padding: 6px 16px;
+    transition: opacity $transitionDurationFast;
+
+    &:hover:not(:disabled) {
+        opacity: 0.85;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    &.lpFollowBtnActive {
+        background: $color-surface;
+        border: 1px solid $color-border;
+        color: $color-text;
+    }
+}
