@@ -8,12 +8,16 @@ async function emitFeedEvent(userId, type, listId) {
     if (!VALID_TYPES.includes(type)) {
         return;
     }
-    await db.feedEvents.save({
-        userId: typeof userId === 'string' ? new ObjectId(userId) : userId,
-        type,
-        listId: typeof listId === 'string' ? new ObjectId(listId) : listId,
-        createdAt: new Date(),
-    });
+    try {
+        await db.feedEvents.save({
+            userId: typeof userId === 'string' ? new ObjectId(userId) : userId,
+            type,
+            listId: typeof listId === 'string' ? new ObjectId(listId) : listId,
+            createdAt: new Date(),
+        });
+    } catch (err) {
+        console.error('[feed-events] emitFeedEvent failed', err);
+    }
 }
 
 async function getFeedForUser(followedIds, modes, cursor, limit = 20) {
