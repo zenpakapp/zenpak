@@ -8,7 +8,7 @@ const { getFeedForUser } = require('./feed-events.js');
 
 // POST /api/community/follow/:username
 router.post('/follow/:username', (req, res) => {
-    authenticateUser(req, res, async (user) => {
+    authenticateUser(req, res, async (req, res, user) => {
         const targetUsername = String(req.params.username || '').toLowerCase().trim();
         if (!targetUsername || targetUsername === user.username) {
             return res.status(400).json({ message: 'Invalid target' });
@@ -32,8 +32,11 @@ router.post('/follow/:username', (req, res) => {
             return res.json({ following: true, mode });
         } catch (err) {
             if (err.code === 11000) {
-                // already following — return current state
-                return res.json({ following: true, mode });
+                const existing = await db.follows.findOne({
+                    followerId: new ObjectId(user._id),
+                    followedId: new ObjectId(target._id),
+                });
+                return res.json({ following: true, mode: existing ? existing.mode : mode });
             }
             return res.status(500).json({ message: 'An error occurred' });
         }
@@ -42,7 +45,7 @@ router.post('/follow/:username', (req, res) => {
 
 // DELETE /api/community/follow/:username
 router.delete('/follow/:username', (req, res) => {
-    authenticateUser(req, res, async (user) => {
+    authenticateUser(req, res, async (req, res, user) => {
         const targetUsername = String(req.params.username || '').toLowerCase().trim();
 
         try {
@@ -65,7 +68,7 @@ router.delete('/follow/:username', (req, res) => {
 
 // GET /api/community/follow-status/:username
 router.get('/follow-status/:username', (req, res) => {
-    authenticateUser(req, res, async (user) => {
+    authenticateUser(req, res, async (req, res, user) => {
         const targetUsername = String(req.params.username || '').toLowerCase().trim();
 
         try {
@@ -91,8 +94,11 @@ router.get('/follow-status/:username', (req, res) => {
 
 // GET /api/community/feed?cursor=<ISO>
 router.get('/feed', (req, res) => {
-    authenticateUser(req, res, async (user) => {
+    authenticateUser(req, res, async (req, res, user) => {
         const cursor = req.query.cursor || null;
+        if (cursor && isNaN(Date.parse(cursor))) {
+            return res.status(400).json({ message: 'Invalid cursor' });
+        }
 
         try {
             const followDocs = await db.follows.findMany({ followerId: new ObjectId(user._id) });
