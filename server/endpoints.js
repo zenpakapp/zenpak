@@ -12,6 +12,7 @@ const { logWithRequest } = require('./log.js');
 const { sendMail } = require('./mailgun.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
 
+const { ObjectId } = require('mongodb');
 const { authenticateUser, verifyPassword } = require('./auth.js');
 
 const db = require('./db.js');
@@ -465,8 +466,8 @@ router.get('/api/public/profile/:username', async (req, res) => {
             return res.status(404).json({ message: 'Profile not found' });
         }
 
-        const followerDocs = await db.follows.findMany({ followedId: user._id });
-        const followingDocs = await db.follows.findMany({ followerId: user._id });
+        const followerDocs = await db.follows.findMany({ followedId: new ObjectId(user._id) });
+        const followingDocs = await db.follows.findMany({ followerId: new ObjectId(user._id) });
         payload.followerCount = followerDocs.length;
         payload.followingCount = followingDocs.length;
 

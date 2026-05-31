@@ -61,7 +61,8 @@ async function run() {
     await emitFeedEvent('aaaaaaaaaaaaaaaaaaaaaaaa', 'list.published', 'bbbbbbbbbbbbbbbbbbbbbbbb');
     assert('saves one document for list.published', savedDocs.length === 1);
     assert('userId is an ObjectId', savedDocs[0].userId instanceof ObjectId);
-    assert('listId is an ObjectId', savedDocs[0].listId instanceof ObjectId);
+    assert('listId is a plain string', typeof savedDocs[0].listId === 'string');
+    assert('listId value is preserved', savedDocs[0].listId === 'bbbbbbbbbbbbbbbbbbbbbbbb');
     assert('type is preserved', savedDocs[0].type === 'list.published');
     assert('createdAt is a Date', savedDocs[0].createdAt instanceof Date);
 
@@ -90,7 +91,8 @@ async function run() {
     const lid = new ObjectId();
     await emitFeedEvent(uid, 'list.published', lid);
     assert('accepts ObjectId directly for userId', savedDocs[0].userId === uid);
-    assert('accepts ObjectId directly for listId', savedDocs[0].listId === lid);
+    assert('listId coerced to string when ObjectId passed', typeof savedDocs[0].listId === 'string');
+    assert('listId string equals ObjectId.toString()', savedDocs[0].listId === lid.toString());
 
     // -----------------------------------------------------------------------
     console.log('\n--- getFeedForUser: empty followedIds ---');

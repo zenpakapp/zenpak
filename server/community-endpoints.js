@@ -112,12 +112,12 @@ router.get('/feed', (req, res) => {
             const authorMap = Object.fromEntries(authors.map((a) => [a._id.toString(), a.username]));
 
             // Resolve list names from author docs (lists stored in user.library.lists)
+            // Keyed by String(list.id) to match the plain-string listId stored in feed events
             const listNameMap = {};
             for (const author of authors) {
                 const lists = (author.library && author.library.lists) || [];
                 for (const list of lists) {
-                    listNameMap[list.id] = list.name;
-                    if (list.externalId) listNameMap[list.externalId] = list.name;
+                    if (list.id != null) listNameMap[String(list.id)] = list.name;
                 }
             }
 
@@ -127,7 +127,7 @@ router.get('/feed', (req, res) => {
                 createdAt: e.createdAt,
                 author: authorMap[e.userId.toString()] || '',
                 listId: e.listId,
-                listName: listNameMap[e.listId.toString()] || '',
+                listName: listNameMap[e.listId] || '',
             }));
 
             return res.json({ events: enriched, nextCursor });

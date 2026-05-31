@@ -12,7 +12,7 @@ async function emitFeedEvent(userId, type, listId) {
         await db.feedEvents.save({
             userId: typeof userId === 'string' ? new ObjectId(userId) : userId,
             type,
-            listId: typeof listId === 'string' ? new ObjectId(listId) : listId,
+            listId: String(listId),
             createdAt: new Date(),
         });
     } catch (err) {
