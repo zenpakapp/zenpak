@@ -69,9 +69,12 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
+const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
 const views = require('./server/views.js');
+
+db.ensureIndexes().catch((err) => console.error('Index creation failed:', err));
 
 app.use('/', endpoints);
 app.use('/', moderationEndpoints);

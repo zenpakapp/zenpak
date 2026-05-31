@@ -53,6 +53,10 @@ function collection(name) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.find(query).toArray());
         },
+        findSorted(query, sort, limitN) {
+            return getCollection(name)
+                .then((mongoCollection) => mongoCollection.find(query).sort(sort).limit(limitN).toArray());
+        },
         findOne(query, callback) {
             const op = getCollection(name)
                 .then((mongoCollection) => mongoCollection.findOne(query));
@@ -121,4 +125,16 @@ module.exports = {
     ready,
     users: collection('users'),
     libraries: collection('libraries'),
+    follows: collection('follows'),
+    feedEvents: collection('feed_events'),
+    async ensureIndexes() {
+        await ready;
+        const follows = _db.collection('follows');
+        await follows.createIndex({ followerId: 1, followedId: 1 }, { unique: true });
+        await follows.createIndex({ followedId: 1 });
+
+        const events = _db.collection('feed_events');
+        await events.createIndex({ userId: 1, createdAt: -1 });
+        await events.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+    },
 };
