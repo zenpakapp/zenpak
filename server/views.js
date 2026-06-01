@@ -225,7 +225,7 @@ router.get('/csv/:id', (req, res) => {
         return;
     }
 
-    db.users.findOne({ 'library.lists.externalId': id }, (err, user) => {
+    db.users.findOne({ 'library.lists.externalId': id }, async (err, user) => {
         if (err) {
             res.status(500).send('An error occurred.');
             return;
@@ -250,6 +250,21 @@ router.get('/csv/:id', (req, res) => {
                 library.defaultListId = library.lists[i].id;
                 list = library.lists[i];
                 break;
+            }
+        }
+
+        const downloadable = list.publicFields && list.publicFields.downloadable;
+        if (!downloadable) {
+            // Allow if the requester is the list owner (via cookie token)
+            const token = req.cookies && req.cookies.lp;
+            if (!token) {
+                res.status(403).send('This list is not available for download.');
+                return;
+            }
+            const requester = await db.users.findOne({ token });
+            if (!requester || String(requester._id) !== String(user._id)) {
+                res.status(403).send('This list is not available for download.');
+                return;
             }
         }
 

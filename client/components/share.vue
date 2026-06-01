@@ -189,6 +189,10 @@
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.images" @change="setPublicField('images', $event.target.checked)">
                             Show images
                         </label>
+                        <label class="shareCheckbox">
+                            <input type="checkbox" :checked="list.publicFields && list.publicFields.downloadable" @change="setPublicField('downloadable', $event.target.checked)">
+                            Allow CSV download
+                        </label>
                     </div>
 
                     <div class="shareSection">
