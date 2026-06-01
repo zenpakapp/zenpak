@@ -7,43 +7,167 @@
     padding: 32px 20px;
 }
 
-.lpPublicListTotals,
+.lpPublicNav {
+    margin-bottom: 20px;
+
+    a {
+        color: $color-text-muted;
+        font-size: 13px;
+        text-decoration: none;
+
+        &:hover { color: $color-text; }
+    }
+}
+
+.lpPublicListTitle {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.lpPublicListSummary {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: 0 0 24px;
+}
+
+.lpPublicChart {
+    align-items: flex-start;
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.lpPublicChartCanvas {
+    flex-shrink: 0;
+    height: 200px;
+    width: 200px;
+}
+
+.lpPublicChartTable {
+    border-collapse: collapse;
+    flex: 1;
+    font-size: 13px;
+
+    th {
+        border-bottom: 1px solid $color-border;
+        color: $color-text-muted;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        text-align: right;
+        text-transform: uppercase;
+
+        &:first-child { text-align: left; }
+    }
+
+    td {
+        border-bottom: 1px solid $color-border;
+        padding: 6px 8px;
+        text-align: right;
+
+        &:first-child { text-align: left; }
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+        font-weight: 700;
+    }
+
+    tr:hover td {
+        background: $color-surface;
+    }
+}
+
+.lpPublicChartSwatch {
+    border-radius: 2px;
+    display: inline-block;
+    height: 10px;
+    margin-right: 6px;
+    vertical-align: middle;
+    width: 10px;
+}
+
 .lpPublicListCategories {
     display: grid;
     gap: 16px;
 }
 
-.lpPublicListTotals {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    margin: 24px 0;
-}
-
-.lpPublicListTotal,
-.lpPublicListItem {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    padding: 12px;
+.lpPublicListCategory h2 {
+    border-bottom: 1px solid $color-border;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    text-transform: uppercase;
 }
 
 .lpPublicListItem {
-    align-items: flex-start;
+    align-items: center;
+    border-bottom: 1px solid $color-border;
     display: grid;
-    gap: 12px;
-    grid-template-columns: 96px 1fr;
-    margin: 10px 0;
+    gap: 8px;
+    grid-template-columns: 36px 1fr auto auto;
+    padding: 4px 0;
+
+    &:last-child { border-bottom: none; }
+
+    &.lpPublicListItemWithPrice {
+        grid-template-columns: 36px 1fr auto auto auto;
+    }
 }
 
 .lpPublicListItemImage {
-    height: 96px;
+    border-radius: $radius-sm;
+    height: 36px;
     object-fit: cover;
-    width: 96px;
+    width: 36px;
 }
 
-.lpPublicListItemActions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.lpPublicListItemImagePlaceholder {
+    flex-shrink: 0;
+    height: 36px;
+    width: 36px;
+}
+
+.lpPublicListItemBody { min-width: 0; }
+
+.lpPublicListItemName {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+
+.lpPublicListItemMeta {
+    color: $color-text-muted;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lpPublicListItemWeight {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lpPublicListItemPrice {
+    color: $color-text-muted;
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lpPublicListItemLink {
+    color: $color-accent;
+    font-size: 12px;
+    text-align: center;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
 }
 
 .lpPublicDisclosure {
@@ -51,6 +175,8 @@
     border-left: 3px solid $color-accent;
     margin: 24px 0;
     padding: 12px 16px;
+    font-size: 13px;
+    color: $color-text-muted;
 }
 </style>
 
@@ -61,56 +187,80 @@
         <p v-if="isLoading">Loading...</p>
         <p v-else-if="error">{{ error }}</p>
         <template v-else-if="list">
-            <p v-if="username">
-                By <router-link :to="`/u/${username}`">{{ username }}</router-link>
-            </p>
-            <h1 class="lpListName">{{ list.name }}</h1>
-            <p v-if="list.summary">{{ list.summary }}</p>
+            <nav class="lpPublicNav">
+                <router-link v-if="username" :to="`/u/${username}`">← {{ username }}'s profile</router-link>
+                <router-link v-else to="/">← Back to LighterPack+</router-link>
+            </nav>
 
-            <section class="lpPublicListTotals">
-                <div class="lpPublicListTotal">
-                    <strong>Total</strong>
-                    <div>{{ displayWeight(list.totalWeight) }} {{ totalUnit }}</div>
-                </div>
-                <div class="lpPublicListTotal">
-                    <strong>Base</strong>
-                    <div>{{ displayWeight(list.totalBaseWeight) }} {{ totalUnit }}</div>
-                </div>
-                <div class="lpPublicListTotal">
-                    <strong>Worn</strong>
-                    <div>{{ displayWeight(list.totalWornWeight) }} {{ totalUnit }}</div>
-                </div>
-                <div class="lpPublicListTotal">
-                    <strong>Consumable</strong>
-                    <div>{{ displayWeight(list.totalConsumableWeight) }} {{ totalUnit }}</div>
-                </div>
-            </section>
+            <h1 class="lpPublicListTitle">{{ list.name }}</h1>
+            <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
+
+            <!-- Chart + tableau catégories -->
+            <div v-show="chartCategories.length" class="lpPublicChart">
+                <canvas ref="chartCanvas" class="lpPublicChartCanvas" width="200" height="200" />
+                <table class="lpPublicChartTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(cat, i) in chartCategories" :key="cat.id || cat.name">
+                            <td>
+                                <span class="lpPublicChartSwatch" :style="{ background: cat.color }" />
+                                {{ cat.name }}
+                            </td>
+                            <td>{{ currencySymbol }}{{ formatPrice(cat.subtotalPrice) }}</td>
+                            <td><strong>{{ displayWeight(cat.subtotalWeight) }}</strong> {{ totalUnit }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td>{{ currencySymbol }}{{ formatPrice(list.totalPrice) }}</td>
+                            <td><strong>{{ displayWeight(list.totalWeight) }}</strong> {{ totalUnit }}</td>
+                        </tr>
+                        <tr v-if="list.totalWornWeight">
+                            <td>Worn</td>
+                            <td></td>
+                            <td><strong>{{ displayWeight(list.totalWornWeight) }}</strong> {{ totalUnit }}</td>
+                        </tr>
+                        <tr>
+                            <td>Base Weight</td>
+                            <td></td>
+                            <td><strong>{{ displayWeight(list.totalBaseWeight) }}</strong> {{ totalUnit }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
 
             <aside v-if="affiliateDisclosure" class="lpPublicDisclosure">
                 {{ affiliateDisclosure }}
             </aside>
 
+            <!-- Items par catégorie -->
             <section class="lpPublicListCategories">
-                <article v-for="category in categories" :key="category.id || category.name">
+                <div v-for="category in categories" :key="category.id || category.name" class="lpPublicListCategory">
                     <h2>{{ category.name }}</h2>
-                    <div v-for="item in category.items" :key="item.id || item.name" class="lpPublicListItem lpItem">
-                        <img v-if="item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name" />
-                        <div v-else></div>
-                        <div>
-                            <h3 class="lpName">{{ item.name }}</h3>
-                            <p v-if="item.brand">{{ item.brand }}</p>
-                            <p v-if="item.description" class="lpDescription">{{ item.description }}</p>
-                            <p class="lpWeight">{{ displayItemWeight(item) }} {{ totalUnit }}</p>
-                            <p class="lpQtyCell">{{ item.qty || 1 }}</p>
-                            <div class="lpPublicListItemActions">
-                                <a v-if="item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" @click="trackItemClick(item)">View gear</a>
-                                <button v-if="item.promoCode" type="button" @click="trackPromoClick(item)">
-                                    {{ item.promoCode }}
-                                </button>
-                            </div>
+                    <div
+                        v-for="item in category.items"
+                        :key="item.id || item.name"
+                        class="lpPublicListItem"
+                        :class="{ 'lpPublicListItemWithPrice': publicFields.price }"
+                    >
+                        <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name" />
+                        <div v-else class="lpPublicListItemImagePlaceholder" />
+                        <div class="lpPublicListItemBody">
+                            <span class="lpPublicListItemName">{{ item.name }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span>
                         </div>
+                        <span v-if="publicFields.price" class="lpPublicListItemPrice">{{ item.price ? `${currencySymbol}${formatPrice(item.price)}` : '' }}</span>
+                        <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ totalUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>
+                        <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" class="lpPublicListItemLink" @click="trackItemClick(item)">Get it ↗</a>
+                        <span v-else />
                     </div>
-                </article>
+                </div>
             </section>
         </template>
     </main>
@@ -118,10 +268,16 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { useTheme } from '../composables/useTheme';
+const pies = require('../pies.js');
 const weightUtils = require('../utils/weight.js');
+const colorUtils = require('../utils/color.js');
 
 export default {
     name: 'PublicList',
+    setup() {
+        useTheme();
+    },
     data() {
         return {
             isLoading: true,
@@ -129,74 +285,104 @@ export default {
             username: null,
             list: null,
             totalUnit: 'oz',
+            currencySymbol: '$',
+            publicFields: { price: false, links: false, images: false },
             categories: [],
             affiliateDisclosure: null,
+            chart: null,
         };
     },
+    computed: {
+        chartCategories() {
+            return this.categories.map((cat, i) => {
+                const color = colorUtils.rgbToString(colorUtils.getColor(i));
+                return { ...cat, color };
+            }).filter((cat) => cat.subtotalWeight > 0);
+        },
+    },
+    mounted() {
+        if (this.chartCategories.length) {
+            this.$nextTick(this.renderChart);
+        }
+    },
+    watch: {
+        categories() {
+            this.$nextTick(() => {
+                this.$nextTick(() => {
+                    this.$nextTick(this.renderChart);
+                });
+            });
+        },
+    },
+    beforeUnmount() {
+        if (this.chart && typeof this.chart.destroy === 'function') {
+            this.chart.destroy();
+        }
+    },
     created() {
-        this.loadPublicList();
+        fetchJson(`/api/public/list/${this.$route.params.externalId}`)
+            .then((payload) => {
+                this.username = payload.username;
+                this.list = payload.list;
+                this.totalUnit = payload.totalUnit || 'oz';
+                this.currencySymbol = payload.currencySymbol || '$';
+                this.publicFields = payload.publicFields || { price: false, links: false, images: false };
+                this.categories = payload.categories || [];
+                this.affiliateDisclosure = payload.affiliateDisclosure;
+                this.updateDocumentMeta();
+                this.track('listView');
+            })
+            .catch((err) => {
+                this.error = err && err.status === 404 ? 'List not found.' : 'Unable to load this list.';
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
     },
     methods: {
-        loadPublicList(attempt = 0) {
-            return fetchJson(`/api/public/list/${this.$route.params.externalId}`)
-                .then((payload) => {
-                    this.username = payload.username;
-                    this.list = payload.list;
-                    this.totalUnit = payload.totalUnit || (payload.list && payload.list.totalUnit) || 'oz';
-                    this.categories = payload.categories || [];
-                    this.affiliateDisclosure = payload.affiliateDisclosure;
-                    this.updateDocumentMeta();
-                    this.track('listView');
-                })
-                .catch((err) => {
-                    if (err && err.statusCode === 404 && attempt < 12) {
-                        window.setTimeout(() => {
-                            this.loadPublicList(attempt + 1);
-                        }, 250);
-                        return;
-                    }
-
-                    this.error = err && err.status === 404 ? 'List not found.' : 'Unable to load this list.';
-                })
-                .finally(() => {
-                    if (this.list || this.error) {
-                        this.isLoading = false;
-                    }
-                });
-        },
         displayWeight(value) {
             return weightUtils.MgToWeight(value || 0, this.totalUnit);
         },
         displayItemWeight(item) {
-            return this.displayWeight(item.weight || 0);
+            return this.displayWeight((item.weight || 0) * (item.qty || 1));
+        },
+        formatPrice(value) {
+            return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
+        },
+        renderChart() {
+            const canvas = this.$refs.chartCanvas;
+            if (!canvas || !this.chartCategories.length) return;
+            const total = this.chartCategories.reduce((sum, cat) => sum + cat.subtotalWeight, 0);
+            if (!total) return;
+
+            // pies.js preprocess() attend { catName: { itemName: weightMg } }
+            const rawData = {};
+            this.chartCategories.forEach((cat) => {
+                const catData = {};
+                (cat.items || []).forEach((item) => {
+                    const value = (item.weight || 0) * (item.qty || 1);
+                    if (value > 0) catData[item.name || item.id] = value;
+                });
+                if (Object.keys(catData).length) rawData[cat.name] = catData;
+            });
+
+            if (this.chart) {
+                this.chart.update({ data: rawData });
+            } else {
+                this.chart = pies({ container: canvas, data: rawData });
+            }
         },
         track(type, itemId) {
-            if (!this.list || !this.list.externalId) {
-                return Promise.resolve();
-            }
-
+            if (!this.list || !this.list.externalId) return Promise.resolve();
             return fetchJson('/api/public/insight', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    externalId: this.list.externalId,
-                    type,
-                    itemId,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ externalId: this.list.externalId, type, itemId }),
             }).catch(() => {});
         },
-        trackItemClick(item) {
-            this.track('gearClick', item.id);
-        },
-        trackPromoClick(item) {
-            this.track('promoClick', item.id);
-        },
+        trackItemClick(item) { this.track('gearClick', item.id); },
         updateDocumentMeta() {
-            if (!this.list) {
-                return;
-            }
+            if (!this.list) return;
             document.title = `${this.list.name || 'Public list'} - LighterPack+`;
             let robots = document.querySelector('meta[name="robots"]');
             if (!this.list.allowSearchIndexing) {

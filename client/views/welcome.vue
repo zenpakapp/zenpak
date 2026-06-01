@@ -109,11 +109,11 @@ $welcomeVerticalSpacing: 80px;
     <div id="lpWelcomeContainer">
         <div id="lpLaunchBanner">
             <div class="lpContainer">
-                <strong>Welcome to the new version of LighterPack!</strong> We hope you like it, and if you have any questions please <a href="mailto:info@lighterpack.com" class="lpHref">get in touch</a>.
+                <strong>Welcome to LighterPack+!</strong> We hope you like it, and if you have any questions please <a href="mailto:info@lighterpack.com" class="lpHref">get in touch</a>.
             </div>
         </div>
         <div id="lpWelcome" class="lpContainer">
-            <h1><strong>LighterPack</strong> helps you track the gear you bring on adventures.</h1>
+            <h1><strong>LighterPack+</strong> helps you track the gear you bring on adventures.</h1>
             <div class="lpWelcomeContent">
                 <div class="lpWelcomeRegisterContainer">
                     <div class="lpWelcomeRegister">
@@ -134,7 +134,7 @@ $welcomeVerticalSpacing: 80px;
                                 <h3><strong>3.</strong>Share your lists with others</h3>
                             </li>
                         </ul>
-                        <img id="lpWelcomeScreenshot" src="/images/screenshot.jpg" alt="A screenshot of the LighterPack interface">
+                        <img id="lpWelcomeScreenshot" src="/images/screenshot.jpg" alt="A screenshot of the LighterPack+ interface">
                     </div>
                 </div>
                 <div class="lpWelcomeSigninContainer">

@@ -45,6 +45,7 @@
 
 .shareSelectWrap {
     position: relative;
+    width: 100%;
 
     &::after {
         color: $color-text-muted;
@@ -76,6 +77,12 @@
         box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
         outline: none;
     }
+}
+
+.shareVisibilityHint {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin: 4px 0 0;
 }
 
 .shareCheckbox {
@@ -160,14 +167,27 @@
                         <div class="shareSelectWrap">
                             <select id="listVisibility" class="shareSelect" :value="list.visibility" @change="setVisibility($event.target.value)">
                                 <option value="private">Private</option>
-                                <option value="shareable">Shareable by link</option>
-                                <option value="discoverable">Discoverable</option>
-                                <option value="indexable">Indexable</option>
+                                <option value="shareable">Unlisted</option>
+                                <option value="discoverable">Public</option>
+                                <option value="indexable">Public + Search engines</option>
                             </select>
                         </div>
+                        <p class="shareVisibilityHint">{{ visibilityHint }}</p>
+                    </div>
+
+                    <div class="shareSection">
+                        <div class="shareLabel">Shared view</div>
                         <label class="shareCheckbox">
-                            <input type="checkbox" :checked="list.allowSearchIndexing" @change="setSearchIndexing($event.target.checked)">
-                            Allow search engines to index this list
+                            <input type="checkbox" :checked="list.publicFields && list.publicFields.price" @change="setPublicField('price', $event.target.checked)">
+                            Show prices
+                        </label>
+                        <label class="shareCheckbox">
+                            <input type="checkbox" :checked="list.publicFields && list.publicFields.links" @change="setPublicField('links', $event.target.checked)">
+                            Show "Get it" links
+                        </label>
+                        <label class="shareCheckbox">
+                            <input type="checkbox" :checked="list.publicFields && list.publicFields.images" @change="setPublicField('images', $event.target.checked)">
+                            Show images
                         </label>
                     </div>
 
@@ -205,6 +225,15 @@ export default {
         };
     },
     computed: {
+        visibilityHint() {
+            const hints = {
+                private: 'Only you can see this list.',
+                shareable: 'Anyone with the link can view it. Won\'t appear on your profile or in feeds.',
+                discoverable: 'Visible on your profile and in your followers\' feed.',
+                indexable: 'Visible on your profile, in feeds, and indexed by search engines.',
+            };
+            return hints[this.list && this.list.visibility] || '';
+        },
         library() {
             return this.$store.state.library;
         },
@@ -242,6 +271,15 @@ export default {
                 }
             });
         },
+        setPublicField(field, value) {
+            this.$store.commit('updateListPublicFields', {
+                listId: this.list.id,
+                [field]: value,
+            });
+            return this.saveShareState().catch(() => {
+                showGlobalAlert('An error occurred while saving your sharing settings. Please try again later.');
+            });
+        },
         setVisibility(visibility) {
             this.$store.commit('updateListVisibility', {
                 listId: this.list.id,
@@ -274,7 +312,6 @@ export default {
                 })
                     .then((response) => {
                         this.$store.commit('setExternalId', { externalId: response.externalId, list: this.list });
-                        this.ensureShareable();
                         return this.saveShareState();
                     })
                     .then(() => {
@@ -285,7 +322,6 @@ export default {
                         showGlobalAlert('An error occurred while attempting to get an ID for your list. Please try again later.');
                     });
             }
-            this.ensureShareable();
             this.shareReady = false;
             return this.saveShareState()
                 .then(() => {

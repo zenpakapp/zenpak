@@ -259,6 +259,11 @@ function buildPublicList(user, externalId) {
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
         currencySymbol: library.currencySymbol || '$',
+        publicFields: {
+            price: !!(list.publicFields && list.publicFields.price),
+            links: !!(list.publicFields && list.publicFields.links),
+            images: !!(list.publicFields && list.publicFields.images),
+        },
         categories,
         hasAffiliateLinks,
     };

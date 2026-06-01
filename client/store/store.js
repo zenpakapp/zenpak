@@ -230,6 +230,15 @@ const store = createStore({
                 list.allowSearchIndexing = args.allowSearchIndexing === true;
             }
         },
+        updateListPublicFields(state, args) {
+            const list = state.library.getListById(args.listId);
+            if (list) {
+                if (!list.publicFields) list.publicFields = {};
+                if (typeof args.price !== 'undefined') list.publicFields.price = args.price;
+                if (typeof args.links !== 'undefined') list.publicFields.links = args.links;
+                if (typeof args.images !== 'undefined') list.publicFields.images = args.images;
+            }
+        },
         updateItemCreatorLink(state, args) {
             const item = state.library.getItemById(args.itemId);
             if (item) {
