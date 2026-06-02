@@ -6,6 +6,7 @@ const router = express.Router();
 const Mustache = require('mustache');
 const markdown = require('markdown').markdown;
 const config = require('config');
+const { resolvePublicOrigin } = require('./request-origin.js');
 const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvField } = require('./csv.js');
 
@@ -20,8 +21,11 @@ const Category = dataTypes.Category;
 const List = dataTypes.List;
 const Library = dataTypes.Library;
 
-function getDeployUrl() {
-    return process.env.DEPLOY_URL || config.get('deployUrl');
+function getDeployUrl(req) {
+    return resolvePublicOrigin(req, {
+        environment: getRuntimeEnvironment(),
+        configuredOrigin: process.env.DEPLOY_URL || config.get('deployUrl'),
+    });
 }
 
 function getRuntimeEnvironment() {
@@ -207,7 +211,7 @@ router.get('/e/:id', (req, res) => {
             renderedTotals,
             optionalFields: library.optionalFields,
             renderedDescription: markdown.toHTML(list.description),
-            baseUrl: getDeployUrl(),
+            baseUrl: getDeployUrl(req),
             styles: shareStylesLinks,
             scripts: shareScriptsLinks,
         };
