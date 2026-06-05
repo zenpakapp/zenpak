@@ -329,18 +329,33 @@
                         <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">All</button>
                         <button
                             :class="['lpGearRoomChip', { active: filterOrphan }]"
-                            @click="filterOrphan = !filterOrphan; filterCategory = ''; filterStarred = false"
+                            @click="filterOrphan = !filterOrphan; filterCategory = ''; filterStarred = false; filterList = ''"
                         >No list</button>
                         <button
                             :class="['lpGearRoomChip', { active: filterStarred }]"
-                            @click="filterStarred = !filterStarred; filterCategory = ''; filterOrphan = false"
+                            @click="filterStarred = !filterStarred; filterCategory = ''; filterOrphan = false; filterList = ''"
                         >★ Favorites</button>
                         <button
                             v-for="cat in availableCategories"
                             :key="cat"
                             :class="['lpGearRoomChip', { active: filterCategory === cat }]"
-                            @click="filterCategory = cat; filterOrphan = false; filterStarred = false"
+                            @click="filterCategory = cat; filterOrphan = false; filterStarred = false; filterList = ''"
                         >{{ cat }}</button>
+                    </div>
+                </div>
+                <div v-if="library.lists.length > 0">
+                    <div class="lpGearRoomFiltersLabel">List</div>
+                    <div class="lpGearRoomCategoryChips">
+                        <button
+                            :class="['lpGearRoomChip', { active: filterList === '' }]"
+                            @click="filterList = ''; filterOrphan = false; filterStarred = false"
+                        >All</button>
+                        <button
+                            v-for="list in library.lists"
+                            :key="list.id"
+                            :class="['lpGearRoomChip', { active: filterList === list.id }]"
+                            @click="filterList = list.id; filterCategory = ''; filterOrphan = false; filterStarred = false"
+                        >{{ list.name }}</button>
                     </div>
                 </div>
                 <div>
@@ -466,6 +481,7 @@ export default {
             selected: [],
             sortKey: 'name',
             sortAsc: true,
+            filterList: '',
             filtersOpen: false,
             compareOpen: false,
         };
@@ -513,6 +529,20 @@ export default {
             }
             if (this.filterStarred) {
                 items = items.filter(i => i.starred);
+            }
+            if (this.filterList) {
+                const list = this.library.lists.find(l => l.id === this.filterList);
+                if (list) {
+                    const itemIdsInList = new Set();
+                    for (const catId of list.categoryIds) {
+                        const cat = this.library.getCategoryById(catId);
+                        if (!cat) continue;
+                        for (const ci of cat.categoryItems) {
+                            itemIdsInList.add(ci.itemId);
+                        }
+                    }
+                    items = items.filter(i => itemIdsInList.has(i.id));
+                }
             }
             if (this.weightMin !== null && this.weightMin !== '') {
                 const minMg = this.weightMin * 1000;
