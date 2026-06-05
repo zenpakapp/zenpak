@@ -16,6 +16,52 @@ test("has title", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
+test("welcome page prioritizes account creation while keeping sign in and skip visible", async ({
+  page,
+}) => {
+  await page.goto(testRoot);
+
+  await expect(
+    page.getByRole("heading", { name: "Pack lighter. Hike further." }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Create an account" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Sign in" }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Skip account for now" }),
+  ).toBeVisible();
+  await expect(
+    page.getByAltText("LighterPack+ interface preview"),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Organize your gear library, compare pack setups, and keep category totals clear."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Share lists with the community"),
+  ).toBeVisible();
+  await expect(page.getByText("Gear library", { exact: true })).toBeVisible();
+  await expect(page.getByText("Pack analysis", { exact: true })).toBeVisible();
+  await expect(page.getByText("Community sharing", { exact: true })).toBeVisible();
+});
+
+test("welcome page adapts key surfaces to dark mode", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto(testRoot);
+
+  const screenshotFrameBackground = await page
+    .locator(".lpWelcomeScreenshotFrame")
+    .evaluate((node) => getComputedStyle(node).backgroundImage);
+  const mainTransitionBackground = await page
+    .locator(".lpWelcomeMain")
+    .evaluate((node) => getComputedStyle(node, "::before").backgroundImage);
+
+  expect(screenshotFrameBackground).not.toContain("255, 255, 255");
+  expect(mainTransitionBackground).not.toContain("248, 247, 245");
+});
+
 test.describe("User Authentication Tests", () => {
   test("should save default currency from account settings", async ({ page }) => {
     await page.goto(testRoot);

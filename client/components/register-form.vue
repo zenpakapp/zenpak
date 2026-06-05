@@ -18,7 +18,7 @@
                     Register
                     <spinner v-if="saving" />
                 </button>
-                <a class="lpHref lpGetStarted" @click="loadLocal">Skip registration</a>
+                <a href="" class="lpHref lpGetStarted" @click.prevent="loadLocal">Skip account for now</a>
             </div>
         </form>
     </div>
@@ -66,7 +66,7 @@ export default {
                 push('/');
                 return;
             }
-            this.pendingRegisterData = { _localMode: true };
+            this.pendingRegisterData = { localMode: true };
             this.showTemplatePicker = true;
         },
         loadLocalWithTemplate(templateData) {
@@ -127,7 +127,7 @@ export default {
             this.showTemplatePicker = true;
         },
         submitWithTemplate(templateData) {
-            if (this.pendingRegisterData && this.pendingRegisterData._localMode) {
+            if (this.pendingRegisterData && this.pendingRegisterData.localMode) {
                 this.loadLocalWithTemplate(templateData);
                 return;
             }

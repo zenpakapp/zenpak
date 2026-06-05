@@ -6,9 +6,9 @@ const router = express.Router();
 const Mustache = require('mustache');
 const markdown = require('markdown').markdown;
 const config = require('config');
-const { resolvePublicOrigin } = require('./request-origin.js');
 const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvField } = require('./csv.js');
+const { resolvePublicOrigin } = require('./request-origin.js');
 
 const db = require('./db.js');
 
@@ -248,27 +248,50 @@ router.get('/csv/:id', (req, res) => {
             res.status(500).send('Unknown error.');
         }
 
+        // Check download permission before loading library
+        const rawLists = (user.library && user.library.lists) || [];
+        const rawList = rawLists.find((l) => l.externalId === id);
+        const downloadable = rawList && rawList.publicFields && rawList.publicFields.downloadable;
+
+        if (!downloadable) {
+            const token = req.cookies && req.cookies.lp;
+            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(user._id)).catch(() => false) : false;
+            if (!isOwner) {
+                res.status(403).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Not available — LighterPack+</title>
+  <style>
+    body { background: #F8F7F5; color: #1A1A1A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .box { max-width: 400px; padding: 40px 20px; text-align: center; }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
+    p { color: #6B7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
+    a { color: #2D7A4F; font-size: 13px; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="icon">⛰️</div>
+    <h1>Leave no trace.</h1>
+    <p>The owner of this list hasn't made it available for download.</p>
+    <a href="/">← Back to LighterPack+</a>
+  </div>
+</body>
+</html>`);
+                return;
+            }
+        }
+
         library.load(user.library);
         for (var i in library.lists) {
             if (library.lists[i].externalId && library.lists[i].externalId == id) {
                 library.defaultListId = library.lists[i].id;
                 list = library.lists[i];
                 break;
-            }
-        }
-
-        const downloadable = list.publicFields && list.publicFields.downloadable;
-        if (!downloadable) {
-            // Allow if the requester is the list owner (via cookie token)
-            const token = req.cookies && req.cookies.lp;
-            if (!token) {
-                res.status(403).send('This list is not available for download.');
-                return;
-            }
-            const requester = await db.users.findOne({ token });
-            if (!requester || String(requester._id) !== String(user._id)) {
-                res.status(403).send('This list is not available for download.');
-                return;
             }
         }
 

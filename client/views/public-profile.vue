@@ -8,6 +8,41 @@
     padding: 20px 20px 40px;
 }
 
+.lpPublicError {
+    margin: 80px auto;
+    max-width: 400px;
+    text-align: center;
+
+    h2 {
+        color: $color-text;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 16px;
+    }
+}
+
+.lpPublicErrorIcon {
+    color: $color-text-muted;
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lpPublicErrorSub {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: -8px 0 16px;
+}
+
+.lpPublicErrorBack {
+    color: $color-accent;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
 .lpPublicNav {
     margin-bottom: 16px;
 
@@ -206,12 +241,18 @@
     <main class="lpPublicProfile">
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
 
-        <nav class="lpPublicNav">
+        <nav v-if="!error" class="lpPublicNav">
             <router-link to="/">← Back to LighterPack+</router-link>
         </nav>
 
         <p v-if="isLoading">Loading...</p>
-        <p v-else-if="error">{{ error }}</p>
+        <div v-else-if="error" class="lpPublicError">
+            <div class="lpPublicErrorIcon">×</div>
+            <h2 v-if="error === 'Profile not found.'">This trail goes nowhere.</h2>
+            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">The profile you're looking for doesn't exist.</p>
+            <h2 v-else>{{ error }}</h2>
+            <router-link to="/" class="lpPublicErrorBack">← Back to LighterPack+</router-link>
+        </div>
         <template v-else-if="profile">
 
             <!-- Hero -->
