@@ -258,147 +258,6 @@
     white-space: nowrap;
 }
 
-.lpGearRoomBatchBar {
-    align-items: center;
-    background: #1a1a1a;
-    border-radius: 12px;
-    bottom: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    color: #fff;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: $fontSize-sm;
-    gap: 8px;
-    left: 50%;
-    padding: 10px 16px;
-    position: fixed;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    z-index: $belowDialog;
-}
-
-.lpGearRoomBatchCount {
-    background: $color-accent;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: $fontWeight-bold;
-    padding: 2px 8px;
-}
-
-.lpGearRoomBatchSep {
-    color: #555;
-}
-
-.lpGearRoomBatchAction {
-    background: #2a2a2a;
-    border: 1px solid #444;
-    border-radius: $radius-sm;
-    color: #eee;
-    cursor: pointer;
-    font-family: $font-family-base;
-    font-size: $fontSize-sm;
-    padding: 5px 12px;
-
-    &:hover {
-        background: #3a3a3a;
-    }
-
-    &.danger {
-        border-color: #882222;
-        color: #ff7070;
-    }
-}
-
-.lpGearRoomBatchCancel {
-    background: none;
-    border: none;
-    color: #777;
-    cursor: pointer;
-    font-family: $font-family-base;
-    font-size: $fontSize-sm;
-    padding: 4px;
-
-    &:hover {
-        color: #aaa;
-    }
-}
-
-.lpGearRoomBatchPanel {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    bottom: 72px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-    left: 50%;
-    padding: 16px;
-    position: fixed;
-    transform: translateX(-50%);
-    width: 300px;
-    z-index: $belowDialog;
-}
-
-.lpGearRoomBatchPanelTitle {
-    color: $color-text-muted;
-    font-size: $fontSize-sm;
-    font-weight: $fontWeight-bold;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-}
-
-.lpGearRoomBatchPanelRow {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.lpGearRoomBatchPanelLabel {
-    color: $color-text-muted;
-    flex-shrink: 0;
-    font-size: $fontSize-sm;
-    width: 70px;
-}
-
-.lpGearRoomBatchPanelInput,
-.lpGearRoomBatchPanelSelect {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    color: $color-text;
-    flex: 1;
-    font-size: $fontSize-sm;
-    min-height: 32px;
-    padding: 0 8px;
-
-    &:focus {
-        border-color: $color-accent;
-        outline: none;
-    }
-}
-
-.lpGearRoomMergeKeep {
-    background: rgba(var(--color-accent-rgb), 0.15) !important;
-    border-color: $color-accent !important;
-    color: $color-accent !important;
-}
-
-.lpGearRoomBatchApply {
-    background: $color-accent;
-    border: none;
-    border-radius: $radius-sm;
-    color: #fff;
-    cursor: pointer;
-    font-family: $font-family-base;
-    font-size: $fontSize-sm;
-    margin-top: 4px;
-    padding: 7px 16px;
-    width: 100%;
-
-    &:hover {
-        opacity: 0.9;
-    }
-}
-
 .lpGearRoomFiltersToggle {
     background: $color-surface;
     border: 1px solid $color-border;
@@ -442,12 +301,6 @@
         }
     }
 
-    .lpGearRoomBatchBar {
-        left: 16px;
-        right: 16px;
-        transform: none;
-        width: auto;
-    }
 }
 
 
@@ -565,66 +418,21 @@
             </div>
         </div>
 
-        <!-- Batch actions bar — appears when items are selected -->
-        <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
-            <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
-            <span class="lpGearRoomBatchSep">|</span>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="toggleBatchPanel('merge')">⇄ Merge</button>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="toggleCompare">{{ compareOpen ? 'Close compare' : '⇔ Compare' }}</button>
-            <button class="lpGearRoomBatchAction" @click="batchSwapNameDesc">Swap name ↔ desc</button>
-            <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('category')">Set category</button>
-            <button class="lpGearRoomBatchAction" @click="toggleBatchPanel('tag')">Add tag</button>
-            <button class="lpGearRoomBatchAction danger" @click="batchDelete">Delete</button>
-            <span class="lpGearRoomBatchSep">|</span>
-            <button class="lpGearRoomBatchCancel" @click="selected = []">✕ Cancel</button>
-        </div>
-
-        <!-- Category panel -->
-        <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Set category for {{ selected.length }} items</div>
-            <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Type</span>
-                <select v-model="batchCategory" class="lpGearRoomBatchPanelSelect">
-                    <option value="">— none —</option>
-                    <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
-                </select>
-            </div>
-            <button class="lpGearRoomBatchApply" @click="applyBatchCategory">Apply</button>
-        </div>
-
-        <!-- Tag panel -->
-        <div v-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Add tag to {{ selected.length }} items</div>
-            <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Tag</span>
-                <input
-                    v-model="batchTag"
-                    class="lpGearRoomBatchPanelInput"
-                    type="text"
-                    placeholder="ex: bikepacking"
-                    @keydown.enter="applyBatchTag"
-                >
-            </div>
-            <button class="lpGearRoomBatchApply" @click="applyBatchTag">Apply</button>
-        </div>
-
-        <!-- Merge panel -->
-        <div v-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
-            <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
-                <button
-                    v-for="id in selected"
-                    :key="id"
-                    :class="['lpGearRoomBatchAction', { 'lpGearRoomMergeKeep': mergeKeepId === id }]"
-                    style="text-align:left"
-                    @click="mergeKeepId = id"
-                >
-                    <strong>{{ itemDisplayName(getItemById(id)) }}</strong>
-                    <span style="color:#aaa;margin-left:8px;font-size:11px">{{ getItemById(id).description }}</span>
-                </button>
-            </div>
-            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">Merge &amp; delete duplicate</button>
-        </div>
+        <gear-room-batch-bar
+            :selected="selected"
+            :available-categories="availableCategories"
+            :all-items="allItems"
+            :lists="library.lists"
+            :compare-open="compareOpen"
+            @update:selected="selected = $event"
+            @batch-swap-name-desc="batchSwapNameDesc"
+            @batch-delete="batchDelete"
+            @batch-category="applyBatchCategory"
+            @batch-tag="applyBatchTag"
+            @batch-merge="applyMerge"
+            @batch-add-to-list="applyBatchAddToList"
+            @toggle-compare="compareOpen = !compareOpen"
+        />
 
         <gear-room-compare-panel
             :items="compareItems"
@@ -639,12 +447,13 @@ import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils.js';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
+import GearRoomBatchBar from './gear-room-batch-bar.vue';
 
 const { displayWeight } = useUtils();
 
 export default {
     name: 'GearRoom',
-    components: { GearRoomComparePanel },
+    components: { GearRoomComparePanel, GearRoomBatchBar },
     emits: ['close'],
     data() {
         return {
@@ -657,10 +466,6 @@ export default {
             selected: [],
             sortKey: 'name',
             sortAsc: true,
-            activeBatchPanel: null,
-            batchCategory: '',
-            batchTag: '',
-            mergeKeepId: null,
             filtersOpen: false,
             compareOpen: false,
         };
@@ -809,9 +614,6 @@ export default {
             const newItem = this.library.items[this.library.items.length - 1];
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, startEditing: true });
         },
-        toggleBatchPanel(panel) {
-            this.activeBatchPanel = this.activeBatchPanel === panel ? null : panel;
-        },
         batchSwapNameDesc() {
             const ids = new Set(this.selected);
             this.allItems
@@ -822,20 +624,16 @@ export default {
             this.selected = [];
             this.activeBatchPanel = null;
         },
-        applyBatchCategory() {
+        applyBatchCategory(category) {
             const ids = new Set(this.selected);
             this.allItems
                 .filter(i => ids.has(i.id))
                 .forEach(item => {
-                    this.$store.commit('updateItem', { ...item, category: this.batchCategory });
+                    this.$store.commit('updateItem', { ...item, category });
                 });
             this.selected = [];
-            this.activeBatchPanel = null;
-            this.batchCategory = '';
         },
-        applyBatchTag() {
-            if (!this.batchTag.trim()) return;
-            const tag = this.batchTag.trim().toLowerCase();
+        applyBatchTag(tag) {
             const ids = new Set(this.selected);
             this.allItems
                 .filter(i => ids.has(i.id))
@@ -845,8 +643,19 @@ export default {
                     this.$store.commit('updateItem', { ...item, tags });
                 });
             this.selected = [];
-            this.activeBatchPanel = null;
-            this.batchTag = '';
+        },
+        applyBatchAddToList({ categoryId, itemIds }) {
+            const category = this.library.getCategoryById(categoryId);
+            if (!category) return;
+            itemIds.forEach(itemId => {
+                if (category.getCategoryItemById(itemId)) return;
+                this.$store.commit('addItemToCategory', {
+                    itemId,
+                    categoryId,
+                    dropIndex: category.categoryItems.length,
+                });
+            });
+            this.selected = [];
         },
         batchDelete() {
             const count = this.selected.length;
@@ -866,9 +675,6 @@ export default {
         getItemById(id) {
             return this.library.getItemById(id);
         },
-        toggleCompare() {
-            this.compareOpen = !this.compareOpen;
-        },
         itemUsedInLists(itemId) {
             return this.library.lists.filter(list =>
                 list.categoryIds.some(catId => {
@@ -877,17 +683,14 @@ export default {
                 })
             ).length;
         },
-        applyMerge() {
-            if (!this.mergeKeepId || this.selected.length < 2) return;
-            const removeIds = this.selected.filter(id => id !== this.mergeKeepId);
+        applyMerge(keepId) {
+            const removeIds = this.selected.filter(id => id !== keepId);
             openSpeedbump(
                 () => {
                     removeIds.forEach(removeId => {
-                        this.$store.commit('mergeItems', { keepId: this.mergeKeepId, removeId });
+                        this.$store.commit('mergeItems', { keepId, removeId });
                     });
                     this.selected = [];
-                    this.activeBatchPanel = null;
-                    this.mergeKeepId = null;
                 },
                 { body: `Merge ${this.selected.length} items into one? The others will be deleted from all lists.` },
             );
