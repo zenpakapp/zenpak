@@ -323,6 +323,21 @@
                     <div class="lpGearRoomFiltersLabel">Search</div>
                     <input v-model="search" class="lpGearRoomSearch" type="text" placeholder="Name, brand, description…">
                 </div>
+                <div v-if="library.lists.length > 0">
+                    <div class="lpGearRoomFiltersLabel">List</div>
+                    <div class="lpGearRoomCategoryChips">
+                        <button
+                            :class="['lpGearRoomChip', { active: filterList === '' }]"
+                            @click="filterList = ''; filterOrphan = false; filterStarred = false"
+                        >All</button>
+                        <button
+                            v-for="list in library.lists"
+                            :key="list.id"
+                            :class="['lpGearRoomChip', { active: filterList === list.id }]"
+                            @click="filterList = list.id; filterCategory = ''; filterOrphan = false; filterStarred = false"
+                        >{{ list.name }}</button>
+                    </div>
+                </div>
                 <div>
                     <div class="lpGearRoomFiltersLabel">Type</div>
                     <div class="lpGearRoomCategoryChips">
@@ -341,21 +356,6 @@
                             :class="['lpGearRoomChip', { active: filterCategory === cat }]"
                             @click="filterCategory = cat; filterOrphan = false; filterStarred = false; filterList = ''"
                         >{{ cat }}</button>
-                    </div>
-                </div>
-                <div v-if="library.lists.length > 0">
-                    <div class="lpGearRoomFiltersLabel">List</div>
-                    <div class="lpGearRoomCategoryChips">
-                        <button
-                            :class="['lpGearRoomChip', { active: filterList === '' }]"
-                            @click="filterList = ''; filterOrphan = false; filterStarred = false"
-                        >All</button>
-                        <button
-                            v-for="list in library.lists"
-                            :key="list.id"
-                            :class="['lpGearRoomChip', { active: filterList === list.id }]"
-                            @click="filterList = list.id; filterCategory = ''; filterOrphan = false; filterStarred = false"
-                        >{{ list.name }}</button>
                     </div>
                 </div>
                 <div>
