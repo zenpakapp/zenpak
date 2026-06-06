@@ -163,6 +163,9 @@
                 </span>
                 <input id="lpListName" :value="list.name" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                 <themeToggle />
+                <span v-if="isSignedIn" class="headerItem">
+                    <router-link to="/feed" class="lpTarget">Feed</router-link>
+                </span>
                 <share />
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />

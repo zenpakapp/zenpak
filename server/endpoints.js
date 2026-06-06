@@ -11,6 +11,7 @@ const config = require('config');
 const { logWithRequest } = require('./log.js');
 const { sendMail } = require('./mailgun.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
+const { detectVisibilityChanges } = require('./save-library-feed.js');
 
 const { ObjectId } = require('mongodb');
 const { authenticateUser, verifyPassword } = require('./auth.js');
@@ -165,10 +166,15 @@ function saveLibrary(req, res, user) {
         return res.status(400).json({ errors: [{ message: 'An error occurred while saving your data - unable to parse library. If this persists, please contact support.' }] });
     }
 
+    const oldLists = (user.library && user.library.lists) || [];
+
     user.library = library;
     user.syncToken++;
     db.users.save(user, () => {
         logWithRequest(req, { message: 'saved library', username: user.username });
+
+        const newLists = (library && library.lists) || [];
+        detectVisibilityChanges(user._id, oldLists, newLists).catch(() => {});
 
         return res.status(200).json({ message: 'success', syncToken: user.syncToken });
     });

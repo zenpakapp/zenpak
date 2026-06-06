@@ -31,13 +31,13 @@ $sidebarPadding: 20px;
         border-bottom: 1px solid $color-border;
         display: flex;
         height: 60px;
-        justify-content: space-between;
         margin: 0 -20px 20px 0;
         padding: 20px 0 20px;
         position: relative;
 
         span {
-            color: $color-text-muted;
+            color: $color-accent;
+            font-weight: $fontWeight-bold;
         }
     }
 
@@ -158,7 +158,7 @@ $sidebarPadding: 20px;
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
         <div id="scrollable">
-            <h1>LighterPack <span>+</span></h1>
+            <h1>LighterPack<span>+</span></h1>
 
             <libraryLists />
             <section class="lpGearSection">
