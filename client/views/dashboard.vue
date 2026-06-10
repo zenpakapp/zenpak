@@ -87,6 +87,8 @@
 }
 
 .headerItem {
+    align-items: center;
+    display: flex;
     flex: 0 0 auto;
     color: $color-text-muted;
     height: 100%;
@@ -96,6 +98,12 @@
 
     &:first-child {
         padding-left: 12px;
+    }
+
+    // When headerItem directly wraps a router-link (.lpTarget), remove its own
+    // padding so the link's padding controls the hit area without doubling up.
+    > .lpTarget {
+        margin: -10px -12px;
     }
 
     .lpPopover {
@@ -108,10 +116,12 @@
         align-items: center;
         border: 1px solid transparent;
         border-radius: 999px;
+        color: $color-text;
         display: inline-flex;
         font-weight: 600;
         gap: 8px;
         padding: 10px 14px;
+        text-decoration: none;
         transition:
             background-color $transitionDurationFast ease,
             border-color $transitionDurationFast ease,
