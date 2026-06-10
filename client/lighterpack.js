@@ -2,6 +2,7 @@ import { createApp, h } from 'vue';
 import { createRouter, createWebHistory, RouterView } from 'vue-router';
 
 import routes from './routes';
+import { setPreviousRoute } from './composables/usePreviousRoute';
 import { registerAppEventHandlers } from './services/app-events';
 import { setRouter, redirect } from './services/navigation';
 import { showGlobalAlert } from './services/user-feedback';
@@ -14,6 +15,10 @@ const router = createRouter({
 });
 
 setRouter(router);
+
+router.beforeEach((to, from) => {
+    setPreviousRoute(from.path);
+});
 
 registerAppEventHandlers({
     onUnauthorized(message) {

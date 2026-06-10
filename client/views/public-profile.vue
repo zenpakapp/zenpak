@@ -242,7 +242,7 @@
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
 
         <nav v-if="!error" class="lpPublicNav">
-            <router-link to="/">← Back to LighterPack+</router-link>
+            <router-link :to="backTo">{{ backLabel }}</router-link>
         </nav>
 
         <p v-if="isLoading">Loading...</p>
@@ -327,12 +327,14 @@ import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
+import { useBackNav } from '../composables/useBackNav';
 
 export default {
     name: 'PublicProfile',
     setup() {
-        useTheme(); // initialise data-theme depuis localStorage
+        useTheme();
         const route = useRoute();
+        const { backTo, backLabel } = useBackNav();
         const username = route.params.username;
         const {
             following,
@@ -341,7 +343,7 @@ export default {
             follow: followUser,
             unfollow: unfollowUser,
         } = useFollow(username);
-        return { following, mode, followLoading, followUser, unfollowUser };
+        return { following, mode, followLoading, followUser, unfollowUser, backTo, backLabel };
     },
     data() {
         return {

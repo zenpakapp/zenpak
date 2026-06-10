@@ -87,8 +87,6 @@
 }
 
 .headerItem {
-    align-items: center;
-    display: flex;
     flex: 0 0 auto;
     color: $color-text-muted;
     height: 100%;
@@ -100,11 +98,6 @@
         padding-left: 12px;
     }
 
-    // When headerItem directly wraps a router-link (.lpTarget), remove its own
-    // padding so the link's padding controls the hit area without doubling up.
-    > .lpTarget {
-        margin: -10px -12px;
-    }
 
     .lpPopover {
         &:hover .lpTarget {

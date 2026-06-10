@@ -179,7 +179,7 @@ router.get('/discover', async (req, res) => {
 
             for (const list of lists) {
                 if (!list.externalId) continue;
-                if (list.visibility !== 'public' && list.visibility !== 'indexed') continue;
+                if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
 
                 const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
                 if (sort !== 'popular' && cursor && updatedAt >= new Date(cursor)) continue;
@@ -230,7 +230,7 @@ router.post('/copy-list/:externalId', (req, res) => {
             }
 
             const sourceList = (owner.library.lists || []).find(l => l.externalId === externalId);
-            if (!sourceList || (sourceList.visibility !== 'public' && sourceList.visibility !== 'indexed')) {
+            if (!sourceList || (sourceList.visibility !== 'discoverable' && sourceList.visibility !== 'indexable')) {
                 return res.status(404).json({ message: 'List not found' });
             }
 
@@ -238,25 +238,41 @@ router.post('/copy-list/:externalId', (req, res) => {
                 return res.status(403).json({ message: 'Cannot copy your own list' });
             }
 
-            // Deep copy: new id, new name, same categories/items
-            const newId = new ObjectId();
-            const copied = JSON.parse(JSON.stringify(sourceList));
-            copied.id = newId;
-            delete copied.externalId;
-            copied.name = `Copy of ${sourceList.name}`;
-            copied.visibility = 'private';
-            copied.copyCount = 0;
-
-            if (!user.library) user.library = {};
-            if (!user.library.lists) user.library.lists = [];
-            user.library.lists.push(copied);
-            await db.users.save(user);
-
-            // Increment copyCount on source
+            // Only increment copyCount — the client handles the actual import with dedup
             sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
             await db.users.save(owner);
 
-            return res.json({ listId: newId });
+            // Return list data (categories + items) for client-side dedup import
+            const categoryIds = sourceList.categoryIds || [];
+            const categories = (owner.library.categories || [])
+                .filter(c => categoryIds.includes(c.id) || categoryIds.map(String).includes(String(c.id)))
+                .map(c => ({
+                    name: c.name,
+                    categoryItems: (c.categoryItems || []).map(ci => {
+                        const item = (owner.library.items || []).find(i => String(i.id) === String(ci.itemId));
+                        if (!item) return null;
+                        return {
+                            name: item.name || '',
+                            description: item.description || '',
+                            weight: Number(item.weight) || 0,
+                            authorUnit: item.authorUnit || 'g',
+                            price: Number(item.price) || 0,
+                            brand: item.brand || '',
+                            shop: item.shop || '',
+                            imageUrl: item.imageUrl || '',
+                            qty: Number(ci.qty) || 1,
+                            worn: ci.worn || 0,
+                            consumable: ci.consumable === true,
+                            star: ci.star || 0,
+                        };
+                    }).filter(Boolean),
+                }));
+
+            return res.json({
+                listName: sourceList.name,
+                description: sourceList.description || '',
+                categories,
+            });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
         }
@@ -277,7 +293,7 @@ router.get('/insights', (req, res) => {
             const listCopies = insights.listCopies || {};
 
             const publicLists = ((user.library && user.library.lists) || []).filter(
-                l => l.externalId && (l.visibility === 'public' || l.visibility === 'indexed')
+                l => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable')
             );
 
             const listsData = publicLists.map(l => ({

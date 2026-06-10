@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { fetchJson } from '../utils/utils';
+import store from '../store/store';
 
 export function useCopyList(router) {
     const copying = ref(false);
@@ -10,7 +11,9 @@ export function useCopyList(router) {
         error.value = null;
         try {
             const data = await fetchJson(`/api/community/copy-list/${externalId}`, { method: 'POST' });
-            router.push(`/?list=${data.listId}`);
+            // Import into local library with dedup — auto-saved by store subscriber
+            store.commit('importPublicList', data);
+            router.push('/');
         } catch (err) {
             if (err && err.status === 403) {
                 error.value = 'Cannot copy your own list.';

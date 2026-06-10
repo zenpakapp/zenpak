@@ -11,7 +11,7 @@ const ownerUser = {
             id: new ObjectId(),
             externalId: 'abc123',
             name: 'PCT Section J',
-            visibility: 'public',
+            visibility: 'discoverable',
             categories: [],
         }],
     },

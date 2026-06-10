@@ -259,7 +259,8 @@
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
-                <router-link v-if="username" :to="`/u/${username}`">← {{ username }}'s profile</router-link>
+                <router-link v-if="backTo === '/community'" to="/community">← Back to Community</router-link>
+                <router-link v-else-if="username" :to="`/u/${username}`">← {{ username }}'s profile</router-link>
                 <router-link v-else to="/">← Back to LighterPack+</router-link>
             </nav>
 
@@ -355,6 +356,7 @@
 import { fetchJson } from '../utils/utils';
 import { useTheme } from '../composables/useTheme';
 import { useRouter } from 'vue-router';
+import { useBackNav } from '../composables/useBackNav';
 import { useCopyList } from '../composables/useCopyList';
 const pies = require('../pies.js');
 const weightUtils = require('../utils/weight.js');
@@ -365,8 +367,9 @@ export default {
     setup() {
         useTheme();
         const router = useRouter();
+        const { backTo, backLabel } = useBackNav();
         const { copying, error: copyError, copyList } = useCopyList(router);
-        return { copying, copyError, copyList };
+        return { copying, copyError, copyList, backTo, backLabel };
     },
     data() {
         return {

@@ -2,10 +2,11 @@
 @import "../css/_globals";
 
 .lpGlobalAlerts {
-    background: $yellow1;
-    border: 1px solid $darkYellow;
+    background: $color-warning;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 0 0 10px 10px;
     border-top: none;
+    color: #1a1a1a;
     left: 50%;
     margin: 0;
     padding: 0;
@@ -19,7 +20,7 @@
 
 .lpGlobalAlert {
     align-items: center;
-    border-bottom: 1px solid $darkYellow;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     display: flex;
     gap: $spacingSmall;
     justify-content: space-between;
@@ -39,10 +40,14 @@
 .lpGlobalAlertDismiss {
     background: transparent;
     border: 0;
+    color: #1a1a1a;
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
+    opacity: 0.6;
     padding: 0;
+
+    &:hover { opacity: 1; }
 }
 </style>
 

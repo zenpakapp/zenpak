@@ -446,6 +446,61 @@ const store = createStore({
                 });
             }
         },
+        importPublicList(state, { listName, description, categories }) {
+            const list = state.library.newList();
+            list.name = `Copy of ${listName}`;
+            list.description = description || '';
+
+            let mergedCount = 0;
+            let newCount = 0;
+
+            for (const catDef of (categories || [])) {
+                const category = state.library.newCategory({ list, _isNew: false });
+                category.name = catDef.name;
+
+                for (const ci of (catDef.categoryItems || [])) {
+                    const nameLower = (ci.name || '').toLowerCase().trim();
+                    const existing = nameLower
+                        ? state.library.items.find(i => (i.name || '').toLowerCase().trim() === nameLower)
+                        : null;
+
+                    let item;
+                    if (existing) {
+                        item = existing;
+                        category.addItem({ itemId: item.id, _isNew: false, qty: ci.qty || 1 });
+                        mergedCount++;
+                    } else {
+                        item = state.library.newItem({ category, _isNew: false });
+                        item.name = ci.name || '';
+                        item.description = ci.description || '';
+                        item.weight = Number(ci.weight) || 0;
+                        item.authorUnit = ci.authorUnit || state.library.itemUnit || 'g';
+                        item.price = Number(ci.price) || 0;
+                        item.brand = ci.brand || '';
+                        item.shop = ci.shop || '';
+                        item.imageUrl = ci.imageUrl || '';
+                        newCount++;
+                    }
+
+                    const categoryItem = category.getCategoryItemById(item.id);
+                    if (categoryItem) {
+                        categoryItem.qty = ci.qty || 1;
+                        categoryItem.worn = ci.worn || 0;
+                        categoryItem.consumable = ci.consumable === true;
+                        categoryItem.star = ci.star || 0;
+                    }
+                }
+            }
+
+            state.library.defaultListId = list.id;
+            list.calculateTotals();
+
+            const msg = mergedCount > 0
+                ? `List copied: ${mergedCount} item${mergedCount > 1 ? 's' : ''} matched your gear library, ${newCount} new item${newCount !== 1 ? 's' : ''} added.`
+                : `List copied: ${newCount} new item${newCount !== 1 ? 's' : ''} added to your gear library.`;
+
+            state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message: msg });
+        },
         save() {
             // no-op
         },

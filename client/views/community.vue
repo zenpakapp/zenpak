@@ -3,15 +3,16 @@
 
 .lpCommunity {
     margin: 0 auto;
-    max-width: 720px;
-    padding: 32px 20px;
+    max-width: 680px;
+    padding: 24px 20px 48px;
 }
 
+/* ── Tabs ── */
+
 .lpCommunityTabs {
-    display: flex;
-    gap: 0;
     border-bottom: 1px solid $color-border;
-    margin-bottom: 24px;
+    display: flex;
+    margin-bottom: 20px;
 }
 
 .lpCommunityTab {
@@ -20,98 +21,114 @@
     border-bottom: 2px solid transparent;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-medium;
     margin-bottom: -1px;
-    padding: 8px 18px;
-    transition: color $transitionDurationFast;
+    padding: 10px 16px;
+    transition: color $transitionDurationFast ease, border-color $transitionDurationFast ease;
 
     &.active {
         border-bottom-color: $color-accent;
         color: $color-text;
+        font-weight: $fontWeight-bold;
     }
 
-    &[aria-disabled="true"] {
+    &[aria-disabled] {
         cursor: not-allowed;
-        opacity: 0.45;
+        opacity: 0.4;
     }
 }
+
+/* ── Sort toolbar ── */
 
 .lpCommunitySort {
     align-items: center;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 16px;
 }
 
+.lpCommunitySortLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    margin-right: 4px;
+    text-transform: uppercase;
+}
+
 .lpCommunitySortBtn {
-    background: $color-surface;
-    border: 1px solid $color-border;
+    background: $color-control-muted;
+    border: 1px solid transparent;
     border-radius: $radius-sm;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 12px;
-    padding: 4px 12px;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
+    height: $control-height-sm;
+    padding: 0 12px;
+    transition: background $transitionDurationFast ease, color $transitionDurationFast ease, border-color $transitionDurationFast ease;
+
+    &:hover {
+        color: $color-text;
+    }
 
     &.active {
-        background: $color-accent;
-        border-color: $color-accent;
-        color: #fff;
+        background: $color-surface;
+        border-color: $color-border;
+        color: $color-text;
+        font-weight: $fontWeight-bold;
     }
 }
 
-.lpCommunityEmpty {
-    color: $color-text-muted;
-    margin-top: 48px;
-    text-align: center;
-}
+/* ── List cards ── */
 
 .lpCommunityCard {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-md;
-    cursor: pointer;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     padding: 14px 16px;
     text-decoration: none;
-    transition: border-color $transitionDurationFast ease;
+    transition: border-color $transitionDurationFast ease, box-shadow $transitionDurationFast ease;
 
     &:hover {
         border-color: $color-accent;
+        box-shadow: $shadow-soft;
     }
 }
 
 .lpCommunityCardName {
     color: $color-accent;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
     margin-bottom: 4px;
 }
 
 .lpCommunityCardAuthor {
     color: $color-text-muted;
-    font-size: 12px;
-    margin-bottom: 6px;
+    font-size: $fontSize-sm;
+    margin-bottom: 8px;
 
     a {
         color: $color-text;
+        font-weight: $fontWeight-medium;
         text-decoration: none;
-        font-weight: 500;
 
         &:hover { text-decoration: underline; }
     }
 }
 
 .lpCommunityBadge {
-    background: $color-accent;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    background: rgba(var(--color-accent-rgb), 0.14);
+    border-radius: 4px;
+    color: $color-accent;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
     margin-left: 5px;
-    padding: 1px 6px;
+    padding: 1px 5px;
     text-transform: uppercase;
     vertical-align: middle;
 }
@@ -119,33 +136,154 @@
 .lpCommunityCardMeta {
     color: $color-text-muted;
     display: flex;
-    font-size: 11px;
-    gap: 14px;
+    flex-wrap: wrap;
+    font-size: $fontSize-xs;
+    gap: 12px;
 }
 
-.lpBtn {
+.lpCommunityCardMetaItem {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+}
+
+/* ── Feed events ── */
+
+.lpCommunityEvent {
+    align-items: flex-start;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+}
+
+.lpCommunityEventAvatar {
+    align-items: center;
+    background: $color-control-muted;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    display: flex;
+    flex-shrink: 0;
+    font-size: $fontSize-md;
+    font-weight: $fontWeight-bold;
+    height: 36px;
+    justify-content: center;
+    width: 36px;
+}
+
+.lpCommunityEventBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.lpCommunityEventLine {
+    font-size: $fontSize-base;
+    line-height: 1.4;
+
+    a {
+        color: $color-text;
+        font-weight: $fontWeight-bold;
+        text-decoration: none;
+
+        &:hover { text-decoration: underline; }
+    }
+
+    span {
+        color: $color-text-muted;
+    }
+}
+
+.lpCommunityEventList {
+    background: $color-control-muted;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
+    margin-top: 6px;
+    padding: 8px 12px;
+}
+
+.lpCommunityEventTime {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    margin-top: 4px;
+}
+
+/* ── Nav ── */
+
+.lpCommunityNav {
+    margin-bottom: 20px;
+
+    a {
+        color: $color-text-muted;
+        font-size: $fontSize-sm;
+        text-decoration: none;
+
+        &:hover { color: $color-text; }
+    }
+}
+
+.lpCommunityHeader {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    h1 {
+        font-size: $fontSize-md;
+        font-weight: $fontWeight-bold;
+        margin: 0;
+    }
+}
+
+/* ── Empty / Loading states ── */
+
+.lpCommunityEmpty {
+    color: $color-text-muted;
+    font-size: $fontSize-base;
+    margin-top: 48px;
+    text-align: center;
+}
+
+/* ── Load more ── */
+
+.lpCommunityLoadMore {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-sm;
-    color: $color-text;
+    color: $color-text-muted;
     cursor: pointer;
-    font-size: 13px;
-    padding: 6px 16px;
-    transition: opacity $transitionDurationFast;
-
-    &:hover:not(:disabled) { opacity: 0.8; }
-    &:disabled { cursor: not-allowed; opacity: 0.5; }
-}
-
-.lpCommunityLoadMore {
     display: block;
-    margin: 24px auto 0;
-    padding: 8px 24px;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
+    height: $control-height-md;
+    margin: 20px auto 0;
+    padding: 0 24px;
+    transition: border-color $transitionDurationFast ease, color $transitionDurationFast ease;
+
+    &:hover:not(:disabled) {
+        border-color: $color-accent;
+        color: $color-text;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 }
 </style>
 
 <template>
     <main class="lpCommunity">
+        <nav class="lpCommunityNav">
+            <router-link to="/">← Back to LighterPack+</router-link>
+        </nav>
+
+        <div class="lpCommunityHeader">
+            <h1>Community</h1>
+        </div>
+
         <div class="lpCommunityTabs">
             <button
                 class="lpCommunityTab"
@@ -169,7 +307,7 @@
         <!-- Discover tab -->
         <div v-if="activeTab === 'discover'">
             <div class="lpCommunitySort">
-                <button
+                        <button
                     class="lpCommunitySortBtn"
                     :class="{ active: discoverSort === 'recent' }"
                     data-sort="recent"
@@ -187,7 +325,7 @@
                 </button>
             </div>
 
-            <p v-if="discoverLoading && discoverLists.length === 0">Loading...</p>
+            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">Loading…</p>
             <p v-else-if="discoverError" class="lpCommunityEmpty">{{ discoverError }}</p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
                 No public lists yet. Be the first to share one.
@@ -206,48 +344,48 @@
                         <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
                     </div>
                     <div class="lpCommunityCardMeta">
-                        <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }}</span>
-                        <span v-if="list.totalQty">📦 {{ list.totalQty }} items</span>
-                        <span v-if="list.copyCount">📋 {{ list.copyCount }} copies</span>
-                        <span>{{ timeAgo(list.updatedAt) }}</span>
+                        <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
+                        <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
+                        <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                        <span class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
                     </div>
                 </router-link>
-                <button v-if="discoverHasMore" class="lpBtn lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
-                    {{ discoverLoading ? 'Loading...' : 'Load more' }}
+                <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
+                    {{ discoverLoading ? 'Loading…' : 'Load more' }}
                 </button>
             </template>
         </div>
 
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
-            <p v-if="feedLoading && feedEvents.length === 0">Loading...</p>
+            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">Loading…</p>
             <p v-else-if="feedError" class="lpCommunityEmpty">{{ feedError }}</p>
             <p v-else-if="feedEvents.length === 0" class="lpCommunityEmpty">
-                Nothing here yet. Follow some users to see their list activity.
+                Nothing here yet. Follow some users to see their activity.
             </p>
             <template v-else>
-                <article v-for="event in feedEvents" :key="String(event._id)" class="lpFeedEvent" style="align-items:flex-start;border-bottom:1px solid var(--color-border);display:flex;gap:12px;padding:16px 0;">
-                    <div style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:50%;flex-shrink:0;font-size:18px;height:36px;line-height:36px;text-align:center;width:36px;">
+                <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
+                    <div class="lpCommunityEventAvatar">
                         {{ event.author.charAt(0).toUpperCase() }}
                     </div>
-                    <div style="flex:1;">
-                        <div>
-                            <router-link :to="`/u/${event.author}`"><strong>{{ event.author }}</strong></router-link>
+                    <div class="lpCommunityEventBody">
+                        <div class="lpCommunityEventLine">
+                            <router-link :to="`/u/${event.author}`">{{ event.author }}</router-link>
                             <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Guide</span>
                             <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
                             <span> {{ eventLabel(event.type) }}</span>
                         </div>
-                        <div v-if="event.listName" style="background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);font-size:13px;margin-top:8px;padding:10px 12px;">
+                        <div v-if="event.listName" class="lpCommunityEventList">
                             {{ event.listName }}
                         </div>
-                        <div v-else-if="event.listDeleted" style="color:var(--color-text-muted);font-style:italic;margin-top:8px;">
+                        <div v-else-if="event.listDeleted" class="lpCommunityEventList" style="font-style:italic;color:var(--color-text-muted)">
                             List no longer available
                         </div>
-                        <div style="color:var(--color-text-muted);font-size:12px;margin-top:4px;">{{ timeAgo(event.createdAt) }}</div>
+                        <div class="lpCommunityEventTime">{{ timeAgo(event.createdAt) }}</div>
                     </div>
                 </article>
-                <button v-if="feedHasMore" class="lpBtn lpCommunityLoadMore" :disabled="feedLoading" @click="feedLoadMore">
-                    {{ feedLoading ? 'Loading...' : 'Load more' }}
+                <button v-if="feedHasMore" class="lpCommunityLoadMore" :disabled="feedLoading" @click="feedLoadMore">
+                    {{ feedLoading ? 'Loading…' : 'Load more' }}
                 </button>
             </template>
         </div>
@@ -258,10 +396,12 @@
 import { useRoute } from 'vue-router';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
+import { useTheme } from '../composables/useTheme';
 
 export default {
     name: 'CommunityView',
     setup() {
+        useTheme();
         const route = useRoute();
         const {
             lists: discoverLists,

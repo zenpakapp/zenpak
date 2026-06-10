@@ -8,7 +8,7 @@ const guideUser = {
     library: {
         entitlements: { plan: 'creator' },
         lists: [
-            { id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'public' },
+            { id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'discoverable' },
             { id: 2, externalId: 'def', name: 'Private list', visibility: 'private' },
         ],
         insights: {

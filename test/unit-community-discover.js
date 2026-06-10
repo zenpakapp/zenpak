@@ -83,7 +83,7 @@ async function run() {
                 id: 2,
                 externalId: 'xyz',
                 name: 'PCT Section J',
-                visibility: 'public',
+                visibility: 'discoverable',
                 totalBaseWeight: 4200,
                 totalQty: 18,
                 copyCount: 5,
@@ -115,7 +115,7 @@ async function run() {
                 id: 3,
                 externalId: 'indexed1',
                 name: 'Indexed List',
-                visibility: 'indexed',
+                visibility: 'indexable',
                 copyCount: 2,
                 updatedAt: new Date('2026-06-05'),
             }],
@@ -142,7 +142,7 @@ async function run() {
             id: 100 + i,
             externalId: `pop${i}`,
             name: `List ${i}`,
-            visibility: 'public',
+            visibility: 'discoverable',
             copyCount: i,
             updatedAt: new Date(`2026-05-${String(i + 1).padStart(2, '0')}`),
         });
@@ -179,9 +179,9 @@ async function run() {
         library: {
             entitlements: { plan: 'free' },
             lists: [
-                { id: 201, externalId: 'r1', name: 'Recent 1', visibility: 'public', copyCount: 0, updatedAt: d1 },
-                { id: 202, externalId: 'r2', name: 'Recent 2', visibility: 'public', copyCount: 0, updatedAt: d2 },
-                { id: 203, externalId: 'r3', name: 'Recent 3', visibility: 'public', copyCount: 0, updatedAt: d3 },
+                { id: 201, externalId: 'r1', name: 'Recent 1', visibility: 'discoverable', copyCount: 0, updatedAt: d1 },
+                { id: 202, externalId: 'r2', name: 'Recent 2', visibility: 'discoverable', copyCount: 0, updatedAt: d2 },
+                { id: 203, externalId: 'r3', name: 'Recent 3', visibility: 'discoverable', copyCount: 0, updatedAt: d3 },
             ],
         },
     });
