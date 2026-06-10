@@ -6,7 +6,7 @@ import forgotPassword from './views/forgot-password.vue';
 import moderation from './views/moderation.vue';
 import publicProfile from './views/public-profile.vue';
 import publicList from './views/public-list.vue';
-import feedView from './views/feed.vue';
+import communityView from './views/community.vue';
 
 export default [
     { path: '/', component: dashboard },
@@ -17,7 +17,9 @@ export default [
     { path: '/register', component: register },
     { path: '/forgot-password', component: forgotPassword },
     { path: '/moderation', component: moderation },
-    { path: '/feed', component: feedView },
+    { path: '/feed', redirect: '/community/feed' },
+    { path: '/community', component: communityView },
+    { path: '/community/feed', component: communityView },
     { path: '/u/:username', component: publicProfile },
     { path: '/p/:externalId', component: publicList },
     { path: '/:pathMatch(.*)*', component: dashboard },
