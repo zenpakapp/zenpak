@@ -154,6 +154,7 @@ router.get('/discover', async (req, res) => {
 
     try {
         const PAGE_SIZE = 20;
+        // NOTE: full-table scan — acceptable at current scale, revisit if user count grows significantly
         const allUsers = await db.users.findMany({});
 
         // Collect all public lists with their author info
@@ -161,14 +162,16 @@ router.get('/discover', async (req, res) => {
         for (const user of allUsers) {
             const lists = (user.library && user.library.lists) || [];
             const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-            const tier = plan === 'creator' ? 'guide' : plan === 'supporter' ? 'trail' : 'base';
+            let tier = 'base';
+            if (plan === 'creator') tier = 'guide';
+            else if (plan === 'supporter') tier = 'trail';
 
             for (const list of lists) {
                 if (!list.externalId) continue;
                 if (list.visibility !== 'public' && list.visibility !== 'indexed') continue;
 
                 const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-                if (cursor && updatedAt >= new Date(cursor)) continue;
+                if (sort !== 'popular' && cursor && updatedAt >= new Date(cursor)) continue;
 
                 items.push({
                     externalId: list.externalId,
@@ -192,7 +195,7 @@ router.get('/discover', async (req, res) => {
         }
 
         const page = items.slice(0, PAGE_SIZE);
-        const nextCursor = page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
+        const nextCursor = (sort !== 'popular' && page.length === PAGE_SIZE) ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
     } catch (err) {
