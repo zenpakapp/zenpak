@@ -199,6 +199,44 @@
     &:hover { text-decoration: underline; }
 }
 
+.lpPublicListActions {
+    margin-bottom: 16px;
+}
+
+.lpCopyListBtn {
+    background: $color-accent;
+    border: none;
+    border-radius: $radius-sm;
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 16px;
+    transition: opacity $transitionDurationFast;
+
+    &:hover:not(:disabled) {
+        opacity: 0.85;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+.lpCopyListSignIn {
+    color: $color-accent;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpCopyListError {
+    color: $color-danger;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
 .lpPublicDisclosure {
     background: $color-surface;
     border-left: 3px solid $color-accent;
@@ -226,6 +264,20 @@
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
+            <div class="lpPublicListActions">
+                <button
+                    v-if="isLoggedIn && !isOwnList"
+                    class="lpBtn lpCopyListBtn"
+                    :disabled="copying"
+                    @click="handleCopy"
+                >
+                    {{ copyLabel }}
+                </button>
+                <router-link v-else-if="!isLoggedIn" to="/signin" class="lpCopyListSignIn">
+                    Sign in to copy this list
+                </router-link>
+                <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
+            </div>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
 
             <!-- Chart + tableau catégories -->
@@ -302,6 +354,8 @@
 <script>
 import { fetchJson } from '../utils/utils';
 import { useTheme } from '../composables/useTheme';
+import { useRouter } from 'vue-router';
+import { useCopyList } from '../composables/useCopyList';
 const pies = require('../pies.js');
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
@@ -310,6 +364,9 @@ export default {
     name: 'PublicList',
     setup() {
         useTheme();
+        const router = useRouter();
+        const { copying, error: copyError, copyList } = useCopyList(router);
+        return { copying, copyError, copyList };
     },
     data() {
         return {
@@ -323,9 +380,17 @@ export default {
             categories: [],
             affiliateDisclosure: null,
             chart: null,
+            isLoggedIn: false,
+            isOwnList: false,
+            copySuccess: false,
         };
     },
     computed: {
+        copyLabel() {
+            if (this.copying) return 'Copying…';
+            if (this.copySuccess) return 'Copied!';
+            return 'Copy list';
+        },
         chartCategories() {
             return this.categories.map((cat, i) => {
                 const color = colorUtils.rgbToString(colorUtils.getColor(i));
@@ -362,6 +427,8 @@ export default {
                 this.publicFields = payload.publicFields || { price: false, links: false, images: false };
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
+                this.isLoggedIn = Boolean(this.$store.state.loggedIn);
+                this.isOwnList = this.$store.state.loggedIn === this.username;
                 this.updateDocumentMeta();
                 this.track('listView');
             })
@@ -414,6 +481,13 @@ export default {
             }).catch(() => {});
         },
         trackItemClick(item) { this.track('gearClick', item.id); },
+        async handleCopy() {
+            await this.copyList(this.$route.params.externalId);
+            if (!this.copyError) {
+                this.copySuccess = true;
+                setTimeout(() => { this.copySuccess = false; }, 2000);
+            }
+        },
         updateDocumentMeta() {
             if (!this.list) return;
             document.title = `${this.list.name || 'Public list'} - LighterPack+`;
