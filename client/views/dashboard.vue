@@ -179,6 +179,8 @@
 
             <list />
 
+            <profile-insights v-if="isGuide" />
+
             <div id="lpFooter">
                 <div class="lpSiteBy">
                     Site by <a class="lpHref" href="https://www.galenmaly.com/" target="_blank" rel="noopener noreferrer">Galen Maly</a>
@@ -230,6 +232,7 @@ import importCSV from '../components/import-csv.vue';
 import copyList from '../components/copy-list.vue';
 import speedbump from '../components/speedbump.vue';
 import gearRoom from '../components/gear-room.vue';
+import profileInsights from '../components/profile-insights.vue';
 import { push } from '../services/navigation';
 import themeToggle from '../components/theme-toggle.vue';
 
@@ -257,6 +260,7 @@ export default {
         speedbump,
         globalAlerts,
         gearRoom,
+        profileInsights,
     },
     data() {
         return {
@@ -275,6 +279,10 @@ export default {
         },
         isSignedIn() {
             return this.$store.state.loggedIn;
+        },
+        isGuide() {
+            const lib = this.$store.state.library;
+            return lib && lib.entitlements && lib.entitlements.plan === 'creator';
         },
     },
     created() {

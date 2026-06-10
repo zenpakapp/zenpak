@@ -263,4 +263,47 @@ router.post('/copy-list/:externalId', (req, res) => {
     });
 });
 
+// GET /api/community/insights — Guide (creator plan) only
+router.get('/insights', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+        if (plan !== 'creator') {
+            return res.status(403).json({ message: 'Guide tier required' });
+        }
+
+        try {
+            const insights = (user.library && user.library.insights) || {};
+            const listViews = insights.listViews || {};
+            const listCopies = insights.listCopies || {};
+
+            const publicLists = (user.library.lists || []).filter(
+                l => l.externalId && (l.visibility === 'public' || l.visibility === 'indexed')
+            );
+
+            const listsData = publicLists.map(l => ({
+                externalId: l.externalId,
+                name: l.name || '',
+                viewCount: listViews[l.externalId] || 0,
+                copyCount: listCopies[l.externalId] || 0,
+            }));
+
+            const totalViews = listsData.reduce((sum, l) => sum + l.viewCount, 0);
+            const totalCopies = listsData.reduce((sum, l) => sum + l.copyCount, 0);
+
+            const followDocs = await db.follows.findMany({ followedId: new ObjectId(user._id) });
+
+            return res.json({
+                totals: {
+                    followers: followDocs.length,
+                    views: totalViews,
+                    copies: totalCopies,
+                },
+                lists: listsData,
+            });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
 module.exports = router;
