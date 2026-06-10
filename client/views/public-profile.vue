@@ -265,8 +265,8 @@
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
                             <h1 class="lpPublicName">{{ profile.displayName }}</h1>
-                            <span v-if="isCreator" class="lpPublicBadge">Creator</span>
-                            <span v-else-if="isSupporter" class="lpPublicBadge">Supporter</span>
+                            <span v-if="isCreator" class="lpPublicBadge">Guide</span>
+                            <span v-else-if="isSupporter" class="lpPublicBadge">Trail</span>
                         </div>
                         <p v-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
                         <div class="lpPublicStats">

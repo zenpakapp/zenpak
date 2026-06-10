@@ -82,6 +82,19 @@
     color: $color-text-muted;
     font-style: italic;
 }
+
+.lpFeedBadge {
+    background: $color-accent;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-left: 5px;
+    padding: 1px 6px;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
 </style>
 
 <template>
@@ -100,6 +113,8 @@
                 <div class="lpFeedEventBody">
                     <div>
                         <router-link :to="`/u/${event.author}`"><strong>{{ event.author }}</strong></router-link>
+                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">Guide</span>
+                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">Trail</span>
                         <span> {{ eventLabel(event.type) }}</span>
                     </div>
                     <div v-if="event.listName" class="lpFeedListCard">
