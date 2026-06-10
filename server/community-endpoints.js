@@ -276,7 +276,7 @@ router.get('/insights', (req, res) => {
             const listViews = insights.listViews || {};
             const listCopies = insights.listCopies || {};
 
-            const publicLists = (user.library.lists || []).filter(
+            const publicLists = ((user.library && user.library.lists) || []).filter(
                 l => l.externalId && (l.visibility === 'public' || l.visibility === 'indexed')
             );
 
