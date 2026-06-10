@@ -3,7 +3,9 @@ const express = require('express');
 const { ObjectId } = require('mongodb');
 const router = express.Router();
 const db = require('./db.js');
-const { authenticateUser } = require('./auth.js');
+const auth = require('./auth.js');
+const { authenticateUser } = auth;
+
 const { getFeedForUser } = require('./feed-events.js');
 
 // POST /api/community/follow/:username
@@ -201,6 +203,62 @@ router.get('/discover', async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: 'An error occurred' });
     }
+});
+
+// POST /api/community/copy-list/:externalId
+router.post('/copy-list/:externalId', (req, res) => {
+    return new Promise((resolve) => {
+        auth.authenticateUser(req, res, async (req, res, user) => {
+            const externalId = String(req.params.externalId || '').trim();
+            if (!externalId) {
+                res.status(400).json({ message: 'Invalid list' });
+                return resolve();
+            }
+
+            try {
+                const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+                if (!owner) {
+                    res.status(404).json({ message: 'List not found' });
+                    return resolve();
+                }
+
+                const sourceList = (owner.library.lists || []).find(l => l.externalId === externalId);
+                if (!sourceList || (sourceList.visibility !== 'public' && sourceList.visibility !== 'indexed')) {
+                    res.status(404).json({ message: 'List not found' });
+                    return resolve();
+                }
+
+                if (String(owner._id) === String(user._id)) {
+                    res.status(403).json({ message: 'Cannot copy your own list' });
+                    return resolve();
+                }
+
+                // Deep copy: new id, new name, same categories/items
+                const newId = new ObjectId();
+                const copied = JSON.parse(JSON.stringify(sourceList));
+                copied.id = newId;
+                delete copied.externalId;
+                copied.name = `Copy of ${sourceList.name}`;
+                copied.visibility = 'private';
+                copied.copyCount = 0;
+
+                if (!user.library) user.library = {};
+                if (!user.library.lists) user.library.lists = [];
+                user.library.lists.push(copied);
+                await db.users.save(user);
+
+                // Increment copyCount on source
+                sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
+                await db.users.save(owner);
+
+                res.json({ listId: newId });
+                resolve();
+            } catch (err) {
+                res.status(500).json({ message: 'An error occurred' });
+                resolve();
+            }
+        });
+    });
 });
 
 module.exports = router;
