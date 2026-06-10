@@ -76,12 +76,13 @@ async function run() {
     savedUsers.length = 0;
     let responseData;
     const req = { params: { externalId: 'abc123' }, body: {} };
-    const res = {
-        status(code) { this._status = code; return this; },
-        json(data) { responseData = data; },
-    };
-
-    await copyRoute.route.stack[0].handle(req, res);
+    await new Promise(resolve => {
+        const res = {
+            status(code) { this._status = code; return this; },
+            json(data) { responseData = data; resolve(); },
+        };
+        copyRoute.route.stack[0].handle(req, res);
+    });
 
     assert('returns listId', responseData && typeof responseData.listId !== 'undefined');
     assert('saves user', savedUsers.length > 0);
@@ -94,15 +95,18 @@ async function run() {
     savedUsers.length = 0;
     const ownReq = { params: { externalId: 'abc123' }, body: {} };
     let ownResponse;
-    const ownRes = {
-        _status: 200,
-        status(code) { this._status = code; return this; },
-        json(data) { ownResponse = data; },
-    };
+    let ownStatus;
     // Temporarily make authStub return ownerUser
     authStub.authenticateUser = (req, res, cb) => cb(req, res, ownerUser);
-    await copyRoute.route.stack[0].handle(ownReq, ownRes);
-    assert('cannot copy own list (403)', ownRes._status === 403);
+    await new Promise(resolve => {
+        const ownRes = {
+            _status: 200,
+            status(code) { ownStatus = code; this._status = code; return this; },
+            json(data) { ownResponse = data; resolve(); },
+        };
+        copyRoute.route.stack[0].handle(ownReq, ownRes);
+    });
+    assert('cannot copy own list (403)', ownStatus === 403);
     // Restore
     authStub.authenticateUser = (req, res, cb) => cb(req, res, copyUser);
 
