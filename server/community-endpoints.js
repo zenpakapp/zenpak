@@ -144,4 +144,60 @@ router.get('/feed', (req, res) => {
     });
 });
 
+// GET /api/community/discover?sort=recent|popular&cursor=<ISO>
+router.get('/discover', async (req, res) => {
+    const sort = req.query.sort === 'popular' ? 'popular' : 'recent';
+    const cursor = req.query.cursor || null;
+    if (cursor && isNaN(Date.parse(cursor))) {
+        return res.status(400).json({ message: 'Invalid cursor' });
+    }
+
+    try {
+        const PAGE_SIZE = 20;
+        const allUsers = await db.users.findMany({});
+
+        // Collect all public lists with their author info
+        const items = [];
+        for (const user of allUsers) {
+            const lists = (user.library && user.library.lists) || [];
+            const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+            const tier = plan === 'creator' ? 'guide' : plan === 'supporter' ? 'trail' : 'base';
+
+            for (const list of lists) {
+                if (!list.externalId) continue;
+                if (list.visibility !== 'public' && list.visibility !== 'indexed') continue;
+
+                const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
+                if (cursor && updatedAt >= new Date(cursor)) continue;
+
+                items.push({
+                    externalId: list.externalId,
+                    name: list.name || '',
+                    description: list.description || '',
+                    totalBaseWeight: Number(list.totalBaseWeight) || 0,
+                    totalQty: Number(list.totalQty) || 0,
+                    author: user.username || '',
+                    authorTier: tier,
+                    copyCount: Number(list.copyCount) || 0,
+                    updatedAt: updatedAt.toISOString(),
+                });
+            }
+        }
+
+        // Sort
+        if (sort === 'popular') {
+            items.sort((a, b) => b.copyCount - a.copyCount);
+        } else {
+            items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        }
+
+        const page = items.slice(0, PAGE_SIZE);
+        const nextCursor = page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
+
+        return res.json({ lists: page, nextCursor });
+    } catch (err) {
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+});
+
 module.exports = router;
