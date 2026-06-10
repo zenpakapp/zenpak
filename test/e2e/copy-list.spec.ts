@@ -1,6 +1,5 @@
 import { test, expect } from "@playwright/test";
 import { registerUser } from "./auth-utils";
-import { testRoot } from "./utils";
 
 test.describe("Copy list", () => {
   test('shows "Sign in to copy this list" link for unauthenticated visitor', async ({

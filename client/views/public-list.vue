@@ -380,12 +380,16 @@ export default {
             categories: [],
             affiliateDisclosure: null,
             chart: null,
-            isLoggedIn: false,
-            isOwnList: false,
             copySuccess: false,
         };
     },
     computed: {
+        isLoggedIn() {
+            return Boolean(this.$store.state.loggedIn);
+        },
+        isOwnList() {
+            return this.$store.state.loggedIn === this.username;
+        },
         copyLabel() {
             if (this.copying) return 'Copying…';
             if (this.copySuccess) return 'Copied!';
@@ -427,8 +431,6 @@ export default {
                 this.publicFields = payload.publicFields || { price: false, links: false, images: false };
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
-                this.isLoggedIn = Boolean(this.$store.state.loggedIn);
-                this.isOwnList = this.$store.state.loggedIn === this.username;
                 this.updateDocumentMeta();
                 this.track('listView');
             })
