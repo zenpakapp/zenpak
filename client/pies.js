@@ -13,7 +13,7 @@ module.exports = function (args) {
     let hovered = null;
     let hoverCallback = null;
     let clickCallback = null;
-    const backgroundColor = 'rgb(245,245,245)';
+    const backgroundColor = args.backgroundColor || 'rgb(245,245,245)';
     const firstRing = { inner: 25, outer: 70 };
     const secondRing = { inner: 80, outer: 120 };
     let tooltip;

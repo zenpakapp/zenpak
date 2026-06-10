@@ -406,6 +406,8 @@ export default {
         if (this.chartCategories.length) {
             this.$nextTick(this.renderChart);
         }
+        this._themeObserver = new MutationObserver(() => this.renderChart());
+        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     watch: {
         categories() {
@@ -417,6 +419,7 @@ export default {
         },
     },
     beforeUnmount() {
+        if (this._themeObserver) this._themeObserver.disconnect();
         if (this.chart && typeof this.chart.destroy === 'function') {
             this.chart.destroy();
         }
@@ -451,6 +454,10 @@ export default {
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
         },
+        getChartBg() {
+            const style = getComputedStyle(document.documentElement);
+            return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
+        },
         renderChart() {
             const canvas = this.$refs.chartCanvas;
             if (!canvas || !this.chartCategories.length) return;
@@ -468,11 +475,11 @@ export default {
                 if (Object.keys(catData).length) rawData[cat.name] = catData;
             });
 
-            if (this.chart) {
-                this.chart.update({ data: rawData });
-            } else {
-                this.chart = pies({ container: canvas, data: rawData });
+            // Always recreate so backgroundColor reflects the current theme
+            if (this.chart && typeof this.chart.destroy === 'function') {
+                this.chart.destroy();
             }
+            this.chart = pies({ container: canvas, data: rawData, backgroundColor: this.getChartBg() });
         },
         track(type, itemId) {
             if (!this.list || !this.list.externalId) return Promise.resolve();
