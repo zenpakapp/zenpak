@@ -157,7 +157,7 @@
             <button
                 class="lpCommunityTab"
                 :class="{ active: activeTab === 'feed' }"
-                :aria-disabled="!canSeeFeed ? 'true' : 'false'"
+                :aria-disabled="!canSeeFeed || undefined"
                 :title="!canSeeFeed ? 'Follow someone to see their activity' : ''"
                 data-tab="feed"
                 @click="canSeeFeed && setTab('feed')"
@@ -294,21 +294,15 @@ export default {
     data() {
         return {
             activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
-            canSeeFeed: false,
         };
     },
+    computed: {
+        canSeeFeed() {
+            return Boolean(this.$store.state.loggedIn);
+        },
+    },
     created() {
-        // Check if user is logged in to enable the Feed tab
-        fetch('/api/community/feed')
-            .then(r => {
-                if (r.ok || r.status === 200) {
-                    this.canSeeFeed = true;
-                    if (this.activeTab === 'feed') this.feedLoad();
-                }
-            })
-            .catch(() => {
-                // Not logged in or error — Feed tab stays disabled
-            });
+        if (this.canSeeFeed && this.activeTab === 'feed') this.feedLoad();
     },
     methods: {
         setTab(tab) {
