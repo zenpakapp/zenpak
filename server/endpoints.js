@@ -475,6 +475,16 @@ router.get('/api/public/profile/:username', async (req, res) => {
             return res.status(404).json({ message: 'Profile not found' });
         }
 
+        // Gate enriched profile fields to Guide tier only
+        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+        if (plan !== 'creator') {
+            if (payload.profile) {
+                payload.profile.bio = '';
+                payload.profile.links = [];
+                payload.profile.gearPhilosophy = [];
+            }
+        }
+
         const followerDocs = await db.follows.findMany({ followedId: new ObjectId(user._id) });
         const followingDocs = await db.follows.findMany({ followerId: new ObjectId(user._id) });
         payload.followerCount = followerDocs.length;
