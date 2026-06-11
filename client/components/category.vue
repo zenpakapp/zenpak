@@ -67,17 +67,25 @@
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
             <li class="lpHeader lpItemsHeader">
                 <span class="lpHandleCell">
-                    <div class="lpHandle lpCategoryHandle" title="Reorder this category" />
+                    <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" title="Reorder this category" />
                 </span>
-                <input v-focus-on-create="category._isNew" type="text" :value="category.name" placeholder="Category Name" class="lpCategoryName lpSilent" @input="updateCategoryName">
+                <input v-focus-on-create="category._isNew" type="text" :value="category.name" placeholder="Category Name" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">Price</span>
                 <span class="lpWeightCell">Weight</span>
                 <span class="lpQtyCell">qty</span>
-                <span class="lpRemoveCell"><a class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
+                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
             </li>
-            <item v-for="itemContainer in itemContainers" :key="itemContainer.item.id" :item-container="itemContainer" :category="category" />
+            <item
+                v-for="itemContainer in itemContainers"
+                :key="itemContainer.item.id"
+                :item-container="itemContainer"
+                :category="category"
+                :is-packing-mode="isPackingMode"
+                :packed-item-ids="packedItemIds"
+                @toggle-pack="$emit('toggle-pack', $event)"
+            />
             <li class="lpFooter lpItemsFooter">
-                <span class="lpAddItemCell">
+                <span v-if="!isPackingMode" class="lpAddItemCell">
                     <input
                         v-if="showSuggestions || newItemName || showInput"
                         v-model="newItemName"
@@ -133,7 +141,7 @@ export default {
     components: {
         item,
     },
-    props: ['category'],
+    props: ['category', 'isPackingMode', 'packedItemIds'],
     data() {
         return {
             newItemName: '',
