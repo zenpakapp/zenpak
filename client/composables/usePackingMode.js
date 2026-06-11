@@ -1,5 +1,8 @@
 import { ref } from 'vue';
 
+// Singleton module-level state: all consumers share the same packing session.
+// Client-only — not SSR-safe.
+
 let currentListId = null;
 
 const isPackingMode = ref(false);
@@ -17,7 +20,13 @@ function persist() {
 function activate(listId, allItemIds) {
     currentListId = listId;
     const raw = localStorage.getItem(storageKey(listId));
-    const saved = raw ? JSON.parse(raw) : [];
+    let saved = [];
+    try {
+        saved = raw ? JSON.parse(raw) : [];
+    } catch {
+        saved = [];
+        localStorage.removeItem(storageKey(listId));
+    }
     const validSet = new Set(allItemIds);
     packedItemIds.value = new Set(saved.filter(id => validSet.has(id)));
     isPackingMode.value = true;
@@ -40,6 +49,7 @@ function toggleItem(itemId) {
 }
 
 function reset() {
+    // Clears packed state but stays in packing mode — user starts over without exiting.
     packedItemIds.value = new Set();
     if (currentListId) {
         localStorage.removeItem(storageKey(currentListId));
