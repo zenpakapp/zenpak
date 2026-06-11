@@ -149,6 +149,18 @@
         padding: 0 16px;
     }
 }
+
+.lpSupportZone {
+    border-top: 1px solid $color-border;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin-top: 32px;
+    padding: 16px 0 8px;
+
+    p {
+        margin: 0 0 6px;
+    }
+}
 </style>
 
 <template>
@@ -186,6 +198,12 @@
             <list />
 
             <profile-insights v-if="isGuide" />
+            <upgrade-prompt v-else-if="isSignedIn && !isGuide" tier="guide" feature="creatorInsights" mode="inline" />
+
+            <div v-if="isSignedIn && isBase" class="lpSupportZone">
+                <p>Like what you see? Trail and Guide plans support this project and unlock your public profile.</p>
+                <router-link to="/about" class="lpHref">Learn more →</router-link>
+            </div>
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
@@ -238,7 +256,9 @@ import copyList from '../components/copy-list.vue';
 import speedbump from '../components/speedbump.vue';
 import gearRoom from '../components/gear-room.vue';
 import profileInsights from '../components/profile-insights.vue';
+import upgradePrompt from '../components/upgrade-prompt.vue';
 import { push } from '../services/navigation';
+import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
 
 export default {
@@ -266,6 +286,7 @@ export default {
         globalAlerts,
         gearRoom,
         profileInsights,
+        upgradePrompt,
     },
     data() {
         return {
@@ -288,6 +309,10 @@ export default {
         isGuide() {
             const lib = this.$store.state.library;
             return lib && lib.entitlements && lib.entitlements.plan === 'creator';
+        },
+        isBase() {
+            const lib = this.$store.state.library;
+            return !lib || !lib.entitlements || isBase(lib.entitlements);
         },
     },
     created() {
