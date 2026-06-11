@@ -570,4 +570,7 @@ router.post('/api/public/insight', (req, res) => {
 const communityRouter = require('./community-endpoints.js');
 router.use('/api/community', communityRouter);
 
+const guideRouter = require('./guide-endpoints.js');
+router.use('/api/guide', guideRouter);
+
 module.exports = router;
