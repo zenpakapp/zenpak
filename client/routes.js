@@ -7,6 +7,7 @@ import moderation from './views/moderation.vue';
 import publicProfile from './views/public-profile.vue';
 import publicList from './views/public-list.vue';
 import communityView from './views/community.vue';
+import guideView from './views/guide.vue';
 
 export default [
     { path: '/', component: dashboard },
@@ -22,5 +23,6 @@ export default [
     { path: '/community/feed', component: communityView },
     { path: '/u/:username', component: publicProfile },
     { path: '/p/:externalId', component: publicList },
+    { path: '/guide', component: guideView },
     { path: '/:pathMatch(.*)*', component: dashboard },
 ];

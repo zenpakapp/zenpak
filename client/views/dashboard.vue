@@ -169,6 +169,9 @@
                 <span v-if="isSignedIn" class="headerItem">
                     <router-link to="/community" class="lpTarget">Community</router-link>
                 </span>
+                <span v-if="isGuide" class="headerItem">
+                    <router-link to="/guide" class="lpTarget">Guide</router-link>
+                </span>
                 <share />
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />
