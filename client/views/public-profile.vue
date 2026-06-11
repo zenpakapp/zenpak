@@ -260,6 +260,7 @@
                 <div class="lpPublicHeroInner">
                     <div class="lpPublicAvatar">
                         <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName" />
+                        <upgrade-prompt v-else-if="isOwnProfile && !isTrail" tier="trail" feature="profileCustomization" mode="inline" />
                         <span v-else>{{ (profile.displayName || '?').charAt(0).toUpperCase() }}</span>
                     </div>
                     <div class="lpPublicHeroMeta">
@@ -268,13 +269,15 @@
                             <span v-if="isCreator" class="lpPublicBadge">Guide</span>
                             <span v-else-if="isSupporter" class="lpPublicBadge">Trail</span>
                         </div>
-                        <p v-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
+                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !profile.bio" tier="trail" feature="profileCustomization" mode="inline" />
+                        <p v-else-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
                         <div class="lpPublicStats">
                             <span><strong>{{ lists.length }}</strong> lists</span>
                             <span><strong>{{ followerCount }}</strong> followers</span>
                             <span><strong>{{ followingCount }}</strong> following</span>
                         </div>
-                        <ul v-if="safeLinks.length" class="lpPublicLinks">
+                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !safeLinks.length" tier="trail" feature="profileCustomization" mode="inline" />
+                        <ul v-else-if="safeLinks.length" class="lpPublicLinks">
                             <li v-for="link in safeLinks" :key="link.url">
                                 <a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label || link.url }}</a>
                             </li>
@@ -328,9 +331,12 @@ import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
+import upgradePrompt from '../components/upgrade-prompt.vue';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'PublicProfile',
+    components: { upgradePrompt },
     setup() {
         useTheme();
         const route = useRoute();
@@ -379,6 +385,10 @@ export default {
         },
         isOwnProfile() {
             return this.$store.state.loggedIn === this.$route.params.username;
+        },
+        isTrail() {
+            const lib = this.$store.state.library;
+            return lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
         },
     },
     created() {
