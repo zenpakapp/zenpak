@@ -80,10 +80,147 @@
     }
 }
 
+.lpPackingBar {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    display: flex;
+    gap: $spacingMedium;
+    justify-content: space-between;
+    margin-bottom: $spacingMedium;
+    padding: $spacingSmall $spacingMedium;
+}
+
+.lpPackingProgress {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+}
+
+.lpPackingProgressTrack {
+    background: $color-control-muted;
+    border-radius: 99px;
+    flex: 1;
+    height: 6px;
+    overflow: hidden;
+}
+
+.lpPackingProgressFill {
+    background: $color-accent;
+    border-radius: 99px;
+    height: 100%;
+    transition: width 0.2s ease;
+}
+
+.lpPackBtn {
+    background: $color-accent;
+    border: none;
+    border-radius: $radius-sm;
+    color: #fff;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    padding: 6px 14px;
+
+    &:hover { background: $color-accent-hover; }
+}
+
+.lpPackBtnExit {
+    background: $color-control-muted;
+    color: $color-text;
+
+    &:hover { background: $color-border; }
+}
+
+.lpPackModal {
+    align-items: center;
+    background: var(--color-overlay);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 200;
+}
+
+.lpPackModalInner {
+    background: $color-surface;
+    border-radius: $radius-lg;
+    box-shadow: var(--shadow-modal);
+    max-width: 400px;
+    padding: $spacingLarge * 1.5;
+    text-align: center;
+    width: 90%;
+}
+
+.lpPackModalPhrase {
+    font-size: 20px;
+    font-weight: $fontWeight-bold;
+    line-height: 1.4;
+    margin: 0 0 $spacingMedium;
+}
+
+.lpPackModalWeight {
+    color: $color-text-muted;
+    font-size: $fontSize-base;
+    margin: 0 0 $spacingLarge;
+}
+
+.lpPackModalActions {
+    display: flex;
+    gap: $spacingSmall;
+    justify-content: center;
+}
+
+.lpPackModalBtn {
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: $fontSize-base;
+    padding: 10px 20px;
+}
+
+.lpPackModalBtnReset {
+    background: $color-control-muted;
+    color: $color-text;
+
+    &:hover { background: $color-border; }
+}
+
+.lpPackModalBtnClose {
+    background: $color-accent;
+    color: #fff;
+
+    &:hover { background: $color-accent-hover; }
+}
+
 </style>
 
 <template>
     <div class="lpListBody">
+        <!-- Packing mode bar -->
+        <div v-if="isPackingMode" class="lpPackingBar">
+            <span class="lpPackingProgress">{{ packingProgress.packed }} / {{ packingProgress.total }} items packed</span>
+            <div class="lpPackingProgressTrack">
+                <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
+            </div>
+            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">Exit Packing</button>
+        </div>
+
+        <!-- Completion modal -->
+        <div v-if="showCompletionModal" class="lpPackModal" @click.self="showCompletionModal = false">
+            <div class="lpPackModalInner">
+                <p class="lpPackModalPhrase">{{ completionPhrase }}</p>
+                <p class="lpPackModalWeight">Total: {{ packTotalWeight }}</p>
+                <div class="lpPackModalActions">
+                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">Reset</button>
+                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">Close</button>
+                </div>
+            </div>
+        </div>
+
         <div v-if="isListNew" id="getStarted">
             <h2>Welcome to LighterPack+!</h2>
             <p>Here's what you need to get started:</p>
@@ -100,6 +237,9 @@
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
+        <div v-if="!isListNew && !isPackingMode" style="margin-bottom: 10px;">
+            <button class="lpPackBtn" @click="enterPackingMode">🎒 Pack this list</button>
+        </div>
 
         <div style="clear: both;" />
 
@@ -109,12 +249,19 @@
         </div>
 
         <TransitionGroup name="lp-list" tag="ul" ref="categories" class="lpCategories">
-            <category v-for="category in categories" :key="category.id" :category="category" />
+            <category
+                v-for="category in categories"
+                :key="category.id"
+                :category="category"
+                :is-packing-mode="isPackingMode"
+                :packed-item-ids="packedItemIds"
+                @toggle-pack="onTogglePack"
+            />
         </TransitionGroup>
 
         <hr>
 
-        <a class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />Add new category</a>
+        <a v-if="!isPackingMode" class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />Add new category</a>
     </div>
 </template>
 
@@ -123,6 +270,11 @@ import category from './category.vue';
 import listSummary from './list-summary.vue';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
+import { usePackingMode } from '../composables/usePackingMode.js';
+import phrasesEn from '../data/packing-phrases.en.js';
+import phrasesFr from '../data/packing-phrases.fr.js';
+
+const weightUtils = require('../utils/weight.js');
 
 export default {
     name: 'List',
@@ -132,11 +284,17 @@ export default {
         categoryDragStartIndex: false,
         itemDragId: false,
     },
+    setup() {
+        const { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset } = usePackingMode();
+        return { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset };
+    },
     data() {
         return {
             onboardingCompleted: false,
             itemDrake: null,
             categoryDrake: null,
+            showCompletionModal: false,
+            completionPhrase: '',
         };
     },
     computed: {
@@ -154,6 +312,27 @@ export default {
         },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
+        },
+        allItemIds() {
+            return this.categories.flatMap(cat =>
+                cat.categoryItems.map(ci => ci.itemId)
+            );
+        },
+        packingProgress() {
+            return {
+                packed: this.packedItemIds ? this.packedItemIds.size : 0,
+                total: this.allItemIds.length,
+            };
+        },
+        packingProgressPct() {
+            const { packed, total } = this.packingProgress;
+            return total > 0 ? Math.round((packed / total) * 100) : 0;
+        },
+        packTotalWeight() {
+            const unit = this.library.totalUnit || 'oz';
+            const mg = this.list.totalWeight || 0;
+            const val = weightUtils.MgToWeight(mg, unit);
+            return `${val} ${unit}`;
         },
     },
     watch: {
@@ -183,6 +362,28 @@ export default {
         },
         updateListDescription() {
             this.$store.commit('updateListDescription', this.list);
+        },
+        enterPackingMode() {
+            this.activate(this.list.id, this.allItemIds);
+        },
+        exitPackingMode() {
+            this.deactivate();
+        },
+        onTogglePack(itemId) {
+            this.toggleItem(itemId);
+            if (this.packingProgress.packed === this.packingProgress.total && this.packingProgress.total > 0) {
+                this.showCompletionModal = true;
+                this.completionPhrase = this.pickPhrase();
+            }
+        },
+        resetPacking() {
+            this.reset();
+            this.showCompletionModal = false;
+        },
+        pickPhrase() {
+            const lang = (navigator.language || 'en').toLowerCase();
+            const phrases = lang.startsWith('fr') ? phrasesFr : phrasesEn;
+            return phrases[Math.floor(Math.random() * phrases.length)];
         },
         handleItemReorder() {
             if (this.itemDrake) {
