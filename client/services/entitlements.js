@@ -47,6 +47,10 @@ function hasFeature(entitlements, feature) {
     return getPlanFeatures(plan).includes(feature) || features.includes(feature);
 }
 
+function isBase(entitlements) {
+    return normalizePlan(entitlements && entitlements.plan) === PLAN_FREE;
+}
+
 module.exports = {
     PLAN_FREE,
     PLAN_SUPPORTER,
@@ -55,4 +59,5 @@ module.exports = {
     normalizePlan,
     getPlanFeatures,
     hasFeature,
+    isBase,
 };
