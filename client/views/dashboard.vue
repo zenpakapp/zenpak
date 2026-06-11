@@ -189,13 +189,12 @@
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
-                    Site by <a class="lpHref" href="https://www.galenmaly.com/" target="_blank" rel="noopener noreferrer">Galen Maly</a>
-                    and <a class="lpHref" href="https://github.com/galenmaly/lighterpack/graphs/contributors" target="_blank" rel="noopener noreferrer">friends</a>.
+                    LighterPack+ is an independent open-source continuation of <a class="lpHref" href="https://lighterpack.com" target="_blank" rel="noopener noreferrer">LighterPack</a>.
                 </div>
                 <div class="lpContact">
-                    <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">Copyleft</a> LighterPack 2019
+                    <a class="lpHref" href="https://github.com/fxbenard/lighterpack" target="_blank" rel="noopener noreferrer">Open source</a>
                     -
-                    <a class="lpHref" href="mailto:info@lighterpack.com">Contact</a>
+                    <a class="lpHref" href="mailto:info@lighterpack.app">Contact</a>
                 </div>
             </div>
         </div>
