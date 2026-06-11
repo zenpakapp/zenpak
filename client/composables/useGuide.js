@@ -1,11 +1,11 @@
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { fetchJson } from '../utils/utils';
 
 export function useGuide() {
     const profile = ref({ bio: '', links: [], gearPhilosophy: [] });
     const affiliateRules = ref([]);
     const disclosure = ref('');
-    const itemGroups = ref([]);
+    const itemGroups = reactive([]);
 
     const savingProfile = ref(false);
     const savingRules = ref(false);
@@ -17,6 +17,21 @@ export function useGuide() {
     const itemsSaved = ref(false);
 
     const error = ref(null);
+
+    async function loadProfile() {
+        try {
+            const data = await fetchJson('/api/guide/profile');
+            profile.value = {
+                bio: data.bio || '',
+                links: data.links || [],
+                gearPhilosophy: data.gearPhilosophy || [],
+            };
+            affiliateRules.value = data.affiliateRules || [];
+            disclosure.value = data.disclosure || '';
+        } catch (err) {
+            // silently ignore — fields stay empty
+        }
+    }
 
     async function saveProfile() {
         savingProfile.value = true;
@@ -61,7 +76,7 @@ export function useGuide() {
         error.value = null;
         try {
             const data = await fetchJson('/api/guide/items');
-            itemGroups.value = data;
+            itemGroups.splice(0, itemGroups.length, ...data);
         } catch (err) {
             error.value = 'Failed to load items.';
         } finally {
@@ -73,7 +88,7 @@ export function useGuide() {
         savingItems.value = true;
         itemsSaved.value = false;
         error.value = null;
-        const updates = itemGroups.value.flatMap(group =>
+        const updates = itemGroups.flatMap(group =>
             group.items.map(item => ({
                 listId: group.listId,
                 itemId: item.itemId,
@@ -106,7 +121,7 @@ export function useGuide() {
     }
 
     return {
-        profile, saveProfile, savingProfile, profileSaved,
+        profile, loadProfile, saveProfile, savingProfile, profileSaved,
         affiliateRules, disclosure, saveAffiliateRules, savingRules, rulesSaved,
         addRule, removeRule,
         itemGroups, loadItems, saveItems, savingItems, itemsSaved, loadingItems,

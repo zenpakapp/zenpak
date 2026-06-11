@@ -1,5 +1,9 @@
 <template>
     <div class="lpGuide">
+        <div class="lpGuideNav">
+            <router-link :to="backTo" class="lpGuideBack">{{ backLabel }}</router-link>
+            <router-link v-if="username" :to="`/u/${username}`" class="lpGuideViewProfile">View my profile →</router-link>
+        </div>
         <h1 class="lpGuideTitle">Guide Settings</h1>
 
         <!-- Section: Public Profile -->
@@ -42,7 +46,6 @@
             <div v-for="(rule, i) in affiliateRules" :key="i" class="lpGuideRuleRow">
                 <select v-model="rule.type" class="lpGuideSelect">
                     <option value="brand">Brand</option>
-                    <option value="shop">Shop</option>
                     <option value="domain">Domain</option>
                 </select>
                 <input v-model="rule.match" class="lpGuideInput lpGuideInputShort" placeholder="e.g. Zpacks" maxlength="200" />
@@ -96,20 +99,27 @@
 
 <script>
 import { useGuide } from '../composables/useGuide.js';
+import { useBackNav } from '../composables/useBackNav.js';
 
 export default {
     name: 'GuideView',
     setup() {
-        return useGuide();
+        const guide = useGuide();
+        const nav = useBackNav();
+        return { ...guide, backTo: nav.backTo, backLabel: nav.backLabel };
     },
     computed: {
         isGuide() {
             const lib = this.$store && this.$store.state && this.$store.state.library;
             return lib && lib.entitlements && lib.entitlements.plan === 'creator';
         },
+        username() {
+            return this.$store && this.$store.state && this.$store.state.loggedIn;
+        },
     },
     mounted() {
         if (this.isGuide) {
+            this.loadProfile();
             this.loadItems();
         }
     },
@@ -121,6 +131,24 @@ export default {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem 1rem;
+}
+
+.lpGuideNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.lpGuideBack,
+.lpGuideViewProfile {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--color-text);
+    }
 }
 
 .lpGuideTitle {

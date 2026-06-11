@@ -18,6 +18,24 @@ function publicLists(user) {
     );
 }
 
+// GET /api/guide/profile
+router.get('/profile', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        if (!isGuide(user)) return res.status(403).json({ message: 'Guide tier required' });
+
+        const profile = user.library.publicProfile || {};
+        const creator = user.library.creator || {};
+
+        return res.json({
+            bio: profile.bio || '',
+            links: Array.isArray(profile.links) ? profile.links : [],
+            gearPhilosophy: Array.isArray(profile.gearPhilosophy) ? profile.gearPhilosophy : [],
+            affiliateRules: Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [],
+            disclosure: creator.disclosure || '',
+        });
+    });
+});
+
 // PUT /api/guide/profile
 router.put('/profile', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
@@ -102,21 +120,32 @@ router.get('/items', (req, res) => {
             return null;
         }
 
-        const result = publicLists(user).map(list => ({
-            listId: String(list.id),
-            listName: list.name || '',
-            items: (list.categories || []).flatMap(cat =>
-                (cat.items || []).map(item => ({
-                    itemId: String(item.id),
-                    name: item.name || '',
-                    brand: item.brand || '',
-                    affiliateUrl: item.affiliateUrl || '',
-                    promoCode: item.promoCode || '',
-                    promoLabel: item.promoLabel || '',
-                    appliedRule: resolveAppliedRule(item),
-                }))
-            ),
-        }));
+        const libraryCategories = user.library.categories || [];
+        const libraryItems = user.library.items || [];
+
+        const result = publicLists(user).map(list => {
+            const categoryItems = (list.categoryIds || []).flatMap(catId => {
+                const cat = libraryCategories.find(c => c.id == catId);
+                return (cat && cat.categoryItems) ? cat.categoryItems : [];
+            });
+            return {
+                listId: String(list.id),
+                listName: list.name || '',
+                items: categoryItems.map(ci => {
+                    const item = libraryItems.find(i => i.id == ci.itemId);
+                    if (!item) return null;
+                    return {
+                        itemId: String(item.id),
+                        name: item.name || '',
+                        brand: item.brand || '',
+                        affiliateUrl: item.affiliateUrl || '',
+                        promoCode: item.promoCode || '',
+                        promoLabel: item.promoLabel || '',
+                        appliedRule: resolveAppliedRule(item),
+                    };
+                }).filter(Boolean),
+            };
+        });
 
         return res.json(result);
     });
@@ -129,20 +158,27 @@ router.put('/items', (req, res) => {
 
         const updates = Array.isArray(req.body) ? req.body.slice(0, 1000) : [];
 
+        const libraryItems = user.library.items || [];
+        const libraryCategories = user.library.categories || [];
+
         for (const update of updates) {
             const listId = String(update.listId || '');
             const itemId = String(update.itemId || '');
             const list = (user.library.lists || []).find(l => String(l.id) === listId);
             if (!list || !isPublicVisibility(list.visibility)) continue;
 
-            for (const cat of (list.categories || [])) {
-                const item = (cat.items || []).find(i => String(i.id) === itemId);
-                if (item) {
-                    item.affiliateUrl = String(update.affiliateUrl || '').slice(0, 500);
-                    item.promoCode = String(update.promoCode || '').slice(0, 100);
-                    item.promoLabel = String(update.promoLabel || '').slice(0, 100);
-                    break;
-                }
+            // verify itemId is actually in this list via categoryIds
+            const inList = (list.categoryIds || []).some(catId => {
+                const cat = libraryCategories.find(c => c.id == catId);
+                return cat && (cat.categoryItems || []).some(ci => String(ci.itemId) === itemId);
+            });
+            if (!inList) continue;
+
+            const item = libraryItems.find(i => String(i.id) === itemId);
+            if (item) {
+                item.affiliateUrl = String(update.affiliateUrl || '').slice(0, 500);
+                item.promoCode = String(update.promoCode || '').slice(0, 100);
+                item.promoLabel = String(update.promoLabel || '').slice(0, 100);
             }
         }
 

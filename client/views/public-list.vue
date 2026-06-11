@@ -199,6 +199,27 @@
     &:hover { text-decoration: underline; }
 }
 
+.lpPublicListItemPromo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.lpPublicListItemPromoLabel {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.lpPublicListItemPromoCode {
+    background: var(--color-badge-bg, #e8f4e8);
+    border-radius: 3px;
+    color: var(--color-badge-text, #2d6a2d);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+}
+
 .lpPublicListActions {
     margin-bottom: 16px;
 }
@@ -339,7 +360,11 @@
                         <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name" />
                         <div v-else class="lpPublicListItemImagePlaceholder" />
                         <div class="lpPublicListItemBody">
-                            <span class="lpPublicListItemName">{{ item.name }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span>
+                            <div><span class="lpPublicListItemName">{{ item.name }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span></div>
+                            <div v-if="item.promoCode" class="lpPublicListItemPromo">
+                                <span v-if="item.promoLabel" class="lpPublicListItemPromoLabel">{{ item.promoLabel }}</span>
+                                <span class="lpPublicListItemPromoCode">{{ item.promoCode }}</span>
+                            </div>
                         </div>
                         <span v-if="publicFields.price" class="lpPublicListItemPrice">{{ item.price ? `${currencySymbol}${formatPrice(item.price)}` : '' }}</span>
                         <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ totalUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>

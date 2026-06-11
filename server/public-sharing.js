@@ -122,32 +122,18 @@ function resolvePublicItemLink(item, creator) {
 
     const rules = creator && Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [];
     const hostname = normalizeHostname(item.url);
+    const isUsableRule = (candidate) => candidate && (normalizeString(candidate.affiliateUrl) || normalizeString(candidate.promoCode));
     const shopRule = rules.find((candidate) => {
-        if (!candidate || !normalizeString(candidate.affiliateUrl)) {
-            return false;
-        }
-        if (candidate.type === 'shop') {
-            return matchesText(item.shop, candidate.match);
-        }
-        return false;
+        if (!isUsableRule(candidate)) return false;
+        return candidate.type === 'shop' && matchesText(item.shop, candidate.match);
     });
     const domainRule = rules.find((candidate) => {
-        if (!candidate || !normalizeString(candidate.affiliateUrl)) {
-            return false;
-        }
-        if (candidate.type === 'domain') {
-            return hostname && matchesText(hostname, candidate.match);
-        }
-        return false;
+        if (!isUsableRule(candidate)) return false;
+        return candidate.type === 'domain' && hostname && matchesText(hostname, candidate.match);
     });
     const brandRule = rules.find((candidate) => {
-        if (!candidate || !normalizeString(candidate.affiliateUrl)) {
-            return false;
-        }
-        if (candidate.type === 'brand') {
-            return matchesText(item.brand, candidate.match);
-        }
-        return false;
+        if (!isUsableRule(candidate)) return false;
+        return candidate.type === 'brand' && matchesText(item.brand, candidate.match);
     });
     const rule = shopRule || domainRule || brandRule;
 

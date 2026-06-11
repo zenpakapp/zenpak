@@ -22,24 +22,24 @@ const guideUser = {
                 externalId: 'abc123',
                 name: 'PCT Section J',
                 visibility: 'discoverable',
-                categories: [
-                    {
-                        items: [
-                            { id: 'item1', name: 'Arc Haul', brand: 'Zpacks', affiliateUrl: '', promoCode: '', promoLabel: '' },
-                            { id: 'item2', name: 'Rain Jacket', brand: 'Outdoor Research', affiliateUrl: '', promoCode: '', promoLabel: '' },
-                        ],
-                    },
-                ],
+                categoryIds: ['cat1'],
             },
             {
                 id: 'list2',
                 externalId: 'def456',
                 name: 'Private List',
                 visibility: 'private',
-                categories: [
-                    { items: [{ id: 'item3', name: 'Hidden item', brand: '', affiliateUrl: '', promoCode: '', promoLabel: '' }] },
-                ],
+                categoryIds: ['cat2'],
             },
+        ],
+        categories: [
+            { id: 'cat1', name: 'Shelter', categoryItems: [{ itemId: 'item1' }, { itemId: 'item2' }] },
+            { id: 'cat2', name: 'Hidden', categoryItems: [{ itemId: 'item3' }] },
+        ],
+        items: [
+            { id: 'item1', name: 'Arc Haul', brand: 'Zpacks', affiliateUrl: '', promoCode: '', promoLabel: '' },
+            { id: 'item2', name: 'Rain Jacket', brand: 'Outdoor Research', affiliateUrl: '', promoCode: '', promoLabel: '' },
+            { id: 'item3', name: 'Hidden item', brand: '', affiliateUrl: '', promoCode: '', promoLabel: '' },
         ],
     },
 };
@@ -147,9 +147,9 @@ async function run() {
         { listId: 'list1', itemId: 'item1', affiliateUrl: 'https://zpacks.com/?ref=alice', promoCode: 'ALICE10', promoLabel: '10% off' },
     ]);
     assert('PUT /items returns 200', itemsUpdateResult && itemsUpdateResult.status === 200);
-    assert('PUT /items updates item affiliateUrl', savedUser && savedUser.library.lists[0].categories[0].items[0].affiliateUrl === 'https://zpacks.com/?ref=alice');
-    assert('PUT /items updates item promoCode', savedUser && savedUser.library.lists[0].categories[0].items[0].promoCode === 'ALICE10');
-    assert('PUT /items does not touch other items', savedUser && savedUser.library.lists[0].categories[0].items[1].promoCode === '');
+    assert('PUT /items updates item affiliateUrl', savedUser && savedUser.library.items[0].affiliateUrl === 'https://zpacks.com/?ref=alice');
+    assert('PUT /items updates item promoCode', savedUser && savedUser.library.items[0].promoCode === 'ALICE10');
+    assert('PUT /items does not touch other items', savedUser && savedUser.library.items[1].promoCode === '');
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
