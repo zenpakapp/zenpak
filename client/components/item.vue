@@ -70,12 +70,33 @@
     }
 }
 
+.lpPackCheckbox {
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+}
+
+.lpItemPacked {
+    opacity: 0.4;
+
+    .lpName {
+        text-decoration: line-through;
+    }
+}
+
 </style>
 
 <template>
-    <li :id="item.id" :data-item-id="item.id" :class="itemRowClasses" @dblclick="openDetail">
+    <li :id="item.id" :data-item-id="item.id" :class="itemRowClasses" @dblclick="!isPackingMode && openDetail()">
         <span class="lpHandleCell">
-            <div class="lpItemHandle lpHandle" title="Reorder this item" />
+            <input
+                v-if="isPackingMode"
+                type="checkbox"
+                class="lpPackCheckbox"
+                :checked="isPacked"
+                @change="onPackCheckbox"
+            />
+            <div v-else class="lpItemHandle lpHandle" title="Reorder this item" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
@@ -89,7 +110,7 @@
                 <span v-if="item.category" class="lpItemCategory">{{ item.category }}</span>
             </span>
         </span>
-        <span class="lpActionsCell">
+        <span v-if="!isPackingMode" class="lpActionsCell">
             <i class="lpSprite lpCamera" title="Upload a photo or use a photo from the web" @click="updateItemImage" />
             <i class="lpSprite lpLink" :class="{lpActive: item.url}" title="Add a link for this item" @click="updateItemLink" />
             <i class="lpSprite lpTag" :class="{lpActive: item.brand}" title="Edit brand, type and tags" @click="updateItemMeta" />
@@ -113,7 +134,7 @@
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
         </span>
     </li>
 </template>
@@ -129,7 +150,7 @@ export default {
     components: {
         unitSelect,
     },
-    props: ['category', 'itemContainer'],
+    props: ['category', 'itemContainer', 'isPackingMode', 'packedItemIds'],
     data() {
         return {
             displayWeight: 0,
@@ -167,12 +188,16 @@ export default {
             }
             return '';
         },
+        isPacked() {
+            return this.isPackingMode && this.packedItemIds && this.packedItemIds.has(this.item.id);
+        },
         itemRowClasses() {
             return [
                 'lpItem',
                 this.item.classes || '',
                 {
                     lpQtyZero: parseFloat(this.categoryItem.qty) <= 0,
+                    lpItemPacked: this.isPacked,
                 },
             ];
         },
@@ -380,6 +405,9 @@ export default {
         },
         removeItem() {
             this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category: this.category });
+        },
+        onPackCheckbox() {
+            this.$emit('toggle-pack', this.item.id);
         },
     },
 };
