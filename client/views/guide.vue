@@ -100,9 +100,18 @@ import { useGuide } from '../composables/useGuide.js';
 export default {
     name: 'GuideView',
     setup() {
-        const guide = useGuide();
-        guide.loadItems();
-        return guide;
+        return useGuide();
+    },
+    computed: {
+        isGuide() {
+            const lib = this.$store && this.$store.state && this.$store.state.library;
+            return lib && lib.entitlements && lib.entitlements.plan === 'creator';
+        },
+    },
+    mounted() {
+        if (this.isGuide) {
+            this.loadItems();
+        }
     },
 };
 </script>

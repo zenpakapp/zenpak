@@ -8,7 +8,8 @@ const auth = require('./auth.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 
 function isGuide(user) {
-    return (user.library && user.library.entitlements && user.library.entitlements.plan) === 'creator';
+    const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+    return plan === 'creator';
 }
 
 function publicLists(user) {
