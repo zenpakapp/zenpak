@@ -42,7 +42,7 @@ require.cache[require.resolve('../server/feed-events.js')] = {
     filename: require.resolve('../server/feed-events.js'), loaded: true, children: [], paths: [],
 };
 
-const router = require('../server/community-endpoints.js');
+const router = require('../server/support-endpoints.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {

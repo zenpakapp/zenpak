@@ -573,4 +573,7 @@ router.use('/api/community', communityRouter);
 const guideRouter = require('./guide-endpoints.js');
 router.use('/api/guide', guideRouter);
 
+const supportRouter = require('./support-endpoints.js');
+router.use('/api/support', supportRouter);
+
 module.exports = router;
