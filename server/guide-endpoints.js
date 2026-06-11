@@ -51,7 +51,7 @@ router.put('/affiliate-rules', (req, res) => {
         if (!isGuide(user)) return res.status(403).json({ message: 'Guide tier required' });
 
         const affiliateRules = Array.isArray(req.body.affiliateRules)
-            ? req.body.affiliateRules.map(r => ({
+            ? req.body.affiliateRules.slice(0, 50).map(r => ({
                 type: ['brand', 'shop', 'domain'].includes(r.type) ? r.type : 'brand',
                 match: String(r.match || '').slice(0, 200),
                 affiliateUrl: String(r.affiliateUrl || '').slice(0, 500),
@@ -126,7 +126,7 @@ router.put('/items', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         if (!isGuide(user)) return res.status(403).json({ message: 'Guide tier required' });
 
-        const updates = Array.isArray(req.body) ? req.body : [];
+        const updates = Array.isArray(req.body) ? req.body.slice(0, 1000) : [];
 
         for (const update of updates) {
             const listId = String(update.listId || '');
