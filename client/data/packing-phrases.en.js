@@ -1,0 +1,17 @@
+export default [
+    'The mountains are calling. 🏔️',
+    'Pack light, go far. 🌍',
+    'Adventure starts here. ⛺',
+    'You\'re ready. Let\'s go. 🚀',
+    'Ready to roll. 🎒',
+    'Go far, carry little. 🌿',
+    'Everything you need. Nothing you don\'t. ✨',
+    'The trail is waiting. 🥾',
+    'Light pack, open road. 🛤️',
+    'All set. Time to move. 👣',
+    'The world is out there. Go get it. 🌄',
+    'Less weight, more freedom. 🦅',
+    'Your pack is perfect. Enjoy the journey. ☀️',
+    'Nothing forgotten. Everything essential. 💚',
+    'Step one: packed. Step two: everything else. 🏕️',
+];

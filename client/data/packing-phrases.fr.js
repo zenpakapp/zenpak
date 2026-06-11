@@ -1,0 +1,17 @@
+export default [
+    'Les montagnes t\'attendent. 🏔️',
+    'Voyage léger, voyage libre. 🌿',
+    'L\'aventure commence ici. ⛺',
+    'Tout est là. Il ne reste qu\'à partir. 🚀',
+    'Le sac est prêt. Toi aussi ? 😄',
+    'À toi les grands espaces. 🌄',
+    'Le reste, c\'est l\'aventure qui s\'en charge. 🧭',
+    'Bon voyage, randonneur. 🥾',
+    'Tout ce qu\'il faut. Rien de plus. ✨',
+    'Le chemin commence sous tes pieds. 🌱',
+    'Chaque gramme compte. Chaque pas aussi. 👣',
+    'Tu es prêt. Le sentier attend. 🏕️',
+    'Légèreté et liberté — c\'est parti. 🦅',
+    'Ton pack est parfait. Profite du voyage. ☀️',
+    'Rien n\'a été oublié. L\'essentiel est là. 💚',
+];
