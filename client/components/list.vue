@@ -273,8 +273,7 @@ import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag
 import { usePackingMode } from '../composables/usePackingMode.js';
 import phrasesEn from '../data/packing-phrases.en.js';
 import phrasesFr from '../data/packing-phrases.fr.js';
-
-const weightUtils = require('../utils/weight.js');
+import weightUtils from '../utils/weight.js';
 
 export default {
     name: 'List',
@@ -371,7 +370,7 @@ export default {
         },
         onTogglePack(itemId) {
             this.toggleItem(itemId);
-            if (this.packingProgress.packed === this.packingProgress.total && this.packingProgress.total > 0) {
+            if (!this.showCompletionModal && this.packingProgress.packed === this.packingProgress.total && this.packingProgress.total > 0) {
                 this.showCompletionModal = true;
                 this.completionPhrase = this.pickPhrase();
             }
