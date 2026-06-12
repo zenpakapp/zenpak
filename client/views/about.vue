@@ -77,7 +77,7 @@
             <button v-if="!showPrompt" class="lpButton lpButtonSecondary" @click="showPrompt = true">
                 I'm interested in Trail or Guide
             </button>
-            <upgrade-prompt v-if="showPrompt" tier="trail" feature="publicProfile" mode="inline" :open="showPrompt" @close="showPrompt = false" />
+            <upgrade-prompt v-if="showPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showPrompt" @close="showPrompt = false" />
         </div>
     </div>
 </template>

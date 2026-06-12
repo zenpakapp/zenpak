@@ -199,7 +199,7 @@
 
             <profile-insights v-if="isGuide" />
             <upgrade-prompt v-else-if="isSignedIn && !isGuide" tier="guide" feature="creatorInsights" mode="inline" />
-            <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="inline" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
+            <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
 
             <div v-if="isSignedIn && isBase" class="lpSupportZone">
                 <p>Like what you see? Trail and Guide plans support this project and unlock your public profile.</p>
