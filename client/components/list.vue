@@ -304,7 +304,7 @@ export default {
             return this.$store.getters.activeList;
         },
         categories() {
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id));
+            return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
         },
         isListNew() {
             return this.list.totalWeight === 0;
