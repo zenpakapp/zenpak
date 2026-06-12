@@ -48,6 +48,7 @@ const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/community/feed' },
     { path: '/u/:username' },
     { path: '/p/:externalId' },
+    { path: '/about' },
 ];
 
 let index = fs.readFileSync(path.join(__dirname, '../_index.html'), 'utf8');
