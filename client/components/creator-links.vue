@@ -58,20 +58,33 @@
 <template>
     <section class="creatorLinks">
         <h3 class="creatorLinksSectionTitle">Creator links</h3>
-        <div class="creatorLinksField">
-            <span class="creatorLinksLabel">Disclosure</span>
-            <textarea class="creatorLinksTextarea" :value="creator.disclosure" @input="updateDisclosure($event.target.value)" />
-        </div>
-        <p class="creatorLinksNote">Affiliate links are shown only on your public pages.</p>
+
+        <template v-if="isGuide">
+            <div class="creatorLinksField">
+                <span class="creatorLinksLabel">Disclosure</span>
+                <textarea class="creatorLinksTextarea" :value="creator.disclosure" @input="updateDisclosure($event.target.value)" />
+            </div>
+            <p class="creatorLinksNote">Affiliate links are shown only on your public pages.</p>
+        </template>
+        <upgrade-prompt v-else tier="guide" feature="creatorLinks" mode="inline" />
+
     </section>
 </template>
 
 <script>
+import upgradePrompt from './upgrade-prompt.vue';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
+
 export default {
     name: 'CreatorLinks',
+    components: { upgradePrompt },
     computed: {
         creator() {
             return this.$store.state.library.creator;
+        },
+        isGuide() {
+            const lib = this.$store.state && this.$store.state.library;
+            return lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.CREATOR_LINKS);
         },
     },
     methods: {
