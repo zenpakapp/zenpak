@@ -100,6 +100,8 @@
 <script>
 import { useGuide } from '../composables/useGuide.js';
 import { useBackNav } from '../composables/useBackNav.js';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { push } from '../services/navigation.js';
 
 export default {
     name: 'GuideView',
@@ -116,6 +118,13 @@ export default {
         username() {
             return this.$store && this.$store.state && this.$store.state.loggedIn;
         },
+    },
+    created() {
+        const lib = this.$store.state.library;
+        const isGuide = lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.CREATOR_INSIGHTS);
+        if (!isGuide) {
+            push('/?upgradeGuide=1');
+        }
     },
     mounted() {
         if (this.isGuide) {
