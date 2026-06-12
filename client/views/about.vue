@@ -28,6 +28,12 @@
         padding-left: 18px;
     }
 
+    .lpAboutBuiltBy {
+        color: $color-text-muted;
+        font-size: $fontSize-sm;
+        margin-top: 24px;
+    }
+
     .lpAboutActions {
         display: flex;
         flex-direction: column;
@@ -57,18 +63,23 @@
 <template>
     <div class="lpAbout">
         <h1>LighterPack+</h1>
-        <p>An independent, open-source continuation of LighterPack — built by someone who uses it to plan every hike, and who's currently preparing for the Camino de Santiago.</p>
+        <p>An independent, open-source packing tool — built by one person, kept alive by the community.</p>
 
         <h2>Why this project exists</h2>
-        <p>I've been using LighterPack for years. When it stopped evolving, I forked it, modernized the stack, and started adding the features I wished it had — a better gear library, public sharing, community discovery, and a way to share affiliate links without being pushy about it.</p>
-        <p>This project is kept alive by a small group of supporters. No VC funding, no growth hacking, no dark patterns. Just a gear nerd trying to build something useful.</p>
+        <p>Looking for the right app to plan my Camino de Santiago, LighterPack was the obvious choice. But it hadn't evolved in years. So I forked it, modernized the stack, and started building the features I wished it had — a better gear library, public sharing, community discovery, and a way to share affiliate links without being pushy about it.</p>
+        <p>No VC funding, no growth hacking, no dark patterns. Just someone trying to build something useful before heading out on trail.</p>
+
+        <h2>Where it's going</h2>
+        <p>This started as a hiking tool. But packing is packing — whether you're heading out on trail, loading up a bike, or flying with carry-on only. The next version of this project is called <strong>JustPack</strong>: a simple, universal packing tool for any kind of trip.</p>
 
         <h2>Plans</h2>
         <ul>
             <li><strong>Base</strong> — Free. The full app. No paywalled core features.</li>
             <li><strong>Trail</strong> — Support the project. Get a public profile with avatar, bio, and links. Managed backups.</li>
-            <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see how your lists help others.</li>
+            <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
         </ul>
+
+        <p class="lpAboutBuiltBy">Built by <a class="lpHref" href="https://github.com/fxbenard" target="_blank" rel="noopener noreferrer">fxbenard</a> — currently preparing for the Camino de Santiago.</p>
 
         <div class="lpAboutActions">
             <a class="lpAboutKofi" href="https://ko-fi.com/fxbenard" target="_blank" rel="noopener noreferrer">

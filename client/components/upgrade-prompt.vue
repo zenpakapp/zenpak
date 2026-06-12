@@ -181,7 +181,7 @@ const INLINE_TEXTS = {
     publicProfile: 'Trail — Share your gear identity',
     profileCustomization: 'Trail — Personalize your profile',
     managedBackups: 'Trail — Keep your data safe',
-    creatorInsights: 'Guide — See how your lists help people',
+    creatorInsights: "Guide — See who's reading your lists",
     creatorLinks: 'Guide — Add your affiliate links',
     promoCode: 'Guide — Add a promo code',
 };

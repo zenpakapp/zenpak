@@ -202,7 +202,7 @@
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
 
             <div v-if="isSignedIn && isBase" class="lpSupportZone">
-                <p>Like what you see? Trail and Guide plans support this project and unlock your public profile.</p>
+                <p>Enjoying the app? Support the project and get a public profile to share your picks with the community.</p>
                 <router-link to="/about" class="lpHref">Learn more →</router-link>
             </div>
 
