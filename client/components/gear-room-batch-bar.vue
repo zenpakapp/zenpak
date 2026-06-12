@@ -2,22 +2,30 @@
 @import "../css/_globals";
 
 .lpGearRoomBatchBar {
-    align-items: center;
     background: #1a1a1a;
     border-radius: 12px;
     bottom: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     color: #fff;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     font-size: $fontSize-sm;
-    gap: 8px;
     left: 50%;
-    padding: 10px 16px;
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
     position: fixed;
     transform: translateX(-50%);
-    white-space: nowrap;
     z-index: $belowDialog;
+}
+
+.lpGearRoomBatchActions {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    white-space: nowrap;
 }
 
 .lpGearRoomBatchCount {
@@ -68,24 +76,35 @@
 
 .lpGearRoomBatchPanel {
     background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    bottom: 72px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-    left: 50%;
-    padding: 16px;
-    position: fixed;
-    transform: translateX(-50%);
-    width: 300px;
-    z-index: $belowDialog;
+    border-bottom: 1px solid $color-border;
+    color: $color-text;
+    padding: 14px 16px;
+}
+
+.lpGearRoomBatchPanelHeader {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
 
 .lpGearRoomBatchPanelTitle {
     color: $color-text-muted;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin-bottom: 12px;
     text-transform: uppercase;
+}
+
+.lpGearRoomBatchPanelClose {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+
+    &:hover { color: $color-text; }
 }
 
 .lpGearRoomBatchPanelRow {
@@ -99,7 +118,7 @@
     color: $color-text-muted;
     flex-shrink: 0;
     font-size: $fontSize-sm;
-    width: 70px;
+    width: 60px;
 }
 
 .lpGearRoomBatchPanelInput,
@@ -111,11 +130,16 @@
     flex: 1;
     font-size: $fontSize-sm;
     min-height: 32px;
+    min-width: 0;
     padding: 0 8px;
 
     &:focus {
         border-color: $color-accent;
         outline: none;
+    }
+
+    &:disabled {
+        opacity: 0.4;
     }
 }
 
@@ -153,25 +177,13 @@
 </style>
 
 <template>
-    <div>
-        <!-- Batch actions bar -->
-        <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
-            <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
-            <span class="lpGearRoomBatchSep">|</span>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">⇄ Merge</button>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? 'Close compare' : '⇔ Compare' }}</button>
-            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">Swap name ↔ desc</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">Set category</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">Add tag</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">Add to list</button>
-            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">Delete</button>
-            <span class="lpGearRoomBatchSep">|</span>
-            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">✕ Cancel</button>
-        </div>
-
-        <!-- Category panel -->
+    <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
+        <!-- Panel: Set type -->
         <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Set category for {{ selected.length }} items</div>
+            <div class="lpGearRoomBatchPanelHeader">
+                <div class="lpGearRoomBatchPanelTitle">Set type for {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+            </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Type</span>
                 <select v-model="batchCategory" class="lpGearRoomBatchPanelSelect">
@@ -182,25 +194,25 @@
             <button class="lpGearRoomBatchApply" @click="applyCategory">Apply</button>
         </div>
 
-        <!-- Tag panel -->
-        <div v-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Add tag to {{ selected.length }} items</div>
+        <!-- Panel: Add tag -->
+        <div v-else-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelHeader">
+                <div class="lpGearRoomBatchPanelTitle">Add tag to {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+            </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Tag</span>
-                <input
-                    v-model="batchTag"
-                    class="lpGearRoomBatchPanelInput"
-                    type="text"
-                    placeholder="ex: bikepacking"
-                    @keydown.enter="applyTag"
-                >
+                <input v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking" @keydown.enter="applyTag">
             </div>
             <button class="lpGearRoomBatchApply" @click="applyTag">Apply</button>
         </div>
 
-        <!-- Merge panel -->
-        <div v-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
+        <!-- Panel: Merge -->
+        <div v-else-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelHeader">
+                <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+            </div>
             <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
                 <button
                     v-for="id in selected"
@@ -216,9 +228,12 @@
             <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">Merge &amp; delete duplicate</button>
         </div>
 
-        <!-- Add to list panel -->
-        <div v-if="activeBatchPanel === 'addToList'" class="lpGearRoomBatchPanel">
-            <div class="lpGearRoomBatchPanelTitle">Add {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }} to list</div>
+        <!-- Panel: Add to list -->
+        <div v-else-if="activeBatchPanel === 'addToList'" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelHeader">
+                <div class="lpGearRoomBatchPanelTitle">Add {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }} to list</div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+            </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
                 <select v-model="batchListId" class="lpGearRoomBatchPanelSelect" @change="batchCategoryId = ''">
@@ -227,13 +242,28 @@
                 </select>
             </div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Category</span>
+                <span class="lpGearRoomBatchPanelLabel">List cat.</span>
                 <select v-model="batchCategoryId" class="lpGearRoomBatchPanelSelect" :disabled="!batchListId">
                     <option value="">— choose —</option>
                     <option v-for="cat in categoriesForSelectedList" :key="cat.id" :value="cat.id">{{ cat.name || 'Unnamed' }}</option>
                 </select>
             </div>
             <button class="lpGearRoomBatchApply" :disabled="!batchListId || !batchCategoryId" @click="applyAddToList">Apply</button>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="lpGearRoomBatchActions">
+            <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
+            <span class="lpGearRoomBatchSep">|</span>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">⇄ Merge</button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? 'Close compare' : '⇔ Compare' }}</button>
+            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">Swap name ↔ desc</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">Set type</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">Add tag</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">Add to list</button>
+            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">Delete</button>
+            <span class="lpGearRoomBatchSep">|</span>
+            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">✕ Cancel</button>
         </div>
     </div>
 </template>
@@ -257,6 +287,10 @@ export default {
         lists: {
             type: Array,
             default: () => [],
+        },
+        library: {
+            type: Object,
+            default: null,
         },
         compareOpen: {
             type: Boolean,
@@ -293,6 +327,11 @@ export default {
                 .filter(Boolean);
         },
     },
+    watch: {
+        selected(val) {
+            if (val.length === 0) this.activeBatchPanel = null;
+        },
+    },
     methods: {
         togglePanel(panel) {
             this.activeBatchPanel = this.activeBatchPanel === panel ? null : panel;
@@ -301,11 +340,8 @@ export default {
             return this.allItems.find(i => i.id === id) || {};
         },
         getCategoryById(id) {
-            for (const list of this.lists) {
-                if (list.getCategoryById) {
-                    const cat = list.getCategoryById(id);
-                    if (cat) return cat;
-                }
+            if (this.library && this.library.getCategoryById) {
+                return this.library.getCategoryById(id) || null;
             }
             return null;
         },

@@ -26,5 +26,5 @@ export default [
     { path: '/p/:externalId', component: publicList },
     { path: '/guide', component: guideView },
     { path: '/about', component: aboutView },
-    { path: '/:pathMatch(.*)*', component: dashboard },
+    { path: '/:pathMatch(.*)*', redirect: '/' },
 ];

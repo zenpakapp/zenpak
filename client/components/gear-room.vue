@@ -395,7 +395,7 @@
                                     ★ {{ sortKey === 'starred' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRCategoryCol lpGRSortable" @click="setSort('category')">
-                                    Category {{ sortKey === 'category' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    List category {{ sortKey === 'category' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRWeightCol lpGRSortable" @click="setSort('weight')">
                                     Weight {{ sortKey === 'weight' ? (sortAsc ? '↑' : '↓') : '' }}
@@ -438,6 +438,7 @@
             :available-categories="availableCategories"
             :all-items="allItems"
             :lists="library.lists"
+            :library="library"
             :compare-open="compareOpen"
             @update:selected="selected = $event"
             @batch-swap-name-desc="batchSwapNameDesc"
