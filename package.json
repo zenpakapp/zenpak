@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node --max-old-space-size=8192 app.js",
     "start": "NODE_ENV=production webpack-cli --config ./webpack.config.js && NODE_ENV=production node app.js",
+    "pm2": "pm2 start ecosystem.config.js",
     "build": "webpack-cli --config ./webpack.config.js",
     "test:e2e": "playwright test",
     "test:e2e:critical": "playwright test test/e2e/auth.spec.ts test/e2e/list.spec.ts test/e2e/save-load.spec.ts",

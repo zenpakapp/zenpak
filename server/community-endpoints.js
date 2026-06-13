@@ -8,6 +8,24 @@ const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
 
+// In-memory rate limiter: max 5 copies/hour per userId or IP
+const COPY_RATE_LIMIT = 5;
+const COPY_RATE_WINDOW_MS = 60 * 60 * 1000;
+const copyRateMap = new Map();
+
+function isCopyRateLimited(key) {
+    const now = Date.now();
+    const windowStart = now - COPY_RATE_WINDOW_MS;
+    const timestamps = (copyRateMap.get(key) || []).filter(t => t > windowStart);
+    if (timestamps.length >= COPY_RATE_LIMIT) {
+        copyRateMap.set(key, timestamps);
+        return true;
+    }
+    timestamps.push(now);
+    copyRateMap.set(key, timestamps);
+    return false;
+}
+
 // POST /api/community/follow/:username
 router.post('/follow/:username', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
@@ -165,10 +183,46 @@ router.get('/discover', async (req, res) => {
 
     try {
         const PAGE_SIZE = 20;
-        // NOTE: full-table scan — acceptable at current scale, revisit if user count grows significantly
+
+        if (sort === 'popular') {
+            const pipeline = [
+                { $unwind: '$library.lists' },
+                { $match: {
+                    'library.lists.visibility': { $in: ['discoverable', 'indexable'] },
+                    'library.lists.externalId': { $exists: true },
+                } },
+                { $sort: { 'library.lists.copyCount': -1 } },
+                { $limit: PAGE_SIZE },
+                { $project: {
+                    _id: 0,
+                    externalId: '$library.lists.externalId',
+                    name: '$library.lists.name',
+                    description: { $ifNull: ['$library.lists.description', ''] },
+                    copyCount: { $ifNull: ['$library.lists.copyCount', 0] },
+                    totalBaseWeight: { $ifNull: ['$library.lists.totalBaseWeight', 0] },
+                    totalQty: { $ifNull: ['$library.lists.totalQty', 0] },
+                    updatedAt: '$library.lists.updatedAt',
+                    author: '$username',
+                    authorTier: { $ifNull: ['$library.entitlements.plan', 'free'] },
+                } },
+            ];
+
+            const items = await db.users.aggregate(pipeline);
+
+            // Normalize authorTier: plan values → tier labels
+            const normalized = items.map((item) => {
+                let tier = 'base';
+                if (item.authorTier === 'creator') tier = 'guide';
+                else if (item.authorTier === 'supporter') tier = 'trail';
+                return { ...item, authorTier: tier };
+            });
+
+            return res.json({ lists: normalized, nextCursor: null });
+        }
+
+        // sort === 'recent': cursor-based, full-scan filtered in JS
         const allUsers = await db.users.findMany({});
 
-        // Collect all public lists with their author info
         const items = [];
         for (const user of allUsers) {
             const lists = (user.library && user.library.lists) || [];
@@ -182,7 +236,7 @@ router.get('/discover', async (req, res) => {
                 if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
 
                 const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-                if (sort !== 'popular' && cursor && updatedAt >= new Date(cursor)) continue;
+                if (cursor && updatedAt >= new Date(cursor)) continue;
 
                 items.push({
                     externalId: list.externalId,
@@ -198,15 +252,10 @@ router.get('/discover', async (req, res) => {
             }
         }
 
-        // Sort
-        if (sort === 'popular') {
-            items.sort((a, b) => b.copyCount - a.copyCount);
-        } else {
-            items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        }
+        items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
         const page = items.slice(0, PAGE_SIZE);
-        const nextCursor = (sort !== 'popular' && page.length === PAGE_SIZE) ? page[page.length - 1].updatedAt : null;
+        const nextCursor = page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
     } catch (err) {
@@ -238,9 +287,23 @@ router.post('/copy-list/:externalId', (req, res) => {
                 return res.status(403).json({ message: 'Cannot copy your own list' });
             }
 
-            // Only increment copyCount — the client handles the actual import with dedup
-            sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
-            await db.users.save(owner);
+            if (user.banned) {
+                return res.status(403).json({ message: 'Account suspended' });
+            }
+
+            const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
+            if (isCopyRateLimited(rateLimitKey)) {
+                return res.status(429).json({ message: 'Too many copies, try again later' });
+            }
+
+            // Increment copyCount once per user (dedup via copiedBy array)
+            const userId = String(user._id);
+            if (!Array.isArray(sourceList.copiedBy)) sourceList.copiedBy = [];
+            if (!sourceList.copiedBy.includes(userId)) {
+                sourceList.copiedBy.push(userId);
+                sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
+                await db.users.save(owner);
+            }
 
             // Return list data (categories + items) for client-side dedup import
             const categoryIds = sourceList.categoryIds || [];

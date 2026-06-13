@@ -93,6 +93,10 @@ function collection(name) {
                 return null;
             });
         },
+        aggregate(pipeline) {
+            return getCollection(name)
+                .then((mongoCollection) => mongoCollection.aggregate(pipeline).toArray());
+        },
         deleteOne(filter) {
             return deleteOne(filter);
         },
@@ -130,6 +134,11 @@ module.exports = {
     async ensureIndexes() {
         await ready;
         // createIndex is not exposed by the wrapper — use raw _db collections directly
+        const users = _db.collection('users');
+        await users.createIndex({ token: 1 }, { unique: true, sparse: true });
+        await users.createIndex({ username: 1 }, { unique: true });
+        await users.createIndex({ 'library.lists.externalId': 1 }, { sparse: true });
+
         const follows = _db.collection('follows');
         await follows.createIndex({ followerId: 1, followedId: 1 }, { unique: true });
         await follows.createIndex({ followedId: 1 });
