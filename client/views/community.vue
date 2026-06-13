@@ -542,7 +542,7 @@ export default {
     methods: {
         setTab(tab) {
             this.activeTab = tab;
-            const path = tab === 'feed' ? '/community/feed' : tab === 'people' ? '/community/people' : '/community';
+            const path = tab === 'feed' ? '/community/feed' : '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
         },
