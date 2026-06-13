@@ -88,12 +88,17 @@
                     <tr v-for="r in reports" :key="String(r._id)">
                         <td>{{ r.reporterUsername }}</td>
                         <td>{{ r.targetType }}</td>
-                        <td style="font-size:11px;word-break:break-all">{{ r.targetId }}</td>
+                        <td style="font-size:11px">
+                            <a v-if="r.targetType === 'list'" :href="`/p/${r.targetId}`" target="_blank">{{ r.targetId }}</a>
+                            <a v-else :href="`/u/${r.targetId}`" target="_blank">{{ r.targetId }}</a>
+                        </td>
                         <td>{{ r.reason }}</td>
                         <td>{{ formatDate(r.createdAt) }}</td>
-                        <td>
-                            <button @click="resolveReport(r, 'resolved')">Resolve</button>
-                            <button @click="resolveReport(r, 'dismissed')">Dismiss</button>
+                        <td style="display:flex;gap:4px;flex-wrap:wrap">
+                            <button @click="resolveReport(r, 'resolved')">✓ Resolve</button>
+                            <button @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
+                            <button v-if="r.targetType === 'list'" style="color:#c0392b" @click="unpublishList(r)">Unpublish</button>
+                            <button style="color:#c0392b" @click="banUser(r)">Ban {{ r.targetType === 'user' ? r.targetId : '' }}</button>
                         </td>
                     </tr>
                 </tbody>
@@ -197,6 +202,21 @@ export default {
                 });
                 this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
             } catch {}
+        },
+        async banUser(report) {
+            const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
+            if (!username || !confirm(`Ban user "${username}"?`)) return;
+            try {
+                await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
+                await this.resolveReport(report, 'resolved');
+            } catch { alert('Failed to ban user.'); }
+        },
+        async unpublishList(report) {
+            if (!confirm(`Unpublish list "${report.targetId}"?`)) return;
+            try {
+                await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
+                await this.resolveReport(report, 'resolved');
+            } catch { alert('Failed to unpublish list.'); }
         },
         formatDate(d) {
             return new Date(d).toLocaleDateString();
