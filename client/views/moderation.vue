@@ -1,44 +1,212 @@
 <style lang="scss">
 @import "../css/_globals";
 
-
 #lp-moderation {
-    padding: 0 2em;
     display: grid;
+    gap: 0 24px;
     grid-template-columns: 15em auto;
+    margin: 0 auto;
+    max-width: 1100px;
+    padding: 32px 20px 80px;
 
-    h1, & > form {
-        grid-column-start: 1;
-        grid-column-end: 3;
+    h1 {
+        color: $color-text;
+        font-size: $fontSize-md;
+        font-weight: $fontWeight-bold;
+        grid-column: 1 / -1;
+        margin-bottom: 16px;
+    }
+
+    & > form {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+
+        input {
+            background: $color-surface;
+            border: 1px solid $color-border;
+            border-radius: $radius-sm;
+            color: $color-text;
+            font-size: $fontSize-sm;
+            padding: 6px 10px;
+            width: 240px;
+
+            &:focus {
+                border-color: $color-accent;
+                outline: none;
+            }
+        }
+
+        button {
+            background: $color-accent;
+            border: none;
+            border-radius: $radius-sm;
+            color: #fff;
+            cursor: pointer;
+            font-size: $fontSize-sm;
+            padding: 6px 14px;
+
+            &:hover { opacity: 0.9; }
+        }
     }
 
     .lp-moderation-search-results {
         grid-column: 1;
+        list-style: none;
+        padding: 0;
+
+        li {
+            border-radius: $radius-sm;
+            color: $color-text-muted;
+            cursor: pointer;
+            font-size: $fontSize-sm;
+            padding: 6px 10px;
+
+            &:hover {
+                background: $color-control-muted;
+                color: $color-text;
+            }
+        }
     }
 
     .lp-moderation-user-to-inspect {
         grid-column: 2;
+
+        h2 {
+            color: $color-text;
+            font-size: $fontSize-base;
+            font-weight: $fontWeight-bold;
+            margin-bottom: 12px;
+        }
+
+        section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+
+            button {
+                background: $color-control-muted;
+                border: 1px solid $color-border;
+                border-radius: $radius-sm;
+                color: $color-text;
+                cursor: pointer;
+                font-size: $fontSize-sm;
+                padding: 5px 12px;
+
+                &:hover { border-color: $color-accent; }
+            }
+
+            strong {
+                color: $color-text;
+                font-size: $fontSize-sm;
+            }
+        }
     }
 }
 
 #lp-moderation-user-library-json {
-    width: 100%;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-family: monospace;
+    font-size: 12px;
     height: 20em;
+    padding: 8px;
+    width: 100%;
+}
+
+.lp-moderation-reports {
+    grid-column: 1 / -1;
+    margin-top: 40px;
+
+    h2 {
+        color: $color-text;
+        font-size: $fontSize-base;
+        font-weight: $fontWeight-bold;
+        margin-bottom: 16px;
+    }
 }
 
 .lp-reports-table {
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: $fontSize-sm;
     width: 100%;
-}
-.lp-reports-table th, .lp-reports-table td {
-    border: 1px solid #ddd;
-    padding: 6px 10px;
-    text-align: left;
-}
-.lp-moderation-reports {
-    grid-column: 1 / -1;
-    margin-top: 32px;
+
+    th {
+        background: $color-control-muted;
+        border-bottom: 2px solid $color-border;
+        color: $color-text-muted;
+        font-size: $fontSize-xs;
+        font-weight: $fontWeight-bold;
+        letter-spacing: $letterSpacing-caps;
+        padding: 8px 12px;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    td {
+        border-bottom: 1px solid $color-border;
+        color: $color-text;
+        padding: 10px 12px;
+        vertical-align: middle;
+
+        a {
+            color: $color-accent;
+            font-size: 11px;
+            text-decoration: none;
+            word-break: break-all;
+
+            &:hover { text-decoration: underline; }
+        }
+    }
+
+    tr:hover td {
+        background: rgba(var(--color-accent-rgb), 0.04);
+    }
+
+    .lp-report-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .lp-btn-resolve {
+        background: rgba(var(--color-accent-rgb), 0.1);
+        border: 1px solid $color-accent;
+        border-radius: $radius-sm;
+        color: $color-accent;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 3px 8px;
+
+        &:hover { background: $color-accent; color: #fff; }
+    }
+
+    .lp-btn-dismiss {
+        background: $color-control-muted;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        color: $color-text-muted;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 3px 8px;
+
+        &:hover { border-color: $color-text-muted; color: $color-text; }
+    }
+
+    .lp-btn-danger {
+        background: rgba(220, 53, 69, 0.08);
+        border: 1px solid rgba(220, 53, 69, 0.4);
+        border-radius: $radius-sm;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 11px;
+        padding: 3px 8px;
+
+        &:hover { background: #dc3545; color: #fff; }
+    }
 }
 </style>
 
@@ -94,11 +262,13 @@
                         </td>
                         <td>{{ r.reason }}</td>
                         <td>{{ formatDate(r.createdAt) }}</td>
-                        <td style="display:flex;gap:4px;flex-wrap:wrap">
-                            <button @click="resolveReport(r, 'resolved')">✓ Resolve</button>
-                            <button @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
-                            <button v-if="r.targetType === 'list'" style="color:#c0392b" @click="unpublishList(r)">Unpublish</button>
-                            <button style="color:#c0392b" @click="banUser(r)">Ban {{ r.targetType === 'user' ? r.targetId : '' }}</button>
+                        <td>
+                            <div class="lp-report-actions">
+                                <button class="lp-btn-resolve" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
+                                <button class="lp-btn-dismiss" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
+                                <button v-if="r.targetType === 'list'" class="lp-btn-danger" @click="unpublishList(r)">Unpublish</button>
+                                <button class="lp-btn-danger" @click="banUser(r)">Ban{{ r.targetType === 'user' ? ` ${r.targetId}` : '' }}</button>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
