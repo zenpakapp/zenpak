@@ -25,6 +25,21 @@
     width: 100%;
     height: 20em;
 }
+
+.lp-reports-table {
+    border-collapse: collapse;
+    font-size: 13px;
+    width: 100%;
+}
+.lp-reports-table th, .lp-reports-table td {
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    text-align: left;
+}
+.lp-moderation-reports {
+    grid-column: 1 / -1;
+    margin-top: 32px;
+}
 </style>
 
 <template>
@@ -54,6 +69,36 @@
                 <textarea id="lp-moderation-user-library-json" v-model="editableLibrary"></textarea>
             </section>
         </div>
+
+        <div class="lp-moderation-reports">
+            <h2>Reports ({{ reports.length }} pending)</h2>
+            <p v-if="reports.length === 0" style="color:#888">No pending reports.</p>
+            <table v-else class="lp-reports-table">
+                <thead>
+                    <tr>
+                        <th>Reporter</th>
+                        <th>Type</th>
+                        <th>Target ID</th>
+                        <th>Reason</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="r in reports" :key="String(r._id)">
+                        <td>{{ r.reporterUsername }}</td>
+                        <td>{{ r.targetType }}</td>
+                        <td style="font-size:11px;word-break:break-all">{{ r.targetId }}</td>
+                        <td>{{ r.reason }}</td>
+                        <td>{{ formatDate(r.createdAt) }}</td>
+                        <td>
+                            <button @click="resolveReport(r, 'resolved')">Resolve</button>
+                            <button @click="resolveReport(r, 'dismissed')">Dismiss</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -72,6 +117,7 @@ export default {
             userToInspect: null,
             editableLibrary: null,
             newPassword: null,
+            reports: [],
         };
     },
     computed: {
@@ -83,6 +129,7 @@ export default {
         if (false) {
             push('/welcome');
         }
+        this.loadReports();
     },
     methods: {
         searchUsers() {
@@ -133,7 +180,27 @@ export default {
             .catch((err) => {
                 console.log(err);
             });
-        }
+        },
+        async loadReports() {
+            try {
+                const data = await fetchJson('/api/reports');
+                this.reports = data.reports || [];
+            } catch {
+                this.reports = [];
+            }
+        },
+        async resolveReport(report, status) {
+            try {
+                await fetchJson(`/api/reports/${report._id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status }),
+                });
+                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
+            } catch {}
+        },
+        formatDate(d) {
+            return new Date(d).toLocaleDateString();
+        },
     },
 };
 </script>

@@ -135,6 +135,7 @@ module.exports = {
     follows: collection('follows'),
     feedEvents: collection('feed_events'),
     notifications: collection('notifications'),
+    reports: collection('reports'),
     async ensureIndexes() {
         await ready;
         // createIndex is not exposed by the wrapper — use raw _db collections directly
@@ -154,5 +155,9 @@ module.exports = {
         const notifications = _db.collection('notifications');
         await notifications.createIndex({ userId: 1, createdAt: -1 });
         await notifications.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+
+        const reports = _db.collection('reports');
+        await reports.createIndex({ reporterId: 1, targetType: 1, targetId: 1 }, { unique: true });
+        await reports.createIndex({ status: 1, createdAt: -1 });
     },
 };

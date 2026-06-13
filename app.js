@@ -73,6 +73,7 @@ const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
 const notificationEndpoints = require('./server/notification-endpoints.js');
+const reportEndpoints = require('./server/report-endpoints.js');
 const views = require('./server/views.js');
 
 db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err }));
@@ -80,6 +81,7 @@ db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err })
 app.use('/', endpoints);
 app.use('/', moderationEndpoints);
 app.use('/api/notifications', notificationEndpoints);
+app.use('/api/reports', reportEndpoints);
 app.use('/', views);
 
 logger.info("Starting up Lighterpack...");
