@@ -272,6 +272,31 @@
         opacity: 0.5;
     }
 }
+
+/* ── Search ── */
+
+.lpCommunitySearch {
+    margin-bottom: 16px;
+}
+
+.lpCommunitySearchInput {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    padding: 8px 12px;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
+
+    &::placeholder {
+        color: $color-text-muted;
+    }
+}
 </style>
 
 <template>
@@ -311,7 +336,7 @@
                     class="lpCommunitySortBtn"
                     :class="{ active: discoverSort === 'recent' }"
                     data-sort="recent"
-                    @click="setDiscoverSort('recent')"
+                    @click="changeDiscoverSort('recent')"
                 >
                     Recent
                 </button>
@@ -319,10 +344,20 @@
                     class="lpCommunitySortBtn"
                     :class="{ active: discoverSort === 'popular' }"
                     data-sort="popular"
-                    @click="setDiscoverSort('popular')"
+                    @click="changeDiscoverSort('popular')"
                 >
                     Most copied
                 </button>
+            </div>
+
+            <div class="lpCommunitySearch">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="lpCommunitySearchInput"
+                    placeholder="Search lists…"
+                    @input="onSearchInput"
+                />
             </div>
 
             <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">Loading…</p>
@@ -409,7 +444,9 @@ export default {
             error: discoverError,
             hasMore: discoverHasMore,
             sort: discoverSort,
+            query: discoverQuery,
             setSort: setDiscoverSort,
+            setQuery: setDiscoverQuery,
             load: discoverLoad,
             loadMore: discoverLoadMore,
         } = useDiscover();
@@ -427,13 +464,15 @@ export default {
 
         return {
             discoverLists, discoverLoading, discoverError, discoverHasMore,
-            discoverSort, setDiscoverSort, discoverLoadMore,
+            discoverSort, discoverQuery, setDiscoverSort, setDiscoverQuery, discoverLoadMore,
             feedEvents, feedLoading, feedError, feedHasMore, feedLoad, feedLoadMore,
         };
     },
     data() {
         return {
             activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
+            searchQuery: '',
+            searchTimeout: null,
         };
     },
     computed: {
@@ -450,6 +489,16 @@ export default {
             const path = tab === 'feed' ? '/community/feed' : '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
+        },
+        onSearchInput() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                this.setDiscoverQuery(this.searchQuery);
+            }, 300);
+        },
+        changeDiscoverSort(value) {
+            this.searchQuery = '';
+            this.setDiscoverSort(value);
         },
         eventLabel(type) {
             if (type === 'list.published') return 'published a new list';

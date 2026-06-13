@@ -8,6 +8,7 @@ export function useDiscover() {
     const error = ref(null);
     const hasMore = ref(false);
     const sort = ref('recent');
+    const query = ref('');
 
     async function load(cursor = null) {
         loading.value = true;
@@ -15,6 +16,7 @@ export function useDiscover() {
         try {
             const params = new URLSearchParams({ sort: sort.value });
             if (cursor) params.set('cursor', cursor);
+            if (query.value.trim()) params.set('q', query.value.trim());
             const data = await fetchJson(`/api/community/discover?${params}`);
             if (cursor) {
                 lists.value = [...lists.value, ...(data.lists || [])];
@@ -36,10 +38,18 @@ export function useDiscover() {
 
     function setSort(value) {
         sort.value = value;
+        query.value = '';
         nextCursor.value = null;
         lists.value = [];
         load();
     }
 
-    return { lists, loading, error, hasMore, sort, setSort, load, loadMore };
+    function setQuery(value) {
+        query.value = value;
+        nextCursor.value = null;
+        lists.value = [];
+        load();
+    }
+
+    return { lists, loading, error, hasMore, sort, query, setSort, setQuery, load, loadMore };
 }

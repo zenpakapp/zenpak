@@ -180,6 +180,7 @@ router.get('/discover', async (req, res) => {
     if (cursor && isNaN(Date.parse(cursor))) {
         return res.status(400).json({ message: 'Invalid cursor' });
     }
+    const q = String(req.query.q || '').trim().slice(0, 100) || null;
 
     try {
         const PAGE_SIZE = 20;
@@ -187,10 +188,16 @@ router.get('/discover', async (req, res) => {
         if (sort === 'popular') {
             const pipeline = [
                 { $unwind: '$library.lists' },
-                { $match: {
-                    'library.lists.visibility': { $in: ['discoverable', 'indexable'] },
-                    'library.lists.externalId': { $exists: true },
-                } },
+                { $match: (() => {
+                    const match = {
+                        'library.lists.visibility': { $in: ['discoverable', 'indexable'] },
+                        'library.lists.externalId': { $exists: true },
+                    };
+                    if (q) {
+                        match['library.lists.name'] = { $regex: q, $options: 'i' };
+                    }
+                    return match;
+                })() },
                 { $sort: { 'library.lists.copyCount': -1 } },
                 { $limit: PAGE_SIZE },
                 { $project: {
@@ -234,6 +241,7 @@ router.get('/discover', async (req, res) => {
             for (const list of lists) {
                 if (!list.externalId) continue;
                 if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
+                if (q && !list.name.toLowerCase().includes(q.toLowerCase())) continue;
 
                 const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
                 if (cursor && updatedAt >= new Date(cursor)) continue;
