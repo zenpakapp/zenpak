@@ -383,11 +383,12 @@
                 No public lists yet. Be the first to share one.
             </p>
             <template v-else>
-                <router-link
+                <div
                     v-for="list in discoverLists"
                     :key="list.externalId"
-                    :to="`/p/${list.externalId}`"
                     class="lpCommunityCard"
+                    style="cursor:pointer"
+                    @click="$router.push(`/p/${list.externalId}`)"
                 >
                     <div class="lpCommunityCardName">{{ list.name }}</div>
                     <div class="lpCommunityCardAuthor">
@@ -401,10 +402,10 @@
                         <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
                         <span class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
                     </div>
-                    <div v-if="$store.state.loggedIn" @click.stop.prevent>
+                    <div v-if="$store.state.loggedIn" @click.stop>
                         <report-button target-type="list" :target-id="list.externalId" />
                     </div>
-                </router-link>
+                </div>
                 <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
                     {{ discoverLoading ? 'Loading…' : 'Load more' }}
                 </button>
