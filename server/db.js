@@ -97,6 +97,9 @@ function collection(name) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.aggregate(pipeline).toArray());
         },
+        updateMany(filter, update) {
+            return getCollection(name).then(col => col.updateMany(filter, update));
+        },
         deleteOne(filter) {
             return deleteOne(filter);
         },
@@ -131,6 +134,7 @@ module.exports = {
     libraries: collection('libraries'),
     follows: collection('follows'),
     feedEvents: collection('feed_events'),
+    notifications: collection('notifications'),
     async ensureIndexes() {
         await ready;
         // createIndex is not exposed by the wrapper — use raw _db collections directly
@@ -146,5 +150,9 @@ module.exports = {
         const events = _db.collection('feed_events');
         await events.createIndex({ userId: 1, createdAt: -1 });
         await events.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+
+        const notifications = _db.collection('notifications');
+        await notifications.createIndex({ userId: 1, createdAt: -1 });
+        await notifications.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
     },
 };

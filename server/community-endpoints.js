@@ -7,6 +7,7 @@ const auth = require('./auth.js');
 const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
+const { createNotification } = require('./notifications.js');
 
 // In-memory rate limiter: max 5 copies/hour per userId or IP
 const COPY_RATE_LIMIT = 5;
@@ -47,6 +48,12 @@ router.post('/follow/:username', (req, res) => {
                 followedId: new ObjectId(target._id),
                 mode,
                 createdAt: new Date(),
+            });
+
+            await createNotification({
+                userId: target._id,
+                type: 'follow',
+                actorUsername: user.username,
             });
 
             return res.json({ following: true, mode });
@@ -311,6 +318,13 @@ router.post('/copy-list/:externalId', (req, res) => {
                 sourceList.copiedBy.push(userId);
                 sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
                 await db.users.save(owner);
+
+                await createNotification({
+                    userId: owner._id,
+                    type: 'copy',
+                    actorUsername: user.username,
+                    listName: sourceList.name,
+                });
             }
 
             // Return list data (categories + items) for client-side dedup import

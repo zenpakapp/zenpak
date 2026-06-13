@@ -72,12 +72,14 @@ app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
 const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
+const notificationEndpoints = require('./server/notification-endpoints.js');
 const views = require('./server/views.js');
 
 db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err }));
 
 app.use('/', endpoints);
 app.use('/', moderationEndpoints);
+app.use('/api/notifications', notificationEndpoints);
 app.use('/', views);
 
 logger.info("Starting up Lighterpack...");

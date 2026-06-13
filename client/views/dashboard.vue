@@ -179,6 +179,9 @@
                 <input id="lpListName" :value="list.name" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                 <themeToggle />
                 <span v-if="isSignedIn" class="headerItem">
+                    <notifications />
+                </span>
+                <span v-if="isSignedIn" class="headerItem">
                     <router-link to="/community" class="lpTarget">Community</router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">
@@ -261,6 +264,7 @@ import upgradePrompt from '../components/upgrade-prompt.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
+import notifications from '../components/notifications.vue';
 
 export default {
     name: 'Dashboard',
@@ -288,6 +292,7 @@ export default {
         gearRoom,
         profileInsights,
         upgradePrompt,
+        notifications,
     },
     data() {
         return {
