@@ -393,4 +393,40 @@ router.get('/insights', (req, res) => {
     });
 });
 
+// GET /api/community/users?q=
+router.get('/users', async (req, res) => {
+    const q = String(req.query.q || '').trim().slice(0, 100);
+    if (!q) return res.json({ users: [] });
+
+    try {
+        const PAGE_SIZE = 20;
+        const pipeline = [
+            { $match: {
+                username: { $regex: q, $options: 'i' },
+                'library.profile.visibility': { $in: ['public', 'discoverable', undefined, null] },
+            }},
+            { $limit: PAGE_SIZE },
+            { $project: {
+                _id: 0,
+                username: 1,
+                displayName: { $ifNull: ['$library.profile.displayName', '$username'] },
+                bio: { $ifNull: ['$library.profile.bio', ''] },
+                avatarUrl: { $ifNull: ['$library.profile.avatarUrl', ''] },
+                plan: { $ifNull: ['$library.entitlements.plan', 'free'] },
+            }},
+        ];
+
+        const users = await db.users.aggregate(pipeline);
+        const normalized = users.map(u => ({
+            ...u,
+            tier: u.plan === 'creator' ? 'guide' : u.plan === 'supporter' ? 'trail' : 'base',
+            plan: undefined,
+        }));
+
+        return res.json({ users: normalized });
+    } catch (err) {
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+});
+
 module.exports = router;

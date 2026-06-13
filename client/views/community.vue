@@ -273,6 +273,16 @@
     }
 }
 
+/* ── User cards ── */
+
+.lpCommunityCardUser {
+    .lpCommunityCardAuthor {
+        color: $color-text-muted;
+        font-size: $fontSize-sm;
+        margin-top: 2px;
+    }
+}
+
 /* ── Search ── */
 
 .lpCommunitySearch {
@@ -326,6 +336,13 @@
                 @click="canSeeFeed && setTab('feed')"
             >
                 My Feed
+            </button>
+            <button
+                class="lpCommunityTab"
+                :class="{ active: activeTab === 'people' }"
+                @click="setTab('people')"
+            >
+                People
             </button>
         </div>
 
@@ -391,6 +408,39 @@
             </template>
         </div>
 
+        <!-- People tab -->
+        <div v-if="activeTab === 'people'">
+            <div class="lpCommunitySearch">
+                <input
+                    v-model="peopleQuery"
+                    type="text"
+                    class="lpCommunitySearchInput"
+                    placeholder="Search users…"
+                    @input="onPeopleInput"
+                    autofocus
+                />
+            </div>
+            <p v-if="peopleLoading" class="lpCommunityEmpty">Loading…</p>
+            <p v-else-if="peopleError" class="lpCommunityEmpty">{{ peopleError }}</p>
+            <p v-else-if="peopleQuery && peopleResults.length === 0" class="lpCommunityEmpty">No users found.</p>
+            <template v-else>
+                <router-link
+                    v-for="user in peopleResults"
+                    :key="user.username"
+                    :to="`/u/${user.username}`"
+                    class="lpCommunityCard lpCommunityCardUser"
+                >
+                    <div class="lpCommunityCardName">
+                        {{ user.displayName || user.username }}
+                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Guide</span>
+                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Trail</span>
+                    </div>
+                    <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
+                    <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
+                </router-link>
+            </template>
+        </div>
+
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
             <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">Loading…</p>
@@ -432,6 +482,7 @@ import { useRoute } from 'vue-router';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
+import { fetchJson } from '../utils/utils.js';
 
 export default {
     name: 'CommunityView',
@@ -473,6 +524,11 @@ export default {
             activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
             searchQuery: '',
             searchTimeout: null,
+            peopleQuery: '',
+            peopleResults: [],
+            peopleLoading: false,
+            peopleError: null,
+            peopleTimeout: null,
         };
     },
     computed: {
@@ -486,9 +542,30 @@ export default {
     methods: {
         setTab(tab) {
             this.activeTab = tab;
-            const path = tab === 'feed' ? '/community/feed' : '/community';
+            const path = tab === 'feed' ? '/community/feed' : tab === 'people' ? '/community/people' : '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
+        },
+        onPeopleInput() {
+            clearTimeout(this.peopleTimeout);
+            this.peopleTimeout = setTimeout(() => this.searchPeople(), 300);
+        },
+        async searchPeople() {
+            if (!this.peopleQuery.trim()) {
+                this.peopleResults = [];
+                return;
+            }
+            this.peopleLoading = true;
+            this.peopleError = null;
+            try {
+                const params = new URLSearchParams({ q: this.peopleQuery.trim() });
+                const data = await fetchJson(`/api/community/users?${params}`);
+                this.peopleResults = data.users || [];
+            } catch {
+                this.peopleError = 'Could not load results.';
+            } finally {
+                this.peopleLoading = false;
+            }
         },
         onSearchInput() {
             clearTimeout(this.searchTimeout);
