@@ -120,7 +120,7 @@
                     <span class="lpSubtotalUnit">{{ displayUnit }}</span>
                 </span>
                 <span class="lpQtyCell lpSubtotal">
-                    <span class="lpQtySubtotal">{{ category.subtotalQty }}</span>
+                    <span class="lpQtySubtotal">{{ +category.subtotalQty.toFixed(2) }}</span>
                 </span>
                 <span class="lpRemoveCell" />
             </li>
