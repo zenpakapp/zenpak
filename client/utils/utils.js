@@ -34,7 +34,7 @@ export function fetchJson(url, options) {
         assignIn(fetchOptions, options);
     }
 
-    if (!fetchOptions.body && !fetchOptions.headers['Content-Type']) {
+    if (!fetchOptions.headers['Content-Type']) {
         fetchOptions.headers['Content-Type'] = 'application/json';
     }
 

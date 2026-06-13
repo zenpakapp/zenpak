@@ -401,12 +401,9 @@
                         <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
                         <span class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
                     </div>
-                    <report-button
-                        v-if="$store.state.loggedIn"
-                        target-type="list"
-                        :target-id="list.externalId"
-                        @click.stop.prevent
-                    />
+                    <div v-if="$store.state.loggedIn" @click.stop.prevent>
+                        <report-button target-type="list" :target-id="list.externalId" />
+                    </div>
                 </router-link>
                 <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
                     {{ discoverLoading ? 'Loading…' : 'Load more' }}
