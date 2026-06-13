@@ -13,5 +13,5 @@
     "mailgunDomain": "",
     "mailgunBaseURL": "",
     "mailgunAPIKey": "",
-    "moderators": ["fxbenard"]
+    "moderators": ["fxbenard", "fxb"]
 }
