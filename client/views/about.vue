@@ -28,10 +28,16 @@
         padding-left: 18px;
     }
 
-    .lpAboutBack {
-        display: inline-block;
-        font-size: $fontSize-sm;
-        margin-bottom: 24px;
+    .lpAboutNav {
+        margin-bottom: 20px;
+
+        a {
+            color: $color-text-muted;
+            font-size: $fontSize-sm;
+            text-decoration: none;
+
+            &:hover { color: $color-text; }
+        }
     }
 
     .lpAboutBuiltBy {
@@ -68,7 +74,9 @@
 
 <template>
     <div class="lpAbout">
-        <router-link to="/" class="lpHref lpAboutBack">← Back to app</router-link>
+        <nav class="lpAboutNav">
+            <router-link to="/">← Back to LighterPack+</router-link>
+        </nav>
         <h1>LighterPack+</h1>
         <p>An independent, open-source packing tool — built by one person, kept alive by the community.</p>
 
