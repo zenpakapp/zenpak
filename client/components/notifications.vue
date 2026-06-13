@@ -95,6 +95,21 @@
     padding: 20px;
     text-align: center;
 }
+
+.lpNotifPrefs {
+    border-top: 1px solid $color-border;
+    padding: 10px 14px;
+}
+
+.lpNotifPrefRow {
+    align-items: center;
+    color: $color-text-muted;
+    cursor: pointer;
+    display: flex;
+    font-size: $fontSize-sm;
+    justify-content: space-between;
+    padding: 4px 0;
+}
 </style>
 
 <template>
@@ -117,6 +132,16 @@
                 <div class="lpNotifText">{{ formatText(n) }}</div>
                 <div class="lpNotifTime">{{ timeAgo(n.createdAt) }}</div>
             </div>
+            <div class="lpNotifPrefs">
+                <label class="lpNotifPrefRow">
+                    <span>Follows</span>
+                    <input type="checkbox" :checked="prefs.follow" @change="updatePref('follow', $event.target.checked)" />
+                </label>
+                <label class="lpNotifPrefRow">
+                    <span>Copies</span>
+                    <input type="checkbox" :checked="prefs.copy" @change="updatePref('copy', $event.target.checked)" />
+                </label>
+            </div>
         </div>
     </div>
 </template>
@@ -132,6 +157,7 @@ export default {
             notifications: [],
             unreadCount: 0,
             pollInterval: null,
+            prefs: { follow: true, copy: true },
         };
     },
     mounted() {
@@ -149,6 +175,7 @@ export default {
                 const data = await fetchJson('/api/notifications');
                 this.notifications = data.notifications || [];
                 this.unreadCount = data.unreadCount || 0;
+                this.prefs = data.prefs || { follow: true, copy: true };
             } catch {
                 // silent
             }
@@ -172,6 +199,18 @@ export default {
             if (n.type === 'follow') return `${n.actorUsername} started following you`;
             if (n.type === 'copy') return `${n.actorUsername} copied your list "${n.listName}"`;
             return '';
+        },
+        async updatePref(type, value) {
+            try {
+                const body = { ...this.prefs, [type]: value };
+                const data = await fetchJson('/api/notifications/prefs', {
+                    method: 'PATCH',
+                    body: JSON.stringify(body),
+                });
+                this.prefs = data.prefs;
+            } catch {
+                // silent
+            }
         },
         timeAgo(date) {
             const diff = Date.now() - new Date(date).getTime();

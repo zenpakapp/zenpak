@@ -15,7 +15,8 @@ router.get('/', (req, res) => {
             notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             const page = notes.slice(0, 50);
             const unreadCount = page.filter(n => !n.read).length;
-            return res.json({ notifications: page, unreadCount });
+            const prefs = user.notificationPrefs || { follow: true, copy: true };
+            return res.json({ notifications: page, unreadCount, prefs });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
         }
@@ -31,6 +32,24 @@ router.post('/read-all', (req, res) => {
                 { $set: { read: true } },
             );
             return res.json({ ok: true });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+// PATCH /api/notifications/prefs
+router.patch('/prefs', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const { follow, copy } = req.body || {};
+        const prefs = {
+            follow: follow !== false,
+            copy: copy !== false,
+        };
+        try {
+            user.notificationPrefs = prefs;
+            await db.users.save(user);
+            return res.json({ prefs });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
         }
