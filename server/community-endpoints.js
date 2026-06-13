@@ -403,7 +403,10 @@ router.get('/users', async (req, res) => {
         const pipeline = [
             { $match: {
                 username: { $regex: q, $options: 'i' },
-                'library.profile.visibility': { $in: ['public', 'discoverable', undefined, null] },
+                $or: [
+                    { 'library.profile.visibility': { $exists: false } },
+                    { 'library.profile.visibility': { $in: ['public', 'discoverable'] } },
+                ],
             }},
             { $limit: PAGE_SIZE },
             { $project: {
