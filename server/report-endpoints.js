@@ -99,6 +99,24 @@ router.post('/ban/:username', (req, res) => {
     });
 });
 
+// POST /api/reports/feature/:externalId — featured toggle (modérateurs uniquement)
+router.post('/feature/:externalId', (req, res) => {
+    auth.authenticateModerator(req, res, async (req, res) => {
+        const externalId = String(req.params.externalId || '').trim();
+        try {
+            const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+            if (!owner) return res.status(404).json({ message: 'List not found' });
+            const list = (owner.library.lists || []).find(l => l.externalId === externalId);
+            if (!list) return res.status(404).json({ message: 'List not found' });
+            list.featured = !list.featured;
+            await db.users.save(owner);
+            return res.json({ ok: true, featured: list.featured });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
 // POST /api/reports/unpublish/:externalId — dépublier une liste (modérateurs uniquement)
 router.post('/unpublish/:externalId', (req, res) => {
     auth.authenticateModerator(req, res, async (req, res) => {

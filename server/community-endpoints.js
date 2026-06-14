@@ -218,6 +218,7 @@ router.get('/discover', async (req, res) => {
                     updatedAt: '$library.lists.updatedAt',
                     author: '$username',
                     authorTier: { $ifNull: ['$library.entitlements.plan', 'free'] },
+                    featured: { $ifNull: ['$library.lists.featured', false] },
                 } },
             ];
 
@@ -263,6 +264,7 @@ router.get('/discover', async (req, res) => {
                     authorTier: tier,
                     copyCount: Number(list.copyCount) || 0,
                     updatedAt: updatedAt.toISOString(),
+                    featured: Boolean(list.featured),
                 });
             }
         }

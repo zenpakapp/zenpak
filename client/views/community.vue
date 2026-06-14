@@ -308,6 +308,35 @@
     }
 }
 
+/* ── Featured section ── */
+
+.lpCommunityFeatured {
+    margin-bottom: 24px;
+}
+
+.lpCommunityFeaturedLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.lpCommunityCardFeatured {
+    border-color: $color-accent;
+    position: relative;
+
+    &::before {
+        color: $color-accent;
+        content: '★';
+        font-size: 10px;
+        position: absolute;
+        right: 12px;
+        top: 12px;
+    }
+}
+
 /* ── Moderation panel ── */
 
 .lpModerationReport {
@@ -430,8 +459,30 @@
                 No public lists yet. Be the first to share one.
             </p>
             <template v-else>
+                <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
+                    <div class="lpCommunityFeaturedLabel">Featured</div>
+                    <div
+                        v-for="list in featuredLists"
+                        :key="'f-' + list.externalId"
+                        class="lpCommunityCard lpCommunityCardFeatured"
+                        style="cursor:pointer"
+                        @click="$router.push(`/p/${list.externalId}`)"
+                    >
+                        <div class="lpCommunityCardName">{{ list.name }}</div>
+                        <div class="lpCommunityCardAuthor">
+                            by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
+                            <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Guide</span>
+                            <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
+                        </div>
+                        <div class="lpCommunityCardMeta">
+                            <span class="lpCommunityCardMetaItem">{{ list.totalBaseWeight.toFixed(2) }} kg base</span>
+                            <span class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
+                            <span class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                        </div>
+                    </div>
+                </div>
                 <div
-                    v-for="list in discoverLists"
+                    v-for="list in nonFeaturedLists"
                     :key="list.externalId"
                     class="lpCommunityCard"
                     style="cursor:pointer"
@@ -545,6 +596,7 @@
                     <div class="lpModerationReportActions">
                         <button class="lpButton lpSmall" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
                         <button class="lpButton lpSmall" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
+                        <button v-if="r.targetType === 'list'" class="lpButton lpSmall" @click="featureList(r.targetId)">★ Feature</button>
                         <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublishList(r)">Unpublish</button>
                         <button class="lpButton lpSmall lpButtonDanger" @click="banUser(r)">Ban</button>
                     </div>
@@ -620,6 +672,12 @@ export default {
         isModerator() {
             return this.moderatorFlag;
         },
+        featuredLists() {
+            return this.discoverLists.filter(l => l.featured);
+        },
+        nonFeaturedLists() {
+            return this.discoverLists.filter(l => !l.featured);
+        },
     },
     created() {
         if (this.canSeeFeed && this.activeTab === 'feed') this.feedLoad();
@@ -685,6 +743,13 @@ export default {
             const days = Math.floor(hours / 24);
             if (days < 7) return `${days}d ago`;
             return new Date(dateStr).toLocaleDateString();
+        },
+        async featureList(externalId) {
+            try {
+                const data = await fetchJson(`/api/reports/feature/${externalId}`, { method: 'POST' });
+                const list = this.discoverLists.find(l => l.externalId === externalId);
+                if (list) list.featured = data.featured;
+            } catch { alert('Failed.'); }
         },
         async fetchModeratorFlag() {
             try {
