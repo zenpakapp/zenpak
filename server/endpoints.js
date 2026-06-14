@@ -14,7 +14,7 @@ const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
 const { detectVisibilityChanges } = require('./save-library-feed.js');
 
 const { ObjectId } = require('mongodb');
-const { authenticateUser, verifyPassword } = require('./auth.js');
+const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
 
 const db = require('./db.js');
 
@@ -564,6 +564,12 @@ router.post('/api/public/insight', (req, res) => {
             }
             return res.json({ message: 'ok' });
         });
+    });
+});
+
+router.get('/api/auth/me', (req, res) => {
+    authenticateUser(req, res, (req, res, user) => {
+        return res.json({ isModerator: isModerator(user.username) });
     });
 });
 

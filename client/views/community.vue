@@ -307,6 +307,45 @@
         color: $color-text-muted;
     }
 }
+
+/* ── Moderation panel ── */
+
+.lpModerationReport {
+    border-bottom: 1px solid $color-border;
+    padding: 14px 0;
+
+    &:last-child { border-bottom: none; }
+}
+
+.lpModerationReportMeta {
+    align-items: center;
+    color: $color-text-muted;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-xs;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.lpModerationReportTarget {
+    font-size: $fontSize-sm;
+    margin-bottom: 8px;
+
+    a {
+        color: $color-accent;
+        text-decoration: none;
+        word-break: break-all;
+
+        &:hover { text-decoration: underline; }
+    }
+}
+
+.lpModerationReportActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
 </style>
 
 <template>
@@ -343,6 +382,14 @@
                 @click="setTab('people')"
             >
                 People
+            </button>
+            <button
+                v-if="isModerator"
+                class="lpCommunityTab"
+                :class="{ active: activeTab === 'moderation' }"
+                @click="setTab('moderation')"
+            >
+                Moderation
             </button>
         </div>
 
@@ -478,6 +525,32 @@
                 </button>
             </template>
         </div>
+
+        <!-- Moderation tab -->
+        <div v-if="activeTab === 'moderation' && isModerator">
+            <h2 style="font-size:14px;font-weight:700;margin-bottom:16px">Reports ({{ reports.length }} pending)</h2>
+            <p v-if="reportsLoading" class="lpCommunityEmpty">Loading…</p>
+            <p v-else-if="reports.length === 0" class="lpCommunityEmpty">No pending reports.</p>
+            <template v-else>
+                <div v-for="r in reports" :key="String(r._id)" class="lpModerationReport">
+                    <div class="lpModerationReportMeta">
+                        <span class="lpCommunityBadge">{{ r.targetType }}</span>
+                        <span>{{ r.reason }}</span>
+                        <span>by {{ r.reporterUsername }}</span>
+                        <span>{{ timeAgo(r.createdAt) }}</span>
+                    </div>
+                    <div class="lpModerationReportTarget">
+                        <a :href="r.targetType === 'list' ? `/p/${r.targetId}` : `/u/${r.targetId}`" target="_blank" class="lpHref">{{ r.targetId }}</a>
+                    </div>
+                    <div class="lpModerationReportActions">
+                        <button class="lpButton lpSmall" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
+                        <button class="lpButton lpSmall" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
+                        <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublishList(r)">Unpublish</button>
+                        <button class="lpButton lpSmall lpButtonDanger" @click="banUser(r)">Ban</button>
+                    </div>
+                </div>
+            </template>
+        </div>
     </main>
 </template>
 
@@ -535,15 +608,22 @@ export default {
             peopleLoading: false,
             peopleError: null,
             peopleTimeout: null,
+            reports: [],
+            reportsLoading: false,
+            moderatorFlag: false,
         };
     },
     computed: {
         canSeeFeed() {
             return Boolean(this.$store.state.loggedIn);
         },
+        isModerator() {
+            return this.moderatorFlag;
+        },
     },
     created() {
         if (this.canSeeFeed && this.activeTab === 'feed') this.feedLoad();
+        if (this.canSeeFeed) this.fetchModeratorFlag();
     },
     methods: {
         setTab(tab) {
@@ -551,6 +631,7 @@ export default {
             const path = tab === 'feed' ? '/community/feed' : '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
+            if (tab === 'moderation' && this.reports.length === 0) this.loadReports();
         },
         onPeopleInput() {
             clearTimeout(this.peopleTimeout);
@@ -604,6 +685,49 @@ export default {
             const days = Math.floor(hours / 24);
             if (days < 7) return `${days}d ago`;
             return new Date(dateStr).toLocaleDateString();
+        },
+        async fetchModeratorFlag() {
+            try {
+                const data = await fetchJson('/api/auth/me');
+                this.moderatorFlag = Boolean(data.isModerator);
+            } catch {
+                this.moderatorFlag = false;
+            }
+        },
+        async loadReports() {
+            this.reportsLoading = true;
+            try {
+                const data = await fetchJson('/api/reports');
+                this.reports = data.reports || [];
+            } catch {
+                this.reports = [];
+            } finally {
+                this.reportsLoading = false;
+            }
+        },
+        async resolveReport(report, status) {
+            try {
+                await fetchJson(`/api/reports/${report._id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status }),
+                });
+                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
+            } catch {}
+        },
+        async banUser(report) {
+            const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
+            if (!username || !confirm(`Ban "${username}"?`)) return;
+            try {
+                await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
+                await this.resolveReport(report, 'resolved');
+            } catch { alert('Failed.'); }
+        },
+        async unpublishList(report) {
+            if (!confirm(`Unpublish "${report.targetId}"?`)) return;
+            try {
+                await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
+                await this.resolveReport(report, 'resolved');
+            } catch { alert('Failed.'); }
         },
     },
 };
