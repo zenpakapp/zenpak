@@ -381,6 +381,51 @@ router.post('/imageUpload', (req, res) => {
     imageUpload(req, res, {});
 });
 
+router.post('/api/profile/avatar', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const form = formidable.formidable({ maxFiles: 1, maxFileSize: 2 * 1024 * 1024 });
+        form.parse(req, async (err, fields, files) => {
+            if (err) return res.status(500).json({ message: 'Upload error' });
+            const imageFile = Array.isArray(files.image) ? files.image[0] : files.image;
+            if (!imageFile || !imageFile.filepath) return res.status(400).json({ message: 'No file' });
+
+            try {
+                const cloudName = config.get('cloudinaryCloudName');
+                const apiKey = config.get('cloudinaryApiKey');
+                const apiSecret = config.get('cloudinaryApiSecret');
+                const timestamp = Math.floor(Date.now() / 1000);
+                const folder = 'lighterpack/avatars';
+                const signatureStr = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+                const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+
+                const imageBuffer = await readFile(imageFile.filepath);
+                const formData = new FormData();
+                formData.append('file', new Blob([imageBuffer]), imageFile.originalFilename || 'avatar');
+                formData.append('api_key', apiKey);
+                formData.append('timestamp', String(timestamp));
+                formData.append('signature', signature);
+                formData.append('folder', folder);
+
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await response.json();
+                if (!response.ok || data.error) return res.status(500).json({ message: 'Upload failed' });
+
+                if (!user.library) user.library = {};
+                if (!user.library.publicProfile) user.library.publicProfile = {};
+                user.library.publicProfile.avatarUrl = data.secure_url;
+                await db.users.save(user);
+
+                return res.json({ avatarUrl: data.secure_url });
+            } catch (e) {
+                return res.status(500).json({ message: 'An error occurred' });
+            }
+        });
+    });
+});
+
 function imageUpload(req, res, user) {
     const form = formidable.formidable({
         maxFiles: 1,

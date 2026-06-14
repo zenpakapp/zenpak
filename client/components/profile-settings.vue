@@ -78,6 +78,52 @@
     }
 }
 
+.profileSettingsAvatar {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.profileSettingsAvatarPreview {
+    align-items: center;
+    background: $color-control-muted;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 20px;
+    font-weight: $fontWeight-bold;
+    height: 56px;
+    justify-content: center;
+    overflow: hidden;
+    width: 56px;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+.profileSettingsAvatarActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.profileSettingsAvatarBtn {
+    cursor: pointer;
+}
+
+.profileSettingsAvatarError {
+    color: $color-danger;
+    font-size: $fontSize-xs;
+    margin: 4px 0 0;
+    width: 100%;
+}
+
 .profileSettingsCheckbox {
     align-items: center;
     color: $color-text;
@@ -137,6 +183,23 @@
 
         <h3 class="profileSettingsSectionTitle">Public profile</h3>
         <div class="profileSettingsField">
+            <span class="profileSettingsLabel">Avatar</span>
+            <div class="profileSettingsAvatar">
+                <div class="profileSettingsAvatarPreview">
+                    <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
+                    <span v-else>{{ (profile.displayName || username || '?').charAt(0).toUpperCase() }}</span>
+                </div>
+                <div class="profileSettingsAvatarActions">
+                    <label class="lpButton lpSmall profileSettingsAvatarBtn">
+                        {{ avatarUploading ? 'Uploading…' : 'Upload photo' }}
+                        <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
+                    </label>
+                    <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">Remove</button>
+                </div>
+                <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
+            </div>
+        </div>
+        <div class="profileSettingsField">
             <span class="profileSettingsLabel">Display name</span>
             <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
         </div>
@@ -172,6 +235,8 @@ export default {
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],
+            avatarUploading: false,
+            avatarError: null,
         };
     },
     computed: {
@@ -180,6 +245,9 @@ export default {
         },
         profile() {
             return this.$store.state.library.publicProfile;
+        },
+        username() {
+            return this.$store.state.loggedIn;
         },
     },
     methods: {
@@ -194,6 +262,28 @@ export default {
         },
         updateCurrencySymbol(value) {
             this.$store.commit('updateCurrencySymbol', value);
+        },
+        async uploadAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            this.avatarUploading = true;
+            this.avatarError = null;
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                const res = await fetch('/api/profile/avatar', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Upload failed');
+                this.$store.commit('updatePublicProfile', { avatarUrl: data.avatarUrl });
+            } catch (e) {
+                this.avatarError = e.message || 'Upload failed';
+            } finally {
+                this.avatarUploading = false;
+                event.target.value = '';
+            }
+        },
+        removeAvatar() {
+            this.$store.commit('updatePublicProfile', { avatarUrl: '' });
         },
     },
 };
