@@ -390,28 +390,10 @@ router.post('/api/profile/avatar', (req, res) => {
             if (!imageFile || !imageFile.filepath) return res.status(400).json({ message: 'No file' });
 
             try {
-                const cloudName = config.get('cloudinaryCloudName');
-                const apiKey = config.get('cloudinaryApiKey');
-                const apiSecret = config.get('cloudinaryApiSecret');
-                const timestamp = Math.floor(Date.now() / 1000);
-                const folder = 'lighterpack/avatars';
-                const signatureStr = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
-                const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
-
-                const imageBuffer = await readFile(imageFile.filepath);
-                const formData = new FormData();
-                formData.append('file', new Blob([imageBuffer]), imageFile.originalFilename || 'avatar');
-                formData.append('api_key', apiKey);
-                formData.append('timestamp', String(timestamp));
-                formData.append('signature', signature);
-                formData.append('folder', folder);
-
-                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                    method: 'POST',
-                    body: formData,
+                const data = await cloudinaryUpload(imageFile, {
+                    folder: 'lighterpack/avatars',
+                    transformation: 'w_200,h_200,c_fill,g_face,q_auto,f_auto',
                 });
-                const data = await response.json();
-                if (!response.ok || data.error) return res.status(500).json({ message: 'Upload failed' });
 
                 if (!user.library) user.library = {};
                 if (!user.library.publicProfile) user.library.publicProfile = {};
@@ -425,6 +407,36 @@ router.post('/api/profile/avatar', (req, res) => {
         });
     });
 });
+
+async function cloudinaryUpload(imageFile, { folder, transformation } = {}) {
+    const cloudName = config.get('cloudinaryCloudName');
+    const apiKey = config.get('cloudinaryApiKey');
+    const apiSecret = config.get('cloudinaryApiSecret');
+    const timestamp = Math.floor(Date.now() / 1000);
+
+    // params sorted alphabetically before apiSecret
+    const params = { folder, timestamp };
+    if (transformation) params.transformation = transformation;
+    const signatureStr = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join('&') + apiSecret;
+    const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+
+    const imageBuffer = await readFile(imageFile.filepath);
+    const formData = new FormData();
+    formData.append('file', new Blob([imageBuffer]), imageFile.originalFilename || 'image');
+    formData.append('api_key', apiKey);
+    formData.append('timestamp', String(timestamp));
+    formData.append('signature', signature);
+    formData.append('folder', folder);
+    if (transformation) formData.append('transformation', transformation);
+
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok || data.error) throw new Error(data.error?.message || 'Upload failed');
+    return data;
+}
 
 function imageUpload(req, res, user) {
     const form = formidable.formidable({
@@ -446,36 +458,10 @@ function imageUpload(req, res, user) {
         }
 
         try {
-            const cloudName = config.get('cloudinaryCloudName');
-            const apiKey = config.get('cloudinaryApiKey');
-            const apiSecret = config.get('cloudinaryApiSecret');
-            const timestamp = Math.floor(Date.now() / 1000);
-
-            // params must be sorted alphabetically before apiSecret
-            const signatureStr = `folder=lighterpack&timestamp=${timestamp}${apiSecret}`;
-            const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
-
-            const imageBuffer = await readFile(imageFile.filepath);
-            const formData = new FormData();
-            formData.append('file', new Blob([imageBuffer]), imageFile.originalFilename || 'image');
-            formData.append('api_key', apiKey);
-            formData.append('timestamp', String(timestamp));
-            formData.append('signature', signature);
-            formData.append('folder', 'lighterpack');
-
-            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: formData,
+            const data = await cloudinaryUpload(imageFile, {
+                folder: 'lighterpack',
+                transformation: 'q_auto,f_auto',
             });
-
-            const data = await response.json();
-
-            if (!response.ok || data.error) {
-                logWithRequest(req, 'cloudinary upload fail');
-                logWithRequest(req, data);
-                return res.status(500).json({ message: 'Upload failed.' });
-            }
-
             return res.json({ data: { id: data.public_id, url: data.secure_url } });
         } catch (uploadError) {
             logWithRequest(req, 'cloudinary upload error');
