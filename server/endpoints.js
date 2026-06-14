@@ -460,7 +460,7 @@ function imageUpload(req, res, user) {
         try {
             const data = await cloudinaryUpload(imageFile, {
                 folder: 'lighterpack',
-                transformation: 'q_auto,f_auto',
+                transformation: 'w_800,f_auto,q_auto',
             });
             return res.json({ data: { id: data.public_id, url: data.secure_url } });
         } catch (uploadError) {
