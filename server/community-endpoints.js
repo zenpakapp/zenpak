@@ -187,7 +187,8 @@ router.get('/discover', async (req, res) => {
     if (cursor && isNaN(Date.parse(cursor))) {
         return res.status(400).json({ message: 'Invalid cursor' });
     }
-    const q = String(req.query.q || '').trim().slice(0, 100) || null;
+    const rawQ = String(req.query.q || '').trim().slice(0, 100);
+    const q = rawQ ? rawQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null;
 
     try {
         const PAGE_SIZE = 20;
@@ -411,7 +412,7 @@ router.get('/insights', (req, res) => {
 
 // GET /api/community/users?q=
 router.get('/users', async (req, res) => {
-    const q = String(req.query.q || '').trim().slice(0, 100);
+    const q = String(req.query.q || '').trim().slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     if (!q) return res.json({ users: [] });
 
     try {

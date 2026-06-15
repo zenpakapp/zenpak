@@ -112,7 +112,7 @@ router.post('/register', (req, res) => {
                         logWithRequest(req, { message: 'Saving new user', username });
                         db.users.save(newUser);
                         const out = { username, library: JSON.stringify(newUser.library), syncToken: 0 };
-                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000 });
+                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
                         return res.status(200).json(out);
                     });
                 });
@@ -377,8 +377,7 @@ function deleteAccount(req, res, user) {
 }
 
 router.post('/imageUpload', (req, res) => {
-    // authenticateUser(req, res, imageUpload);
-    imageUpload(req, res, {});
+    authenticateUser(req, res, imageUpload);
 });
 
 router.post('/api/profile/avatar', (req, res) => {
