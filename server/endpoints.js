@@ -168,6 +168,13 @@ function saveLibrary(req, res, user) {
 
     const oldLists = (user.library && user.library.lists) || [];
 
+    const now = new Date();
+    if (library && library.lists) {
+        library.lists.forEach((list) => {
+            if (!list.updatedAt) list.updatedAt = now;
+        });
+    }
+
     user.library = library;
     user.syncToken++;
     db.users.save(user, () => {

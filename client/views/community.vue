@@ -503,7 +503,7 @@
                         <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
                         <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
                         <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
-                        <span class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
+                        <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
                     </div>
                     <div v-if="$store.state.loggedIn" @click.stop>
                         <report-button target-type="list" :target-id="list.externalId" />

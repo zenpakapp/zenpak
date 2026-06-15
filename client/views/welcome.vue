@@ -95,38 +95,127 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
     max-width: 620px;
 }
 
-.lpWelcomeSignals {
-    display: grid;
-    gap: 12px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    list-style: none;
+.lpWelcomeStats {
+    display: flex;
+    gap: 32px;
     margin: 28px 0 0;
-    padding: 0;
 }
 
-.lpWelcomeSignals li {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 16px;
-    min-height: 92px;
-    padding: 14px 16px;
+.lpWelcomeStat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.lpWelcomeSignalTitle {
-    color: rgba(255, 255, 255, 0.96);
-    display: block;
-    font-size: 13px;
+.lpWelcomeStatNum {
+    color: #fff;
+    font-size: 22px;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
+    line-height: 1.2;
+}
+
+.lpWelcomeStatLabel {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 13px;
+}
+
+.lpWelcomeFeatures {
+    background: $color-surface;
+    border-bottom: 1px solid $color-border;
+    border-top: 1px solid $color-border;
+    padding: 48px 0;
+}
+
+.lpWelcomeFeaturesGrid {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lpWelcomeFeatureItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lpWelcomeFeatureNum {
+    color: $color-accent;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
-.lpWelcomeSignalText {
-    color: rgba(255, 255, 255, 0.72);
-    display: block;
-    font-size: 13px;
-    line-height: 1.45;
+.lpWelcomeFeatureTitle {
+    font-size: 20px;
+    font-weight: $fontWeight-bold;
+    margin: 0;
+}
+
+.lpWelcomeFeatureText {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.lpWelcomeFaq {
+    padding: 56px 0 48px;
+}
+
+.lpWelcomeFaqTitle {
+    font-size: 28px;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 28px;
+}
+
+.lpWelcomeFaqList {
+    display: grid;
+    gap: 0;
+    max-width: 680px;
+}
+
+.lpWelcomeFaqItem {
+    border-bottom: 1px solid $color-border;
+    padding: 16px 0;
+
+    &:first-child {
+        border-top: 1px solid $color-border;
+    }
+}
+
+.lpWelcomeFaqQ {
+    color: $color-text;
+    cursor: pointer;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-medium;
+    list-style: none;
+    user-select: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    &::after {
+        color: $color-text-muted;
+        content: "+";
+        float: right;
+        font-size: 20px;
+        font-weight: 300;
+        line-height: 1;
+    }
+}
+
+details[open] .lpWelcomeFaqQ::after {
+    content: "−";
+}
+
+.lpWelcomeFaqA {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    line-height: 1.65;
+    margin: 10px 0 0;
+    max-width: 600px;
 }
 
 .lpWelcomeMain {
@@ -224,6 +313,39 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
     content: "•";
     font-size: 18px;
     line-height: 1;
+}
+
+.lpWelcomeProofTabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.lpWelcomeProofTab {
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
+    padding: 6px 14px;
+    transition: all 0.15s;
+
+    &:hover {
+        border-color: $color-accent;
+        color: $color-accent;
+    }
+}
+
+.lpWelcomeProofTabActive {
+    background: $color-accent;
+    border-color: $color-accent;
+    color: #fff;
+
+    &:hover {
+        color: #fff;
+    }
 }
 
 .lpWelcomeScreenshotFrame {
@@ -396,15 +518,6 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
         background: linear-gradient(180deg, rgba(17, 17, 17, 0) 0%, rgba(17, 17, 17, 0.68) 58%, rgba(17, 17, 17, 1) 100%);
     }
 
-    .lpWelcomeSignals li {
-        background: rgba(255, 255, 255, 0.04);
-        border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .lpWelcomeSignalText {
-        color: rgba(232, 232, 232, 0.72);
-    }
-
     .lpWelcomeMiniList li {
         background: rgba(var(--color-accent-rgb), 0.16);
     }
@@ -442,15 +555,6 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
             background: linear-gradient(180deg, rgba(17, 17, 17, 0) 0%, rgba(17, 17, 17, 0.68) 58%, rgba(17, 17, 17, 1) 100%);
         }
 
-        .lpWelcomeSignals li {
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .lpWelcomeSignalText {
-            color: rgba(232, 232, 232, 0.72);
-        }
-
         .lpWelcomeMiniList li {
             background: rgba(var(--color-accent-rgb), 0.16);
         }
@@ -480,10 +584,6 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
         margin-top: 0;
     }
 
-    .lpWelcomeSignals {
-        grid-template-columns: 1fr;
-    }
-
     .lpWelcomeProofHeader {
         align-items: start;
         flex-direction: column;
@@ -492,6 +592,13 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
     .lpWelcomeMiniList {
         min-width: 0;
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .lpWelcomeFeaturesGrid {
+        gap: 24px;
+        grid-template-columns: 1fr;
     }
 }
 
@@ -552,22 +659,44 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
                         <span>Hike further.</span>
                     </h1>
                     <p class="lpWelcomeDeck">
-                        Organize your gear library, compare pack setups, see your pack weight instantly, and keep the familiar LighterPack flow with a cleaner, more modern entry point.
+                        Build your gear library, build pack lists, track your base weight to the gram — and share lists with the community.
                     </p>
-                    <ul class="lpWelcomeSignals">
-                        <li>
-                            <span class="lpWelcomeSignalTitle">Gear library</span>
-                            <span class="lpWelcomeSignalText">Keep gear organized across categories, setups, and repeat trips.</span>
-                        </li>
-                        <li>
-                            <span class="lpWelcomeSignalTitle">Pack analysis</span>
-                            <span class="lpWelcomeSignalText">See base weight, worn items, and consumables without losing the classic flow.</span>
-                        </li>
-                        <li>
-                            <span class="lpWelcomeSignalTitle">Community sharing</span>
-                            <span class="lpWelcomeSignalText">Publish clean public lists and share them with other hikers.</span>
-                        </li>
-                    </ul>
+                    <div class="lpWelcomeStats">
+                        <div class="lpWelcomeStat">
+                            <span class="lpWelcomeStatNum">100%</span>
+                            <span class="lpWelcomeStatLabel">Free to start</span>
+                        </div>
+                        <div class="lpWelcomeStat">
+                            <span class="lpWelcomeStatNum">Open source</span>
+                            <span class="lpWelcomeStatLabel">Fork of lighterpack.com</span>
+                        </div>
+                        <div class="lpWelcomeStat">
+                            <span class="lpWelcomeStatNum">No ads</span>
+                            <span class="lpWelcomeStatLabel">Ever</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="lpWelcomeFeatures">
+            <div class="lpContainer">
+                <div class="lpWelcomeFeaturesGrid">
+                    <div class="lpWelcomeFeatureItem">
+                        <span class="lpWelcomeFeatureNum">01</span>
+                        <h3 class="lpWelcomeFeatureTitle">Gear library</h3>
+                        <p class="lpWelcomeFeatureText">Add every piece of kit once — weight, brand, category. Reuse across trips, filter, compare.</p>
+                    </div>
+                    <div class="lpWelcomeFeatureItem">
+                        <span class="lpWelcomeFeatureNum">02</span>
+                        <h3 class="lpWelcomeFeatureTitle">Pack lists</h3>
+                        <p class="lpWelcomeFeatureText">Build lists per trip, see base weight / worn / consumables live. Packing mode to check items off as you go.</p>
+                    </div>
+                    <div class="lpWelcomeFeatureItem">
+                        <span class="lpWelcomeFeatureNum">03</span>
+                        <h3 class="lpWelcomeFeatureTitle">Community</h3>
+                        <p class="lpWelcomeFeatureText">Publish lists publicly, follow other hikers, discover curated loadouts from the community.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -576,20 +705,18 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
             <div class="lpContainer lpWelcomeGrid">
                 <section class="lpWelcomeProof">
                     <div class="lpWelcomeProofHeader">
-                        <div>
-                            <span class="lpWelcomeProofEyebrow">Product preview</span>
-                            <h2 class="lpWelcomeProofTitle">
-                                See the app at a glance
-                            </h2>
-                            <p class="lpWelcomeProofText">
-                                Organize your gear library, compare pack setups, and keep category totals clear. Share clean public lists and stay connected to the community without leaving the core app experience.
-                            </p>
+                        <span class="lpWelcomeProofEyebrow">Product preview</span>
+                        <div class="lpWelcomeProofTabs">
+                            <button
+                                v-for="tab in previewTabs"
+                                :key="tab.id"
+                                class="lpWelcomeProofTab"
+                                :class="{ lpWelcomeProofTabActive: activeTab === tab.id }"
+                                @click="activeTab = tab.id"
+                            >
+                                {{ tab.label }}
+                            </button>
                         </div>
-                        <ul class="lpWelcomeMiniList">
-                            <li>Track gear by category</li>
-                            <li>Visualize worn vs. consumable weight</li>
-                            <li>Share lists with the community</li>
-                        </ul>
                     </div>
 
                     <div class="lpWelcomeScreenshotFrame">
@@ -597,13 +724,13 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
                             <span class="lpWelcomeScreenshotDot" />
                             <span class="lpWelcomeScreenshotDot" />
                             <span class="lpWelcomeScreenshotDot" />
-                            <span class="lpWelcomeScreenshotLabel">Live product preview</span>
+                            <span class="lpWelcomeScreenshotLabel">{{ previewTabs.find(t => t.id === activeTab).label }}</span>
                         </div>
                         <div class="lpWelcomeScreenshotBody">
                             <img
                                 id="lpWelcomeScreenshot"
-                                src="/images/screenshot-new.png"
-                                alt="LighterPack+ interface preview"
+                                :src="previewTabs.find(t => t.id === activeTab).src"
+                                :alt="previewTabs.find(t => t.id === activeTab).label"
                             >
                         </div>
                     </div>
@@ -635,6 +762,26 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
             </div>
         </main>
 
+        <section class="lpWelcomeFaq">
+            <div class="lpContainer">
+                <h2 class="lpWelcomeFaqTitle">Questions</h2>
+                <div class="lpWelcomeFaqList">
+                    <details class="lpWelcomeFaqItem">
+                        <summary class="lpWelcomeFaqQ">What's the difference with lighterpack.com?</summary>
+                        <p class="lpWelcomeFaqA">This is a modern open-source fork — same core list editor, but with a gear library, community discover, packing mode, public profiles, and ongoing development. The original site hasn't been updated since 2020.</p>
+                    </details>
+                    <details class="lpWelcomeFaqItem">
+                        <summary class="lpWelcomeFaqQ">Is it really free?</summary>
+                        <p class="lpWelcomeFaqA">Yes — gear library, lists, weight tracking, and sharing are yours, free forever. Trail helps keep the lights on. Guide unlocks affiliate links and insights.</p>
+                    </details>
+                    <details class="lpWelcomeFaqItem">
+                        <summary class="lpWelcomeFaqQ">Can I import my existing lists?</summary>
+                        <p class="lpWelcomeFaqA">Yes. Import via CSV from lighterpack.com or any spreadsheet. Export works the same way.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
         <div class="lpContainer">
             <globalAlerts />
             <blackoutFooter />
@@ -656,6 +803,16 @@ export default {
         globalAlerts,
         registerForm,
         SigninForm,
+    },
+    data() {
+        return {
+            activeTab: 'gear',
+            previewTabs: [
+                { id: 'gear', label: 'Gear library', src: '/images/screenshot-gear.png' },
+                { id: 'list', label: 'Pack list', src: '/images/screenshot-list.png' },
+                { id: 'community', label: 'Community', src: '/images/screenshot-community.png' },
+            ],
+        };
     },
     created() {
         if (this.$store.state.library) {

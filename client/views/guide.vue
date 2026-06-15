@@ -162,7 +162,7 @@ export default {
 }
 
 .lpGuideTitle {
-    font-size: $fontSize-lg;
+    font-size: 20px;
     font-weight: $fontWeight-bold;
     margin-bottom: 32px;
 }
