@@ -46,6 +46,7 @@
             <div v-for="(rule, i) in affiliateRules" :key="i" class="lpGuideRuleRow">
                 <select v-model="rule.type" class="lpGuideSelect">
                     <option value="brand">Brand</option>
+                    <option value="shop">Shop</option>
                     <option value="domain">Domain</option>
                 </select>
                 <input v-model="rule.match" class="lpGuideInput lpGuideInputShort" placeholder="e.g. Zpacks" maxlength="200" />
@@ -136,92 +137,105 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/_globals";
+
 .lpGuide {
-    max-width: 800px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    max-width: 800px;
+    padding: 32px 20px;
 }
 
 .lpGuideNav {
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
 }
 
 .lpGuideBack,
 .lpGuideViewProfile {
-    color: var(--color-text-muted);
-    font-size: 0.85rem;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
     text-decoration: none;
 
-    &:hover {
-        color: var(--color-text);
-    }
+    &:hover { color: $color-text; }
 }
 
 .lpGuideTitle {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 2rem;
+    font-size: $fontSize-lg;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 32px;
 }
 
 .lpGuideSection {
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    background: var(--color-bg);
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    margin-bottom: 32px;
+    padding: 24px;
 }
 
 .lpGuideSectionTitle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 16px;
 }
 
 .lpGuideField {
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .lpGuideFieldTop {
-    margin-top: 1rem;
+    margin-top: 16px;
 }
 
 .lpGuideLabel {
+    color: $color-text-muted;
     display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.3rem;
-    color: var(--color-text-muted);
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    margin-bottom: 6px;
+    text-transform: uppercase;
 }
 
 .lpGuideTextarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-input-bg, var(--color-bg));
-    color: var(--color-text);
-    font-size: 0.9rem;
-    resize: vertical;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
     box-sizing: border-box;
+    color: $color-text;
+    font-family: $font-family-base;
+    font-size: $fontSize-sm;
+    padding: 8px 10px;
+    resize: vertical;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
 }
 
 .lpGuideCharCount {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
 }
 
 .lpGuideInput {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-input-bg, var(--color-bg));
-    color: var(--color-text);
-    font-size: 0.9rem;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
     flex: 1;
+    font-size: $fontSize-sm;
     min-width: 0;
+    padding: 6px 10px;
+
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
 }
 
 .lpGuideInputShort {
@@ -229,109 +243,105 @@ export default {
 }
 
 .lpGuideSelect {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    background: var(--color-input-bg, var(--color-bg));
-    color: var(--color-text);
-    font-size: 0.9rem;
-    flex: 0 0 90px;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    flex: 0 0 100px;
+    font-size: $fontSize-sm;
+    padding: 6px 10px;
 }
 
 .lpGuideRow,
 .lpGuideRuleRow,
 .lpGuideItemRow {
-    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    display: flex;
     flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .lpGuideItemName {
-    font-size: 0.9rem;
     flex: 0 0 160px;
-    white-space: nowrap;
+    font-size: $fontSize-sm;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .lpGuideRuleBadge {
-    font-size: 0.75rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 3px;
-    background: var(--color-badge-bg, #e8f4e8);
-    color: var(--color-badge-text, #2d6a2d);
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: $radius-sm;
+    color: $color-accent;
+    font-size: $fontSize-xs;
+    padding: 2px 6px;
     white-space: nowrap;
 }
 
 .lpGuideAdd {
     background: none;
     border: none;
-    color: var(--color-link);
+    color: $color-accent;
     cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.3rem 0;
-    margin-top: 0.25rem;
+    font-size: $fontSize-sm;
+    margin-top: 4px;
+    padding: 4px 0;
 
-    &:hover {
-        text-decoration: underline;
-    }
+    &:hover { text-decoration: underline; }
 }
 
 .lpGuideRemove {
     background: none;
     border: none;
-    color: var(--color-danger, #c00);
+    color: $color-danger;
     cursor: pointer;
-    font-size: 0.8rem;
-    padding: 0.3rem 0;
+    font-size: $fontSize-xs;
+    padding: 4px 0;
     white-space: nowrap;
 
-    &:hover {
-        text-decoration: underline;
-    }
+    &:hover { text-decoration: underline; }
 }
 
 .lpGuideSaveRow {
-    display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-top: 1.25rem;
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
 }
 
 .lpGuideSavedFeedback {
-    font-size: 0.85rem;
-    color: var(--color-success, #2d6a2d);
+    color: $color-accent;
+    font-size: $fontSize-sm;
 }
 
 .lpGuideListGroup {
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
 }
 
 .lpGuideListName {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--color-text-muted);
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 8px;
 }
 
 .lpGuideHint {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1rem;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin-bottom: 16px;
 }
 
 .lpGuideLoading,
 .lpGuideEmpty {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    padding: 1rem 0;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    padding: 16px 0;
 }
 
 .lpGuideError {
-    color: var(--color-danger, #c00);
-    font-size: 0.9rem;
-    margin-top: 1rem;
+    color: $color-danger;
+    font-size: $fontSize-sm;
+    margin-top: 16px;
 }
 </style>

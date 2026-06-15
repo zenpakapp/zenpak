@@ -204,6 +204,11 @@
     padding: 8px 12px;
 }
 
+.lpCommunityEventListDeleted {
+    color: $color-text-muted;
+    font-style: italic;
+}
+
 .lpCommunityEventTime {
     color: $color-text-muted;
     font-size: $fontSize-xs;
@@ -565,7 +570,7 @@
                         <div v-if="event.listName" class="lpCommunityEventList">
                             {{ event.listName }}
                         </div>
-                        <div v-else-if="event.listDeleted" class="lpCommunityEventList" style="font-style:italic;color:var(--color-text-muted)">
+                        <div v-else-if="event.listDeleted" class="lpCommunityEventList lpCommunityEventListDeleted">
                             List no longer available
                         </div>
                         <div class="lpCommunityEventTime">{{ timeAgo(event.createdAt) }}</div>
@@ -607,7 +612,6 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
@@ -619,14 +623,12 @@ export default {
     components: { reportButton },
     setup() {
         useTheme();
-        const route = useRoute();
         const {
             lists: discoverLists,
             loading: discoverLoading,
             error: discoverError,
             hasMore: discoverHasMore,
             sort: discoverSort,
-            query: discoverQuery,
             setSort: setDiscoverSort,
             setQuery: setDiscoverQuery,
             load: discoverLoad,
@@ -646,7 +648,7 @@ export default {
 
         return {
             discoverLists, discoverLoading, discoverError, discoverHasMore,
-            discoverSort, discoverQuery, setDiscoverSort, setDiscoverQuery, discoverLoadMore,
+            discoverSort, setDiscoverSort, setDiscoverQuery, discoverLoadMore,
             feedEvents, feedLoading, feedError, feedHasMore, feedLoad, feedLoadMore,
         };
     },
@@ -662,15 +664,12 @@ export default {
             peopleTimeout: null,
             reports: [],
             reportsLoading: false,
-            moderatorFlag: false,
+            isModerator: false,
         };
     },
     computed: {
         canSeeFeed() {
             return Boolean(this.$store.state.loggedIn);
-        },
-        isModerator() {
-            return this.moderatorFlag;
         },
         featuredLists() {
             return this.discoverLists.filter(l => l.featured);
@@ -754,7 +753,7 @@ export default {
         async fetchModeratorFlag() {
             try {
                 const data = await fetchJson('/api/auth/me');
-                this.moderatorFlag = Boolean(data.isModerator);
+                this.isModerator = Boolean(data.isModerator);
             } catch {
                 this.moderatorFlag = false;
             }
