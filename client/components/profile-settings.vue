@@ -230,6 +230,8 @@
 </template>
 
 <script>
+import { fetchJson } from '../utils/utils';
+
 export default {
     name: 'ProfileSettings',
     data() {
@@ -282,8 +284,13 @@ export default {
                 event.target.value = '';
             }
         },
-        removeAvatar() {
-            this.$store.commit('updatePublicProfile', { avatarUrl: '' });
+        async removeAvatar() {
+            try {
+                await fetchJson('/api/profile/avatar', { method: 'DELETE' });
+                this.$store.commit('updatePublicProfile', { avatarUrl: '' });
+            } catch {
+                this.avatarError = 'Failed to remove avatar';
+            }
         },
     },
 };

@@ -380,6 +380,20 @@ router.post('/imageUpload', (req, res) => {
     authenticateUser(req, res, imageUpload);
 });
 
+router.delete('/api/profile/avatar', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        try {
+            if (!user.library) user.library = {};
+            if (!user.library.publicProfile) user.library.publicProfile = {};
+            user.library.publicProfile.avatarUrl = '';
+            await db.users.save(user);
+            return res.json({ ok: true });
+        } catch (e) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
 router.post('/api/profile/avatar', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         const form = formidable.formidable({ maxFiles: 1, maxFileSize: 2 * 1024 * 1024 });
