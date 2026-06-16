@@ -17,6 +17,18 @@
     padding-bottom: 28px;
 }
 
+.accountSectionTitle {
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 8px;
+}
+
+.accountSectionText {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin: 0 0 14px;
+}
+
 .accountFieldGroup {
     display: flex;
     flex-direction: column;
@@ -183,6 +195,17 @@
             </form>
         </section>
 
+        <section class="accountSection">
+            <h3 class="accountSectionTitle">Library backup</h3>
+            <template v-if="hasBackup">
+                <p class="accountSectionText">Download your full gear library as a JSON file.</p>
+                <button class="lpButton" @click="downloadBackup" :disabled="backupLoading">
+                    {{ backupLoading ? 'Preparing…' : 'Download backup' }}
+                </button>
+            </template>
+            <upgrade-prompt v-else tier="trail" feature="managedBackups" mode="inline" />
+        </section>
+
         <profileSettings />
         <creatorLinks />
     </modal>
@@ -194,8 +217,10 @@ import modal from './modal.vue';
 import spinner from './spinner.vue';
 import profileSettings from './profile-settings.vue';
 import creatorLinks from './creator-links.vue';
+import upgradePrompt from './upgrade-prompt.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'Account',
@@ -205,6 +230,7 @@ export default {
         spinner,
         profileSettings,
         creatorLinks,
+        upgradePrompt,
     },
     data() {
         return {
@@ -215,6 +241,7 @@ export default {
             newPassword: '',
             confirmNewPassword: '',
             shown: false,
+            backupLoading: false,
         };
     },
     computed: {
@@ -223,6 +250,9 @@ export default {
         },
         username() {
             return this.$store.state.loggedIn;
+        },
+        hasBackup() {
+            return this.library && hasFeature(this.library.entitlements, FEATURES.MANAGED_BACKUPS);
         },
     },
     mounted() {
@@ -234,6 +264,24 @@ export default {
         unregisterDialogOpener('account');
     },
     methods: {
+        async downloadBackup() {
+            this.backupLoading = true;
+            try {
+                const res = await fetch('/api/backup', { credentials: 'same-origin' });
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const cd = res.headers.get('Content-Disposition') || '';
+                const match = cd.match(/filename="([^"]+)"/);
+                a.href = url;
+                a.download = match ? match[1] : 'justpack-backup.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch {
+                // silent — user sees nothing happened
+            }
+            this.backupLoading = false;
+        },
         updateAccount() {
             this.errors = [];
 
