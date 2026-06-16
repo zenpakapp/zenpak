@@ -745,11 +745,11 @@ details[open] .lpWelcomeFaqQ::after {
                 <div class="lpWelcomeHeroCopy">
                     <span class="lpWelcomeEyebrow">JustPack</span>
                     <h1 class="lpWelcomeHeadline">
-                        Pack lighter.
-                        <span>Hike further.</span>
+                        Pack faster.
+                        <span>Leave lighter.</span>
                     </h1>
                     <p class="lpWelcomeDeck">
-                        Build your gear library, build pack lists, track your base weight to the gram — and share lists with the community.
+                        Build your gear library, create pack lists, track your weight to the gram — and share with the community.
                     </p>
                     <div class="lpWelcomeStats">
                         <div class="lpWelcomeStat">
@@ -833,7 +833,7 @@ details[open] .lpWelcomeFaqQ::after {
                             Create an account
                         </h2>
                         <p class="lpWelcomeCardText">
-                            Save your lists online, keep them synced, and start with a setup that still feels like classic LighterPack.
+                            Save your lists online, sync across devices, and get started in minutes.
                         </p>
                         <a href="/api/auth/google" class="lpButtonGoogle">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
