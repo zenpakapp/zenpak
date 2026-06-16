@@ -69,19 +69,23 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
+const passport = require('passport');
 const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
 const notificationEndpoints = require('./server/notification-endpoints.js');
 const reportEndpoints = require('./server/report-endpoints.js');
+const oauthEndpoints = require('./server/oauth.js');
 const views = require('./server/views.js');
 
 db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err }));
 
+app.use(passport.initialize());
 app.use('/', endpoints);
 app.use('/', moderationEndpoints);
 app.use('/api/notifications', notificationEndpoints);
 app.use('/api/reports', reportEndpoints);
+app.use('/', oauthEndpoints);
 app.use('/', views);
 
 logger.info("Starting up Lighterpack...");

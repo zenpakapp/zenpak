@@ -112,10 +112,10 @@ const verifyPassword = function (username, password) {
 };
 
 const generateSession = function (req, res, user, callback) {
-    crypto.randomBytes(48, (ex, buf) => {
+    crypto.randomBytes(48, async (ex, buf) => {
         const token = buf.toString('hex');
         user.token = token;
-        db.users.save(user);
+        await db.users.save(user);
         res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
         callback(req, res, user);
     });

@@ -72,7 +72,15 @@ function collection(name) {
         save(doc, callback) {
             const { _id, ...rest } = doc;
             const filter = _id ? { _id: normalizeId(_id) } : { _id: new ObjectId() };
-            const update = { $set: rest };
+            const setFields = {};
+            const unsetFields = {};
+            for (const [k, v] of Object.entries(rest)) {
+                if (v === undefined) unsetFields[k] = '';
+                else setFields[k] = v;
+            }
+            const update = Object.keys(unsetFields).length
+                ? { $set: setFields, $unset: unsetFields }
+                : { $set: setFields };
             const options = { upsert: true, returnDocument: 'after' };
 
             const op = getCollection(name)

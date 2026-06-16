@@ -25,7 +25,9 @@ registerAppEventHandlers({
         if (message) {
             store.commit('pushGlobalAlert', { message });
         }
-        redirect('/signin');
+        if (window.location.pathname !== '/welcome') {
+            redirect('/welcome');
+        }
     },
     onGlobalAlert(alert) {
         store.commit('pushGlobalAlert', alert);

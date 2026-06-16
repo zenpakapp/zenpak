@@ -64,6 +64,7 @@ const store = createStore({
         },
         signout(state) {
             clearCookie('lp');
+            fetch('/api/auth/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
             state.library = false; // duplicate logic
             state.loggedIn = false; // duplicate logic
         },
@@ -507,15 +508,16 @@ const store = createStore({
     },
     actions: {
         init(context) {
-            if (readCookie('lp')) {
-                return context.dispatch('loadRemote');
-            } if (hasLocalLibrary()) {
-                return context.dispatch('loadLocal');
-            }
-            return new Promise((resolve, reject) => {
-                context.commit('setLoggedIn', false);
-                context.commit('clearLibraryData');
-                resolve();
+            return context.dispatch('loadRemote').catch((error) => {
+                if (error && (error.statusCode === 401 || error.statusCode === 404)) {
+                    if (hasLocalLibrary()) {
+                        return context.dispatch('loadLocal');
+                    }
+                    context.commit('setLoggedIn', false);
+                    context.commit('clearLibraryData');
+                    return Promise.resolve();
+                }
+                return Promise.reject(error);
             });
         },
         loadLocal(context) {
@@ -523,6 +525,20 @@ const store = createStore({
             context.commit('loadLibraryData', libraryData);
             context.commit('setSaveType', 'local');
             context.commit('setLoggedIn', false);
+        },
+        saveRemoteWithTemplate(context, templateData) {
+            context.commit('loadLibraryData', JSON.stringify(templateData));
+            context.commit('setSaveType', 'remote');
+            const saveData = JSON.stringify(context.state.library.save());
+            return fetchJson('/saveLibrary/', {
+                method: 'POST',
+                body: JSON.stringify({ syncToken: context.state.syncToken, username: context.state.loggedIn, data: saveData }),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+            }).then((response) => {
+                context.commit('setSyncToken', response.syncToken);
+                context.commit('setLastSaveData', saveData);
+            });
         },
         loadRemote(context) {
             return fetchJson('/signin', {
@@ -541,12 +557,8 @@ const store = createStore({
                 .catch((error) => {
                     if (error && error.statusCode === 401) {
                         notifyUnauthorized(error.message);
-                        return Promise.resolve();
                     }
-
-                    return Promise.reject(error && error.message
-                        ? error.message
-                        : 'An error occurred while fetching your data, please try again later.');
+                    return Promise.reject(error);
                 });
         },
     },

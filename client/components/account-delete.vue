@@ -90,7 +90,7 @@ export default {
                 .then((response) => {
                     this.deleting = false;
                     this.$store.commit('signout');
-                    this.$router.push('/signin');
+                    this.$router.push('/welcome');
                 })
                 .catch((err) => {
                     this.errors = err;

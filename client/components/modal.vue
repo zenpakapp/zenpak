@@ -194,8 +194,9 @@
 
     &.lpBlackout {
         animation: none;
-        background: url("/images/lp_bg2.jpg") 50% 50%;
-        background-size: cover;
+        background:
+            linear-gradient(135deg, rgba(19, 57, 37, 0.88), rgba(45, 122, 79, 0.72)),
+            url("/images/lp_bg2.jpg") 50% 30% / cover no-repeat;
         opacity: 1;
     }
 

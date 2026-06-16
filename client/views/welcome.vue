@@ -646,6 +646,96 @@ details[open] .lpWelcomeFaqQ::after {
     }
 }
 
+.lpButtonGoogle {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text;
+    display: flex;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-medium;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+    min-height: 44px;
+    text-decoration: none;
+    transition: border-color 0.15s;
+    width: 100%;
+
+    &:hover {
+        border-color: $color-accent;
+    }
+}
+
+.lpOAuthDivider {
+    align-items: center;
+    color: $color-text-muted;
+    display: flex;
+    font-size: $fontSize-xs;
+    gap: 10px;
+    margin: 14px 0;
+    text-transform: uppercase;
+
+    &::before,
+    &::after {
+        background: $color-border;
+        content: '';
+        flex: 1;
+        height: 1px;
+    }
+}
+
+.lpOAuthSetup {
+    align-items: center;
+    background: rgba(0, 0, 0, 0.55);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.lpOAuthSetupCard {
+    background: $color-surface;
+    border-radius: $radius-lg;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    max-width: 420px;
+    padding: 40px;
+    width: 90%;
+}
+
+.lpOAuthSetupTitle {
+    font-size: 24px;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 8px;
+}
+
+.lpOAuthSetupText {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin: 0 0 24px;
+}
+
+.lpOAuthSetupInput {
+    background: $color-bg;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-md;
+    box-sizing: border-box;
+    font-size: $fontSize-base;
+    padding: 10px 14px;
+    transition: border-color 0.15s;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
+}
+
 </style>
 
 <template>
@@ -745,6 +835,16 @@ details[open] .lpWelcomeFaqQ::after {
                         <p class="lpWelcomeCardText">
                             Save your lists online, keep them synced, and start with a setup that still feels like classic LighterPack.
                         </p>
+                        <a href="/api/auth/google" class="lpButtonGoogle">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+                                <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+                                <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                                <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                            </svg>
+                            Continue with Google
+                        </a>
+                        <div class="lpOAuthDivider"><span>or</span></div>
                         <registerForm />
                     </section>
 
@@ -786,6 +886,37 @@ details[open] .lpWelcomeFaqQ::after {
             <globalAlerts />
             <blackoutFooter />
         </div>
+
+        <div v-if="showOnboarding" class="lpOAuthSetup">
+            <div class="lpOAuthSetupCard">
+                <templatePicker @select="onTemplateSelect" @dismiss="onTemplateSkip" />
+            </div>
+        </div>
+
+        <div v-if="showUsernameSetup" class="lpOAuthSetup">
+            <div class="lpOAuthSetupCard">
+                <h2 class="lpOAuthSetupTitle">Choose your username</h2>
+                <p class="lpOAuthSetupText">Pick a unique username to complete your account setup.</p>
+                <div class="lpError" v-if="setupError">{{ setupError }}</div>
+                <input
+                    v-model="setupUsername"
+                    class="lpOAuthSetupInput"
+                    type="text"
+                    placeholder="Username"
+                    maxlength="20"
+                    @keyup.enter="submitUsername"
+                />
+                <div class="lpButtons" style="margin-top: 16px;">
+                    <button
+                        class="lpButton lpButtonPrimary"
+                        :disabled="setupLoading"
+                        @click="submitUsername"
+                    >
+                        {{ setupLoading ? 'Saving…' : 'Confirm username' }}
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -794,6 +925,7 @@ import blackoutFooter from '../components/blackout-footer.vue';
 import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
 import SigninForm from '../components/signin-form.vue';
+import templatePicker from '../components/template-picker.vue';
 import { push } from '../services/navigation';
 
 export default {
@@ -803,6 +935,7 @@ export default {
         globalAlerts,
         registerForm,
         SigninForm,
+        templatePicker,
     },
     data() {
         return {
@@ -812,12 +945,70 @@ export default {
                 { id: 'list', label: 'Pack list', src: '/images/screenshot-list.png' },
                 { id: 'community', label: 'Community', src: '/images/screenshot-community.png' },
             ],
+            setupUsername: '',
+            setupToken: '',
+            setupError: '',
+            setupLoading: false,
+            showUsernameSetup: false,
+            showOnboarding: false,
         };
     },
     created() {
+        const query = this.$route?.query || {};
+        if (query.setup === 'username') return;
+        if (query.onboarding === '1' && this.$store.state.library) {
+            this.showOnboarding = true;
+            return;
+        }
         if (this.$store.state.library) {
             push('/');
         }
+    },
+    mounted() {
+        const getCookie = (name) => {
+            const c = document.cookie.split('; ').find((r) => r.startsWith(`${name}=`));
+            return c ? decodeURIComponent(c.split('=')[1]) : '';
+        };
+        const token = getCookie('oauth_setup_token');
+        if (token) {
+            this.setupToken = token;
+            this.setupUsername = getCookie('oauth_setup_suggested') || '';
+            this.showUsernameSetup = true;
+            document.cookie = 'oauth_setup_token=; path=/; max-age=0';
+            document.cookie = 'oauth_setup_suggested=; path=/; max-age=0';
+        }
+    },
+    methods: {
+        async onTemplateSelect(templateData) {
+            if (templateData) {
+                await this.$store.dispatch('saveRemoteWithTemplate', templateData);
+            }
+            push('/');
+        },
+        onTemplateSkip() {
+            push('/');
+        },
+        async submitUsername() {
+            this.setupLoading = true;
+            this.setupError = '';
+            try {
+                const res = await fetch('/api/auth/google/set-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ username: this.setupUsername, setupToken: this.setupToken }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Error');
+                document.cookie = 'oauth_setup_token=; path=/; max-age=0';
+                document.cookie = 'oauth_setup_suggested=; path=/; max-age=0';
+                window.location.replace('/welcome?onboarding=1');
+            } catch (e) {
+                this.setupError = e.message;
+            } finally {
+                this.setupLoading = false;
+            }
+        },
     },
 };
 </script>

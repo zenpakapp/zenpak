@@ -131,7 +131,7 @@ export default {
         },
         signout() {
             this.$store.commit('signout');
-            this.$router.push('/signin');
+            this.$router.push('/welcome');
         },
     },
 };
