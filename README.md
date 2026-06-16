@@ -1,39 +1,37 @@
-# LighterPack+
+# JustPack
 
-> The actively maintained fork of LighterPack — plan lighter, share better, stay open.
+> Pack faster. Leave lighter.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-## Why this fork
+JustPack is an open-source packing tool for hikers, travelers, cyclists, and anyone who wants to pack smarter. Built on the foundation of [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly.
 
-LighterPack hasn't seen active development in years. This fork picks up where it left off — same familiar tool, new features the community has been asking for, and a commitment to keeping it running long-term.
+## Features
 
-## What's new
-
-- **Image upload** — attach photos to any gear item
-- **Advanced gear library** — search, filter, and reuse items across lists
-- **Gear room** — shared gear modal for quick item management
-- **Public sharing controls** — private, link-only, or discoverable
+- **Gear library** — build a reusable catalog of your gear, weights, and photos
+- **Pack lists** — organize by category, track base weight to the gram
+- **Public sharing** — private, link-only, or discoverable by the community
 - **Public profiles** — showcase your gear philosophy and featured lists
-- **Improved CSV import/export** — full round-trip fidelity
-- **Visual refresh** — cleaner UI, fixed popovers, consistent controls
+- **Community discover** — browse and copy lists from other packers
+- **Image upload** — attach photos to any gear item
+- **CSV import/export** — full round-trip fidelity with lighterpack.com
 
 ## Coming soon
 
-LighterPack+ will offer optional paid plans on the hosted service at **lighterpack.app** (coming soon):
+Optional paid plans on the hosted service at **justpack.app**:
 
-- **Supporter** (~3 €/month) — managed backups, enhanced public profile, supporter badge
-- **Creator** (~8 €/month) — affiliate links per item, public collections, lightweight insights
+- **Supporter** (~3 €/month) — managed backups, enhanced profile, supporter badge
+- **Creator** (~8 €/month) — affiliate links per item, public collections, insights
 
-Self-hosting remains fully free and open-source. Paid plans are for the hosted service only.
+Self-hosting remains fully free and open-source.
 
 ## Migrating from lighterpack.com
 
-1. On lighterpack.com, go to **Settings → Export CSV** and download your library.
-2. Create an account on LighterPack+.
-3. Go to **Settings → Import CSV** and upload the file.
+1. On lighterpack.com → **Settings → Export CSV**
+2. Create an account on JustPack
+3. **Settings → Import CSV** — upload the file
 
-Your lists, items, weights, and notes will carry over.
+Lists, items, weights, and notes carry over.
 
 ## Self-hosting
 
@@ -44,8 +42,8 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:8080`. The app expects MongoDB at `localhost/lighterpack` by default.
+Open `http://localhost:8080`. MongoDB expected at `localhost/lighterpack`.
 
 ## License
 
-LighterPack+ is an independent open-source fork built from [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly. Licensed under [GPL v2](LICENSE). Not affiliated with lighterpack.com.
+Licensed under [GPL v2](LICENSE). Built from [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly. Not affiliated with lighterpack.com.
