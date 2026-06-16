@@ -16,12 +16,12 @@ JustPack is an open-source packing tool for hikers, travelers, cyclists, and any
 - **Image upload** — attach photos to any gear item
 - **CSV import/export** — full round-trip fidelity with lighterpack.com
 
-## Coming soon
+## Pricing (hosted service)
 
-Optional paid plans on the hosted service at **justpack.app**:
+The app is free to use. Optional paid plans on **justpack.app** (coming soon):
 
-- **Supporter** (~3 €/month) — managed backups, enhanced profile, supporter badge
-- **Creator** (~8 €/month) — affiliate links per item, public collections, insights
+- **Trail** (~3 €/month) — managed backups, enhanced public profile, supporter badge
+- **Guide** (~8 €/month) — affiliate links per item, public collections, insights
 
 Self-hosting remains fully free and open-source.
 
