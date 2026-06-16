@@ -251,7 +251,7 @@
             <h2 v-if="error === 'Profile not found.'">This trail goes nowhere.</h2>
             <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">The profile you're looking for doesn't exist.</p>
             <h2 v-else>{{ error }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">← Back to LighterPack+</router-link>
+            <router-link to="/" class="lpPublicErrorBack">← Back to JustPack</router-link>
         </div>
         <template v-else-if="profile">
 
@@ -425,7 +425,7 @@ export default {
     methods: {
         updateDocumentMeta() {
             if (!this.profile) return;
-            document.title = `${this.profile.displayName || 'Public profile'} - LighterPack+`;
+            document.title = `${this.profile.displayName || 'Public profile'} - JustPack`;
             let robots = document.querySelector('meta[name="robots"]');
             if (!this.profile.allowSearchIndexing) {
                 if (!robots) {

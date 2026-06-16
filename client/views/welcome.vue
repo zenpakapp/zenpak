@@ -743,7 +743,7 @@ details[open] .lpWelcomeFaqQ::after {
         <section class="lpWelcomeHero">
             <div class="lpContainer lpWelcomeHeroInner">
                 <div class="lpWelcomeHeroCopy">
-                    <span class="lpWelcomeEyebrow">LighterPack+</span>
+                    <span class="lpWelcomeEyebrow">JustPack</span>
                     <h1 class="lpWelcomeHeadline">
                         Pack lighter.
                         <span>Hike further.</span>

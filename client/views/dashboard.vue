@@ -211,7 +211,7 @@
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
-                    LighterPack+ is an independent open-source continuation of <a class="lpHref" href="https://lighterpack.com" target="_blank" rel="noopener noreferrer">LighterPack</a>.
+                    JustPack is an independent open-source packing tool built on <a class="lpHref" href="https://lighterpack.com" target="_blank" rel="noopener noreferrer">LighterPack</a>.
                 </div>
                 <div class="lpContact">
                     <a class="lpHref" href="https://github.com/fxbenard/lighterpack" target="_blank" rel="noopener noreferrer">Open source</a>

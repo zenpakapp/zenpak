@@ -276,13 +276,13 @@
         <div v-else-if="error" class="lpPublicError">
             <div class="lpPublicErrorIcon">×</div>
             <h2>{{ error }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">← Back to LighterPack+</router-link>
+            <router-link to="/" class="lpPublicErrorBack">← Back to JustPack</router-link>
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
                 <router-link v-if="backTo === '/community'" to="/community">← Back to Community</router-link>
                 <router-link v-else-if="username" :to="`/u/${username}`">← {{ username }}'s profile</router-link>
-                <router-link v-else to="/">← Back to LighterPack+</router-link>
+                <router-link v-else to="/">← Back to JustPack</router-link>
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
@@ -527,7 +527,7 @@ export default {
         },
         updateDocumentMeta() {
             if (!this.list) return;
-            document.title = `${this.list.name || 'Public list'} - LighterPack+`;
+            document.title = `${this.list.name || 'Public list'} - JustPack`;
             let robots = document.querySelector('meta[name="robots"]');
             if (!this.list.allowSearchIndexing) {
                 if (!robots) {

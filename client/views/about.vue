@@ -75,9 +75,9 @@
 <template>
     <div class="lpAbout">
         <nav class="lpAboutNav">
-            <router-link to="/">← Back to LighterPack+</router-link>
+            <router-link to="/">← Back to JustPack</router-link>
         </nav>
-        <h1>LighterPack+</h1>
+        <h1>JustPack</h1>
         <p>An independent, open-source packing tool — built by one person, kept alive by the community.</p>
 
         <h2>Why this project exists</h2>
