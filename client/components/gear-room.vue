@@ -444,6 +444,7 @@
             @batch-swap-name-desc="batchSwapNameDesc"
             @batch-delete="batchDelete"
             @batch-category="applyBatchCategory"
+            @batch-brand="applyBatchBrand"
             @batch-tag="applyBatchTag"
             @batch-merge="applyMerge"
             @batch-add-to-list="applyBatchAddToList"
@@ -662,6 +663,15 @@ export default {
                 .filter(i => ids.has(i.id))
                 .forEach(item => {
                     this.$store.commit('updateItem', { ...item, category });
+                });
+            this.selected.splice(0, this.selected.length);
+        },
+        applyBatchBrand(brand) {
+            const ids = new Set(this.selected);
+            this.allItems
+                .filter(i => ids.has(i.id))
+                .forEach(item => {
+                    this.$store.commit('updateItem', { ...item, brand });
                 });
             this.selected.splice(0, this.selected.length);
         },

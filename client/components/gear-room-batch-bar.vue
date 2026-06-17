@@ -194,6 +194,19 @@
             <button class="lpGearRoomBatchApply" @click="applyCategory">Apply</button>
         </div>
 
+        <!-- Panel: Set brand -->
+        <div v-else-if="activeBatchPanel === 'brand'" class="lpGearRoomBatchPanel">
+            <div class="lpGearRoomBatchPanelHeader">
+                <div class="lpGearRoomBatchPanelTitle">Set brand for {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+            </div>
+            <div class="lpGearRoomBatchPanelRow">
+                <span class="lpGearRoomBatchPanelLabel">Brand</span>
+                <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia" @keydown.enter="applyBrand">
+            </div>
+            <button class="lpGearRoomBatchApply" @click="applyBrand">Apply</button>
+        </div>
+
         <!-- Panel: Add tag -->
         <div v-else-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
@@ -259,6 +272,7 @@
             <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? 'Close compare' : '⇔ Compare' }}</button>
             <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">Swap name ↔ desc</button>
             <button class="lpGearRoomBatchAction" @click="togglePanel('category')">Set type</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('brand')">Set brand</button>
             <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">Add tag</button>
             <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">Add to list</button>
             <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">Delete</button>
@@ -302,6 +316,7 @@ export default {
         'batch-swap-name-desc',
         'batch-delete',
         'batch-category',
+        'batch-brand',
         'batch-tag',
         'batch-merge',
         'batch-add-to-list',
@@ -311,6 +326,7 @@ export default {
         return {
             activeBatchPanel: null,
             batchCategory: '',
+            batchBrand: '',
             batchTag: '',
             mergeKeepId: null,
             batchListId: '',
@@ -351,6 +367,11 @@ export default {
         applyCategory() {
             this.$emit('batch-category', this.batchCategory);
             this.batchCategory = '';
+            this.activeBatchPanel = null;
+        },
+        applyBrand() {
+            this.$emit('batch-brand', this.batchBrand.trim());
+            this.batchBrand = '';
             this.activeBatchPanel = null;
         },
         applyTag() {

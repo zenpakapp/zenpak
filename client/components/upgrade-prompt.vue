@@ -161,7 +161,6 @@
                         </button>
                     </div>
 
-                    <a class="lpHref" href="/about" target="_blank">Pack light, give light →</a>
                 </div>
 
                 <div v-else class="lpUpgradeConfirm">
@@ -184,8 +183,9 @@ const TRAIL_BENEFITS = [
 ];
 
 const GUIDE_BENEFITS = [
-    'Everything in Trail',
-    'Full public profile (bio, gear philosophy, links)',
+    'Public profile with avatar, bio, and links',
+    'Guide badge on your profile and lists',
+    'Library backup and restore',
     'Insights: views, copies, top lists',
     'Affiliate links and promo codes per item',
     'Automatic affiliate disclosure',
@@ -195,7 +195,7 @@ const INLINE_TEXTS = {
     publicProfile: 'Trail — Share your gear identity',
     profileCustomization: 'Trail — Personalize your profile',
     managedBackups: 'Trail — Keep your data safe',
-    creatorInsights: "Guide — See who's reading your lists",
+    creatorInsights: "Your lists inspire others — see who reads them and earn from what you recommend.",
     creatorLinks: 'Guide — Add your affiliate links',
     promoCode: 'Guide — Add a promo code',
 };
