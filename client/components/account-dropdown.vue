@@ -88,6 +88,7 @@
                         <span class="accountDropdownUsername">{{ username }}</span>
                     </div>
                     <a class="accountDropdownItem" @click="showAccount">Account Settings</a>
+                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">My Profile</router-link>
                     <a class="accountDropdownItem" @click="showHelp">Help</a>
                     <hr class="accountDropdownDivider">
                     <a class="accountDropdownItem accountDropdownDanger" @click="signout">Sign Out</a>
@@ -117,6 +118,11 @@ export default {
         },
         username() {
             return this.$store.state.loggedIn;
+        },
+        isTrail() {
+            const lib = this.$store.state.library;
+            const plan = lib && lib.entitlements && lib.entitlements.plan;
+            return plan === 'supporter' || plan === 'creator';
         },
         themeLabel() {
             return { auto: '⚙ Auto', light: '☀ Light', dark: '☾ Dark' }[this.mode];

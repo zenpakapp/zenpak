@@ -90,11 +90,11 @@
         <h2>Plans</h2>
         <ul>
             <li><strong>Base</strong> — Free. The full app. No paywalled core features.</li>
-            <li><strong>Trail</strong> — Support the project. Get a public profile with avatar, bio, and links. Managed backups.</li>
+            <li><strong>Trail</strong> — Support the project. Get a public profile with avatar, bio, and links. Trail badge on your profile and lists. Download and restore your full gear library as a JSON backup.</li>
             <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
         </ul>
 
-        <p class="lpAboutBuiltBy">Built by <a class="lpHref" href="https://github.com/fxbenard" target="_blank" rel="noopener noreferrer">fxbenard</a> — currently preparing for the Camino de Santiago.</p>
+        <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago.</p>
 
         <div class="lpAboutActions">
             <a class="lpAboutKofi" href="https://ko-fi.com/fxbenard" target="_blank" rel="noopener noreferrer">

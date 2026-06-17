@@ -66,7 +66,7 @@
             </div>
             <p class="creatorLinksNote">Affiliate links are shown only on your public pages.</p>
         </template>
-        <upgrade-prompt v-else tier="guide" feature="creatorLinks" mode="inline" />
+        <p v-else class="creatorLinksNote">Available on the Guide plan.</p>
 
     </section>
 </template>

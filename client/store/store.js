@@ -76,13 +76,13 @@ const store = createStore({
             try {
                 libraryData = JSON.parse(libraryData);
                 library.load(libraryData);
-                state.library = library;
             } catch (err) {
                 state.globalAlerts.push({
                     id: `${Date.now()}-${Math.random()}`,
                     message: 'An error occurred while loading your data.',
                 });
             }
+            state.library = library;
             state.lastSaveData = JSON.stringify(library.save());
         },
         clearLibraryData(state) {
@@ -528,6 +528,20 @@ const store = createStore({
         },
         saveRemoteWithTemplate(context, templateData) {
             context.commit('loadLibraryData', JSON.stringify(templateData));
+            context.commit('setSaveType', 'remote');
+            const saveData = JSON.stringify(context.state.library.save());
+            return fetchJson('/saveLibrary/', {
+                method: 'POST',
+                body: JSON.stringify({ syncToken: context.state.syncToken, username: context.state.loggedIn, data: saveData }),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+            }).then((response) => {
+                context.commit('setSyncToken', response.syncToken);
+                context.commit('setLastSaveData', saveData);
+            });
+        },
+        restoreFromBackup(context, libraryData) {
+            context.commit('loadLibraryData', JSON.stringify(libraryData));
             context.commit('setSaveType', 'remote');
             const saveData = JSON.stringify(context.state.library.save());
             return fetchJson('/saveLibrary/', {

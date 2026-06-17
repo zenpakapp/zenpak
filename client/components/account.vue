@@ -128,6 +128,43 @@
     }
 }
 
+.accountBackupActions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.accountRestoreConfirm {
+    background: rgba(var(--color-danger-rgb), 0.06);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+    border-radius: $radius-md;
+    margin-top: 14px;
+    padding: 14px 16px;
+}
+
+.accountRestoreConfirmText {
+    color: $color-text;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 12px;
+}
+
+.accountRestoreConfirmActions {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.lpButtonDanger {
+    background: $color-danger;
+    border-color: $color-danger;
+    color: #fff;
+
+    &:hover {
+        filter: brightness(0.9);
+    }
+}
+
 @media (max-width: 640px) {
     .accountActions {
         flex-direction: column;
@@ -198,10 +235,23 @@
         <section class="accountSection">
             <h3 class="accountSectionTitle">Library backup</h3>
             <template v-if="hasBackup">
-                <p class="accountSectionText">Download your full gear library as a JSON file.</p>
-                <button class="lpButton" @click="downloadBackup" :disabled="backupLoading">
-                    {{ backupLoading ? 'Preparing…' : 'Download backup' }}
-                </button>
+                <p class="accountSectionText">Download or restore your full gear library.</p>
+                <div class="accountBackupActions">
+                    <button class="lpButton" @click="downloadBackup" :disabled="backupLoading">
+                        {{ backupLoading ? 'Preparing…' : 'Download backup' }}
+                    </button>
+                    <button class="lpButton lpButtonSecondary" @click="triggerRestoreFile" :disabled="restoreLoading">
+                        {{ restoreLoading ? 'Restoring…' : 'Restore from backup' }}
+                    </button>
+                </div>
+                <div v-if="restoreConfirm" class="accountRestoreConfirm">
+                    <p class="accountRestoreConfirmText">⚠ This will replace your entire library. This cannot be undone.</p>
+                    <div class="accountRestoreConfirmActions">
+                        <button class="lpButton lpButtonDanger" @click="confirmRestore">Yes, restore</button>
+                        <a class="accountCancelLink" @click="restoreConfirm = false; restoreFile = null">Cancel</a>
+                    </div>
+                </div>
+                <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />
             </template>
             <upgrade-prompt v-else tier="trail" feature="managedBackups" mode="inline" />
         </section>
@@ -242,6 +292,9 @@ export default {
             confirmNewPassword: '',
             shown: false,
             backupLoading: false,
+            restoreLoading: false,
+            restoreConfirm: false,
+            restoreFile: null,
         };
     },
     computed: {
@@ -281,6 +334,31 @@ export default {
                 // silent — user sees nothing happened
             }
             this.backupLoading = false;
+        },
+        triggerRestoreFile() {
+            this.$refs.restoreInput.value = '';
+            this.$refs.restoreInput.click();
+        },
+        onRestoreFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            this.restoreFile = file;
+            this.restoreConfirm = true;
+        },
+        async confirmRestore() {
+            if (!this.restoreFile) return;
+            this.restoreConfirm = false;
+            this.restoreLoading = true;
+            try {
+                const text = await this.restoreFile.text();
+                const data = JSON.parse(text);
+                if (!data.library) throw new Error('Invalid backup file');
+                await this.$store.dispatch('restoreFromBackup', data.library);
+            } catch {
+                // silent on parse/network errors
+            }
+            this.restoreFile = null;
+            this.restoreLoading = false;
         },
         updateAccount() {
             this.errors = [];

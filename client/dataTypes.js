@@ -669,7 +669,7 @@ Library.prototype.load = function (serializedLibrary) {
 
     this.version = serializedLibrary.version;
     this.sequence = serializedLibrary.sequence;
-    this.defaultListId = serializedLibrary.defaultListId;
+    this.defaultListId = serializedLibrary.defaultListId || (this.lists.length ? this.lists[0].id : 1);
 };
 
 Library.prototype.upgrade01to02 = function (serializedLibrary) {

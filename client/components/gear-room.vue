@@ -582,10 +582,10 @@ export default {
             return items;
         },
         allSelected() {
-            return this.selected.length === this.filteredItems.length && this.filteredItems.length > 0;
+            return this.filteredItems.length > 0 && this.filteredItems.every(i => this.selected.includes(i.id));
         },
         someSelected() {
-            return this.selected.length > 0 && this.selected.length < this.filteredItems.length;
+            return this.filteredItems.some(i => this.selected.includes(i.id)) && !this.allSelected;
         },
         totalWeightDisplay() {
             const totalMg = this.filteredItems.reduce((s, i) => s + (i.weight || 0), 0);
@@ -631,9 +631,10 @@ export default {
         },
         toggleSelectAll() {
             if (this.allSelected) {
-                this.selected = [];
+                this.selected.splice(0, this.selected.length);
             } else {
-                this.selected = this.filteredItems.map(i => i.id);
+                const ids = this.filteredItems.map(i => i.id);
+                this.selected.splice(0, this.selected.length, ...ids);
             }
         },
         openItemDetail(item) {
@@ -652,7 +653,7 @@ export default {
                 .forEach(item => {
                     this.$store.commit('updateItem', { ...item, name: item.description, description: item.name });
                 });
-            this.selected = [];
+            this.selected.splice(0, this.selected.length);
             this.activeBatchPanel = null;
         },
         applyBatchCategory(category) {
@@ -662,7 +663,7 @@ export default {
                 .forEach(item => {
                     this.$store.commit('updateItem', { ...item, category });
                 });
-            this.selected = [];
+            this.selected.splice(0, this.selected.length);
         },
         applyBatchTag(tag) {
             const ids = new Set(this.selected);
@@ -673,7 +674,7 @@ export default {
                     if (!tags.includes(tag)) tags.push(tag);
                     this.$store.commit('updateItem', { ...item, tags });
                 });
-            this.selected = [];
+            this.selected.splice(0, this.selected.length);
         },
         applyBatchAddToList({ categoryId, itemIds }) {
             const category = this.library.getCategoryById(categoryId);
@@ -686,7 +687,7 @@ export default {
                     dropIndex: category.categoryItems.length,
                 });
             });
-            this.selected = [];
+            this.selected.splice(0, this.selected.length);
         },
         batchDelete() {
             const count = this.selected.length;
@@ -698,7 +699,7 @@ export default {
                         .forEach(item => {
                             this.$store.commit('removeItem', item);
                         });
-                    this.selected = [];
+                    this.selected.splice(0, this.selected.length);
                 },
                 { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
             );
@@ -721,7 +722,7 @@ export default {
                     removeIds.forEach(removeId => {
                         this.$store.commit('mergeItems', { keepId, removeId });
                     });
-                    this.selected = [];
+                    this.selected.splice(0, this.selected.length);
                 },
                 { body: `Merge ${this.selected.length} items into one? The others will be deleted from all lists.` },
             );
