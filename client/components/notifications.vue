@@ -189,8 +189,10 @@ export default {
         toggle() {
             this.open = !this.open;
         },
-        onOutsideClick() {
-            this.open = false;
+        onOutsideClick(e) {
+            if (!this.$el.contains(e.target)) {
+                this.open = false;
+            }
         },
         async markAllRead() {
             try {

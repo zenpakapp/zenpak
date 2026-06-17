@@ -16,14 +16,14 @@ ZenPak is an open-source packing tool for hikers, travelers, pilgrims, cyclists,
 - **Image upload** — attach photos to any gear item
 - **CSV import/export** — full round-trip fidelity with lighterpack.com
 
-## Pricing (hosted service)
+## Plans
 
-The app is free to use. Optional paid plans on **zenpak.app** (coming soon):
+The app is free — self-hosted or on **zenpak.app** (coming soon). Optional plans to support the project:
 
 - **Trail** (~3 €/month) — full library export (JSON), enhanced public profile, supporter badge
 - **Guide** (~8 €/month) — affiliate links, promo codes, and insights (views, copies, clicks)
 
-Self-hosting remains fully free and open-source.
+Self-hosting is always free and open-source. Plans are a way to support the project, not a paywall.
 
 ## Migrating from lighterpack.com
 

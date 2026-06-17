@@ -200,13 +200,15 @@
 
             <list />
 
-            <profile-insights v-if="isGuide" />
-            <upgrade-prompt v-else-if="isSignedIn && !isGuide" tier="guide" feature="creatorInsights" mode="inline" />
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
 
-            <div v-if="isSignedIn && isBase" class="lpSupportZone">
-                <p>Enjoying the app? Support the project and get a public profile to share your picks with the community.</p>
-                <router-link to="/about" class="lpHref">Learn more →</router-link>
+            <div v-if="isSignedIn" class="lpSupportZone">
+                <profile-insights v-if="isGuide" />
+                <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
+                <template v-else>
+                    <p>Enjoying the app? Support the project and get a public profile to share your picks with the community.</p>
+                    <router-link to="/about" class="lpHref">Learn more →</router-link>
+                </template>
             </div>
 
             <div id="lpFooter">
@@ -316,6 +318,10 @@ export default {
         isGuide() {
             const lib = this.$store.state.library;
             return lib && lib.entitlements && lib.entitlements.plan === 'creator';
+        },
+        isTrail() {
+            const lib = this.$store.state.library;
+            return lib && lib.entitlements && lib.entitlements.plan === 'supporter';
         },
         isBase() {
             const lib = this.$store.state.library;

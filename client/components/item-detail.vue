@@ -620,14 +620,28 @@
     position: relative;
 }
 
+.itemDetailAddListHeader {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: 0.06em;
+    padding: 10px 14px 4px;
+    text-transform: uppercase;
+
+    &:not(:first-child) {
+        border-top: 1px solid $color-border;
+        margin-top: 4px;
+        padding-top: 12px;
+    }
+}
+
 .itemDetailAddCreate {
     align-items: stretch;
-    border-top: 1px solid $color-border;
     display: grid;
     gap: 6px;
     grid-template-columns: minmax(0, 1fr);
     margin-top: 0;
-    padding: 8px 10px;
+    padding: 6px 10px 10px;
 }
 
 .itemDetailAddCreateInput {
@@ -808,28 +822,32 @@
                             + Add to list ▾
                         </button>
                         <ul v-if="addToListOpen" class="itemDetailAddDropdown">
-                            <li
-                                v-for="cat in currentListCategories"
-                                :key="cat.id"
-                                :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
-                                @click="addToCategory(cat)"
-                            >
-                                {{ cat.name || 'Unnamed category' }}
-                            </li>
-                            <li class="itemDetailAddCreate">
-                                <div class="itemDetailAddCreateRow">
-                                    <input
-                                        v-model="newCategoryName"
-                                        type="text"
-                                        class="itemDetailAddCreateInput"
-                                        placeholder="New category"
-                                        @keydown.enter.prevent="createCategoryAndAdd"
-                                    >
-                                    <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd">
-                                        Create
-                                    </button>
-                                </div>
-                            </li>
+                            <template v-for="group in allListsWithCategories" :key="group.list.id">
+                                <li class="itemDetailAddListHeader">{{ group.list.name || 'Unnamed list' }}</li>
+                                <li
+                                    v-for="cat in group.categories"
+                                    :key="cat.id"
+                                    :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
+                                    @click="addToCategory(cat)"
+                                >
+                                    {{ cat.name || 'Unnamed category' }}
+                                </li>
+                                <li class="itemDetailAddCreate">
+                                    <div class="itemDetailAddCreateRow">
+                                        <input
+                                            :value="newCategoryNames[group.list.id] || ''"
+                                            type="text"
+                                            class="itemDetailAddCreateInput"
+                                            placeholder="New category"
+                                            @input="newCategoryNames[group.list.id] = $event.target.value"
+                                            @keydown.enter.prevent="createCategoryAndAdd(group.list.id)"
+                                        >
+                                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd(group.list.id)">
+                                            Create
+                                        </button>
+                                    </div>
+                                </li>
+                            </template>
                         </ul>
                     </div>
                     <a class="itemDetailDelete" @click="deleteGear">
@@ -1043,7 +1061,7 @@ export default {
             fetchError: '',
             fetchSuccess: '',
             addToListOpen: false,
-            newCategoryName: '',
+            newCategoryNames: {},
             brandDropdownOpen: false,
             brandActiveIndex: -1,
         };
@@ -1072,11 +1090,13 @@ export default {
             if (!this.item.weight) return '0';
             return weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
         },
-        currentListCategories() {
+        allListsWithCategories() {
             const library = this.$store.state.library;
-            const list = library.getListById(library.defaultListId);
-            if (!list) return [];
-            return list.categoryIds.map((id) => library.getCategoryById(id)).filter(Boolean);
+            if (!library) return [];
+            return library.lists.map(list => ({
+                list,
+                categories: list.categoryIds.map(id => library.getCategoryById(id)).filter(Boolean),
+            }));
         },
         itemUsedInLists() {
             const library = this.$store.state.library;
@@ -1144,7 +1164,7 @@ export default {
             this.shown = false;
             this.editing = false;
             this.addToListOpen = false;
-            this.newCategoryName = '';
+            this.newCategoryNames = {};
         },
         navigateToList(list) {
             this.$store.commit('setDefaultList', list);
@@ -1317,13 +1337,13 @@ export default {
             });
             this.close();
         },
-        createCategoryAndAdd() {
-            if (!this.newCategoryName.trim()) {
-                return;
-            }
+        createCategoryAndAdd(listId) {
+            const name = (this.newCategoryNames[listId] || '').trim();
+            if (!name) return;
             this.$store.commit('createCategoryAndAddItem', {
                 itemId: this.item.id,
-                name: this.newCategoryName,
+                name,
+                listId,
             });
             this.close();
         },

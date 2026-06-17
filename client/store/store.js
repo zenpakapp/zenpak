@@ -189,7 +189,8 @@ const store = createStore({
             }
         },
         createCategoryAndAddItem(state, args) {
-            const list = state.library.getListById(state.library.defaultListId);
+            const listId = args.listId || state.library.defaultListId;
+            const list = state.library.getListById(listId);
             const item = state.library.getItemById(args.itemId);
             const name = String(args.name || '').trim();
 
@@ -208,7 +209,7 @@ const store = createStore({
                 category.addItem({ itemId: item.id });
             }
 
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            list.calculateTotals();
         },
         updateListName(state, updatedList) {
             const list = state.library.getListById(updatedList.id);

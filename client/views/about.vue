@@ -94,11 +94,11 @@
             <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
         </ul>
 
-        <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago.</p>
+        <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago, and one day the Shikoku Henro.</p>
 
         <div class="lpAboutActions">
             <a class="lpAboutKofi" href="https://ko-fi.com/fxbenard" target="_blank" rel="noopener noreferrer">
-                Pack light, give light ☕
+                Pack light, give light 🍵
             </a>
             <button v-if="!showPrompt" class="lpButton lpButtonSecondary" @click="showPrompt = true">
                 I'm interested in Trail or Guide

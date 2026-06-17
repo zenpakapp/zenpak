@@ -6,25 +6,39 @@
     background: $color-surface;
     border: 1px dashed $color-border;
     border-radius: $radius-md;
-    color: $color-text-muted;
     cursor: pointer;
     display: flex;
-    font-size: $fontSize-sm;
-    gap: 8px;
-    padding: 10px 14px;
-    transition: border-color $transitionDurationFast ease, color $transitionDurationFast ease;
+    gap: 12px;
+    justify-content: space-between;
+    padding: 12px 16px;
+    transition: border-color $transitionDurationFast ease;
     width: 100%;
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+
+        .lpUpgradeLockCta {
+            background: $color-accent;
+            color: #fff;
+        }
     }
 }
 
-.lpUpgradeLockIcon {
+.lpUpgradeLockText {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+}
+
+.lpUpgradeLockCta {
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: $radius-sm;
+    color: $color-accent;
     flex-shrink: 0;
-    font-size: 14px;
-    opacity: 0.7;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    padding: 4px 10px;
+    transition: background $transitionDurationFast ease, color $transitionDurationFast ease;
+    white-space: nowrap;
 }
 
 .lpUpgradeModal {
@@ -100,8 +114,8 @@
 <template>
     <div>
         <div v-if="mode === 'inline'" class="lpUpgradeLock" @click="showModal = true">
-            <span class="lpUpgradeLockIcon">🔒</span>
-            <span>{{ inlineText }}</span>
+            <span class="lpUpgradeLockText">{{ inlineText }}</span>
+            <span class="lpUpgradeLockCta">Upgrade to {{ tierLabel }} →</span>
         </div>
 
         <modal :shown="showModal" @hide="closeModal">
