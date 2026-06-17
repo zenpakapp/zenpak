@@ -240,13 +240,13 @@ router.post('/forgotPassword', (req, res) => {
                     user.password = hash;
                     const email = user.email;
 
-                    const message = `Hello ${username},\n Apparently you forgot your password. Here's your new one: \n\n Username: ${username}\n Password: ${newPassword}\n\n If you continue to have problems, please reply to this email with details.\n\n Thanks!`;
+                    const message = `Hello ${username},\n\nHere's your new ZenPak password:\n\n  Username: ${username}\n  Password: ${newPassword}\n\nYou can sign in at https://zenpak.app\n\nIf you need help, reply to this email.\n\n— ZenPak`;
 
                     const mailOptions = {
-                        from: 'LighterPack <info@mg.lighterpack.com>',
+                        from: 'ZenPak <noreply@zenpak.app>',
                         to: email,
-                        'h:Reply-To': 'LighterPack <info@lighterpack.com>',
-                        subject: 'Your new LighterPack password',
+                        'h:Reply-To': 'ZenPak <support@zenpak.app>',
+                        subject: 'Your new ZenPak password',
                         text: message,
                     };
 
@@ -285,13 +285,13 @@ router.post('/forgotUsername', (req, res) => {
         }
         const username = user.username;
 
-        const message = `Hello ${username},\n Apparently you forgot your username. Here It is: \n\n Username: ${username}\n\n If you continue to have problems, please reply to this email with details.\n\n Thanks!`;
+        const message = `Hello,\n\nYour ZenPak username is:\n\n  ${username}\n\nSign in at https://zenpak.app\n\nIf you need help, reply to this email.\n\n— ZenPak`;
 
         const mailOptions = {
-            from: 'LighterPack <info@mg.lighterpack.com>',
+            from: 'ZenPak <noreply@zenpak.app>',
             to: email,
-            'h:Reply-To': 'LighterPack <info@lighterpack.com>',
-            subject: 'Your LighterPack username',
+            'h:Reply-To': 'ZenPak <support@zenpak.app>',
+            subject: 'Your ZenPak username',
             text: message,
         };
 

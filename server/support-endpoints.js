@@ -18,9 +18,9 @@ router.post('/interest', async (req, res) => {
     try {
         const adminEmail = (config.has('adminEmail') && config.get('adminEmail')) || 'fxbenard@gmail.com';
         await sendMail({
-            from: 'LighterPack+ <noreply@lighterpack.app>',
+            from: 'ZenPak <noreply@zenpak.app>',
             to: adminEmail,
-            subject: `[LighterPack+] Interest: ${tier} — ${email}`,
+            subject: `[ZenPak] Interest: ${tier} — ${email}`,
             text: `Email: ${email}\nTier: ${tier}\nMessage: ${message || '(none)'}`,
         });
     } catch {

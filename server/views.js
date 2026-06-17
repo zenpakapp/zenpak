@@ -282,7 +282,7 @@ router.get('/csv/:id', (req, res) => {
     <div class="icon">⛰️</div>
     <h1>Leave no trace.</h1>
     <p>The owner of this list hasn't made it available for download.</p>
-    <a href="/">← Back to LighterPack+</a>
+    <a href="/">← Back to ZenPak</a>
   </div>
 </body>
 </html>`);
