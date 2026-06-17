@@ -385,7 +385,7 @@
 <template>
     <main class="lpCommunity">
         <nav class="lpCommunityNav">
-            <router-link to="/">← Back to JustPack</router-link>
+            <router-link to="/">← Back to ZenPak</router-link>
         </nav>
 
         <div class="lpCommunityHeader">

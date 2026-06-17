@@ -266,7 +266,7 @@ router.get('/csv/:id', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Not available — JustPack</title>
+  <title>Not available — ZenPak</title>
   <style>
     body { background: #F8F7F5; color: #1A1A1A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
     .box { max-width: 400px; padding: 40px 20px; text-align: center; }

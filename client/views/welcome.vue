@@ -743,10 +743,10 @@ details[open] .lpWelcomeFaqQ::after {
         <section class="lpWelcomeHero">
             <div class="lpContainer lpWelcomeHeroInner">
                 <div class="lpWelcomeHeroCopy">
-                    <span class="lpWelcomeEyebrow">JustPack</span>
+                    <span class="lpWelcomeEyebrow">ZenPak</span>
                     <h1 class="lpWelcomeHeadline">
-                        Pack faster.
-                        <span>Leave lighter.</span>
+                        Pack light.
+                        <span>Leave calm.</span>
                     </h1>
                     <p class="lpWelcomeDeck">
                         Build your gear library, create pack lists, track your weight to the gram — and share with the community.

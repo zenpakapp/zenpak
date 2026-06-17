@@ -222,7 +222,7 @@
         </div>
 
         <div v-if="isListNew" id="getStarted">
-            <h2>Welcome to JustPack!</h2>
+            <h2>Welcome to ZenPak!</h2>
             <p>Here's what you need to get started:</p>
             <ol>
                 <li>Click on things to edit them. Give your list and category a name.</li>

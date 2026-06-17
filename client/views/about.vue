@@ -75,9 +75,9 @@
 <template>
     <div class="lpAbout">
         <nav class="lpAboutNav">
-            <router-link to="/">← Back to JustPack</router-link>
+            <router-link to="/">← Back to ZenPak</router-link>
         </nav>
-        <h1>JustPack</h1>
+        <h1>ZenPak</h1>
         <p>An independent, open-source packing tool — built by one person, kept alive by the community.</p>
 
         <h2>Why this project exists</h2>
@@ -85,7 +85,7 @@
         <p>No VC funding, no growth hacking, no dark patterns. Just someone trying to build something useful before heading out on trail.</p>
 
         <h2>Where it's going</h2>
-        <p>This started as a hiking tool. But packing is packing — whether you're heading out on trail, loading up a bike, or flying with carry-on only. The next version of this project is called <strong>JustPack</strong>: a simple, universal packing tool for any kind of trip.</p>
+        <p>This started as a hiking tool. But packing is packing — whether you're heading out on trail, loading up a bike, or flying with carry-on only. The next version of this project is called <strong>ZenPak</strong>: a simple, universal packing tool for any kind of trip.</p>
 
         <h2>Plans</h2>
         <ul>

@@ -11,7 +11,7 @@ export function useBackNav() {
     );
 
     const backLabel = computed(() =>
-        backTo.value === '/community' ? '← Back to Community' : '← Back to JustPack'
+        backTo.value === '/community' ? '← Back to Community' : '← Back to ZenPak'
     );
 
     return { backTo, backLabel };

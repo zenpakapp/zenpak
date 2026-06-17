@@ -158,7 +158,7 @@ $sidebarPadding: 20px;
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
         <div id="scrollable">
-            <h1>JustPack</h1>
+            <h1>ZenPak</h1>
 
             <libraryLists />
             <section class="lpGearSection">

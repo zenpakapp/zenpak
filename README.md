@@ -1,10 +1,10 @@
-# JustPack
+# ZenPak
 
-> Pack faster. Leave lighter.
+> Pack light. Leave calm.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-JustPack is an open-source packing tool for hikers, travelers, cyclists, and anyone who wants to pack smarter. Built on the foundation of [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly.
+ZenPak is an open-source packing tool for hikers, travelers, pilgrims, cyclists, and anyone who wants to pack smarter. Built on the foundation of [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly.
 
 ## Features
 
@@ -18,7 +18,7 @@ JustPack is an open-source packing tool for hikers, travelers, cyclists, and any
 
 ## Pricing (hosted service)
 
-The app is free to use. Optional paid plans on **justpack.app** (coming soon):
+The app is free to use. Optional paid plans on **zenpak.app** (coming soon):
 
 - **Trail** (~3 €/month) — full library export (JSON), enhanced public profile, supporter badge
 - **Guide** (~8 €/month) — affiliate links, promo codes, and insights (views, copies, clicks)
@@ -28,7 +28,7 @@ Self-hosting remains fully free and open-source.
 ## Migrating from lighterpack.com
 
 1. On lighterpack.com → **Settings → Export CSV**
-2. Create an account on JustPack
+2. Create an account on ZenPak
 3. **Settings → Import CSV** — upload the file
 
 Lists, items, weights, and notes carry over.

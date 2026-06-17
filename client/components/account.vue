@@ -327,7 +327,7 @@ export default {
                 const cd = res.headers.get('Content-Disposition') || '';
                 const match = cd.match(/filename="([^"]+)"/);
                 a.href = url;
-                a.download = match ? match[1] : 'justpack-backup.json';
+                a.download = match ? match[1] : 'zenpak-backup.json';
                 a.click();
                 URL.revokeObjectURL(url);
             } catch {
