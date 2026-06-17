@@ -1,4 +1,22 @@
 const config = require('config');
+const nodemailer = require('nodemailer');
+
+async function sendMailDev(mailOptions) {
+    const transporter = nodemailer.createTransport({
+        host: '127.0.0.1',
+        port: config.get('mailpitSmtpPort') || 1025,
+        secure: false,
+        ignoreTLS: true,
+    });
+    await transporter.sendMail({
+        from: mailOptions.from,
+        to: mailOptions.to,
+        subject: mailOptions.subject,
+        text: mailOptions.text,
+        html: mailOptions.html,
+    });
+    return { message: 'Queued (Mailpit dev)' };
+}
 
 function getMailgunMessagesUrl() {
     const baseUrl = (config.get('mailgunBaseURL') || 'https://api.mailgun.net').replace(/\/+$/, '');
@@ -26,6 +44,10 @@ function getMailgunAuthorization() {
 }
 
 async function sendMail(mailOptions) {
+    if (config.get('environment') === 'development') {
+        return sendMailDev(mailOptions);
+    }
+
     const formData = new FormData();
 
     Object.entries(mailOptions).forEach(([key, value]) => {

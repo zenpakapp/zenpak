@@ -3,8 +3,25 @@ const crypto = require('crypto');
 const path = require('path');
 const express = require('express');
 const { readFile } = require('fs/promises');
+const rateLimit = require('express-rate-limit');
 
 const router = express.Router();
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { errors: [{ message: 'Too many attempts. Try again in 15 minutes.' }] },
+});
+
+const forgotLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { errors: [{ message: 'Too many requests. Try again in 1 hour.' }] },
+});
 const fs = require('fs');
 const formidable = require('formidable');
 const config = require('config');
@@ -30,7 +47,7 @@ const EXTERNAL_ID_ALPHABET = '1234567890abcdefghijklmnopqrstuvwxyz';
 // one day in many years this can go away.
 eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 
-router.post('/register', (req, res) => {
+router.post('/register', authLimiter, (req, res) => {
     const username = String(req.body.username).toLowerCase().trim();
     const password = String(req.body.password);
     let email = String(req.body.email);
@@ -121,7 +138,7 @@ router.post('/register', (req, res) => {
     });
 });
 
-router.post('/signin', (req, res) => {
+router.post('/signin', authLimiter, (req, res) => {
     authenticateUser(req, res, returnLibrary);
 });
 
@@ -216,58 +233,99 @@ function externalId(req, res, user) {
     });
 }
 
-router.post('/forgotPassword', (req, res) => {
+router.post('/forgotPassword', forgotLimiter, (req, res) => {
     logWithRequest(req);
     const username = String(req.body.username).toLowerCase().trim();
     if (!username || username.length < 1 || username.length > 32) {
-        logWithRequest(req, { message: 'Bad forgot password', username });
         return res.status(400).json({ errors: [{ message: 'Please enter a username.' }] });
     }
 
     db.users.findOne({ username }, (err, user) => {
-        if (err) {
-            logWithRequest(req, { message: 'Forgot password lookup error', username });
-            return res.status(500).json({ message: 'An error occurred' });
-        } if (!user) {
-            logWithRequest(req, { message: 'Forgot password for unknown user', username });
-            return res.status(500).json({ message: 'An error occurred.' });
+        if (err) return res.status(500).json({ errors: [{ message: 'An error occurred, please try again.' }] });
+        if (!user) return res.status(400).json({ errors: [{ message: 'No account found with that username.' }] });
+
+        const cooldown = 15 * 60 * 1000;
+        if (user.resetTokenExpiry && user.resetTokenExpiry - Date.now() > (60 * 60 * 1000 - cooldown)) {
+            return res.status(200).json({ message: 'A reset link has been sent to your email.' });
         }
-        require('crypto').randomBytes(12, (ex, buf) => {
-            const newPassword = buf.toString('hex');
 
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(newPassword, salt, (err, hash) => {
-                    user.password = hash;
-                    const email = user.email;
+        const token = require('crypto').randomBytes(32).toString('hex');
+        user.resetToken = token;
+        user.resetTokenExpiry = Date.now() + 60 * 60 * 1000;
 
-                    const message = `Hello ${username},\n\nHere's your new ZenPak password:\n\n  Username: ${username}\n  Password: ${newPassword}\n\nYou can sign in at https://zenpak.app\n\nIf you need help, reply to this email.\n\n— ZenPak`;
+        db.users.save(user, (saveErr) => {
+            if (saveErr) return res.status(500).json({ message: 'An error occurred' });
 
-                    const mailOptions = {
-                        from: 'ZenPak <noreply@zenpak.app>',
-                        to: email,
-                        'h:Reply-To': 'ZenPak <support@zenpak.app>',
-                        subject: 'Your new ZenPak password',
-                        text: message,
-                    };
+            const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
+            const resetUrl = `${deployUrl}/reset-password?token=${token}`;
 
-                    logWithRequest(req, { message: 'Attempting to send new password', email });
-                    sendMail(mailOptions).then((response) => {
-                        db.users.save(user);
-                        const out = { username };
-                        logWithRequest(req, { message: 'Message sent', response: response.message });
-                        logWithRequest(req, { message: 'password changed for user', username });
-                        return res.status(200).json(out);
-                    }).catch((error) => {
-                        logWithRequest(req, error);
-                        return res.status(500).json({ message: 'An error occurred' });
-                    });
+            const textBody = `Hi ${username},\n\nEven the best hikers lose the trail sometimes. Here's your link to find your way back — it expires in 1 hour:\n\n${resetUrl}\n\nDidn't request this? Just ignore this email — your password won't change.\n\n— The ZenPak team`;
+
+            const htmlBody = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Lost on the trail?</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Hey <strong>${username}</strong>,<br><br>Even the best hikers lose the trail sometimes. Click below to find your way back — the link expires in <strong>1 hour</strong>.</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${resetUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Get back on track →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Just ignore this email — your password won't change.<br><br>Or copy this link: <a href="${resetUrl}" style="color:#2d6a4f;word-break:break-all;">${resetUrl}</a></td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+            sendMail({
+                from: 'ZenPak <noreply@zenpak.app>',
+                to: user.email,
+                'h:Reply-To': 'ZenPak <support@zenpak.app>',
+                subject: 'Reset your ZenPak password',
+                text: textBody,
+                html: htmlBody,
+            }).catch((e) => logWithRequest(req, e));
+
+            return res.status(200).json({ message: 'A reset link has been sent to your email.' });
+        });
+    });
+});
+
+router.post('/resetPassword', (req, res) => {
+    logWithRequest(req);
+    const { token, password } = req.body;
+
+    if (!token || !password || password.length < 6) {
+        return res.status(400).json({ errors: [{ message: 'Password must be at least 6 characters.' }] });
+    }
+
+    db.users.findOne({ resetToken: token }, (err, user) => {
+        if (err || !user) {
+            return res.status(400).json({ errors: [{ message: 'Invalid or expired reset link.' }] });
+        }
+        if (!user.resetTokenExpiry || Date.now() > user.resetTokenExpiry) {
+            return res.status(400).json({ errors: [{ message: 'Reset link has expired. Please request a new one.' }] });
+        }
+
+        bcrypt.genSalt(10, (saltErr, salt) => {
+            bcrypt.hash(password, salt, (hashErr, hash) => {
+                user.password = hash;
+                user.resetToken = null;
+                user.resetTokenExpiry = null;
+                db.users.save(user, (saveErr) => {
+                    if (saveErr) return res.status(500).json({ message: 'An error occurred' });
+                    logWithRequest(req, { message: 'Password reset for user', username: user.username });
+                    return res.status(200).json({ message: 'Password updated successfully.' });
                 });
             });
         });
     });
 });
 
-router.post('/forgotUsername', (req, res) => {
+router.post('/forgotUsername', forgotLimiter, (req, res) => {
     logWithRequest(req);
     const email = String(req.body.email).toLowerCase().trim();
     if (!email || email.length < 1) {
@@ -281,18 +339,51 @@ router.post('/forgotUsername', (req, res) => {
             return res.status(500).json({ message: 'An error occurred' });
         } if (!user) {
             logWithRequest(req, { message: 'Forgot email for unknown user', email });
-            return res.status(400).json({ message: 'An error occurred' });
+            return res.status(200).json({ email });
         }
+        const cooldown = 15 * 60 * 1000;
+        if (user.forgotUsernameSentAt && Date.now() - user.forgotUsernameSentAt < cooldown) {
+            return res.status(200).json({ email });
+        }
+
+        user.forgotUsernameSentAt = Date.now();
+        db.users.save(user, () => {});
+
         const username = user.username;
 
-        const message = `Hello,\n\nYour ZenPak username is:\n\n  ${username}\n\nSign in at https://zenpak.app\n\nIf you need help, reply to this email.\n\n— ZenPak`;
+        const signinUrl = 'https://zenpak.app/welcome';
+
+        const textBody = `Hi,\n\nFound it. Here's the trail marker you were looking for:\n\n  ${username}\n\nHead back: ${signinUrl}\n\nIf you need help, reply to this email.\n\n— The ZenPak team`;
+
+        const htmlBody = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Found your trail marker</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Here's the username tied to this email:</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <div style="display:inline-block;background:#f0f4f1;border:1px solid #d0e0d8;border-radius:6px;padding:14px 32px;font-size:20px;font-weight:700;color:#2d6a4f;letter-spacing:.5px;">${username}</div>
+        </td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${signinUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Back to the trail →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Just ignore this email.</td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
 
         const mailOptions = {
             from: 'ZenPak <noreply@zenpak.app>',
             to: email,
             'h:Reply-To': 'ZenPak <support@zenpak.app>',
             subject: 'Your ZenPak username',
-            text: message,
+            text: textBody,
+            html: htmlBody,
         };
 
         logWithRequest(req, { message: 'Attempting to send username', email, username });

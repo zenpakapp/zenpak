@@ -20,12 +20,18 @@ router.beforeEach((to, from) => {
     setPreviousRoute(from.path);
 });
 
+const PUBLIC_PATHS = ['/welcome', '/forgot-password', '/reset-password', '/community', '/guide', '/about'];
+
+function isPublicPath(pathname) {
+    return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/u/') || pathname.startsWith('/p/'));
+}
+
 registerAppEventHandlers({
     onUnauthorized(message) {
         if (message) {
             store.commit('pushGlobalAlert', { message });
         }
-        if (window.location.pathname !== '/welcome') {
+        if (!isPublicPath(window.location.pathname)) {
             redirect('/welcome');
         }
     },
@@ -39,7 +45,7 @@ store.dispatch('init')
         initLighterPack();
     })
     .catch((error) => {
-        if (!store.state.library) {
+        if (!store.state.library && !isPublicPath(window.location.pathname)) {
             router.push('/welcome');
         }
         showGlobalAlert(error);

@@ -3,6 +3,7 @@ import welcome from './views/welcome.vue';
 import signin from './views/signin.vue';
 import register from './views/register.vue';
 import forgotPassword from './views/forgot-password.vue';
+import resetPassword from './views/reset-password.vue';
 import moderation from './views/moderation.vue';
 import publicProfile from './views/public-profile.vue';
 import publicList from './views/public-list.vue';
@@ -18,6 +19,7 @@ export default [
     { path: '/signin/forgot-username', redirect: '/welcome' },
     { path: '/register', redirect: '/welcome' },
     { path: '/forgot-password', component: forgotPassword },
+    { path: '/reset-password', component: resetPassword },
     { path: '/moderation', component: moderation },
     { path: '/feed', redirect: '/community/feed' },
     { path: '/community', component: communityView },
