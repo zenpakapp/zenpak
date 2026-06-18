@@ -26,12 +26,17 @@ function isPublicPath(pathname) {
     return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/u/') || pathname.startsWith('/p/'));
 }
 
+function isUnknownRoute(pathname) {
+    const resolved = router.resolve(pathname);
+    return resolved.matched.length > 0 && resolved.matched[resolved.matched.length - 1].path === '/:pathMatch(.*)*';
+}
+
 registerAppEventHandlers({
     onUnauthorized(message) {
         if (message) {
             store.commit('pushGlobalAlert', { message });
         }
-        if (!isPublicPath(window.location.pathname)) {
+        if (!isPublicPath(window.location.pathname) && !isUnknownRoute(window.location.pathname)) {
             redirect('/welcome');
         }
     },
@@ -45,7 +50,7 @@ store.dispatch('init')
         initLighterPack();
     })
     .catch((error) => {
-        if (!store.state.library && !isPublicPath(window.location.pathname)) {
+        if (!store.state.library && !isPublicPath(window.location.pathname) && !isUnknownRoute(window.location.pathname)) {
             router.push('/welcome');
         }
         showGlobalAlert(error);

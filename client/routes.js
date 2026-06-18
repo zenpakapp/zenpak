@@ -10,6 +10,7 @@ import publicList from './views/public-list.vue';
 import communityView from './views/community.vue';
 import guideView from './views/guide.vue';
 import aboutView from './views/about.vue';
+import notFound from './views/not-found.vue';
 
 export default [
     { path: '/', component: dashboard },
@@ -28,5 +29,5 @@ export default [
     { path: '/p/:externalId', component: publicList },
     { path: '/guide', component: guideView },
     { path: '/about', component: aboutView },
-    { path: '/:pathMatch(.*)*', redirect: '/' },
+    { path: '/:pathMatch(.*)*', component: notFound },
 ];

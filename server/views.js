@@ -50,6 +50,7 @@ const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/u/:username' },
     { path: '/p/:externalId' },
     { path: '/about' },
+    { path: '/guide' },
 ];
 
 let index = fs.readFileSync(path.join(__dirname, '../_index.html'), 'utf8');
@@ -98,6 +99,10 @@ for (let i = 0; i < vueRoutes.length; i++) {
         res.send(index);
     });
 }
+
+router.get('*', (req, res) => {
+    res.status(404).send(index);
+});
 
 router.get('/r/:id', (req, res) => {
     const id = req.params.id;

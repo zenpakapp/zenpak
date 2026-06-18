@@ -554,7 +554,32 @@ export default {
         },
         updateDocumentMeta() {
             if (!this.list) return;
-            document.title = `${this.list.name || 'Public list'} - ZenPak`;
+            const title = `${this.list.name || 'Public list'} - ZenPak`;
+            const description = this.list.summary || this.list.description || `A gear list on ZenPak by ${this.username || 'a hiker'}.`;
+            const url = window.location.href;
+
+            document.title = title;
+
+            const setMeta = (attr, key, value) => {
+                let el = document.querySelector(`meta[${attr}="${key}"]`);
+                if (!el) {
+                    el = document.createElement('meta');
+                    el.setAttribute(attr, key);
+                    document.head.appendChild(el);
+                }
+                el.setAttribute('content', value);
+            };
+
+            setMeta('property', 'og:type', 'website');
+            setMeta('property', 'og:title', title);
+            setMeta('property', 'og:description', description);
+            setMeta('property', 'og:url', url);
+            setMeta('property', 'og:site_name', 'ZenPak');
+            setMeta('name', 'twitter:card', 'summary');
+            setMeta('name', 'twitter:title', title);
+            setMeta('name', 'twitter:description', description);
+            setMeta('name', 'description', description);
+
             let robots = document.querySelector('meta[name="robots"]');
             if (!this.list.allowSearchIndexing) {
                 if (!robots) {
