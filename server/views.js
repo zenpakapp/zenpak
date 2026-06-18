@@ -51,6 +51,7 @@ const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/p/:externalId' },
     { path: '/about' },
     { path: '/guide' },
+    { path: '/verify-email' },
 ];
 
 let index = fs.readFileSync(path.join(__dirname, '../_index.html'), 'utf8');

@@ -11,6 +11,7 @@ import communityView from './views/community.vue';
 import guideView from './views/guide.vue';
 import aboutView from './views/about.vue';
 import notFound from './views/not-found.vue';
+import verifyEmail from './views/verify-email.vue';
 
 export default [
     { path: '/', component: dashboard },
@@ -29,5 +30,6 @@ export default [
     { path: '/p/:externalId', component: publicList },
     { path: '/guide', component: guideView },
     { path: '/about', component: aboutView },
+    { path: '/verify-email', component: verifyEmail },
     { path: '/:pathMatch(.*)*', component: notFound },
 ];

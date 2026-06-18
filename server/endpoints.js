@@ -118,6 +118,7 @@ router.post('/register', authLimiter, (req, res) => {
                             library = new Library().save();
                         }
 
+                        const emailVerifyToken = crypto.randomBytes(32).toString('hex');
                         const newUser = {
                             username,
                             password: hash,
@@ -125,10 +126,43 @@ router.post('/register', authLimiter, (req, res) => {
                             token,
                             library,
                             syncToken: 0,
+                            emailVerified: false,
+                            emailVerifyToken,
                         };
                         logWithRequest(req, { message: 'Saving new user', username });
                         db.users.save(newUser);
-                        const out = { username, library: JSON.stringify(newUser.library), syncToken: 0 };
+
+                        const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
+                        const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
+                        const textBody = `Almost ready, ${username}!\n\nVerify your email to share your lists with the world:\n\n${verifyUrl}\n\n— The ZenPak team`;
+                        const htmlBody = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Almost ready, ${username}!</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Verify your email to share your lists with the world.</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+                        sendMail({
+                            from: 'ZenPak <noreply@zenpak.app>',
+                            to: email,
+                            'h:Reply-To': 'ZenPak <support@zenpak.app>',
+                            subject: 'Verify your ZenPak email',
+                            text: textBody,
+                            html: htmlBody,
+                        }).catch((e) => logWithRequest(req, e));
+
+                        const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
                         res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
                         return res.status(200).json(out);
                     });
@@ -148,7 +182,7 @@ function returnLibrary(req, res, user) {
         user.syncToken = 0;
         db.users.save(user);
     }
-    return res.json({ username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken });
+    return res.json({ username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified });
 }
 
 router.post('/saveLibrary', (req, res) => {
@@ -184,6 +218,18 @@ function saveLibrary(req, res, user) {
     }
 
     const oldLists = (user.library && user.library.lists) || [];
+
+    if (!user.emailVerified && library && library.lists) {
+        const { isPublicVisibility } = require('../client/services/public-visibility.js');
+        const storedVisibilityMap = {};
+        oldLists.forEach((l) => { storedVisibilityMap[l.id] = l.visibility; });
+        const escalatesVisibility = library.lists.some((l) => (
+            isPublicVisibility(l.visibility) && !isPublicVisibility(storedVisibilityMap[l.id])
+        ));
+        if (escalatesVisibility) {
+            return res.status(403).json({ errors: [{ message: 'Please verify your email before making lists public.' }] });
+        }
+    }
 
     const now = new Date();
     if (library && library.lists) {
@@ -725,6 +771,69 @@ router.get('/api/backup', (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
         res.json({ username: user.username, exportedAt: new Date().toISOString(), library: user.library });
+    });
+});
+
+router.get('/verify-email', (req, res, next) => {
+    const { token } = req.query;
+    if (!token) return next();
+
+    db.users.findOne({ emailVerifyToken: token }, (err, user) => {
+        if (err || !user) return res.redirect('/verify-email?error=1');
+        user.emailVerified = true;
+        user.emailVerifyToken = undefined;
+        db.users.save(user);
+        return res.redirect('/verify-email?success=1');
+    });
+});
+
+router.post('/resendVerification', (req, res) => {
+    authenticateUser(req, res, (req, res, user) => {
+        if (user.emailVerified) {
+            return res.status(200).json({ alreadyVerified: true, message: 'Your email is already verified.' });
+        }
+
+        const cooldown = 5 * 60 * 1000;
+        if (user.verifyEmailSentAt && Date.now() - user.verifyEmailSentAt < cooldown) {
+            return res.status(429).json({ errors: [{ message: 'Please wait 5 minutes before requesting another verification email.' }] });
+        }
+
+        const emailVerifyToken = crypto.randomBytes(32).toString('hex');
+        user.emailVerifyToken = emailVerifyToken;
+        user.verifyEmailSentAt = Date.now();
+        db.users.save(user);
+
+        const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
+        const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
+        const textBody = `Hi ${user.username},\n\nVerify your ZenPak email:\n\n${verifyUrl}\n\n— The ZenPak team`;
+        const htmlBody = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Verify your email</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">One click and your ZenPak pack is ready to share with the world.</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Ignore it.</td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+        sendMail({
+            from: 'ZenPak <noreply@zenpak.app>',
+            to: user.email,
+            'h:Reply-To': 'ZenPak <support@zenpak.app>',
+            subject: 'Verify your ZenPak email',
+            text: textBody,
+            html: htmlBody,
+        }).catch((e) => logWithRequest(req, e));
+
+        return res.status(200).json({ message: 'Verification email sent.' });
     });
 });
 

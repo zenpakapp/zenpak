@@ -17,6 +17,38 @@
     z-index: $belowDialog;
 }
 
+.lpVerifyBanner {
+    align-items: center;
+    background: color-mix(in srgb, $color-accent 10%, transparent);
+    border: 1px solid color-mix(in srgb, $color-accent 30%, transparent);
+    border-radius: $radius-sm;
+    color: $color-text;
+    display: flex;
+    font-size: 13px;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+}
+
+.lpVerifyBannerBtn {
+    background: transparent;
+    border: 1px solid $color-accent;
+    border-radius: $radius-sm;
+    color: $color-accent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+
+    &:hover { opacity: 0.7; }
+}
+
+.lpVerifyBannerError {
+    color: $color-text-muted;
+}
+
 #hamburger {
     align-items: center;
     cursor: pointer;
@@ -309,6 +341,15 @@
                 <span class="clearfix" />
             </div>
 
+            <div v-if="isSignedIn && emailVerified === false" class="lpVerifyBanner">
+                <span v-if="verifyResendSent">Verification email sent! Check your inbox.</span>
+                <template v-else>
+                    <span>Verify your email to share lists publicly.</span>
+                    <button class="lpVerifyBannerBtn" @click="resendVerification">Resend email</button>
+                    <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
+                </template>
+            </div>
+
             <list />
 
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
@@ -324,12 +365,12 @@
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
-                    ZenPak is an independent open-source packing tool built on <a class="lpHref" href="https://lighterpack.com" target="_blank" rel="noopener noreferrer">LighterPack</a>.
+                    ZenPak is an independent open-source packing tool built on <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">LighterPack</a>.
                 </div>
                 <div class="lpContact">
                     <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">Open source</a>
                     -
-                    <a class="lpHref" href="mailto:info@lighterpack.app">Contact</a>
+                    <a class="lpHref" href="mailto:info@zenpak.app">Contact</a>
                 </div>
             </div>
         </div>
@@ -351,6 +392,7 @@
 </template>
 
 <script>
+import { fetchJson } from '../utils/utils.js';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import share from '../components/share.vue';
@@ -411,6 +453,8 @@ export default {
         return {
             isLoaded: false,
             showGuideUpgrade: false,
+            verifyResendSent: false,
+            verifyResendError: null,
         };
     },
     computed: {
@@ -438,6 +482,9 @@ export default {
             const lib = this.$store.state.library;
             return !lib || !lib.entitlements || isBase(lib.entitlements);
         },
+        emailVerified() {
+            return this.$store.state.emailVerified;
+        },
     },
     created() {
         if (!this.$store.state.library) {
@@ -455,6 +502,12 @@ export default {
         },
         updateListName(evt) {
             this.$store.commit('updateListName', { id: this.list.id, name: evt.target.value });
+        },
+        resendVerification() {
+            this.verifyResendError = null;
+            fetchJson('/resendVerification', { method: 'POST', credentials: 'same-origin' })
+                .then(() => { this.verifyResendSent = true; })
+                .catch((err) => { this.verifyResendError = (err && err.message) || 'An error occurred.'; });
         },
     },
 };

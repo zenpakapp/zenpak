@@ -322,8 +322,8 @@ export default {
                         this.shareReady = true;
                         this.selectShareUrl();
                     })
-                    .catch(() => {
-                        showGlobalAlert('An error occurred while attempting to get an ID for your list. Please try again later.');
+                    .catch((err) => {
+                        showGlobalAlert((err && err.message) || 'An error occurred while attempting to get an ID for your list. Please try again later.');
                     });
             }
             this.shareReady = false;

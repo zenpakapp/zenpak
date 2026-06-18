@@ -21,6 +21,7 @@ const createInitialState = () => ({
     saveType: null,
     lastSaveData: null,
     loggedIn: false,
+    emailVerified: null,
     globalAlerts: [],
     itemVersion: 0,
     categoryItemVersion: 0,
@@ -70,6 +71,9 @@ const store = createStore({
         },
         setLoggedIn(state, loggedIn) {
             state.loggedIn = loggedIn;
+        },
+        setEmailVerified(state, emailVerified) {
+            state.emailVerified = emailVerified;
         },
         loadLibraryData(state, libraryData) {
             const library = new Library();
@@ -568,6 +572,7 @@ const store = createStore({
                     context.commit('loadLibraryData', response.library);
                     context.commit('setSaveType', 'remote');
                     context.commit('setLoggedIn', response.username);
+                    context.commit('setEmailVerified', response.emailVerified ?? null);
                 })
                 .catch((error) => {
                     if (error && error.statusCode === 401) {

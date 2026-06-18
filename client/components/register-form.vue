@@ -154,11 +154,13 @@ export default {
                     this.$store.commit('loadLibraryData', response.library);
                     this.$store.commit('setSaveType', 'remote');
                     this.$store.commit('setLoggedIn', response.username);
+                    this.$store.commit('setEmailVerified', response.emailVerified ?? false);
 
                     if (registerData.library) {
                         moveLocalLibraryToRegistered();
                     }
                     this.saving = false;
+                    this.$store.commit('pushGlobalAlert', { message: 'Welcome! Check your inbox to verify your email.' });
                     push('/');
                 })
                 .catch((err) => {
