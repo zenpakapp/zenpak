@@ -152,9 +152,9 @@
 </style>
 
 <template>
-    <span v-if="isSignedIn" class="headerItem hasPopover">
+    <span v-if="isSignedIn" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="share" @shown="focusShare">
-            <template #target><span><i class="lpSprite lpLink" /> Share</span></template>
+            <template #target><span title="Share"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">Share</span></span></template>
             <template #content>
                 <div class="sharePopover">
                     <div class="shareSection">

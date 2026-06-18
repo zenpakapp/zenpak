@@ -60,6 +60,31 @@
     margin: 0 0 24px;
 }
 
+.lpPublicListActions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+
+.lpPrintBtn {
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 16px;
+    transition: border-color $transitionDurationFast, color $transitionDurationFast;
+
+    &:hover {
+        border-color: $color-accent;
+        color: $color-accent;
+    }
+}
+
 .lpPublicChart {
     align-items: flex-start;
     display: flex;
@@ -220,27 +245,25 @@
     padding: 2px 6px;
 }
 
-.lpPublicListActions {
-    margin-bottom: 16px;
-}
 
 .lpCopyListBtn {
-    background: $color-accent;
-    border: none;
+    background: transparent;
+    border: 1px solid $color-border;
     border-radius: $radius-sm;
-    color: #fff;
+    color: $color-text-muted;
     cursor: pointer;
     font-size: 13px;
     padding: 6px 16px;
-    transition: opacity $transitionDurationFast;
+    transition: border-color $transitionDurationFast, color $transitionDurationFast;
 
     &:hover:not(:disabled) {
-        opacity: 0.85;
+        border-color: $color-accent;
+        color: $color-accent;
     }
 
     &:disabled {
         cursor: not-allowed;
-        opacity: 0.6;
+        opacity: 0.5;
     }
 }
 
@@ -299,6 +322,7 @@
                     Sign in to copy this list
                 </router-link>
                 <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
+                <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">Print / Save as PDF</button>
             </div>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
 
@@ -473,6 +497,9 @@ export default {
             });
     },
     methods: {
+        printList() {
+            window.print();
+        },
         displayWeight(value) {
             return weightUtils.MgToWeight(value || 0, this.totalUnit);
         },

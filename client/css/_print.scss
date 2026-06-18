@@ -36,4 +36,40 @@
     .lpActionsCell { width: 80px !important; }
     .lpQtyCell { width: 20px !important; }
     .lpWeightCell { width: 99px !important; }
+
+    /* Public list print */
+    .lpPublicNav,
+    .lpPublicListActions,
+    .lpPublicChart {
+        display: none !important;
+    }
+
+    .lpPublicList {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .lpPublicListTitle {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .lpPublicListItem {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .lpPublicListCategory {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .lpPublicListItemLink,
+    .lpPublicListItemPromo {
+        display: none;
+    }
+
+    a[href]::after {
+        content: none !important;
+    }
 }

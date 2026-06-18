@@ -6,12 +6,14 @@
     background: $color-surface;
     border-bottom: 1px solid $color-border;
     display: flex;
-    gap: 2px;
-    margin: 0 -20px 20px;
+    gap: 4px;
+    margin-bottom: 20px;
+    margin-left: -20px;
     min-height: 60px;
     padding: 0 8px;
     position: sticky;
     top: 0;
+    width: calc(100% + 40px);
     z-index: $belowDialog;
 }
 
@@ -67,7 +69,9 @@
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
     letter-spacing: -0.01em;
+    min-width: 0;
     padding: 10px 14px;
+    width: 100%;
 
     &::placeholder {
         color: $color-text-muted;
@@ -89,15 +93,10 @@
 .headerItem {
     flex: 0 0 auto;
     color: $color-text-muted;
-    height: 100%;
-    padding: 10px 12px;
+    height: auto;
+    padding: 0;
     position: relative;
     transition: color $transitionDurationFast ease;
-
-    &:first-child {
-        padding-left: 12px;
-    }
-
 
     .lpPopover {
         &:hover .lpTarget {
@@ -113,6 +112,8 @@
         display: inline-flex;
         font-weight: 600;
         gap: 8px;
+        line-height: 1;
+        min-height: 40px;
         padding: 10px 14px;
         text-decoration: none;
         transition:
@@ -129,15 +130,16 @@
 
     .lpPopover:hover .lpTarget,
     .lpPopover.lpPopoverShown .lpTarget {
-        background: rgba(var(--color-accent-rgb), 0.08);
-        border-color: rgba(var(--color-accent-rgb), 0.14);
-        box-shadow: 0 8px 18px rgba(17, 24, 39, 0.08);
-        color: $color-accent;
-        transform: translateY(-1px);
+        background: rgba(var(--color-accent-rgb), 0.04);
+        border-color: transparent;
+        box-shadow: none;
+        color: $color-text;
+        transform: none;
     }
 
     &#lpListName {
-        flex: 1 0 auto;
+        flex: 1 1 240px;
+        min-width: 0;
     }
 
     &.hasPopover {
@@ -147,6 +149,113 @@
     &.signInRegisterButtons {
         height: auto;
         padding: 0 16px;
+    }
+}
+
+.headerItem:not(#lpListName) {
+    align-items: center;
+    display: flex;
+    min-height: 60px;
+}
+
+.headerIconItem {
+    justify-content: center;
+    min-width: 40px;
+}
+
+.headerTruncateItem {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.headerTruncateItem .lpPopover,
+.headerTruncateItem .lpPopover .lpTarget {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.headerMenuLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.headerItem .lpPopover {
+    align-items: center;
+    display: flex;
+    position: relative;
+}
+
+.headerItem .lpPopover::after {
+    content: "";
+    height: 12px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 100%;
+}
+
+.headerItem .lpPopover .lpTarget {
+    align-items: center;
+    display: inline-flex;
+    line-height: 1;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.headerItem .lpPopover .lpTarget > span {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    line-height: 1;
+    position: relative;
+    top: -5px;
+}
+
+.headerItem .lpSprite {
+    flex: 0 0 auto;
+    top: 0;
+    vertical-align: middle;
+}
+
+@media (max-width: 1240px) {
+    #header {
+        gap: 2px;
+        padding: 0 6px;
+    }
+
+    #lpListName {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
+
+    .headerItem .lpTarget {
+        gap: 6px;
+        padding: 10px 10px;
+    }
+
+    .headerItem .lpPopover .lpTarget > span {
+        gap: 6px;
+    }
+
+    .headerTruncateItem .headerMenuLabel {
+        max-width: 128px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .headerItem .lpTarget {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
+
+    .headerIconItem {
+        min-width: 32px;
+    }
+
+    .headerTruncateItem .headerMenuLabel {
+        max-width: 96px;
     }
 }
 
@@ -177,8 +286,10 @@
                     </a>
                 </span>
                 <input id="lpListName" :value="list.name" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
-                <themeToggle />
-                <span v-if="isSignedIn" class="headerItem">
+                <span class="headerItem headerIconItem">
+                    <themeToggle />
+                </span>
+                <span v-if="isSignedIn" class="headerItem headerIconItem">
                     <notifications />
                 </span>
                 <span v-if="isSignedIn" class="headerItem">

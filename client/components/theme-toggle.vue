@@ -5,27 +5,32 @@
     align-items: center;
     color: $color-text-muted;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     font-size: 16px;
-    padding: 0 12px;
+    justify-content: center;
+    line-height: 0;
+    padding: 0;
     transition: color $transitionDurationFast ease;
 
     &:hover {
         color: $color-text;
     }
+}
 
-    span {
-        position: relative;
-        top: 4px;
-    }
+.lpThemeGlyph {
+    display: block;
+    line-height: 1;
+    position: relative;
+    top: -1px;
+    user-select: none;
 }
 </style>
 
 <template>
     <a class="lpThemeItem" @click="cycleTheme">
-        <span>{{ mode === 'dark' ? '☾' : mode === 'light' ? '☀' : '⚙' }}</span>
+        <span class="lpThemeGlyph">{{ mode === 'dark' ? '☾' : mode === 'light' ? '☀' : '⚙' }}</span>
     </a>
-</template>
+ </template>
 
 <script>
 import { useTheme } from '../composables/useTheme.js';

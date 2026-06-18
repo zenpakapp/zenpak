@@ -82,9 +82,9 @@
 </style>
 
 <template>
-    <span v-if="isSignedIn" id="settings" class="headerItem hasPopover">
+    <span v-if="isSignedIn" id="settings" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover>
-            <template #target><span><i class="lpSprite lpSettings" /> Settings</span></template>
+            <template #target><span title="Settings"><i class="lpSprite lpSettings" /> <span class="headerMenuLabel">Settings</span></span></template>
             <template #content><div>
                 <ul id="lpOptionalFields">
                     <li v-for="optionalField in optionalFieldsLookup" :key="optionalField.name" class="lpOptionalField">

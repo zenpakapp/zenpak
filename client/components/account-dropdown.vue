@@ -1,6 +1,36 @@
 <style lang="scss">
 @import "../css/_globals";
 
+.accountDropdownTarget {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.accountDropdownLead {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.accountDropdownName {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.accountDropdownCaret {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 1240px) {
+    .accountDropdownLead {
+        display: none;
+    }
+}
+
 .accountDropdownMenu {
     display: flex;
     flex-direction: column;
@@ -76,10 +106,14 @@
 </style>
 
 <template>
-    <span class="headerItem hasPopover">
+    <span class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="headerPopover">
             <template #target>
-                <span>Signed in as <strong>{{ username }}</strong> <i class="lpSprite lpExpand" /></span>
+                <span class="accountDropdownTarget" :title="username">
+                    <span class="accountDropdownLead">Signed in as</span>
+                    <strong class="accountDropdownName">{{ username }}</strong>
+                    <i class="lpSprite lpExpand accountDropdownCaret" />
+                </span>
             </template>
             <template #content>
                 <div class="accountDropdownMenu">

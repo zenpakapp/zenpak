@@ -5,14 +5,21 @@
     align-items: center;
     color: $color-text-muted;
     cursor: pointer;
-    display: flex;
-    padding: 0 8px;
+    display: inline-flex;
+    justify-content: center;
+    line-height: 0;
+    padding: 0;
     position: relative;
+    transition: color $transitionDurationFast ease;
 
-    &:hover { color: $color-text; }
+    &:hover {
+        color: $color-text;
+    }
 
     svg {
         display: block;
+        position: relative;
+        top: -1px;
     }
 }
 
@@ -26,9 +33,9 @@
     min-width: 16px;
     padding: 2px 4px;
     position: absolute;
-    right: 0;
+    right: -10px;
     text-align: center;
-    top: 0;
+    top: -8px;
 }
 
 .lpNotifDropdown {

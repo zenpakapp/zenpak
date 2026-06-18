@@ -344,9 +344,9 @@ router.get('/csv/:id', (req, res) => {
         if (!filename) filename = id;
         filename = filename.replace(/[^a-z0-9\-]/gi, '_');
 
-        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
-        res.send(out);
+        res.send('﻿' + out);
     });
 });
 
