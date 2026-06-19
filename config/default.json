@@ -17,5 +17,9 @@
     "moderators": [],
     "googleClientId": "",
     "googleClientSecret": "",
-    "googleCallbackUrl": "http://localhost:3001/api/auth/google/callback"
+    "googleCallbackUrl": "http://localhost:3001/api/auth/google/callback",
+    "stripeSecretKey": "",
+    "stripeWebhookSecret": "",
+    "stripePriceIdTrail": "",
+    "stripePriceIdGuide": ""
 }
