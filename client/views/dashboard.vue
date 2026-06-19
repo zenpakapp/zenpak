@@ -49,6 +49,18 @@
     color: $color-text-muted;
 }
 
+.lpPastDueBanner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 #hamburger {
     align-items: center;
     cursor: pointer;
@@ -350,6 +362,11 @@
                 </template>
             </div>
 
+            <div v-if="isPastDue" class="lpPastDueBanner">
+                <span>⚠ Your payment failed. Update your payment method to keep your {{ planLabel }} plan.</span>
+                <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">Fix payment</button>
+            </div>
+
             <list />
 
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
@@ -485,6 +502,15 @@ export default {
         emailVerified() {
             return this.$store.state.emailVerified;
         },
+        isPastDue() {
+            const billing = this.$store.state.billing;
+            return billing && billing.status === 'past_due';
+        },
+        planLabel() {
+            const map = { supporter: 'Trail', creator: 'Guide' };
+            const billing = this.$store.state.billing;
+            return map[billing && billing.plan] || 'plan';
+        },
     },
     created() {
         if (!this.$store.state.library) {
@@ -508,6 +534,16 @@ export default {
             fetchJson('/resendVerification', { method: 'POST', credentials: 'same-origin' })
                 .then(() => { this.verifyResendSent = true; })
                 .catch((err) => { this.verifyResendError = (err && err.message) || 'An error occurred.'; });
+        },
+        async openPortal() {
+            try {
+                const res = await fetch('/api/billing/portal-session', {
+                    method: 'POST', credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+            } catch (_) {}
         },
     },
 };
