@@ -253,7 +253,6 @@
                 </div>
                 <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />
             </template>
-            <upgrade-prompt v-else tier="trail" feature="managedBackups" mode="inline" />
         </section>
 
         <profileSettings />
@@ -305,7 +304,7 @@ export default {
             return this.$store.state.loggedIn;
         },
         hasBackup() {
-            return this.library && hasFeature(this.library.entitlements, FEATURES.MANAGED_BACKUPS);
+            return !!this.library;
         },
     },
     mounted() {

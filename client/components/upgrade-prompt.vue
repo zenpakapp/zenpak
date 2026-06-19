@@ -179,7 +179,6 @@ const TRAIL_BENEFITS = [
     'Trail badge on your public profile',
     'Public profile with avatar, bio, and links',
     'Improved public list presentation',
-    'Managed backups and restore',
 ];
 
 const GUIDE_BENEFITS = [
@@ -194,7 +193,6 @@ const GUIDE_BENEFITS = [
 const INLINE_TEXTS = {
     publicProfile: 'Trail — Share your gear identity',
     profileCustomization: 'Trail — Personalize your profile',
-    managedBackups: 'Trail — Keep your data safe',
     creatorInsights: "Your lists inspire others — see who reads them and earn from what you recommend.",
     creatorLinks: 'Guide — Add your affiliate links',
     promoCode: 'Guide — Add a promo code',
