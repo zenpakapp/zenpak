@@ -758,7 +758,7 @@ details[open] .lpWelcomeFaqQ::after {
                         </div>
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">Open source</span>
-                            <span class="lpWelcomeStatLabel">Fork of lighterpack.com</span>
+                            <span class="lpWelcomeStatLabel">Built on LighterPack</span>
                         </div>
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">No ads</span>
