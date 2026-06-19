@@ -165,6 +165,21 @@
     }
 }
 
+.accountBillingAlert {
+    background: rgba(var(--color-danger-rgb), 0.06);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+    border-radius: $radius-md;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    margin-bottom: 14px;
+    padding: 14px 16px;
+}
+
+.accountBillingUpgrade,
+.accountBillingManage {
+    // inherits section spacing
+}
+
 @media (max-width: 640px) {
     .accountActions {
         flex-direction: column;
@@ -255,6 +270,35 @@
             </template>
         </section>
 
+        <section v-if="billing && billing.stripeEnabled" class="accountSection">
+            <h3 class="accountSectionTitle">Subscription</h3>
+
+            <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
+                Payment failed — update your payment method to keep your plan.
+                <div class="accountActions">
+                    <button class="lpButton lpButtonDanger" @click="openPortal">Update payment</button>
+                </div>
+            </div>
+
+            <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
+                <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
+                <div class="accountActions">
+                    <a href="/checkout/trail" class="lpButton lpButtonSecondary">Upgrade to Trail</a>
+                    <a href="/checkout/guide" class="lpButton lpButtonPrimary">Upgrade to Guide</a>
+                </div>
+            </div>
+
+            <div v-if="billing.plan !== 'free'" class="accountBillingManage">
+                <p class="accountSectionText">
+                    Current plan: <strong>{{ planLabel }}</strong>
+                    <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
+                </p>
+                <div class="accountActions">
+                    <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
+                </div>
+            </div>
+        </section>
+
         <profileSettings />
         <creatorLinks />
     </modal>
@@ -305,6 +349,13 @@ export default {
         },
         hasBackup() {
             return !!this.library;
+        },
+        billing() {
+            return this.$store.state.billing;
+        },
+        planLabel() {
+            const map = { supporter: 'Trail', creator: 'Guide', free: 'Base' };
+            return map[this.billing && this.billing.plan] || 'Base';
         },
     },
     mounted() {
@@ -416,6 +467,21 @@ export default {
         showDeleteAccount() {
             this.shown = false;
             openDialog('deleteAccount');
+        },
+        async openPortal() {
+            try {
+                const res = await fetch('/api/billing/portal-session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+            } catch (_) {}
+        },
+        formatDate(iso) {
+            if (!iso) return '';
+            return new Date(iso).toLocaleDateString();
         },
     },
 };
