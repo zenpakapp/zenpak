@@ -283,8 +283,8 @@
             <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
                 <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
                 <div class="accountActions">
-                    <a href="/checkout/trail" class="lpButton lpButtonSecondary">Upgrade to Trail</a>
-                    <a href="/checkout/guide" class="lpButton lpButtonPrimary">Upgrade to Guide</a>
+                    <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">Upgrade to Trail</button>
+                    <button @click="openCheckout('guide')" class="lpButton lpButtonPrimary">Upgrade to Guide</button>
                 </div>
             </div>
 
@@ -467,6 +467,18 @@ export default {
         showDeleteAccount() {
             this.shown = false;
             openDialog('deleteAccount');
+        },
+        async openCheckout(plan) {
+            try {
+                const res = await fetch('/api/billing/checkout-session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan }),
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+            } catch (_) {}
         },
         async openPortal() {
             try {

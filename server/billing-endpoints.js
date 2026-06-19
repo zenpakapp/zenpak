@@ -17,7 +17,14 @@ function billingRequired(req, res, next) {
 // Body: { priceId: string, successUrl?: string, cancelUrl?: string }
 router.post('/checkout-session', billingRequired, (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
-        const { priceId, successUrl, cancelUrl } = req.body || {};
+        const { priceId: bodyPriceId, plan, successUrl, cancelUrl } = req.body || {};
+
+        let priceId = bodyPriceId;
+        if (!priceId && plan) {
+            if (plan === 'trail') priceId = config.get('stripePriceIdTrail');
+            else if (plan === 'guide') priceId = config.get('stripePriceIdGuide');
+        }
+
         const validPriceIds = [config.get('stripePriceIdTrail'), config.get('stripePriceIdGuide')].filter(Boolean);
 
         if (!priceId || !validPriceIds.includes(priceId)) {
