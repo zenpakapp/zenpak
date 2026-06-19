@@ -43,6 +43,8 @@ async function getOrCreateCustomer(user) {
 async function syncUserBilling(user, subscription, status) {
     if (!user.billing) user.billing = {};
 
+    const existingTermsAccepted = user.billing && user.billing.termsVersionAccepted;
+
     const now = new Date().toISOString();
 
     if (!subscription) {
@@ -54,6 +56,7 @@ async function syncUserBilling(user, subscription, status) {
         user.billing.currentPeriodEnd = null;
         user.billing.lastSyncedAt = now;
         user.billing.legalEntityVersion = LEGAL_ENTITY_VERSION;
+        if (existingTermsAccepted) user.billing.termsVersionAccepted = existingTermsAccepted;
         if (!user.library) user.library = {};
         if (!user.library.entitlements) user.library.entitlements = {};
         user.library.entitlements.plan = 'free';
@@ -74,6 +77,7 @@ async function syncUserBilling(user, subscription, status) {
             : null;
         user.billing.lastSyncedAt = now;
         user.billing.legalEntityVersion = LEGAL_ENTITY_VERSION;
+        if (existingTermsAccepted) user.billing.termsVersionAccepted = existingTermsAccepted;
 
         if (!user.library) user.library = {};
         if (!user.library.entitlements) user.library.entitlements = {};
