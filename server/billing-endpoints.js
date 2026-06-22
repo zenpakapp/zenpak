@@ -40,17 +40,19 @@ router.post('/checkout-session', billingRequired, (req, res) => {
                 customer: customerId,
                 mode: 'subscription',
                 line_items: [{ price: priceId, quantity: 1 }],
-                success_url: successUrl || `${deployUrl}/account?billing=success`,
-                cancel_url: cancelUrl || `${deployUrl}/account?billing=cancel`,
+                success_url: successUrl || `${deployUrl}/?billing=success`,
+                cancel_url: cancelUrl || `${deployUrl}/?billing=cancel`,
                 allow_promotion_codes: true,
                 billing_address_collection: 'required',
                 tax_id_collection: { enabled: true },
-                consent_collection: { terms_of_service: 'required' },
+                customer_update: { name: 'auto', address: 'auto' },
+
                 metadata: { username: user.username },
             });
 
             return res.json({ url: session.url });
         } catch (err) {
+            console.error('checkout-session error:', err.message, err.type, err.code);
             return res.status(500).json({ message: 'Failed to create checkout session' });
         }
     });
@@ -70,7 +72,7 @@ router.post('/portal-session', billingRequired, (req, res) => {
 
             const session = await stripe.billingPortal.sessions.create({
                 customer: customerId,
-                return_url: `${deployUrl}/account`,
+                return_url: `${deployUrl}/?billing=success`,
             });
 
             return res.json({ url: session.url });

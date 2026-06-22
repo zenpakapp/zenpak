@@ -9,9 +9,16 @@ import { showGlobalAlert } from './services/user-feedback';
 import { registerFocusDirectives } from './utils/focus';
 import store from './store/store';
 
+if (typeof window !== 'undefined') {
+    window.history.scrollRestoration = 'manual';
+}
+
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior() {
+        return { top: 0 };
+    },
 });
 
 setRouter(router);

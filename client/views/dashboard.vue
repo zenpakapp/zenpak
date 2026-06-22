@@ -49,6 +49,35 @@
     color: $color-text-muted;
 }
 
+.lpVerifyBannerDismiss {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: auto;
+    opacity: 0.6;
+    padding: 0 2px;
+
+    &:hover { opacity: 1; }
+}
+
+.lpBillingSuccessBanner {
+    background: #d1fae5;
+    border: 1px solid #34d399;
+    color: #065f46;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.lpBillingCancelBanner {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    color: #92400e;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
 .lpPastDueBanner {
     background: #fff3cd;
     border: 1px solid #ffc107;
@@ -353,16 +382,23 @@
                 <span class="clearfix" />
             </div>
 
-            <div v-if="isSignedIn && emailVerified === false" class="lpVerifyBanner">
+            <div v-if="isSignedIn && emailVerified === false && !verifyBannerDismissed" class="lpVerifyBanner">
                 <span v-if="verifyResendSent">Verification email sent! Check your inbox.</span>
                 <template v-else>
                     <span>Verify your email to share lists publicly.</span>
                     <button class="lpVerifyBannerBtn" @click="resendVerification">Resend email</button>
                     <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
                 </template>
+                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">✕</button>
             </div>
 
-            <div v-if="isPastDue" class="lpPastDueBanner">
+            <div v-if="billingSuccess" class="lpBillingSuccessBanner">
+                ✓ Thank you for supporting ZenPak! Your {{ planLabel }} plan is now active.
+            </div>
+            <div v-if="billingCancelled" class="lpBillingCancelBanner">
+                No worries — you can upgrade whenever you're ready.
+            </div>
+<div v-if="isPastDue" class="lpPastDueBanner">
                 <span>⚠ Your payment failed. Update your payment method to keep your {{ planLabel }} plan.</span>
                 <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">Fix payment</button>
             </div>
@@ -472,6 +508,9 @@ export default {
             showGuideUpgrade: false,
             verifyResendSent: false,
             verifyResendError: null,
+            verifyBannerDismissed: !!localStorage.getItem('verifyBannerDismissed'),
+            billingSuccess: false,
+            billingCancelled: false,
         };
     },
     computed: {
@@ -482,6 +521,7 @@ export default {
             return this.$store.state.gearRoomOpen;
         },
         list() {
+            if (!this.library || typeof this.library.getListById !== 'function') return null;
             return this.library.getListById(this.library.defaultListId);
         },
         isSignedIn() {
@@ -512,6 +552,14 @@ export default {
             return map[billing && billing.plan] || 'plan';
         },
     },
+    watch: {
+        emailVerified(val) {
+            if (val === true) {
+                localStorage.removeItem('verifyBannerDismissed');
+                this.verifyBannerDismissed = false;
+            }
+        },
+    },
     created() {
         if (!this.$store.state.library) {
             push('/welcome');
@@ -521,6 +569,20 @@ export default {
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
         }
+        if (this.$route && this.$route.query.billing === 'success') {
+            fetch('/api/billing/me', { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .catch(() => {});
+            this.billingSuccess = true;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { this.billingSuccess = false; }, 6000);
+        }
+        if (this.$route && this.$route.query.billing === 'cancel') {
+            this.billingCancelled = true;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { this.billingCancelled = false; }, 6000);
+        }
     },
     methods: {
         toggleSidebar() {
@@ -528,6 +590,10 @@ export default {
         },
         updateListName(evt) {
             this.$store.commit('updateListName', { id: this.list.id, name: evt.target.value });
+        },
+        dismissVerifyBanner() {
+            localStorage.setItem('verifyBannerDismissed', '1');
+            this.verifyBannerDismissed = true;
         },
         resendVerification() {
             this.verifyResendError = null;
