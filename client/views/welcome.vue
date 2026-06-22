@@ -876,8 +876,7 @@ details[open] .lpWelcomeFaqQ::after {
                     </details>
                     <details class="lpWelcomeFaqItem">
                         <summary class="lpWelcomeFaqQ">Can I import my existing lists?</summary>
-                        <p class="lpWelcomeFaqA">Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak.</p>
-                        <p class="lpWelcomeFaqA">Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand.</p>
+                        <p class="lpWelcomeFaqA">Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak. Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand.</p>
                     </details>
                 </div>
             </div>
