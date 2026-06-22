@@ -26,6 +26,7 @@ const createInitialState = () => ({
     itemVersion: 0,
     categoryItemVersion: 0,
     gearRoomOpen: false,
+    billing: null,
 });
 
 const store = createStore({
@@ -97,6 +98,9 @@ const store = createStore({
         },
         setGearRoomOpen(state, open) {
             state.gearRoomOpen = open;
+        },
+        setBilling(state, billing) {
+            state.billing = billing;
         },
         setDefaultList(state, list) {
             state.library.defaultListId = list.id;
@@ -559,27 +563,33 @@ const store = createStore({
                 context.commit('setLastSaveData', saveData);
             });
         },
-        loadRemote(context) {
-            return fetchJson('/signin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-            })
-                .then((response) => {
-                    context.commit('setSyncToken', response.syncToken);
-                    context.commit('loadLibraryData', response.library);
-                    context.commit('setSaveType', 'remote');
-                    context.commit('setLoggedIn', response.username);
-                    context.commit('setEmailVerified', response.emailVerified ?? null);
-                })
-                .catch((error) => {
-                    if (error && error.statusCode === 401) {
-                        notifyUnauthorized(error.message);
-                    }
-                    return Promise.reject(error);
+        async loadRemote(context) {
+            try {
+                const response = await fetchJson('/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
                 });
+                context.commit('setSyncToken', response.syncToken);
+                context.commit('loadLibraryData', response.library);
+                context.commit('setSaveType', 'remote');
+                context.commit('setLoggedIn', response.username);
+                context.commit('setEmailVerified', response.emailVerified ?? null);
+                try {
+                    const billingRes = await fetch('/api/billing/me', { credentials: 'include' });
+                    if (billingRes.ok) {
+                        const billing = await billingRes.json();
+                        context.commit('setBilling', billing);
+                    }
+                } catch (_) {}
+            } catch (error) {
+                if (error && error.statusCode === 401) {
+                    notifyUnauthorized(error.message);
+                }
+                return Promise.reject(error);
+            }
         },
     },
     plugins: [

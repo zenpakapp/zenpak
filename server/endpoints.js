@@ -763,10 +763,6 @@ router.get('/api/auth/me', (req, res) => {
 
 router.get('/api/backup', (req, res) => {
     authenticateUser(req, res, (req, res, user) => {
-        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-        if (plan !== 'supporter' && plan !== 'creator') {
-            return res.status(403).json({ message: 'Trail plan required.' });
-        }
         const filename = `zenpak-backup-${user.username}-${new Date().toISOString().slice(0, 10)}.json`;
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

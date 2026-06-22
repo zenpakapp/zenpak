@@ -144,6 +144,7 @@ module.exports = {
     feedEvents: collection('feed_events'),
     notifications: collection('notifications'),
     reports: collection('reports'),
+    billingEvents: collection('billing_events'),
     async ensureIndexes() {
         await ready;
         // createIndex is not exposed by the wrapper — use raw _db collections directly
@@ -167,5 +168,10 @@ module.exports = {
         const reports = _db.collection('reports');
         await reports.createIndex({ reporterId: 1, targetType: 1, targetId: 1 }, { unique: true });
         await reports.createIndex({ status: 1, createdAt: -1 });
+
+        const billingEvents = _db.collection('billing_events');
+        await billingEvents.createIndex({ stripeEventId: 1 }, { unique: true, name: 'billing_events_stripeEventId_unique' });
+
+        await users.createIndex({ 'billing.customerId': 1 }, { unique: true, sparse: true, name: 'users_billing_customerId_unique' });
     },
 };

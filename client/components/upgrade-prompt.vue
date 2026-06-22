@@ -134,38 +134,46 @@
                     <li v-for="benefit in benefits" :key="benefit">{{ benefit }}</li>
                 </ul>
 
-                <div v-if="!submitted" class="lpUpgradeActions">
-                    <button class="lpButton" @click="showForm = !showForm">
-                        {{ showForm ? 'Cancel' : "I'm interested" }}
+                <div v-if="stripeEnabled" class="lpUpgradeActions">
+                    <p v-if="checkoutError" class="lpUpgradeError">{{ checkoutError }}</p>
+                    <button class="lpButton" :disabled="checkingOut" @click="checkout">
+                        {{ checkingOut ? 'Redirecting…' : `Become a ${tierLabel}` }}
                     </button>
+                </div>
 
-                    <div v-if="showForm" class="lpUpgradeInterestForm">
-                        <div>
-                            <label>Your email</label>
-                            <input v-model="email" type="email" placeholder="you@example.com" />
-                        </div>
-                        <div>
-                            <label>Which plan?</label>
-                            <select v-model="selectedTier">
-                                <option value="trail">Trail</option>
-                                <option value="guide">Guide</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Message (optional)</label>
-                            <textarea v-model="message" placeholder="Tell us a bit about how you use LighterPack" rows="3" />
-                        </div>
-                        <p v-if="formError" class="lpUpgradeError">{{ formError }}</p>
-                        <button class="lpButton" :disabled="submitting" @click="submit">
-                            {{ submitting ? 'Sending…' : 'Send' }}
+                <template v-else>
+                    <div v-if="!submitted" class="lpUpgradeActions">
+                        <button class="lpButton" @click="showForm = !showForm">
+                            {{ showForm ? 'Cancel' : "I'm interested" }}
                         </button>
+
+                        <div v-if="showForm" class="lpUpgradeInterestForm">
+                            <div>
+                                <label>Your email</label>
+                                <input v-model="email" type="email" placeholder="you@example.com" />
+                            </div>
+                            <div>
+                                <label>Which plan?</label>
+                                <select v-model="selectedTier">
+                                    <option value="trail">Trail</option>
+                                    <option value="guide">Guide</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Message (optional)</label>
+                                <textarea v-model="message" placeholder="Tell us a bit about how you use ZenPak" rows="3" />
+                            </div>
+                            <p v-if="formError" class="lpUpgradeError">{{ formError }}</p>
+                            <button class="lpButton" :disabled="submitting" @click="submit">
+                                {{ submitting ? 'Sending…' : 'Send' }}
+                            </button>
+                        </div>
                     </div>
 
-                </div>
-
-                <div v-else class="lpUpgradeConfirm">
-                    Thanks! We'll be in touch soon.
-                </div>
+                    <div v-else class="lpUpgradeConfirm">
+                        Thanks! We'll be in touch soon.
+                    </div>
+                </template>
             </div>
         </modal>
     </div>
@@ -179,7 +187,6 @@ const TRAIL_BENEFITS = [
     'Trail badge on your public profile',
     'Public profile with avatar, bio, and links',
     'Improved public list presentation',
-    'Managed backups and restore',
 ];
 
 const GUIDE_BENEFITS = [
@@ -194,7 +201,6 @@ const GUIDE_BENEFITS = [
 const INLINE_TEXTS = {
     publicProfile: 'Trail — Share your gear identity',
     profileCustomization: 'Trail — Personalize your profile',
-    managedBackups: 'Trail — Keep your data safe',
     creatorInsights: "Your lists inspire others — see who reads them and earn from what you recommend.",
     creatorLinks: 'Guide — Add your affiliate links',
     promoCode: 'Guide — Add a promo code',
@@ -241,6 +247,8 @@ export default {
             submitting: false,
             submitted: false,
             formError: null,
+            checkingOut: false,
+            checkoutError: null,
         };
     },
     computed: {
@@ -256,6 +264,9 @@ export default {
         benefits() {
             return this.tier === 'trail' ? TRAIL_BENEFITS : GUIDE_BENEFITS;
         },
+        stripeEnabled() {
+            return this.$store.state.billing && this.$store.state.billing.stripeEnabled;
+        },
     },
     watch: {
         open(val) {
@@ -266,6 +277,25 @@ export default {
         closeModal() {
             this.showModal = false;
             this.$emit('close');
+        },
+        async checkout() {
+            this.checkoutError = null;
+            this.checkingOut = true;
+            try {
+                const res = await fetch('/api/billing/checkout-session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: this.tier }),
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+                else this.checkoutError = 'Something went wrong — give it another try.';
+            } catch (_) {
+                this.checkoutError = 'Looks like we lost the connection. Try again in a moment.';
+            } finally {
+                this.checkingOut = false;
+            }
         },
         async submit() {
             this.formError = null;

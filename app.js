@@ -62,6 +62,11 @@ const oneDay = 86400000;
 
 app.use(compression());
 app.use(cookieParser());
+
+const webhookHandler = require('./server/webhook-handler.js');
+// Webhook MUST be before express.json() — needs raw body for signature verification
+app.use('/', webhookHandler);
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({
     extended: true,
@@ -86,6 +91,13 @@ app.use('/', moderationEndpoints);
 app.use('/api/notifications', notificationEndpoints);
 app.use('/api/reports', reportEndpoints);
 app.use('/', oauthEndpoints);
+
+const { stripeEnabled } = require('./server/billing.js');
+if (stripeEnabled()) {
+    const billingEndpoints = require('./server/billing-endpoints.js');
+    app.use('/api/billing', billingEndpoints);
+}
+
 app.use('/', views);
 
 logger.info("Starting up Lighterpack...");

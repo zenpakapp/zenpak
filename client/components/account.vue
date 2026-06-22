@@ -165,6 +165,31 @@
     }
 }
 
+.accountBillingAlert {
+    background: rgba(var(--color-danger-rgb), 0.06);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+    border-radius: $radius-md;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    margin-bottom: 14px;
+    padding: 14px 16px;
+}
+
+.accountBillingError {
+    background: rgba(var(--color-danger-rgb), 0.06);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.2);
+    border-radius: $radius-md;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+}
+
+.accountBillingUpgrade,
+.accountBillingManage {
+    // inherits section spacing
+}
+
 @media (max-width: 640px) {
     .accountActions {
         flex-direction: column;
@@ -253,7 +278,48 @@
                 </div>
                 <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />
             </template>
-            <upgrade-prompt v-else tier="trail" feature="managedBackups" mode="inline" />
+        </section>
+
+        <section v-if="billing && billing.stripeEnabled" class="accountSection">
+            <h3 class="accountSectionTitle">Subscription</h3>
+
+            <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
+                Payment failed — update your payment method to keep your plan.
+                <div class="accountActions">
+                    <button class="lpButton lpButtonDanger" @click="openPortal">Update payment</button>
+                </div>
+            </div>
+
+            <div v-if="billingError" class="accountBillingError">{{ billingError }}</div>
+
+            <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
+                <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
+                <div class="accountActions">
+                    <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">Upgrade to Trail</button>
+                    <button @click="openCheckout('guide')" class="lpButton lpButtonPrimary">Upgrade to Guide</button>
+                </div>
+            </div>
+
+            <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
+                <p class="accountSectionText">
+                    Current plan: <strong>Trail</strong>
+                    <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
+                </p>
+                <div class="accountActions">
+                    <button class="lpButton lpButtonPrimary" @click="openPortal">Upgrade to Guide</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
+                </div>
+            </div>
+
+            <div v-if="billing.plan === 'creator'" class="accountBillingManage">
+                <p class="accountSectionText">
+                    Current plan: <strong>Guide</strong>
+                    <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
+                </p>
+                <div class="accountActions">
+                    <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
+                </div>
+            </div>
         </section>
 
         <profileSettings />
@@ -295,6 +361,7 @@ export default {
             restoreLoading: false,
             restoreConfirm: false,
             restoreFile: null,
+            billingError: null,
         };
     },
     computed: {
@@ -305,7 +372,14 @@ export default {
             return this.$store.state.loggedIn;
         },
         hasBackup() {
-            return this.library && hasFeature(this.library.entitlements, FEATURES.MANAGED_BACKUPS);
+            return !!this.library;
+        },
+        billing() {
+            return this.$store.state.billing;
+        },
+        planLabel() {
+            const map = { supporter: 'Trail', creator: 'Guide', free: 'Base' };
+            return map[this.billing && this.billing.plan] || 'Base';
         },
     },
     mounted() {
@@ -417,6 +491,41 @@ export default {
         showDeleteAccount() {
             this.shown = false;
             openDialog('deleteAccount');
+        },
+        async openCheckout(plan) {
+            this.billingError = null;
+            try {
+                const res = await fetch('/api/billing/checkout-session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan }),
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+                else this.billingError = 'Something went wrong — give it another try.';
+            } catch (_) {
+                this.billingError = 'Looks like we lost the connection. Try again in a moment.';
+            }
+        },
+        async openPortal() {
+            this.billingError = null;
+            try {
+                const res = await fetch('/api/billing/portal-session', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+                else this.billingError = 'Something went wrong — give it another try.';
+            } catch (_) {
+                this.billingError = 'Looks like we lost the connection. Try again in a moment.';
+            }
+        },
+        formatDate(iso) {
+            if (!iso) return '';
+            return new Date(iso).toLocaleDateString();
         },
     },
 };

@@ -26,7 +26,7 @@ const directives = {
     'focus-on-create': {
     mounted(el, binding) {
         if (typeof binding.value === 'undefined' || binding.value) {
-            el.focus();
+            el.focus({ preventScroll: true });
         }
     },
     beforeUnmount() {

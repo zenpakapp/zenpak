@@ -758,7 +758,7 @@ details[open] .lpWelcomeFaqQ::after {
                         </div>
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">Open source</span>
-                            <span class="lpWelcomeStatLabel">Fork of lighterpack.com</span>
+                            <span class="lpWelcomeStatLabel">Built on LighterPack</span>
                         </div>
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">No ads</span>
@@ -867,16 +867,16 @@ details[open] .lpWelcomeFaqQ::after {
                 <h2 class="lpWelcomeFaqTitle">Questions</h2>
                 <div class="lpWelcomeFaqList">
                     <details class="lpWelcomeFaqItem">
-                        <summary class="lpWelcomeFaqQ">What's the difference with lighterpack.com?</summary>
-                        <p class="lpWelcomeFaqA">This is a modern open-source fork — same core list editor, but with a gear library, community discover, packing mode, public profiles, and ongoing development. The original site hasn't been updated since 2020.</p>
+                        <summary class="lpWelcomeFaqQ">Already using LighterPack?</summary>
+                        <p class="lpWelcomeFaqA">ZenPak picks up where LighterPack left off. It keeps the simple public gear-list spirit, then adds a reusable gear library, public profiles, community discovery, packing mode, and active ongoing development.</p>
                     </details>
                     <details class="lpWelcomeFaqItem">
                         <summary class="lpWelcomeFaqQ">Is it really free?</summary>
-                        <p class="lpWelcomeFaqA">Yes — gear library, lists, weight tracking, and sharing are yours, free forever. Trail helps keep the lights on. Guide unlocks affiliate links and insights.</p>
+                        <p class="lpWelcomeFaqA">Yes. The core stays free and open-source, including self-hosting. Trail is a simple support plan for the hosted app, and Guide is the creator layer with affiliate links, promo codes, and insights.</p>
                     </details>
                     <details class="lpWelcomeFaqItem">
                         <summary class="lpWelcomeFaqQ">Can I import my existing lists?</summary>
-                        <p class="lpWelcomeFaqA">Yes. Import via CSV from lighterpack.com or any spreadsheet. Export works the same way.</p>
+                        <p class="lpWelcomeFaqA">Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak. Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand.</p>
                     </details>
                 </div>
             </div>
