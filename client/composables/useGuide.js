@@ -26,7 +26,9 @@ export function useGuide() {
                 links: data.links || [],
                 gearPhilosophy: data.gearPhilosophy || [],
             };
-            affiliateRules.value = data.affiliateRules || [];
+            affiliateRules.value = data.affiliateRules && data.affiliateRules.length
+                ? data.affiliateRules
+                : [{ type: 'brand', match: '', affiliateUrl: '', promoCode: '', promoLabel: '' }];
             disclosure.value = data.disclosure || '';
         } catch (err) {
             // silently ignore — fields stay empty

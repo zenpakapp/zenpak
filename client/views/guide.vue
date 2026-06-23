@@ -113,6 +113,8 @@ export default {
     },
     computed: {
         isGuide() {
+            const billing = this.$store && this.$store.state && this.$store.state.billing;
+            if (billing && billing.plan === 'creator') return true;
             const lib = this.$store && this.$store.state && this.$store.state.library;
             return lib && lib.entitlements && lib.entitlements.plan === 'creator';
         },
@@ -121,11 +123,21 @@ export default {
         },
     },
     created() {
+        const billing = this.$store.state.billing;
+        if (billing && billing.plan === 'creator') return;
         const lib = this.$store.state.library;
         const isGuide = lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.CREATOR_INSIGHTS);
         if (!isGuide) {
             push('/?upgradeGuide=1');
         }
+    },
+    watch: {
+        isGuide(val) {
+            if (val) {
+                this.loadProfile();
+                this.loadItems();
+            }
+        },
     },
     mounted() {
         if (this.isGuide) {
