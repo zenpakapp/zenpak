@@ -726,11 +726,7 @@
                 <div class="itemDetailHeader">
                     <img v-if="thumbnailImage" class="itemDetailThumb" :src="thumbnailImage" @click="viewImage">
                     <div v-else class="itemDetailThumbPlaceholder" aria-label="No item image">
-                        <svg viewBox="0 0 64 56" aria-hidden="true" focusable="false">
-                            <path d="M5 48h54" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.35" />
-                            <path d="M10 45 25 22l10 14 9-12 16 21" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="m25 22 4 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.45" />
-                        </svg>
+                        <zenpak-gear-icon />
                     </div>
                     <div class="itemDetailHeaderInfo">
                         <div class="itemDetailName">{{ item.name || 'Unnamed item' }}</div>
@@ -865,11 +861,7 @@
                 <div class="itemDetailHeader">
                     <img v-if="thumbnailImage" class="itemDetailThumb" :src="thumbnailImage">
                     <div v-else class="itemDetailThumbPlaceholder" aria-label="No item image">
-                        <svg viewBox="0 0 64 56" aria-hidden="true" focusable="false">
-                            <path d="M5 48h54" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.35" />
-                            <path d="M10 45 25 22l10 14 9-12 16 21" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="m25 22 4 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.45" />
-                        </svg>
+                        <zenpak-gear-icon />
                     </div>
                     <div class="itemDetailHeaderInfo">
                         <div class="itemDetailName">{{ editName || 'Unnamed item' }}</div>
@@ -1019,6 +1011,7 @@
 
 <script>
 import modal from './modal.vue';
+import ZenpakGearIcon from './zenpak-gear-icon.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
 
@@ -1033,7 +1026,7 @@ const UNITS = ['oz', 'lb', 'g', 'kg'];
 
 export default {
     name: 'ItemDetail',
-    components: { modal },
+    components: { modal, ZenpakGearIcon },
     data() {
         return {
             shown: false,

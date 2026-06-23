@@ -307,7 +307,7 @@ export default {
             return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
         },
         isListNew() {
-            return this.list.totalWeight === 0;
+            return this.list.totalWeight === 0 && this.categories.every(c => c.categoryItems.length === 0);
         },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';

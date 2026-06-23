@@ -28,7 +28,7 @@ export function useGuide() {
             };
             affiliateRules.value = data.affiliateRules && data.affiliateRules.length
                 ? data.affiliateRules
-                : [{ type: 'brand', match: '', affiliateUrl: '', promoCode: '', promoLabel: '' }];
+                : [{ type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '' }];
             disclosure.value = data.disclosure || '';
         } catch (err) {
             // silently ignore — fields stay empty
@@ -115,7 +115,7 @@ export function useGuide() {
     }
 
     function addRule() {
-        affiliateRules.value.push({ type: 'brand', match: '', affiliateUrl: '', promoCode: '', promoLabel: '' });
+        affiliateRules.value.push({ type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '' });
     }
 
     function removeRule(index) {

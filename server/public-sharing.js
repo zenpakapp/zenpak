@@ -122,7 +122,7 @@ function resolvePublicItemLink(item, creator) {
 
     const rules = creator && Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [];
     const hostname = normalizeHostname(item.url);
-    const isUsableRule = (candidate) => candidate && (normalizeString(candidate.affiliateUrl) || normalizeString(candidate.promoCode));
+    const isUsableRule = (candidate) => candidate && (normalizeString(candidate.affiliateUrl) || normalizeString(candidate.appendParam) || normalizeString(candidate.promoCode));
     const shopRule = rules.find((candidate) => {
         if (!isUsableRule(candidate)) return false;
         return candidate.type === 'shop' && matchesText(item.shop, candidate.match);
@@ -138,11 +138,34 @@ function resolvePublicItemLink(item, creator) {
     const rule = shopRule || domainRule || brandRule;
 
     if (rule) {
+        if (normalizeString(rule.affiliateUrl)) {
+            return {
+                url: normalizeString(rule.affiliateUrl),
+                promoCode: rule.promoCode || '',
+                promoLabel: rule.promoLabel || '',
+                hasAffiliateLink: true,
+            };
+        }
+        const paramString = normalizeString(rule.appendParam).replace(/^\?/, '');
+        if (paramString && normalizeString(item.url)) {
+            try {
+                const itemUrl = new URL(item.url);
+                new URLSearchParams(paramString).forEach((v, k) => itemUrl.searchParams.set(k, v));
+                return {
+                    url: itemUrl.toString(),
+                    promoCode: rule.promoCode || '',
+                    promoLabel: rule.promoLabel || '',
+                    hasAffiliateLink: true,
+                };
+            } catch {
+                // invalid URL, fall through
+            }
+        }
         return {
-            url: normalizeString(rule.affiliateUrl),
+            url: normalizeString(item.url),
             promoCode: rule.promoCode || '',
             promoLabel: rule.promoLabel || '',
-            hasAffiliateLink: true,
+            hasAffiliateLink: !!(rule.promoCode || rule.promoLabel),
         };
     }
 

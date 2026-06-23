@@ -74,6 +74,7 @@ router.put('/affiliate-rules', (req, res) => {
                 type: ['brand', 'shop', 'domain'].includes(r.type) ? r.type : 'brand',
                 match: String(r.match || '').slice(0, 200),
                 affiliateUrl: String(r.affiliateUrl || '').slice(0, 500),
+                appendParam: String(r.appendParam || '').slice(0, 200),
                 promoCode: String(r.promoCode || '').slice(0, 100),
                 promoLabel: String(r.promoLabel || '').slice(0, 100),
             }))

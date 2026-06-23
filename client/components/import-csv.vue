@@ -1,6 +1,24 @@
 <style lang="scss">
 @import "../css/_globals";
 
+.lpImportTextarea {
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: monospace;
+    padding: 8px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    background: $color-surface-elevated;
+    color: $color-text;
+    resize: vertical;
+
+    &:focus {
+        outline: none;
+        border-color: $color-accent;
+    }
+}
+
 .lpImportUrlInput {
     border: 1px solid $color-border;
     border-radius: 4px;
@@ -210,6 +228,28 @@
                 <a id="importConfirm" class="lpButton" @click="importList">Import List</a>
             </div>
         </modal>
+        <modal id="importText" :shown="showTextInput" @hide="closeTextInput">
+            <h2>Paste your gear list</h2>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">YouTube descriptions, affiliate link lists, any text with <code>-CATEGORY</code> and <code>*Item - URL</code> format.</p>
+            <textarea
+                v-model="textInput"
+                class="lpImportTextarea"
+                placeholder="-PACKING&#10;*Palate V2 Backpack - https://...&#10;&#10;-SLEEPING&#10;*Zpacks Duplex Lite Tent - https://..."
+                rows="10"
+            />
+            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">List name</label>
+            <input
+                v-model="textName"
+                class="lpImportUrlInput"
+                type="text"
+                placeholder="My gear list"
+            >
+            <p v-if="textError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ textError }}</p>
+            <div class="lpModalActions">
+                <a class="lpButton lpButtonSecondary" @click="closeTextInput">Cancel</a>
+                <a class="lpButton" @click="importFromText">Import</a>
+            </div>
+        </modal>
         <modal id="importLP" :shown="showLPInput" @hide="closeLPInput">
             <h2>Import from LighterPack</h2>
             <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">Paste your public LighterPack list URL below.</p>
@@ -250,6 +290,7 @@ import { findBestMatch } from '../composables/useGearMatcher.js';
 import { useUtils } from '../composables/useUtils.js';
 
 const csvImportUtils = require('../utils/csv-import.js');
+const textImportUtils = require('../utils/text-import.js');
 const weightUtils = require('../utils/weight.js');
 const { displayWeight } = useUtils();
 
@@ -281,6 +322,10 @@ export default {
             listId: false,
             importData: {},
             shown: false,
+            showTextInput: false,
+            textInput: '',
+            textName: '',
+            textError: '',
             showLPInput: false,
             lpUrl: '',
             lpName: '',
@@ -313,6 +358,12 @@ export default {
         this.csvInput = this.$refs.csvInput;
         this.csvInput.onchange = this.importCSV;
 
+        registerDialogOpener('importText', () => {
+            this.textInput = '';
+            this.textName = '';
+            this.textError = '';
+            this.showTextInput = true;
+        });
         registerDialogOpener('importCSV', () => {
             this.csvInput.click();
         });
@@ -327,6 +378,7 @@ export default {
         if (this.csvInput) {
             this.csvInput.onchange = null;
         }
+        unregisterDialogOpener('importText');
         unregisterDialogOpener('importCSV');
         unregisterDialogOpener('importLP');
     },
@@ -368,6 +420,38 @@ export default {
             this.$store.commit('importCSV', this.importData);
             this.shown = false;
             if (this.csvInput) this.csvInput.value = '';
+        },
+        closeTextInput() {
+            this.showTextInput = false;
+            this.textInput = '';
+            this.textName = '';
+            this.textError = '';
+        },
+        importFromText() {
+            this.textError = '';
+            const text = this.textInput.trim();
+            if (!text) {
+                this.textError = 'Please paste a gear list.';
+                return;
+            }
+            const items = textImportUtils.parseTextList(text);
+            if (!items.length) {
+                this.textError = 'No items found. Use *Item - URL format.';
+                return;
+            }
+            const name = this.textName.trim() || 'Imported list';
+            this.showTextInput = false;
+            const importData = {
+                data: items,
+                name,
+                listDescription: '',
+                acceptedRows: items.length,
+                rejectedRows: [],
+                errors: [],
+            };
+            const deduped = computeDedup(importData, this.library.items);
+            this.importData = deduped;
+            this.shown = true;
         },
         closeLPInput() {
             this.showLPInput = false;

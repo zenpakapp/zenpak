@@ -50,7 +50,8 @@
                     <option value="domain">Domain</option>
                 </select>
                 <input v-model="rule.match" class="lpGuideInput lpGuideInputShort" placeholder="e.g. Zpacks" maxlength="200" />
-                <input v-model="rule.affiliateUrl" class="lpGuideInput" placeholder="Affiliate URL" maxlength="500" />
+                <input v-model="rule.affiliateUrl" class="lpGuideInput" placeholder="Affiliate URL (replaces)" maxlength="500" />
+                <input v-model="rule.appendParam" class="lpGuideInput lpGuideInputShort" placeholder="Append param (e.g. tag=xyz)" maxlength="200" />
                 <input v-model="rule.promoCode" class="lpGuideInput lpGuideInputShort" placeholder="Code" maxlength="100" />
                 <input v-model="rule.promoLabel" class="lpGuideInput lpGuideInputShort" placeholder="Label (e.g. 10% off)" maxlength="100" />
                 <button class="lpGuideRemove" @click="removeRule(i)">Remove</button>

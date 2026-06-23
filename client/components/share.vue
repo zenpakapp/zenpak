@@ -290,8 +290,8 @@ export default {
                 visibility,
                 allowSearchIndexing: visibility === 'indexable' && this.list.allowSearchIndexing,
             });
-            return this.saveShareState().catch(() => {
-                showGlobalAlert('An error occurred while attempting to save your sharing settings. Please try again later.');
+            return this.saveShareState().catch((err) => {
+                showGlobalAlert((err && err.message) || 'An error occurred while attempting to save your sharing settings. Please try again later.');
             });
         },
         setSearchIndexing(allowSearchIndexing) {
@@ -300,8 +300,8 @@ export default {
                 visibility: allowSearchIndexing ? 'indexable' : this.list.visibility,
                 allowSearchIndexing,
             });
-            return this.saveShareState().catch(() => {
-                showGlobalAlert('An error occurred while attempting to save your sharing settings. Please try again later.');
+            return this.saveShareState().catch((err) => {
+                showGlobalAlert((err && err.message) || 'An error occurred while attempting to save your sharing settings. Please try again later.');
             });
         },
         focusShare() {
@@ -348,6 +348,20 @@ export default {
         saveShareState() {
             if (this.$store.state.saveType !== 'remote' || !this.$store.state.loggedIn) {
                 return Promise.resolve();
+            }
+
+            if (this.$store.state.isSaving) {
+                return new Promise((resolve, reject) => {
+                    const unwatch = this.$store.watch(
+                        (state) => state.isSaving,
+                        (isSaving) => {
+                            if (!isSaving) {
+                                unwatch();
+                                this.saveShareState().then(resolve).catch(reject);
+                            }
+                        },
+                    );
+                });
             }
 
             const saveData = JSON.stringify(this.library.save());

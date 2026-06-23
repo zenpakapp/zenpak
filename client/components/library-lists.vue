@@ -106,6 +106,7 @@
                 <template #target><span><a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a></span></template>
                 <template #content><div style="display:flex;flex-direction:column;gap:8px;">
                     <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a>
+                    <a class="lpAdd" @click="importText"><i class="lpSprite lpSpriteUpload" />Paste gear list</a>
                     <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />Import CSV</a>
                     <a class="lpAdd" @click="importLP"><i class="lpSprite lpSpriteUpload" />Import from LighterPack</a>
                     <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />Copy a list</a>
@@ -169,6 +170,9 @@ export default {
         },
         copyList() {
             openDialog('copyList');
+        },
+        importText() {
+            openDialog('importText');
         },
         importCSV() {
             openDialog('importCSV');
