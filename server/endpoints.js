@@ -833,6 +833,35 @@ router.post('/resendVerification', (req, res) => {
     });
 });
 
+router.post('/api/import/lighterpack', async (req, res) => {
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: 'No URL provided.' });
+
+    const match = String(url).match(/lighterpack\.com\/r\/([a-zA-Z0-9]+)/);
+    if (!match) return res.status(400).json({ error: 'Invalid LighterPack URL. Expected: lighterpack.com/r/xxxxx' });
+
+    const id = match[1];
+    let response;
+    try {
+        response = await fetch(`https://lighterpack.com/csv/${id}`, {
+            headers: { 'User-Agent': 'ZenPak Importer/1.0' },
+            signal: AbortSignal.timeout(10000),
+        });
+    } catch {
+        return res.status(502).json({ error: 'Could not reach LighterPack. Check your connection.' });
+    }
+
+    if (!response.ok) {
+        return res.status(400).json({ error: 'List not found or not downloadable on LighterPack.' });
+    }
+
+    const csv = await response.text();
+    const disposition = response.headers.get('content-disposition') || '';
+    const nameMatch = disposition.match(/filename=([^;]+)\.csv/i);
+    const name = nameMatch ? nameMatch[1].replace(/_/g, ' ').trim() : id;
+    return res.json({ csv, name });
+});
+
 const communityRouter = require('./community-endpoints.js');
 router.use('/api/community', communityRouter);
 

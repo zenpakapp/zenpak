@@ -107,6 +107,7 @@
                 <template #content><div style="display:flex;flex-direction:column;gap:8px;">
                     <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a>
                     <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />Import CSV</a>
+                    <a class="lpAdd" @click="importLP"><i class="lpSprite lpSpriteUpload" />Import from LighterPack</a>
                     <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />Copy a list</a>
                 </div></template>
             </PopoverHover>
@@ -171,6 +172,9 @@ export default {
         },
         importCSV() {
             openDialog('importCSV');
+        },
+        importLP() {
+            openDialog('importLP');
         },
         handleListReorder() {
             if (this.drake) {

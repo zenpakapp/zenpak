@@ -1,6 +1,22 @@
 <style lang="scss">
 @import "../css/_globals";
 
+.lpImportUrlInput {
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    background: $color-surface-elevated;
+    color: $color-text;
+
+    &:focus {
+        outline: none;
+        border-color: $color-accent;
+    }
+}
+
 #importValidate {
     height: 500px;
     overflow-y: scroll;
@@ -194,6 +210,32 @@
                 <a id="importConfirm" class="lpButton" @click="importList">Import List</a>
             </div>
         </modal>
+        <modal id="importLP" :shown="showLPInput" @hide="closeLPInput">
+            <h2>Import from LighterPack</h2>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">Paste your public LighterPack list URL below.</p>
+            <input
+                v-model="lpUrl"
+                class="lpImportUrlInput"
+                type="url"
+                placeholder="https://lighterpack.com/r/abc123"
+                @keyup.enter="importFromLP"
+            >
+            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">List name</label>
+            <input
+                v-model="lpName"
+                class="lpImportUrlInput"
+                type="text"
+                placeholder="My gear list"
+                @keyup.enter="importFromLP"
+            >
+            <p v-if="lpError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ lpError }}</p>
+            <div class="lpModalActions">
+                <a class="lpButton lpButtonSecondary" @click="closeLPInput">Cancel</a>
+                <a class="lpButton" :class="{ disabled: lpLoading }" @click="importFromLP">
+                    {{ lpLoading ? 'Importing…' : 'Import' }}
+                </a>
+            </div>
+        </modal>
         <form id="csvUpload">
             <input id="csv" ref="csvInput" type="file" name="csv">
         </form>
@@ -239,6 +281,11 @@ export default {
             listId: false,
             importData: {},
             shown: false,
+            showLPInput: false,
+            lpUrl: '',
+            lpName: '',
+            lpLoading: false,
+            lpError: '',
         };
     },
     computed: {
@@ -269,12 +316,19 @@ export default {
         registerDialogOpener('importCSV', () => {
             this.csvInput.click();
         });
+        registerDialogOpener('importLP', () => {
+            this.lpUrl = '';
+            this.lpName = '';
+            this.lpError = '';
+            this.showLPInput = true;
+        });
     },
     beforeUnmount() {
         if (this.csvInput) {
             this.csvInput.onchange = null;
         }
         unregisterDialogOpener('importCSV');
+        unregisterDialogOpener('importLP');
     },
     methods: {
         importCSV(evt) {
@@ -314,6 +368,41 @@ export default {
             this.$store.commit('importCSV', this.importData);
             this.shown = false;
             if (this.csvInput) this.csvInput.value = '';
+        },
+        closeLPInput() {
+            this.showLPInput = false;
+            this.lpUrl = '';
+            this.lpName = '';
+            this.lpError = '';
+        },
+        async importFromLP() {
+            if (this.lpLoading) return;
+            this.lpError = '';
+            const url = this.lpUrl.trim();
+            if (!url) {
+                this.lpError = 'Please enter a URL.';
+                return;
+            }
+            this.lpLoading = true;
+            try {
+                const res = await fetch('/api/import/lighterpack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url }),
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    this.lpError = data.error || 'Import failed.';
+                    return;
+                }
+                if (!this.lpName) this.lpName = data.name;
+                this.showLPInput = false;
+                this.validateImport(data.csv, this.lpName || data.name);
+            } catch {
+                this.lpError = 'Network error. Please try again.';
+            } finally {
+                this.lpLoading = false;
+            }
         },
         displayWeight,
         resolveReview(rowIndex, decision) {
