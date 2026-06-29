@@ -21,7 +21,16 @@ function getPlanFromPriceId(priceId) {
     if (!priceId) return 'free';
     if (priceId === config.get('stripePriceIdTrail')) return 'supporter';
     if (priceId === config.get('stripePriceIdGuide')) return 'creator';
+    if (priceId === config.get('stripePriceIdGuideAnnual')) return 'creator';
     return 'free';
+}
+
+function getIntervalFromPriceId(priceId) {
+    if (!priceId) return null;
+    if (priceId === config.get('stripePriceIdTrail')) return 'year';
+    if (priceId === config.get('stripePriceIdGuide')) return 'month';
+    if (priceId === config.get('stripePriceIdGuideAnnual')) return 'year';
+    return null;
 }
 
 async function getOrCreateCustomer(user) {
@@ -65,10 +74,12 @@ async function syncUserBilling(user, subscription, status) {
             ? subscription.items.data[0].price.id
             : null;
         const plan = getPlanFromPriceId(priceId);
+        const interval = getIntervalFromPriceId(priceId);
 
         user.billing.provider = 'stripe';
         user.billing.subscriptionId = subscription.id;
         user.billing.priceId = priceId;
+        user.billing.interval = interval;
         user.billing.plan = plan;
         user.billing.status = status || subscription.status;
         user.billing.cancelAtPeriodEnd = subscription.cancel_at_period_end || false;
@@ -91,11 +102,42 @@ async function syncUserBilling(user, subscription, status) {
     await db.users.save(user);
 }
 
+async function syncKofiBilling(user, { amount, donationDate }) {
+    if (!user.billing) user.billing = {};
+
+    const expiryDate = new Date(donationDate);
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
+    const existingTermsAccepted = user.billing.termsVersionAccepted;
+
+    user.billing.provider = 'kofi';
+    user.billing.subscriptionId = null;
+    user.billing.priceId = null;
+    user.billing.plan = 'supporter';
+    user.billing.interval = 'oneshot';
+    user.billing.status = 'active';
+    user.billing.cancelAtPeriodEnd = false;
+    user.billing.currentPeriodEnd = expiryDate.toISOString();
+    user.billing.kofiAmount = amount;
+    user.billing.kofiDonationDate = donationDate;
+    user.billing.lastSyncedAt = new Date().toISOString();
+    user.billing.legalEntityVersion = LEGAL_ENTITY_VERSION;
+    if (existingTermsAccepted) user.billing.termsVersionAccepted = existingTermsAccepted;
+
+    if (!user.library) user.library = {};
+    if (!user.library.entitlements) user.library.entitlements = {};
+    user.library.entitlements.plan = 'supporter';
+
+    await db.users.save(user);
+}
+
 module.exports = {
     LEGAL_ENTITY_VERSION,
     stripeEnabled,
     getStripe,
     getPlanFromPriceId,
+    getIntervalFromPriceId,
     getOrCreateCustomer,
     syncUserBilling,
+    syncKofiBilling,
 };
