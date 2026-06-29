@@ -21,11 +21,21 @@ router.post('/checkout-session', billingRequired, (req, res) => {
 
         let priceId = bodyPriceId;
         if (!priceId && plan) {
-            if (plan === 'trail') priceId = config.get('stripePriceIdTrail');
-            else if (plan === 'guide') priceId = config.get('stripePriceIdGuide');
+            const interval = req.body.interval; // 'month' | 'year' | undefined
+            if (plan === 'trail') {
+                priceId = config.get('stripePriceIdTrail'); // annual-only, interval ignored
+            } else if (plan === 'guide') {
+                priceId = interval === 'year'
+                    ? config.get('stripePriceIdGuideAnnual')
+                    : config.get('stripePriceIdGuide');
+            }
         }
 
-        const validPriceIds = [config.get('stripePriceIdTrail'), config.get('stripePriceIdGuide')].filter(Boolean);
+        const validPriceIds = [
+            config.get('stripePriceIdTrail'),
+            config.get('stripePriceIdGuide'),
+            config.get('stripePriceIdGuideAnnual'),
+        ].filter(Boolean);
 
         if (!priceId || !validPriceIds.includes(priceId)) {
             return res.status(400).json({ message: 'Invalid price ID' });
@@ -92,6 +102,7 @@ router.get('/me', (req, res) => {
             cancelAtPeriodEnd: billing.cancelAtPeriodEnd || false,
             currentPeriodEnd: billing.currentPeriodEnd || null,
             provider: billing.provider || null,
+            interval: billing.interval || null,
             stripeEnabled: stripeEnabled(),
         });
     });
