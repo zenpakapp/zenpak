@@ -90,7 +90,7 @@
         <h2>Plans</h2>
         <ul>
             <li><strong>Base</strong> — Free. The full app. No paywalled core features.</li>
-            <li><strong>Trail</strong> — Support the project. Get a public profile with avatar, bio, and links. Trail badge on your profile and lists. Download and restore your full gear library as a JSON backup.</li>
+            <li><strong>Trail</strong> — Support the project. Customize your public profile with an avatar, bio, and links.</li>
             <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
         </ul>
 
