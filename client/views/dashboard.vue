@@ -358,7 +358,7 @@
                         <span class="lpHamburgerLine" />
                     </a>
                 </span>
-                <input id="lpListName" :value="list.name" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                 <span class="headerItem headerIconItem">
                     <themeToggle />
                 </span>
@@ -589,6 +589,7 @@ export default {
             this.$store.commit('toggleSidebar');
         },
         updateListName(evt) {
+            if (!this.list) return;
             this.$store.commit('updateListName', { id: this.list.id, name: evt.target.value });
         },
         dismissVerifyBanner() {
