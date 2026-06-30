@@ -88,9 +88,15 @@ async function handleEvent(event) {
         case 'invoice.paid': {
             const user = await findUserByCustomerId(obj.customer);
             if (!user) return;
-            if (!user.billing) user.billing = {};
-            user.billing.lastSyncedAt = new Date().toISOString();
-            await db.users.save(user);
+            if (obj.subscription) {
+                const stripe = getStripe();
+                const subscription = await stripe.subscriptions.retrieve(obj.subscription);
+                await syncUserBilling(user, subscription, subscription.status);
+            } else {
+                if (!user.billing) user.billing = {};
+                user.billing.lastSyncedAt = new Date().toISOString();
+                await db.users.save(user);
+            }
             break;
         }
 
