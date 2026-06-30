@@ -5,7 +5,7 @@ const config = require('config');
 const router = express.Router();
 const { logger } = require('./log.js');
 const db = require('./db.js');
-const { stripeEnabled, getStripe, syncUserBilling } = require('./billing.js');
+const { stripeEnabled, getStripe, syncUserBilling, syncKofiBilling } = require('./billing.js');
 
 // Raw body parser — MUST be applied before express.json() in app.js
 router.post(
@@ -121,4 +121,72 @@ async function findUserByCustomerId(customerId) {
     return db.users.findOne({ 'billing.customerId': customerId });
 }
 
+function parseKofiPayload(rawData) {
+    const parsed = JSON.parse(rawData);
+    const amountCents = Math.round(parseFloat(parsed.amount || '0') * 100);
+    return {
+        verificationToken: parsed.verification_token || '',
+        email: (parsed.email || '').toLowerCase().trim(),
+        amountCents,
+        donationDate: parsed.timestamp || new Date().toISOString(),
+        transactionId: parsed.kofi_transaction_id || '',
+        type: parsed.type || '',
+    };
+}
+
+function validateKofiToken(token) {
+    if (!token) return false;
+    const expected = config.get('kofiWebhookToken');
+    return !!expected && token === expected;
+}
+
+router.post(
+    '/api/webhooks/kofi',
+    express.urlencoded({ extended: false }),
+    async (req, res) => {
+        const rawData = req.body && req.body.data;
+        if (!rawData) {
+            return res.status(400).json({ message: 'Missing data field' });
+        }
+
+        let payload;
+        try {
+            payload = parseKofiPayload(rawData);
+        } catch (err) {
+            logger.warn('Ko-fi webhook parse error', { err: err.message });
+            return res.status(400).json({ message: 'Invalid payload' });
+        }
+
+        if (!validateKofiToken(payload.verificationToken)) {
+            logger.warn('Ko-fi webhook token mismatch');
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+
+        if (!payload.email) {
+            return res.status(400).json({ message: 'Missing email in payload' });
+        }
+
+        const user = await db.users.findOne({ email: payload.email });
+        if (!user) {
+            // Unknown email — acknowledge to Ko-fi, no action
+            return res.json({ received: true, matched: false });
+        }
+
+        try {
+            await syncKofiBilling(user, {
+                amount: payload.amountCents,
+                donationDate: payload.donationDate,
+            });
+        } catch (err) {
+            logger.error('Ko-fi syncKofiBilling failed', { err: err.message, email: payload.email });
+            return res.status(500).json({ message: 'Sync failed' });
+        }
+
+        logger.info('Ko-fi Trail activated', { username: user.username, amount: payload.amountCents });
+        return res.json({ received: true, matched: true });
+    }
+);
+
 module.exports = router;
+module.exports.parseKofiPayload = parseKofiPayload;
+module.exports.validateKofiToken = validateKofiToken;
