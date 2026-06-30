@@ -97,7 +97,7 @@
         <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago, and one day the Shikoku Henro.</p>
 
         <div class="lpAboutActions">
-            <a class="lpAboutKofi" href="https://ko-fi.com/fxbenard" target="_blank" rel="noopener noreferrer">
+            <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">
                 Pack light, give light 🍵
             </a>
             <button v-if="!showPrompt" class="lpButton lpButtonSecondary" @click="showPrompt = true">
