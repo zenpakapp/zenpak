@@ -170,7 +170,8 @@ module.exports = {
         await reports.createIndex({ status: 1, createdAt: -1 });
 
         const billingEvents = _db.collection('billing_events');
-        await billingEvents.createIndex({ stripeEventId: 1 }, { unique: true, name: 'billing_events_stripeEventId_unique' });
+        await billingEvents.createIndex({ stripeEventId: 1 }, { unique: true, sparse: true, name: 'billing_events_stripeEventId_unique' });
+        await billingEvents.createIndex({ kofiTransactionId: 1 }, { unique: true, sparse: true, name: 'billing_events_kofiTransactionId_unique' });
 
         await users.createIndex({ 'billing.customerId': 1 }, { unique: true, sparse: true, name: 'users_billing_customerId_unique' });
     },

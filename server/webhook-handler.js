@@ -123,7 +123,8 @@ async function findUserByCustomerId(customerId) {
 
 function parseKofiPayload(rawData) {
     const parsed = JSON.parse(rawData);
-    const amountCents = Math.round(parseFloat(parsed.amount || '0') * 100);
+    const rawAmount = parseFloat(parsed.amount || '0');
+    const amountCents = isNaN(rawAmount) ? 0 : Math.round(rawAmount * 100);
     return {
         verificationToken: parsed.verification_token || '',
         email: (parsed.email || '').toLowerCase().trim(),
@@ -164,6 +165,21 @@ router.post(
 
         if (!payload.email) {
             return res.status(400).json({ message: 'Missing email in payload' });
+        }
+
+        // Idempotency — drop duplicate Ko-fi notifications
+        try {
+            await db.billingEvents.save({
+                kofiTransactionId: payload.transactionId,
+                type: 'kofi_donation',
+                processedAt: new Date().toISOString(),
+            });
+        } catch (err) {
+            if (err.code === 11000) {
+                return res.json({ received: true, duplicate: true });
+            }
+            logger.error('Failed to record Ko-fi billing event', { transactionId: payload.transactionId, err: err.message });
+            return res.status(500).json({ message: 'Internal error' });
         }
 
         const user = await db.users.findOne({ email: payload.email });
