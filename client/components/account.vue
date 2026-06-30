@@ -294,9 +294,36 @@
 
             <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
                 <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
-                <div class="accountActions">
-                    <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">Upgrade to Trail</button>
-                    <button @click="openCheckout('guide')" class="lpButton lpButtonPrimary">Upgrade to Guide</button>
+                <div class="accountBillingActions">
+                    <div class="accountBillingOption">
+                        <p class="accountSectionText"><strong>Trail</strong> — €20/year</p>
+                        <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">
+                            Upgrade to Trail
+                        </button>
+                    </div>
+                    <div class="accountBillingOption">
+                        <p class="accountSectionText"><strong>Guide</strong></p>
+                        <div class="accountIntervalToggle">
+                            <button
+                                :class="['lpButton', selectedGuideInterval === 'month' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
+                                @click="selectedGuideInterval = 'month'"
+                            >
+                                €5/month
+                            </button>
+                            <button
+                                :class="['lpButton', selectedGuideInterval === 'year' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
+                                @click="selectedGuideInterval = 'year'"
+                            >
+                                €39/year
+                            </button>
+                        </div>
+                        <button
+                            @click="openCheckout('guide', selectedGuideInterval)"
+                            class="lpButton lpButtonPrimary"
+                        >
+                            Upgrade to Guide
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -362,6 +389,7 @@ export default {
             restoreConfirm: false,
             restoreFile: null,
             billingError: null,
+            selectedGuideInterval: 'month',
         };
     },
     computed: {
@@ -492,14 +520,15 @@ export default {
             this.shown = false;
             openDialog('deleteAccount');
         },
-        async openCheckout(plan) {
+        async openCheckout(plan, interval) {
             this.billingError = null;
+            const body = interval ? { plan, interval } : { plan };
             try {
                 const res = await fetch('/api/billing/checkout-session', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan }),
+                    body: JSON.stringify(body),
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
