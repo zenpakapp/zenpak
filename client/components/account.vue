@@ -190,6 +190,23 @@
     // inherits section spacing
 }
 
+.accountBillingActions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.accountBillingOption {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.accountIntervalToggle {
+    display: flex;
+    gap: 8px;
+}
+
 @media (max-width: 640px) {
     .accountActions {
         flex-direction: column;
