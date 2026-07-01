@@ -461,9 +461,11 @@ export default {
             return filteredItems;
         },
         list() {
+            if (!this.library || typeof this.library.getListById !== 'function') return null;
             return this.library.getListById(this.library.defaultListId);
         },
         categories() {
+            if (!this.list) return [];
             return this.list.categoryIds.map(id => this.library.getCategoryById(id));
         },
     },
