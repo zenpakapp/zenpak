@@ -63,17 +63,23 @@ $welcome-page-screenshot-end: rgba(244, 242, 237, 0.92);
 
 .lpWelcomeEyebrow {
     color: rgba(255, 255, 255, 0.74);
-    display: inline-block;
+    display: block;
     font-size: 12px;
     font-weight: $fontWeight-bold;
+    margin-bottom: 16px;
     letter-spacing: 0.18em;
-    margin-bottom: 18px;
     text-transform: uppercase;
+}
+
+.lpWelcomeEyebrowMark {
+    display: block;
+    height: auto;
+    width: 122px;
 }
 
 .lpWelcomeHeadline {
     color: #fff;
-    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
     font-size: clamp(36px, 6vw, 66px);
     font-weight: 700;
     letter-spacing: -0.04em;
@@ -743,7 +749,9 @@ details[open] .lpWelcomeFaqQ::after {
         <section class="lpWelcomeHero">
             <div class="lpContainer lpWelcomeHeroInner">
                 <div class="lpWelcomeHeroCopy">
-                    <span class="lpWelcomeEyebrow">ZenPak</span>
+                    <span class="lpWelcomeEyebrow">
+                        <zenpak-brand-asset class="lpWelcomeEyebrowMark" variant="wordmark-white" alt="ZenPak" />
+                    </span>
                     <h1 class="lpWelcomeHeadline">
                         Pack light.
                         <span>Leave calm.</span>
@@ -872,7 +880,7 @@ details[open] .lpWelcomeFaqQ::after {
                     </details>
                     <details class="lpWelcomeFaqItem">
                         <summary class="lpWelcomeFaqQ">Is it really free?</summary>
-                        <p class="lpWelcomeFaqA">Yes. The core stays free and open-source, including self-hosting. Trail is a simple support plan for the hosted app, and Guide is the creator layer with affiliate links, promo codes, and insights.</p>
+                        <p class="lpWelcomeFaqA">Yes. The core stays free and open-source, including self-hosting. Kin is a simple support plan for the hosted app, and Wayfarer is the creator layer with affiliate links, promo codes, and insights.</p>
                     </details>
                     <details class="lpWelcomeFaqItem">
                         <summary class="lpWelcomeFaqQ">Can I import my existing lists?</summary>
@@ -926,6 +934,7 @@ import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
 import SigninForm from '../components/signin-form.vue';
 import templatePicker from '../components/template-picker.vue';
+import ZenpakBrandAsset from '../components/zenpak-brand-asset.vue';
 import { push } from '../services/navigation';
 
 export default {
@@ -936,6 +945,7 @@ export default {
         registerForm,
         SigninForm,
         templatePicker,
+        ZenpakBrandAsset,
     },
     data() {
         return {
@@ -960,7 +970,7 @@ export default {
             this.showOnboarding = true;
             return;
         }
-        if (this.$store.state.library) {
+        if (this.$store.state.loggedIn && this.$store.state.library) {
             push('/');
         }
     },

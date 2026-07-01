@@ -369,7 +369,7 @@
                     <router-link to="/community" class="lpTarget">Community</router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">
-                    <router-link to="/guide" class="lpTarget">Guide</router-link>
+                    <router-link to="/guide" class="lpTarget">Wayfarer</router-link>
                 </span>
                 <share />
                 <listSettings />
@@ -547,7 +547,7 @@ export default {
             return billing && billing.status === 'past_due';
         },
         planLabel() {
-            const map = { supporter: 'Trail', creator: 'Guide' };
+            const map = { supporter: 'Kin', creator: 'Wayfarer' };
             const billing = this.$store.state.billing;
             return map[billing && billing.plan] || 'plan';
         },

@@ -313,13 +313,13 @@
                 <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Trail</strong> — €19/year</p>
+                        <p class="accountSectionText"><strong>Kin</strong> — €19/year</p>
                         <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">
-                            Upgrade to Trail
+                            Upgrade to Kin
                         </button>
                     </div>
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Guide</strong></p>
+                        <p class="accountSectionText"><strong>Wayfarer</strong></p>
                         <div class="accountIntervalToggle">
                             <button
                                 :class="['lpButton', selectedGuideInterval === 'month' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
@@ -338,7 +338,7 @@
                             @click="openCheckout('guide', selectedGuideInterval)"
                             class="lpButton lpButtonPrimary"
                         >
-                            Upgrade to Guide
+                            Upgrade to Wayfarer
                         </button>
                     </div>
                 </div>
@@ -346,18 +346,18 @@
 
             <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    Current plan: <strong>Trail</strong>
+                    Current plan: <strong>Kin</strong>
                     <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonPrimary" @click="openPortal">Upgrade to Guide</button>
+                    <button class="lpButton lpButtonPrimary" @click="openPortal">Upgrade to Wayfarer</button>
                     <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
                 </div>
             </div>
 
             <div v-if="billing.plan === 'creator'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    Current plan: <strong>Guide</strong>
+                    Current plan: <strong>Wayfarer</strong>
                     <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
@@ -423,7 +423,7 @@ export default {
             return this.$store.state.billing;
         },
         planLabel() {
-            const map = { supporter: 'Trail', creator: 'Guide', free: 'Base' };
+            const map = { supporter: 'Kin', creator: 'Wayfarer', free: 'Base' };
             return map[this.billing && this.billing.plan] || 'Base';
         },
     },

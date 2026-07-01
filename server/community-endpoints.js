@@ -372,7 +372,7 @@ router.get('/insights', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
         if (plan !== 'creator') {
-            return res.status(403).json({ message: 'Guide tier required' });
+            return res.status(403).json({ message: 'Wayfarer tier required' });
         }
 
         try {

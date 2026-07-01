@@ -155,8 +155,8 @@
                             <div>
                                 <label>Which plan?</label>
                                 <select v-model="selectedTier">
-                                    <option value="trail">Trail</option>
-                                    <option value="guide">Guide</option>
+                                    <option value="trail">Kin</option>
+                                    <option value="guide">Wayfarer</option>
                                 </select>
                             </div>
                             <div>
@@ -184,14 +184,14 @@ import modal from './modal.vue';
 import { fetchJson } from '../utils/utils.js';
 
 const TRAIL_BENEFITS = [
-    'Trail badge on your public profile',
+    'Kin badge on your public profile',
     'Public profile with avatar, bio, and links',
     'Improved public list presentation',
 ];
 
 const GUIDE_BENEFITS = [
     'Public profile with avatar, bio, and links',
-    'Guide badge on your profile and lists',
+    'Wayfarer badge on your profile and lists',
     'Library backup and restore',
     'Insights: views, copies, top lists',
     'Affiliate links and promo codes per item',
@@ -199,11 +199,11 @@ const GUIDE_BENEFITS = [
 ];
 
 const INLINE_TEXTS = {
-    publicProfile: 'Trail — Share your gear identity',
-    profileCustomization: 'Trail — Personalize your profile',
+    publicProfile: 'Kin — Share your gear identity',
+    profileCustomization: 'Kin — Personalize your profile',
     creatorInsights: "Your lists inspire others — see who reads them and earn from what you recommend.",
-    creatorLinks: 'Guide — Add your affiliate links',
-    promoCode: 'Guide — Add a promo code',
+    creatorLinks: 'Wayfarer — Add your affiliate links',
+    promoCode: 'Wayfarer — Add a promo code',
 };
 
 const TAGLINES = {
@@ -253,7 +253,7 @@ export default {
     },
     computed: {
         tierLabel() {
-            return this.tier === 'trail' ? 'Trail' : 'Guide';
+            return this.tier === 'trail' ? 'Kin' : 'Wayfarer';
         },
         inlineText() {
             return INLINE_TEXTS[this.feature] || `${this.tierLabel} — Unlock this feature`;

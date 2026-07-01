@@ -4,7 +4,7 @@
             <router-link :to="backTo" class="lpGuideBack">{{ backLabel }}</router-link>
             <router-link v-if="username" :to="`/u/${username}`" class="lpGuideViewProfile">View my profile →</router-link>
         </div>
-        <h1 class="lpGuideTitle">Guide Settings</h1>
+        <h1 class="lpGuideTitle">Wayfarer Settings</h1>
 
         <!-- Section: Public Profile -->
         <section class="lpGuideSection">

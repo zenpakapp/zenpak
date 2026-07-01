@@ -98,16 +98,16 @@
         <h2>Plans</h2>
         <ul>
             <li><strong>Base</strong> — Free. The full app. No paywalled core features.</li>
-            <li><strong>Trail</strong> — Support the project. Customize your public profile with an avatar, bio, and links.</li>
-            <li><strong>Guide</strong> — Everything in Trail, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
+            <li><strong>Kin</strong> — Support the project. Customize your public profile with an avatar, bio, and links.</li>
+            <li><strong>Wayfarer</strong> — Everything in Kin, plus affiliate links, promo codes, and insights to see who's reading your lists.</li>
         </ul>
 
         <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago, and one day the Shikoku Henro.</p>
 
         <div class="lpAboutActions">
             <div class="lpAboutCtaRow">
-                <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Trail</button>
-                <button class="lpButton" @click="showGuidePrompt = true">Become a Guide</button>
+                <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Kin</button>
+                <button class="lpButton" @click="showGuidePrompt = true">Become a Wayfarer</button>
             </div>
             <p class="lpAboutKofiNote">Or <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">put a stone on the cairn</a> — pay what you want on Ko-fi, get 1 year of Trail.</p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />

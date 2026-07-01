@@ -476,8 +476,8 @@
                         <div class="lpCommunityCardName">{{ list.name }}</div>
                         <div class="lpCommunityCardAuthor">
                             by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                            <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Guide</span>
-                            <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
+                            <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                            <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
                         </div>
                         <div class="lpCommunityCardMeta">
                             <span class="lpCommunityCardMetaItem">{{ list.totalBaseWeight.toFixed(2) }} kg base</span>
@@ -496,8 +496,8 @@
                     <div class="lpCommunityCardName">{{ list.name }}</div>
                     <div class="lpCommunityCardAuthor">
                         by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                        <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Guide</span>
-                        <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
+                        <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                        <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
                     </div>
                     <div class="lpCommunityCardMeta">
                         <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -539,8 +539,8 @@
                 >
                     <div class="lpCommunityCardName">
                         {{ user.displayName || user.username }}
-                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Guide</span>
-                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Trail</span>
+                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Kin</span>
                     </div>
                     <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
                     <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
@@ -563,8 +563,8 @@
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
                             <router-link :to="`/u/${event.author}`">{{ event.author }}</router-link>
-                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Guide</span>
-                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Trail</span>
+                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
                             <span> {{ eventLabel(event.type) }}</span>
                         </div>
                         <div v-if="event.listName" class="lpCommunityEventList">

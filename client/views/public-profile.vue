@@ -266,8 +266,8 @@
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
                             <h1 class="lpPublicName">{{ profile.displayName }}</h1>
-                            <span v-if="isCreator" class="lpPublicBadge">Guide</span>
-                            <span v-else-if="isSupporter" class="lpPublicBadge">Trail</span>
+                            <span v-if="isCreator" class="lpPublicBadge">Wayfarer</span>
+                            <span v-else-if="isSupporter" class="lpPublicBadge">Kin</span>
                         </div>
                         <upgrade-prompt v-if="isOwnProfile && !isTrail && !profile.bio" tier="trail" feature="profileCustomization" mode="inline" />
                         <p v-else-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>

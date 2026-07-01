@@ -113,8 +113,8 @@
                 <div class="lpFeedEventBody">
                     <div>
                         <router-link :to="`/u/${event.author}`"><strong>{{ event.author }}</strong></router-link>
-                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">Guide</span>
-                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">Trail</span>
+                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">Wayfarer</span>
+                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">Kin</span>
                         <span> {{ eventLabel(event.type) }}</span>
                     </div>
                     <div v-if="event.listName" class="lpFeedListCard">

@@ -66,7 +66,7 @@
             </div>
             <p class="creatorLinksNote">Affiliate links are shown only on your public pages.</p>
         </template>
-        <p v-else class="creatorLinksNote">Available on the Guide plan.</p>
+        <p v-else class="creatorLinksNote">Available on the Wayfarer plan.</p>
 
     </section>
 </template>
