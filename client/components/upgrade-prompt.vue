@@ -207,7 +207,7 @@ const INLINE_TEXTS = {
 };
 
 const TAGLINES = {
-    trail: 'A small contribution keeps LighterPack independent and open source. In return, you get a public profile to share your gear identity with the community.',
+    trail: 'A small contribution keeps ZenPak independent and open source. In return, you get a public profile to share your gear identity with the community.',
     guide: 'For those who publish their lists and want to help others gear up. Affiliate links, insights, and a full public profile — everything you need to share your expertise.',
 };
 
