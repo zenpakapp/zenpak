@@ -333,8 +333,8 @@
                 <div v-if="item.brand" class="itemDetailBrand">{{ item.brand }}</div>
                 <span v-if="item.category" class="itemDetailCategoryBadge">{{ item.category }}</span>
             </div>
-            <button class="itemDetailStar" :class="{ active: item.starred }" :title="item.starred ? 'Remove from favorites' : 'Add to favorites'" @click="toggleStar">
-                {{ item.starred ? '★' : '☆' }}
+            <button class="itemDetailStar" :class="{ active: localStarred }" :title="localStarred ? 'Remove from favorites' : 'Add to favorites'" @click="toggleStar">
+                {{ localStarred ? '★' : '☆' }}
             </button>
             <button class="lpIconButton itemDetailClose" title="Close" @click="$emit('close')">×</button>
         </div>
@@ -359,7 +359,7 @@
                         v-for="n in 3"
                         :key="n"
                         class="itemDetailStarBtn"
-                        :class="{ active: categoryItem && categoryItem.star >= n, disabled: !categoryItem }"
+                        :class="{ active: categoryItem && localCategoryStar >= n, disabled: !categoryItem }"
                         @click="setCategoryStar(n)"
                     >★</span>
                 </div>
@@ -441,7 +441,21 @@ export default {
         categoryItem: { type: Object, default: null },
         category: { type: Object, default: null },
     },
-    emits: ['close', 'start-edit', 'navigate-to-list'],
+    emits: ['close', 'start-edit'],
+    data() {
+        return {
+            localStarred: false,
+            localCategoryStar: 0,
+        };
+    },
+    created() {
+        this.localStarred = !!this.item?.starred;
+        this.localCategoryStar = this.categoryItem?.star || 0;
+    },
+    watch: {
+        'item.starred'(val) { this.localStarred = !!val; },
+        'categoryItem.star'(val) { this.localCategoryStar = val || 0; },
+    },
     computed: {
         thumbnailImage() {
             if (!this.item) return null;
@@ -465,14 +479,16 @@ export default {
     },
     methods: {
         toggleStar() {
-            const starred = !this.item.starred;
+            const starred = !this.localStarred;
             this.$store.commit('updateItem', { ...this.item, starred });
+            this.localStarred = starred;
         },
         setCategoryStar(n) {
             if (!this.categoryItem || !this.category) return;
-            const star = this.categoryItem.star === n ? 0 : n;
+            const star = this.localCategoryStar === n ? 0 : n;
             const updated = { ...this.categoryItem, star };
             this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: updated });
+            this.localCategoryStar = star;
         },
         viewImage() {
             openDialog('itemViewImage', { imageUrl: this.thumbnailImage });
@@ -496,7 +512,6 @@ export default {
         navigateToList(list) {
             this.$store.commit('setDefaultList', list);
             this.$store.commit('setGearRoomOpen', false);
-            this.$emit('navigate-to-list', list);
             this.$emit('close');
         },
     },
