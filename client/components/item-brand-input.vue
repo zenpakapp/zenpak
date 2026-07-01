@@ -41,7 +41,7 @@ export default {
     computed: {
         knownBrands() {
             const library = this.$store.state.library;
-            if (!library) return [];
+            if (!library || !library.items) return [];
             const brands = new Set(library.items.map(i => i.brand).filter(Boolean));
             return [...brands].sort();
         },
@@ -58,7 +58,7 @@ export default {
         moveIndex(dir) {
             if (!this.dropdownOpen) return;
             const max = this.suggestionsFiltered.length - 1;
-            this.activeIndex = Math.min(Math.max(this.activeIndex + dir, 0), max);
+            this.activeIndex = Math.min(Math.max(this.activeIndex + dir, -1), max);
             this.$nextTick(() => {
                 const list = this.$refs.brandList;
                 if (!list) return;
