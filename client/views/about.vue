@@ -100,10 +100,10 @@
             <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">
                 Pack light, give light 🍵
             </a>
-            <button v-if="!showPrompt" class="lpButton lpButtonSecondary" @click="showPrompt = true">
-                I'm interested in Trail or Guide
-            </button>
-            <upgrade-prompt v-if="showPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showPrompt" @close="showPrompt = false" />
+            <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Trail</button>
+            <button class="lpButton" @click="showGuidePrompt = true">Become a Guide</button>
+            <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
+            <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>
     </div>
 </template>
@@ -115,7 +115,7 @@ export default {
     name: 'AboutView',
     components: { upgradePrompt },
     data() {
-        return { showPrompt: false };
+        return { showTrailPrompt: false, showGuidePrompt: false };
     },
 };
 </script>
