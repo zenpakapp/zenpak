@@ -313,7 +313,7 @@
                 <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Trail</strong> — €20/year</p>
+                        <p class="accountSectionText"><strong>Trail</strong> — €19/year</p>
                         <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">
                             Upgrade to Trail
                         </button>
