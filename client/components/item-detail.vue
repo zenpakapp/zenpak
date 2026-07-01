@@ -54,7 +54,8 @@
         justify-content: center;
         width: 84px;
 
-        svg {
+        .zenpakGearIcon {
+            display: block;
             height: 46px;
             width: 52px;
         }
@@ -342,40 +343,6 @@
     flex-direction: column;
     gap: 14px;
     padding: 20px;
-
-    .itemDetailFieldBrand {
-        position: relative;
-    }
-
-    .brandSuggestions {
-        background: $color-surface;
-        border: 1px solid $color-border;
-        border-radius: $radius-md;
-        box-shadow: $shadow-popover;
-        left: 0;
-        list-style: none;
-        margin: 0;
-        max-height: 188px;
-        overflow-y: auto;
-        padding: 4px 0;
-        position: absolute;
-        right: 0;
-        top: calc(100% + 4px);
-        z-index: 10;
-    }
-
-    .brandSuggestion {
-        cursor: pointer;
-        font-size: $fontSize-base;
-        padding: 8px 12px;
-        transition: background $transitionDurationFast ease;
-
-        &:hover,
-        &.active {
-            background: rgba(var(--color-accent-rgb), 0.08);
-            color: $color-accent;
-        }
-    }
 
     .itemDetailField {
         display: flex;
@@ -814,14 +781,24 @@
                         Remove from list
                     </a>
                     <div v-else class="itemDetailAddToList">
-                        <button class="lpButton lpSmall lpButtonSecondary itemDetailAddBtn" @click="addToListOpen = !addToListOpen">
+                        <button class="lpButton lpSmall lpButtonSecondary itemDetailAddBtn" @click="addToListOpen = !addToListOpen; selectedListId = null">
                             + Add to list ▾
                         </button>
                         <ul v-if="addToListOpen" class="itemDetailAddDropdown">
-                            <template v-for="group in allListsWithCategories" :key="group.list.id">
-                                <li class="itemDetailAddListHeader">{{ group.list.name || 'Unnamed list' }}</li>
+                            <template v-if="!selectedListId">
                                 <li
-                                    v-for="cat in group.categories"
+                                    v-for="list in addableLists"
+                                    :key="list.id"
+                                    :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
+                                    @click="selectedListId = list.id"
+                                >
+                                    {{ list.name || 'Unnamed list' }} ›
+                                </li>
+                            </template>
+                            <template v-else>
+                                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">‹ Back</li>
+                                <li
+                                    v-for="cat in selectedListCategories"
                                     :key="cat.id"
                                     :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
                                     @click="addToCategory(cat)"
@@ -831,14 +808,14 @@
                                 <li class="itemDetailAddCreate">
                                     <div class="itemDetailAddCreateRow">
                                         <input
-                                            :value="newCategoryNames[group.list.id] || ''"
+                                            :value="newCategoryNames[selectedListId] || ''"
                                             type="text"
                                             class="itemDetailAddCreateInput"
                                             placeholder="New category"
-                                            @input="newCategoryNames[group.list.id] = $event.target.value"
-                                            @keydown.enter.prevent="createCategoryAndAdd(group.list.id)"
+                                            @input="newCategoryNames[selectedListId] = $event.target.value"
+                                            @keydown.enter.prevent="createCategoryAndAdd(selectedListId)"
                                         >
-                                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd(group.list.id)">
+                                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd(selectedListId)">
                                             Create
                                         </button>
                                     </div>
@@ -885,29 +862,9 @@
                         <textarea v-model="editDescription" placeholder="Description"></textarea>
                     </div>
 
-                    <div class="itemDetailField itemDetailFieldBrand">
+                    <div class="itemDetailField">
                         <label>Brand</label>
-                        <input
-                            v-model="editBrand"
-                            type="text"
-                            placeholder="e.g. Sea to Summit"
-                            autocomplete="off"
-                            @focus="brandDropdownOpen = true; brandActiveIndex = -1"
-                            @blur="closeBrandDropdown"
-                            @keydown.down.prevent="moveBrandIndex(1)"
-                            @keydown.up.prevent="moveBrandIndex(-1)"
-                            @keydown.enter.prevent="selectBrandSuggestion(brandActiveIndex)"
-                            @keydown.escape="brandDropdownOpen = false; brandActiveIndex = -1"
-                        >
-                        <ul v-if="brandDropdownOpen && brandSuggestionsFiltered.length" ref="brandList" class="brandSuggestions">
-                            <li
-                                v-for="(brand, i) in brandSuggestionsFiltered"
-                                :key="brand"
-                                class="brandSuggestion"
-                                :class="{ active: i === brandActiveIndex }"
-                                @mousedown.prevent="editBrand = brand; brandDropdownOpen = false; brandActiveIndex = -1"
-                            >{{ brand }}</li>
-                        </ul>
+                        <item-brand-input v-model="editBrand" />
                     </div>
 
                     <div class="itemDetailField">
@@ -1012,6 +969,7 @@
 <script>
 import modal from './modal.vue';
 import ZenpakGearIcon from './zenpak-gear-icon.vue';
+import ItemBrandInput from './item-brand-input.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
 
@@ -1026,7 +984,7 @@ const UNITS = ['oz', 'lb', 'g', 'kg'];
 
 export default {
     name: 'ItemDetail',
-    components: { modal, ZenpakGearIcon },
+    components: { modal, ZenpakGearIcon, ItemBrandInput },
     data() {
         return {
             shown: false,
@@ -1054,26 +1012,13 @@ export default {
             fetchError: '',
             fetchSuccess: '',
             addToListOpen: false,
+            selectedListId: null,
             newCategoryNames: {},
-            brandDropdownOpen: false,
-            brandActiveIndex: -1,
         };
     },
     computed: {
         gearCategories() { return GEAR_CATEGORIES; },
         units() { return UNITS; },
-        knownBrands() {
-            const library = this.$store.state.library;
-            if (!library || !library.items) return [];
-            return [...new Set(
-                library.items.map((i) => i.brand).filter(Boolean),
-            )].sort();
-        },
-        brandSuggestionsFiltered() {
-            if (!this.editBrand) return this.knownBrands;
-            const q = this.editBrand.toLowerCase();
-            return this.knownBrands.filter(b => b.toLowerCase().includes(q));
-        },
         thumbnailImage() {
             if (this.item.image) return `https://i.imgur.com/${this.item.image}s.jpg`;
             if (this.item.imageUrl) return this.item.imageUrl;
@@ -1083,13 +1028,17 @@ export default {
             if (!this.item.weight) return '0';
             return weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
         },
-        allListsWithCategories() {
+        addableLists() {
             const library = this.$store.state.library;
             if (!library) return [];
-            return library.lists.map(list => ({
-                list,
-                categories: list.categoryIds.map(id => library.getCategoryById(id)).filter(Boolean),
-            }));
+            return library.lists;
+        },
+        selectedListCategories() {
+            const library = this.$store.state.library;
+            if (!library || !this.selectedListId) return [];
+            const list = library.lists.find(l => l.id === this.selectedListId);
+            if (!list) return [];
+            return list.categoryIds.map(id => library.getCategoryById(id)).filter(Boolean);
         },
         itemUsedInLists() {
             const library = this.$store.state.library;
@@ -1121,26 +1070,6 @@ export default {
         unregisterDialogOpener('itemDetail');
     },
     methods: {
-        closeBrandDropdown() {
-            setTimeout(() => { this.brandDropdownOpen = false; this.brandActiveIndex = -1; }, 150);
-        },
-        moveBrandIndex(dir) {
-            const max = this.brandSuggestionsFiltered.length - 1;
-            this.brandActiveIndex = Math.min(Math.max(this.brandActiveIndex + dir, -1), max);
-            this.$nextTick(() => {
-                const list = this.$refs.brandList;
-                if (!list) return;
-                const active = list.children[this.brandActiveIndex];
-                if (active) active.scrollIntoView({ block: 'nearest' });
-            });
-        },
-        selectBrandSuggestion(index) {
-            if (index >= 0 && index < this.brandSuggestionsFiltered.length) {
-                this.editBrand = this.brandSuggestionsFiltered[index];
-            }
-            this.brandDropdownOpen = false;
-            this.brandActiveIndex = -1;
-        },
         toggleStar() {
             const starred = !this.item.starred;
             this.$store.commit('updateItem', { ...this.item, starred });
@@ -1157,6 +1086,7 @@ export default {
             this.shown = false;
             this.editing = false;
             this.addToListOpen = false;
+            this.selectedListId = null;
             this.newCategoryNames = {};
         },
         navigateToList(list) {
