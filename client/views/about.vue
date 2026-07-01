@@ -109,7 +109,7 @@
                 <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Kin</button>
                 <button class="lpButton" @click="showGuidePrompt = true">Become a Wayfarer</button>
             </div>
-            <p class="lpAboutKofiNote">Or <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">put a stone on the cairn</a> — pay what you want on Ko-fi, get 1 year of Trail.</p>
+            <p class="lpAboutKofiNote">Or <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">put a stone on the cairn</a> — pay what you want on Ko-fi, get 1 year of Kin.</p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>
