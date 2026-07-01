@@ -48,6 +48,22 @@
     }
 }
 
+.lpPublicNavAuthor {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+}
+
+.lpPublicListBadge {
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: $radius-sm;
+    color: $color-accent;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+}
+
 .lpPublicListTitle {
     font-size: 28px;
     font-weight: 700;
@@ -304,7 +320,11 @@
         <template v-else-if="list">
             <nav class="lpPublicNav">
                 <router-link v-if="backTo === '/community'" to="/community">← Back to Community</router-link>
-                <router-link v-else-if="username" :to="`/u/${username}`">← {{ username }}'s profile</router-link>
+                <span v-else-if="username" class="lpPublicNavAuthor">
+                    <router-link :to="`/u/${username}`">← {{ username }}'s profile</router-link>
+                    <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
+                    <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+                </span>
                 <router-link v-else to="/">← Back to ZenPak</router-link>
             </nav>
 
@@ -431,6 +451,7 @@ export default {
             publicFields: { price: false, links: false, images: false },
             categories: [],
             affiliateDisclosure: null,
+            authorTier: null,
             chart: null,
             copySuccess: false,
         };
@@ -480,6 +501,7 @@ export default {
         fetchJson(`/api/public/list/${this.$route.params.externalId}`)
             .then((payload) => {
                 this.username = payload.username;
+                this.authorTier = payload.authorTier || null;
                 this.list = payload.list;
                 this.totalUnit = payload.totalUnit || 'oz';
                 this.currencySymbol = payload.currencySymbol || '$';

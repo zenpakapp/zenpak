@@ -264,6 +264,7 @@ function buildPublicList(user, externalId) {
 
     const payload = {
         username: user.username || '',
+        authorTier: (library.entitlements && library.entitlements.plan) || null,
         list: sanitizeListSummary(list),
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
