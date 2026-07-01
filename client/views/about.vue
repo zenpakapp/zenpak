@@ -47,26 +47,34 @@
     }
 
     .lpAboutActions {
+        align-items: center;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         margin-top: 32px;
     }
 
+    .lpAboutCtaRow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+    }
+
+    .lpAboutKofiNote {
+        color: var(--color-text-muted);
+        font-size: 14px;
+        margin: 0;
+        text-align: center;
+    }
+
     .lpAboutKofi {
-        align-items: center;
-        background: $color-accent;
-        border-radius: $radius-md;
-        color: #fff;
-        display: inline-flex;
-        font-weight: 700;
-        gap: 8px;
-        padding: 12px 20px;
+        color: $color-accent;
+        font-weight: 600;
         text-decoration: none;
 
         &:hover {
-            opacity: 0.9;
-            text-decoration: none;
+            text-decoration: underline;
         }
     }
 }
@@ -97,11 +105,11 @@
         <p class="lpAboutBuiltBy">Built by <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link> — currently preparing for the Camino de Santiago, and one day the Shikoku Henro.</p>
 
         <div class="lpAboutActions">
-            <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">
-                Pack light, give light 🍵
-            </a>
-            <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Trail</button>
-            <button class="lpButton" @click="showGuidePrompt = true">Become a Guide</button>
+            <div class="lpAboutCtaRow">
+                <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">Become a Trail</button>
+                <button class="lpButton" @click="showGuidePrompt = true">Become a Guide</button>
+            </div>
+            <p class="lpAboutKofiNote">Trail also available on <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">Ko-fi</a> — pay what you want, 1 year of Trail access.</p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>
