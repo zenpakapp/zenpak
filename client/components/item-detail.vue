@@ -583,106 +583,6 @@
     padding: 14px 20px;
 }
 
-.itemDetailAddToList {
-    position: relative;
-}
-
-.itemDetailAddListHeader {
-    color: $color-text-muted;
-    font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
-    letter-spacing: 0.06em;
-    padding: 10px 14px 4px;
-    text-transform: uppercase;
-
-    &:not(:first-child) {
-        border-top: 1px solid $color-border;
-        margin-top: 4px;
-        padding-top: 12px;
-    }
-}
-
-.itemDetailAddCreate {
-    align-items: stretch;
-    display: grid;
-    gap: 6px;
-    grid-template-columns: minmax(0, 1fr);
-    margin-top: 0;
-    padding: 6px 10px 10px;
-}
-
-.itemDetailAddCreateInput {
-    background: rgba(var(--color-accent-rgb), 0.04);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.14);
-    border-radius: $radius-md;
-    color: $color-text;
-    flex: 1;
-    font-size: $fontSize-sm;
-    min-height: $control-height-sm;
-    min-width: 0;
-    padding: 0 10px;
-
-    &:focus {
-        border-color: $color-accent;
-        box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.12);
-        outline: none;
-    }
-}
-
-.itemDetailAddCreateRow {
-    display: grid;
-    gap: 6px;
-    grid-template-columns: minmax(0, 1fr) auto;
-}
-
-.itemDetailAddCreateBtn {
-    min-height: $control-height-sm;
-    white-space: nowrap;
-}
-
-
-.itemDetailAddDropdown {
-    background: $color-surface;
-    border: 1px solid rgba(var(--color-accent-rgb), 0.12);
-    border-radius: $radius-md;
-    bottom: 100%;
-    box-shadow: $shadow-popover;
-    left: 0;
-    list-style: none;
-    margin: 0 0 8px;
-    min-width: 320px;
-    padding: 4px 0;
-    padding-left: 0;
-    position: absolute;
-    z-index: 10;
-}
-
-.itemDetailAddOption {
-    cursor: pointer;
-    font-size: $fontSize-sm;
-    list-style: none;
-    padding: 10px 14px;
-
-    &:hover {
-        background: rgba(var(--color-accent-rgb), 0.06);
-    }
-
-    &.dimmed {
-        color: $color-text-muted;
-        cursor: default;
-        pointer-events: none;
-    }
-}
-
-@media (max-width: 640px) {
-    .itemDetailAddDropdown {
-        min-width: min(320px, calc(100vw - 72px));
-    }
-
-    .itemDetailAddCreateRow {
-        grid-template-columns: minmax(0, 1fr);
-    }
-}
 </style>
 
 <template>
@@ -780,49 +680,7 @@
                     <a v-if="category" class="itemDetailRemove" @click="removeFromList">
                         Remove from list
                     </a>
-                    <div v-else class="itemDetailAddToList">
-                        <button class="lpButton lpSmall lpButtonSecondary itemDetailAddBtn" @click="addToListOpen = !addToListOpen; selectedListId = null">
-                            + Add to list ▾
-                        </button>
-                        <ul v-if="addToListOpen" class="itemDetailAddDropdown">
-                            <template v-if="!selectedListId">
-                                <li
-                                    v-for="list in addableLists"
-                                    :key="list.id"
-                                    :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
-                                    @click="selectedListId = list.id"
-                                >
-                                    {{ list.name || 'Unnamed list' }} ›
-                                </li>
-                            </template>
-                            <template v-else>
-                                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">‹ Back</li>
-                                <li
-                                    v-for="cat in selectedListCategories"
-                                    :key="cat.id"
-                                    :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
-                                    @click="addToCategory(cat)"
-                                >
-                                    {{ cat.name || 'Unnamed category' }}
-                                </li>
-                                <li class="itemDetailAddCreate">
-                                    <div class="itemDetailAddCreateRow">
-                                        <input
-                                            :value="newCategoryNames[selectedListId] || ''"
-                                            type="text"
-                                            class="itemDetailAddCreateInput"
-                                            placeholder="New category"
-                                            @input="newCategoryNames[selectedListId] = $event.target.value"
-                                            @keydown.enter.prevent="createCategoryAndAdd(selectedListId)"
-                                        >
-                                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd(selectedListId)">
-                                            Create
-                                        </button>
-                                    </div>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
+                    <item-add-to-list v-else :item="item" @added="close" />
                     <a class="itemDetailDelete" @click="deleteGear">
                         Delete gear
                     </a>
@@ -970,6 +828,7 @@
 import modal from './modal.vue';
 import ZenpakGearIcon from './zenpak-gear-icon.vue';
 import ItemBrandInput from './item-brand-input.vue';
+import ItemAddToList from './item-add-to-list.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
 
@@ -984,7 +843,7 @@ const UNITS = ['oz', 'lb', 'g', 'kg'];
 
 export default {
     name: 'ItemDetail',
-    components: { modal, ZenpakGearIcon, ItemBrandInput },
+    components: { modal, ZenpakGearIcon, ItemBrandInput, ItemAddToList },
     data() {
         return {
             shown: false,
@@ -1011,9 +870,6 @@ export default {
             fetchLoading: false,
             fetchError: '',
             fetchSuccess: '',
-            addToListOpen: false,
-            selectedListId: null,
-            newCategoryNames: {},
         };
     },
     computed: {
@@ -1027,18 +883,6 @@ export default {
         displayWeight() {
             if (!this.item.weight) return '0';
             return weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
-        },
-        addableLists() {
-            const library = this.$store.state.library;
-            if (!library) return [];
-            return library.lists;
-        },
-        selectedListCategories() {
-            const library = this.$store.state.library;
-            if (!library || !this.selectedListId) return [];
-            const list = library.lists.find(l => l.id === this.selectedListId);
-            if (!list) return [];
-            return list.categoryIds.map(id => library.getCategoryById(id)).filter(Boolean);
         },
         itemUsedInLists() {
             const library = this.$store.state.library;
@@ -1085,9 +929,6 @@ export default {
         close() {
             this.shown = false;
             this.editing = false;
-            this.addToListOpen = false;
-            this.selectedListId = null;
-            this.newCategoryNames = {};
         },
         navigateToList(list) {
             this.$store.commit('setDefaultList', list);
@@ -1251,24 +1092,6 @@ export default {
             } finally {
                 this.editImageUploading = false;
             }
-        },
-        addToCategory(category) {
-            this.$store.commit('addItemToCategory', {
-                itemId: this.item.id,
-                categoryId: category.id,
-                dropIndex: category.categoryItems.length,
-            });
-            this.close();
-        },
-        createCategoryAndAdd(listId) {
-            const name = (this.newCategoryNames[listId] || '').trim();
-            if (!name) return;
-            this.$store.commit('createCategoryAndAddItem', {
-                itemId: this.item.id,
-                name,
-                listId,
-            });
-            this.close();
         },
     },
 };
