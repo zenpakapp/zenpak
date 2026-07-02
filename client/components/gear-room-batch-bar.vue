@@ -85,6 +85,23 @@
     flex: 1;
 }
 
+.lpBrandSelectWrap {
+    flex: 1;
+    position: relative;
+
+    &::after {
+        color: $color-text-muted;
+        content: "⌄";
+        font-size: 18px;
+        line-height: 1;
+        pointer-events: none;
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-54%);
+    }
+}
+
 .lpBrandSuggestions {
     background: $color-surface;
     border: 1px solid $color-border;
@@ -148,11 +165,13 @@
 
 .lpGearRoomBatchPanelInput,
 .lpGearRoomBatchPanelSelect {
+    appearance: none;
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-sm;
     color: $color-text;
     flex: 1;
+    font-family: $font-family-base;
     font-size: $fontSize-sm;
     min-height: 32px;
     min-width: 0;
@@ -167,6 +186,10 @@
     &:disabled {
         opacity: 0.4;
     }
+}
+
+.lpGearRoomBatchPanelSelect {
+    padding-right: 24px;
 }
 
 .lpGearRoomMergeKeep {
@@ -296,7 +319,7 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
-                <div class="lpBrandInputWrap">
+                <div class="lpBrandSelectWrap">
                     <select v-model="batchListId" class="lpGearRoomBatchPanelSelect" @change="batchCategoryId = ''">
                         <option value="">— choose —</option>
                         <option v-for="list in lists" :key="list.id" :value="list.id">{{ list.name }}</option>
@@ -305,7 +328,7 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List cat.</span>
-                <div class="lpBrandInputWrap">
+                <div class="lpBrandSelectWrap">
                     <select v-model="batchCategoryId" class="lpGearRoomBatchPanelSelect" :disabled="!batchListId">
                         <option value="">— choose —</option>
                         <option v-for="cat in categoriesForSelectedList" :key="cat.id" :value="cat.id">{{ cat.name || 'Unnamed' }}</option>
