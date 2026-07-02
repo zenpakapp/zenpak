@@ -81,6 +81,31 @@
     padding: 14px 16px;
 }
 
+.lpBrandInputWrap {
+    flex: 1;
+}
+
+.lpBrandSuggestions {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    list-style: none;
+    margin: 4px 0 0;
+    max-height: 160px;
+    overflow-y: auto;
+    padding: 4px 0;
+
+    li {
+        cursor: pointer;
+        font-size: $fontSize-sm;
+        padding: 6px 12px;
+
+        &:hover {
+            background: rgba(var(--color-accent-rgb), 0.08);
+        }
+    }
+}
+
 .lpGearRoomBatchPanelHeader {
     align-items: center;
     display: flex;
@@ -202,10 +227,15 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Brand</span>
-                <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia" list="batchBrandList" @keydown.enter="applyBrand">
-                <datalist id="batchBrandList">
-                    <option v-for="brand in existingBrands" :key="brand" :value="brand" />
-                </datalist>
+                <div class="lpBrandInputWrap">
+                    <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia"
+                        @focus="showBrandDropdown = true"
+                        @blur="showBrandDropdown = false"
+                        @keydown.enter="applyBrand">
+                    <ul v-if="showBrandDropdown && filteredBrands.length" class="lpBrandSuggestions">
+                        <li v-for="brand in filteredBrands" :key="brand" @mousedown.prevent="selectBrand(brand)">{{ brand }}</li>
+                    </ul>
+                </div>
             </div>
             <button class="lpGearRoomBatchApply" @click="applyBrand">Apply</button>
         </div>
@@ -334,6 +364,7 @@ export default {
             mergeKeepId: null,
             batchListId: '',
             batchCategoryId: '',
+            showBrandDropdown: false,
         };
     },
     computed: {
@@ -341,6 +372,10 @@ export default {
             const brands = new Set();
             (this.allItems || []).forEach(item => { if (item.brand) brands.add(item.brand); });
             return [...brands].sort((a, b) => a.localeCompare(b));
+        },
+        filteredBrands() {
+            const q = (this.batchBrand || '').toLowerCase();
+            return q ? this.existingBrands.filter(b => b.toLowerCase().includes(q)) : this.existingBrands;
         },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
@@ -376,6 +411,10 @@ export default {
             this.$emit('batch-category', this.batchCategory);
             this.batchCategory = '';
             this.activeBatchPanel = null;
+        },
+        selectBrand(brand) {
+            this.batchBrand = brand;
+            this.showBrandDropdown = false;
         },
         applyBrand() {
             this.$emit('batch-brand', this.batchBrand.trim());
