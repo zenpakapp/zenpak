@@ -22,7 +22,6 @@
 <template>
     <modal id="itemDetailDialog" :shown="shown" @hide="close">
         <div class="itemDetail">
-            <!-- View mode -->
             <item-detail-view
                 v-if="!editing"
                 :item="item"
@@ -32,7 +31,6 @@
                 @start-edit="startEdit"
             />
 
-            <!-- Edit mode -->
             <item-detail-edit
                 v-else
                 :item="item"
@@ -58,24 +56,21 @@ export default {
         return {
             shown: false,
             editing: false,
-            item: {},
+            item: null,
             categoryItem: null,
             category: null,
         };
     },
     mounted() {
         registerDialogOpener('itemDetail', ({ item, categoryItem, category, startEditing }) => {
-            this.item = { ...item };
-            const liveCategory = category ? this.$store.state.library.getCategoryById(category.id) : null;
+            const library = this.$store.state.library;
+            const liveCategory = category ? library.getCategoryById(category.id) : null;
             const liveCategoryItem = liveCategory && item ? liveCategory.getCategoryItemById(item.id) : null;
+            this.item = { ...item };
             this.categoryItem = liveCategoryItem ? { ...liveCategoryItem } : (categoryItem ? { ...categoryItem } : null);
             this.category = liveCategory || category || null;
             this.shown = true;
-            if (startEditing) {
-                this.startEdit();
-            } else {
-                this.editing = false;
-            }
+            this.editing = !!startEditing;
         });
     },
     beforeUnmount() {
