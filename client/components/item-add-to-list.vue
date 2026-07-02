@@ -13,6 +13,21 @@
                 >
                     {{ list.name || 'Unnamed list' }} ›
                 </li>
+                <li class="itemDetailAddCreate">
+                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">+ New list</div>
+                    <div v-else class="itemDetailAddCreateRow">
+                        <input
+                            ref="newListInput"
+                            v-model="newListName"
+                            type="text"
+                            class="itemDetailAddCreateInput"
+                            placeholder="List name"
+                            @keydown.enter.prevent="createListAndNavigate"
+                            @keydown.esc="creatingList = false"
+                        >
+                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">Create</button>
+                    </div>
+                </li>
             </template>
             <template v-else>
                 <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">‹ Back</li>
@@ -56,6 +71,8 @@ export default {
             open: false,
             selectedListId: null,
             newCategoryName: '',
+            creatingList: false,
+            newListName: '',
         };
     },
     computed: {
@@ -89,6 +106,20 @@ export default {
                 dropIndex: category.categoryItems.length,
             });
             this.$emit('added');
+        },
+        showNewListInput() {
+            this.creatingList = true;
+            this.$nextTick(() => { this.$refs.newListInput && this.$refs.newListInput.focus(); });
+        },
+        createListAndNavigate() {
+            const name = (this.newListName || '').trim();
+            if (!name) return;
+            this.$store.commit('newListNamed', name);
+            const library = this.$store.state.library;
+            const newList = library.lists[library.lists.length - 1];
+            this.newListName = '';
+            this.creatingList = false;
+            this.selectedListId = newList.id;
         },
         createCategoryAndAdd() {
             const name = (this.newCategoryName || '').trim();
@@ -173,6 +204,16 @@ export default {
         cursor: default;
         pointer-events: none;
     }
+}
+
+.itemDetailAddNewList {
+    color: $color-accent;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    padding: 2px 0;
+
+    &:hover { opacity: 0.8; }
 }
 
 .itemDetailAddCreate {
