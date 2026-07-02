@@ -1,6 +1,18 @@
 <style lang="scss" scoped>
 @import "../css/_globals";
 
+.itemDetailAddType {
+    background: none;
+    border: none;
+    color: $color-accent;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    opacity: 0.7;
+    padding: 4px 16px 8px;
+
+    &:hover { opacity: 1; }
+}
+
 .itemDetailStats {
     border-bottom: 1px solid $color-border;
     display: grid;
@@ -215,7 +227,10 @@
             @toggle-star="toggleStar"
             @close="$emit('close')"
             @view-image="viewImage"
+            @click-category="$emit('start-edit')"
         />
+
+        <button v-if="!item.category" class="itemDetailAddType" @click="$emit('start-edit')">+ Add type</button>
 
         <div class="itemDetailStats">
             <div class="itemDetailStat">

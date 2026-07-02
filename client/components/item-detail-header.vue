@@ -77,6 +77,15 @@
         padding: 10px 14px;
     }
 
+    .itemDetailCategoryBadgeClickable {
+        cursor: pointer;
+        transition: background $transitionDurationFast ease;
+
+        &:hover {
+            background: rgba(var(--color-accent-rgb), 0.24);
+        }
+    }
+
     .itemDetailStar {
         background: none;
         border: none;
@@ -130,7 +139,7 @@
         <div class="itemDetailHeaderInfo">
             <div class="itemDetailName">{{ name || 'Unnamed item' }}</div>
             <div v-if="brand" class="itemDetailBrand">{{ brand }}</div>
-            <span v-if="category" class="itemDetailCategoryBadge">{{ category }}</span>
+            <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? 'Remove from favorites' : 'Add to favorites'" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
@@ -153,7 +162,7 @@ export default {
         imageUrl: { type: String, default: '' },
         starred:  { type: Boolean, default: false },
     },
-    emits: ['toggle-star', 'close', 'view-image'],
+    emits: ['toggle-star', 'close', 'view-image', 'click-category'],
     computed: {
         thumbnailImage() {
             if (this.imageKey) return `https://i.imgur.com/${this.imageKey}l.jpg`;
