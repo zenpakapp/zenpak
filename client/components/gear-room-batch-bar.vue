@@ -211,10 +211,15 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Type</span>
-                <select v-model="batchCategory" class="lpGearRoomBatchPanelSelect">
-                    <option value="">— none —</option>
-                    <option v-for="cat in availableCategories" :key="cat" :value="cat">{{ cat }}</option>
-                </select>
+                <div class="lpBrandInputWrap">
+                    <input v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Shelter"
+                        @focus="showTypeDropdown = true"
+                        @blur="showTypeDropdown = false"
+                        @keydown.enter="applyCategory">
+                    <ul v-if="showTypeDropdown && filteredTypes.length" class="lpBrandSuggestions">
+                        <li v-for="cat in filteredTypes" :key="cat" @mousedown.prevent="selectType(cat)">{{ cat }}</li>
+                    </ul>
+                </div>
             </div>
             <button class="lpGearRoomBatchApply" @click="applyCategory">Apply</button>
         </div>
@@ -365,6 +370,7 @@ export default {
             batchListId: '',
             batchCategoryId: '',
             showBrandDropdown: false,
+            showTypeDropdown: false,
         };
     },
     computed: {
@@ -372,6 +378,12 @@ export default {
             const brands = new Set();
             (this.allItems || []).forEach(item => { if (item.brand) brands.add(item.brand); });
             return [...brands].sort((a, b) => a.localeCompare(b));
+        },
+        filteredTypes() {
+            const q = (this.batchCategory || '').toLowerCase();
+            return q
+                ? this.availableCategories.filter(c => c.toLowerCase().includes(q))
+                : this.availableCategories;
         },
         filteredBrands() {
             const q = (this.batchBrand || '').toLowerCase();
@@ -411,6 +423,10 @@ export default {
             this.$emit('batch-category', this.batchCategory);
             this.batchCategory = '';
             this.activeBatchPanel = null;
+        },
+        selectType(cat) {
+            this.batchCategory = cat;
+            this.showTypeDropdown = false;
         },
         selectBrand(brand) {
             this.batchBrand = brand;
