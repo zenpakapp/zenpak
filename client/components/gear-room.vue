@@ -448,6 +448,7 @@
             @batch-tag="applyBatchTag"
             @batch-merge="applyMerge"
             @batch-add-to-list="applyBatchAddToList"
+            @batch-create-list="applyBatchCreateList"
             @toggle-compare="compareOpen = !compareOpen"
         />
 
@@ -698,6 +699,12 @@ export default {
                 });
             });
             this.selected.splice(0, this.selected.length);
+        },
+        applyBatchCreateList({ name, itemIds }) {
+            this.$store.commit('newListNamed', name);
+            const newList = this.library.lists[this.library.lists.length - 1];
+            const categoryId = newList.categoryIds[0];
+            this.applyBatchAddToList({ categoryId, itemIds });
         },
         batchDelete() {
             const count = this.selected.length;

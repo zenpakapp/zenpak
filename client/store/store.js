@@ -142,6 +142,12 @@ const store = createStore({
             list.calculateTotals();
             state.library.defaultListId = list.id;
         },
+        newListNamed(state, name) {
+            const list = state.library.newList();
+            list.name = name || 'New list';
+            state.library.newCategory({ list });
+            list.calculateTotals();
+        },
         removeItem(state, item) {
             state.library.removeItem(item.id);
             state.library.getListById(state.library.defaultListId).calculateTotals();

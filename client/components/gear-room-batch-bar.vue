@@ -105,6 +105,11 @@
             background: rgba(var(--color-accent-rgb), 0.08);
         }
     }
+
+    .lpBrandSuggestionsCreate {
+        color: $color-accent;
+        font-weight: $fontWeight-bold;
+    }
 }
 
 .lpGearRoomBatchPanelHeader {
@@ -299,27 +304,28 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
                 <div class="lpBrandInputWrap">
-                    <input :value="selectedListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
-                        @click="showListDropdown = !showListDropdown"
-                        @blur="showListDropdown = false">
-                    <ul v-if="showListDropdown && lists.length" class="lpBrandSuggestions">
-                        <li v-for="list in lists" :key="list.id" @mousedown.prevent="selectList(list)">{{ list.name }}</li>
+                    <input v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="Find or create a list..."
+                        @focus="showListDropdown = true; batchListId = ''"
+                        @blur="showListDropdown = false"
+                        @keydown.enter="filteredLists.length ? selectList(filteredLists[0]) : createAndSelectList()">
+                    <ul v-if="showListDropdown" class="lpBrandSuggestions">
+                        <li v-if="showCreateList" class="lpBrandSuggestionsCreate" @mousedown.prevent="createAndSelectList()">+ Create "{{ batchListName }}"</li>
+                        <li v-for="list in filteredLists" :key="list.id" @mousedown.prevent="selectList(list)">{{ list.name }}</li>
                     </ul>
                 </div>
             </div>
-            <div class="lpGearRoomBatchPanelRow">
+            <div v-if="batchListId && batchListId !== '__new__'" class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List cat.</span>
                 <div class="lpBrandInputWrap">
                     <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
-                        :disabled="!batchListId"
-                        @click="batchListId && (showListCatDropdown = !showListCatDropdown)"
+                        @click="showListCatDropdown = !showListCatDropdown"
                         @blur="showListCatDropdown = false">
                     <ul v-if="showListCatDropdown && categoriesForSelectedList.length" class="lpBrandSuggestions">
                         <li v-for="cat in categoriesForSelectedList" :key="cat.id" @mousedown.prevent="selectListCat(cat)">{{ cat.name || 'Unnamed' }}</li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" :disabled="!batchListId || !batchCategoryId" @click="applyAddToList">Apply</button>
+            <button class="lpGearRoomBatchApply" :disabled="!batchListId || (batchListId !== '__new__' && !batchCategoryId)" @click="applyAddToList">Apply</button>
         </div>
 
         <!-- Action buttons -->
@@ -378,6 +384,7 @@ export default {
         'batch-tag',
         'batch-merge',
         'batch-add-to-list',
+        'batch-create-list',
         'toggle-compare',
     ],
     data() {
@@ -394,6 +401,7 @@ export default {
             showTagDropdown: false,
             showListDropdown: false,
             showListCatDropdown: false,
+            batchListName: '',
         };
     },
     computed: {
@@ -420,6 +428,14 @@ export default {
         filteredTags() {
             const q = (this.batchTag || '').toLowerCase();
             return q ? this.existingTags.filter(t => t.toLowerCase().includes(q)) : this.existingTags;
+        },
+        filteredLists() {
+            const q = (this.batchListName || '').toLowerCase();
+            return q ? this.lists.filter(l => l.name.toLowerCase().includes(q)) : this.lists;
+        },
+        showCreateList() {
+            const q = (this.batchListName || '').trim();
+            return q && !this.lists.some(l => l.name.toLowerCase() === q.toLowerCase());
         },
         selectedListName() {
             const list = this.lists.find(l => l.id === this.batchListId);
@@ -495,7 +511,12 @@ export default {
         },
         selectList(list) {
             this.batchListId = list.id;
+            this.batchListName = list.name;
             this.batchCategoryId = '';
+            this.showListDropdown = false;
+        },
+        createAndSelectList() {
+            this.batchListId = '__new__';
             this.showListDropdown = false;
         },
         selectListCat(cat) {
@@ -503,12 +524,15 @@ export default {
             this.showListCatDropdown = false;
         },
         applyAddToList() {
-            if (!this.batchListId || !this.batchCategoryId) return;
-            this.$emit('batch-add-to-list', {
-                categoryId: this.batchCategoryId,
-                itemIds: [...this.selected],
-            });
+            if (!this.batchListId) return;
+            if (this.batchListId === '__new__') {
+                this.$emit('batch-create-list', { name: this.batchListName.trim(), itemIds: [...this.selected] });
+            } else {
+                if (!this.batchCategoryId) return;
+                this.$emit('batch-add-to-list', { categoryId: this.batchCategoryId, itemIds: [...this.selected] });
+            }
             this.batchListId = '';
+            this.batchListName = '';
             this.batchCategoryId = '';
             this.activeBatchPanel = null;
         },
