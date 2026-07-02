@@ -85,22 +85,6 @@
     flex: 1;
 }
 
-.lpBrandSelectWrap {
-    flex: 1;
-    position: relative;
-
-    &::after {
-        color: $color-text-muted;
-        content: "⌄";
-        font-size: 18px;
-        line-height: 1;
-        pointer-events: none;
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-54%);
-    }
-}
 
 .lpBrandSuggestions {
     background: $color-surface;
@@ -186,10 +170,6 @@
     &:disabled {
         opacity: 0.4;
     }
-}
-
-.lpGearRoomBatchPanelSelect {
-    padding-right: 24px;
 }
 
 .lpGearRoomMergeKeep {
@@ -319,20 +299,25 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
-                <div class="lpBrandSelectWrap">
-                    <select v-model="batchListId" class="lpGearRoomBatchPanelSelect" @change="batchCategoryId = ''">
-                        <option value="">— choose —</option>
-                        <option v-for="list in lists" :key="list.id" :value="list.id">{{ list.name }}</option>
-                    </select>
+                <div class="lpBrandInputWrap">
+                    <input :value="selectedListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
+                        @click="showListDropdown = !showListDropdown"
+                        @blur="showListDropdown = false">
+                    <ul v-if="showListDropdown && lists.length" class="lpBrandSuggestions">
+                        <li v-for="list in lists" :key="list.id" @mousedown.prevent="selectList(list)">{{ list.name }}</li>
+                    </ul>
                 </div>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List cat.</span>
-                <div class="lpBrandSelectWrap">
-                    <select v-model="batchCategoryId" class="lpGearRoomBatchPanelSelect" :disabled="!batchListId">
-                        <option value="">— choose —</option>
-                        <option v-for="cat in categoriesForSelectedList" :key="cat.id" :value="cat.id">{{ cat.name || 'Unnamed' }}</option>
-                    </select>
+                <div class="lpBrandInputWrap">
+                    <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
+                        :disabled="!batchListId"
+                        @click="batchListId && (showListCatDropdown = !showListCatDropdown)"
+                        @blur="showListCatDropdown = false">
+                    <ul v-if="showListCatDropdown && categoriesForSelectedList.length" class="lpBrandSuggestions">
+                        <li v-for="cat in categoriesForSelectedList" :key="cat.id" @mousedown.prevent="selectListCat(cat)">{{ cat.name || 'Unnamed' }}</li>
+                    </ul>
                 </div>
             </div>
             <button class="lpGearRoomBatchApply" :disabled="!batchListId || !batchCategoryId" @click="applyAddToList">Apply</button>
@@ -408,6 +393,8 @@ export default {
             showBrandDropdown: false,
             showTypeDropdown: false,
             showTagDropdown: false,
+            showListDropdown: false,
+            showListCatDropdown: false,
         };
     },
     computed: {
@@ -434,6 +421,14 @@ export default {
         filteredTags() {
             const q = (this.batchTag || '').toLowerCase();
             return q ? this.existingTags.filter(t => t.toLowerCase().includes(q)) : this.existingTags;
+        },
+        selectedListName() {
+            const list = this.lists.find(l => l.id === this.batchListId);
+            return list ? list.name : '';
+        },
+        selectedCatName() {
+            const cat = this.categoriesForSelectedList.find(c => c.id === this.batchCategoryId);
+            return cat ? (cat.name || 'Unnamed') : '';
         },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
@@ -498,6 +493,15 @@ export default {
             this.$emit('batch-merge', this.mergeKeepId);
             this.mergeKeepId = null;
             this.activeBatchPanel = null;
+        },
+        selectList(list) {
+            this.batchListId = list.id;
+            this.batchCategoryId = '';
+            this.showListDropdown = false;
+        },
+        selectListCat(cat) {
+            this.batchCategoryId = cat.id;
+            this.showListCatDropdown = false;
         },
         applyAddToList() {
             if (!this.batchListId || !this.batchCategoryId) return;
