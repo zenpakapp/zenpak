@@ -157,6 +157,7 @@
     min-height: 32px;
     min-width: 0;
     padding: 0 8px;
+    width: 100%;
 
     &:focus {
         border-color: $color-accent;
@@ -253,7 +254,15 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Tag</span>
-                <input v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking" @keydown.enter="applyTag">
+                <div class="lpBrandInputWrap">
+                    <input v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking"
+                        @focus="showTagDropdown = true"
+                        @blur="showTagDropdown = false"
+                        @keydown.enter="applyTag">
+                    <ul v-if="showTagDropdown && filteredTags.length" class="lpBrandSuggestions">
+                        <li v-for="tag in filteredTags" :key="tag" @mousedown.prevent="selectTag(tag)">{{ tag }}</li>
+                    </ul>
+                </div>
             </div>
             <button class="lpGearRoomBatchApply" @click="applyTag">Apply</button>
         </div>
@@ -287,17 +296,21 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
-                <select v-model="batchListId" class="lpGearRoomBatchPanelSelect" @change="batchCategoryId = ''">
-                    <option value="">— choose —</option>
-                    <option v-for="list in lists" :key="list.id" :value="list.id">{{ list.name }}</option>
-                </select>
+                <div class="lpBrandInputWrap">
+                    <select v-model="batchListId" class="lpGearRoomBatchPanelSelect" @change="batchCategoryId = ''">
+                        <option value="">— choose —</option>
+                        <option v-for="list in lists" :key="list.id" :value="list.id">{{ list.name }}</option>
+                    </select>
+                </div>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List cat.</span>
-                <select v-model="batchCategoryId" class="lpGearRoomBatchPanelSelect" :disabled="!batchListId">
-                    <option value="">— choose —</option>
-                    <option v-for="cat in categoriesForSelectedList" :key="cat.id" :value="cat.id">{{ cat.name || 'Unnamed' }}</option>
-                </select>
+                <div class="lpBrandInputWrap">
+                    <select v-model="batchCategoryId" class="lpGearRoomBatchPanelSelect" :disabled="!batchListId">
+                        <option value="">— choose —</option>
+                        <option v-for="cat in categoriesForSelectedList" :key="cat.id" :value="cat.id">{{ cat.name || 'Unnamed' }}</option>
+                    </select>
+                </div>
             </div>
             <button class="lpGearRoomBatchApply" :disabled="!batchListId || !batchCategoryId" @click="applyAddToList">Apply</button>
         </div>
@@ -371,6 +384,7 @@ export default {
             batchCategoryId: '',
             showBrandDropdown: false,
             showTypeDropdown: false,
+            showTagDropdown: false,
         };
     },
     computed: {
@@ -388,6 +402,15 @@ export default {
         filteredBrands() {
             const q = (this.batchBrand || '').toLowerCase();
             return q ? this.existingBrands.filter(b => b.toLowerCase().includes(q)) : this.existingBrands;
+        },
+        existingTags() {
+            const tags = new Set();
+            (this.allItems || []).forEach(item => { (item.tags || []).forEach(t => tags.add(t)); });
+            return [...tags].sort((a, b) => a.localeCompare(b));
+        },
+        filteredTags() {
+            const q = (this.batchTag || '').toLowerCase();
+            return q ? this.existingTags.filter(t => t.toLowerCase().includes(q)) : this.existingTags;
         },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
@@ -431,6 +454,10 @@ export default {
         selectBrand(brand) {
             this.batchBrand = brand;
             this.showBrandDropdown = false;
+        },
+        selectTag(tag) {
+            this.batchTag = tag;
+            this.showTagDropdown = false;
         },
         applyBrand() {
             this.$emit('batch-brand', this.batchBrand.trim());
