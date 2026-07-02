@@ -49,6 +49,33 @@
             }
         }
 
+        .itemDetailTypeWrap {
+            position: relative;
+        }
+
+        .itemDetailTypeSuggestions {
+            background: $color-surface;
+            border: 1px solid $color-border;
+            border-radius: $radius-md;
+            list-style: none;
+            margin: 4px 0 0;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 4px 0;
+            position: relative;
+            z-index: 10;
+
+            li {
+                cursor: pointer;
+                font-size: $fontSize-sm;
+                padding: 6px 12px;
+
+                &:hover {
+                    background: rgba(var(--color-accent-rgb), 0.08);
+                }
+            }
+        }
+
         input[type="text"],
         input[type="number"],
         select,
@@ -281,11 +308,13 @@
 
             <div class="itemDetailField">
                 <label>Type</label>
-                <div class="itemDetailSelectWrap">
-                    <select v-model="editCategory">
-                        <option value="">— none —</option>
-                        <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
-                    </select>
+                <div class="itemDetailTypeWrap">
+                    <input v-model="editCategory" type="text" placeholder="ex: Shelter"
+                        @focus="showCategoryDropdown = true"
+                        @blur="showCategoryDropdown = false">
+                    <ul v-if="showCategoryDropdown && filteredGearCategories.length" class="itemDetailTypeSuggestions">
+                        <li v-for="cat in filteredGearCategories" :key="cat" @mousedown.prevent="selectCategory(cat)">{{ cat }}</li>
+                    </ul>
                 </div>
             </div>
 
@@ -420,11 +449,16 @@ export default {
             fetchLoading: false,
             fetchError: '',
             fetchSuccess: '',
+            showCategoryDropdown: false,
         };
     },
     computed: {
         gearCategories() { return GEAR_CATEGORIES; },
         units() { return UNITS; },
+        filteredGearCategories() {
+            const q = (this.editCategory || '').toLowerCase();
+            return q ? GEAR_CATEGORIES.filter(c => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
+        },
         thumbnailImage() {
             if (this.editImageUrl) return this.editImageUrl;
             if (this.item.image) return `https://i.imgur.com/${this.item.image}l.jpg`;
@@ -519,6 +553,10 @@ export default {
             } finally {
                 this.fetchLoading = false;
             }
+        },
+        selectCategory(cat) {
+            this.editCategory = cat;
+            this.showCategoryDropdown = false;
         },
         addTag() {
             const tag = this.tagInput.trim().toLowerCase();
