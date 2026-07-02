@@ -202,7 +202,10 @@
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Brand</span>
-                <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia" @keydown.enter="applyBrand">
+                <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia" list="batchBrandList" @keydown.enter="applyBrand">
+                <datalist id="batchBrandList">
+                    <option v-for="brand in existingBrands" :key="brand" :value="brand" />
+                </datalist>
             </div>
             <button class="lpGearRoomBatchApply" @click="applyBrand">Apply</button>
         </div>
@@ -334,6 +337,11 @@ export default {
         };
     },
     computed: {
+        existingBrands() {
+            const brands = new Set();
+            (this.allItems || []).forEach(item => { if (item.brand) brands.add(item.brand); });
+            return [...brands].sort((a, b) => a.localeCompare(b));
+        },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
             const list = this.lists.find(l => l.id === this.batchListId);
