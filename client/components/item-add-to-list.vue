@@ -66,6 +66,18 @@ export default {
         item: { type: Object, required: true },
     },
     emits: ['added'],
+    mounted() {
+        this._outsideHandler = (e) => {
+            if (this.open && !this.$el.contains(e.target)) {
+                this.open = false;
+                this.creatingList = false;
+            }
+        };
+        document.addEventListener('click', this._outsideHandler, true);
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this._outsideHandler, true);
+    },
     data() {
         return {
             open: false,
