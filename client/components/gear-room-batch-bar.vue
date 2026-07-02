@@ -220,7 +220,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Type</span>
                 <div class="lpBrandInputWrap">
-                    <input v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Shelter"
+                    <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Shelter"
                         @focus="showTypeDropdown = true"
                         @blur="showTypeDropdown = false"
                         @keydown.enter="applyCategory">
@@ -241,7 +241,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Brand</span>
                 <div class="lpBrandInputWrap">
-                    <input v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia"
+                    <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia"
                         @focus="showBrandDropdown = true"
                         @blur="showBrandDropdown = false"
                         @keydown.enter="applyBrand">
@@ -262,7 +262,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">Tag</span>
                 <div class="lpBrandInputWrap">
-                    <input v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking"
+                    <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking"
                         @focus="showTagDropdown = true"
                         @blur="showTagDropdown = false"
                         @keydown.enter="applyTag">
@@ -304,7 +304,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">List</span>
                 <div class="lpBrandInputWrap">
-                    <input v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="Find or create a list..."
+                    <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="Find or create a list..."
                         @focus="showListDropdown = true; batchListId = ''"
                         @blur="showListDropdown = false"
                         @keydown.enter="filteredLists.length ? selectList(filteredLists[0]) : createAndSelectList()">
@@ -462,6 +462,11 @@ export default {
     methods: {
         togglePanel(panel) {
             this.activeBatchPanel = this.activeBatchPanel === panel ? null : panel;
+            if (this.activeBatchPanel) {
+                const refMap = { category: 'inputCategory', brand: 'inputBrand', tag: 'inputTag', addToList: 'inputList' };
+                const ref = refMap[panel];
+                if (ref) this.$nextTick(() => { this.$refs[ref] && this.$refs[ref].focus(); });
+            }
         },
         getItemById(id) {
             return this.allItems.find(i => i.id === id) || {};
