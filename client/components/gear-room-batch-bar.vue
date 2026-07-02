@@ -147,8 +147,7 @@
     width: 60px;
 }
 
-.lpGearRoomBatchPanelInput,
-.lpGearRoomBatchPanelSelect {
+.lpGearRoomBatchPanelInput {
     appearance: none;
     background: $color-surface;
     border: 1px solid $color-border;
