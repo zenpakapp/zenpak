@@ -77,6 +77,18 @@
         padding: 10px 14px;
     }
 
+    .itemDetailAddCategoryInline {
+        background: none;
+        border: none;
+        color: $color-accent;
+        cursor: pointer;
+        font-size: $fontSize-sm;
+        opacity: 0.6;
+        padding: 0;
+
+        &:hover { opacity: 1; }
+    }
+
     .itemDetailCategoryBadgeClickable {
         cursor: pointer;
         transition: background $transitionDurationFast ease;
@@ -140,6 +152,7 @@
             <div class="itemDetailName">{{ name || 'Unnamed item' }}</div>
             <div v-if="brand" class="itemDetailBrand">{{ brand }}</div>
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
+            <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">+ Add type</button>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? 'Remove from favorites' : 'Add to favorites'" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
@@ -161,6 +174,7 @@ export default {
         imageKey: { type: String, default: '' },
         imageUrl: { type: String, default: '' },
         starred:  { type: Boolean, default: false },
+        showAddCategory: { type: Boolean, default: false },
     },
     emits: ['toggle-star', 'close', 'view-image', 'click-category'],
     computed: {
