@@ -120,7 +120,7 @@
             <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
-            <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @keydown.up="incrementPrice($event)" @keydown.down="decrementPrice($event)" @blur="setDisplayPrice">
+            <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
         </span>
         <span class="lpWeightCell lpNumber">
             <input v-model="displayWeight" v-empty-if-zero type="text" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
@@ -321,34 +321,6 @@ export default {
             }
             this.categoryItem.star = (this.categoryItem.star + 1) % this.numStars;
             this.saveCategoryItem();
-        },
-        incrementPrice(evt) {
-            evt.stopImmediatePropagation();
-
-            if (this.priceError) {
-                return;
-            }
-
-            this.item.price = this.item.price + 1;
-
-            this.saveItem();
-            this.setDisplayPrice();
-        },
-        decrementPrice(evt) {
-            evt.stopImmediatePropagation();
-
-            if (this.priceError) {
-                return;
-            }
-
-            this.item.price = this.item.price - 1;
-
-            if (this.item.price < 0) {
-                this.item.price = 0;
-            }
-
-            this.saveItem();
-            this.setDisplayPrice();
         },
         incrementQty(evt) {
             evt.stopImmediatePropagation();
