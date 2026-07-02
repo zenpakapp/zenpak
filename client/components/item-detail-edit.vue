@@ -1,124 +1,6 @@
 <style lang="scss" scoped>
 @import "../css/_globals";
 
-.itemDetailHeader {
-    align-items: center;
-    background:
-        linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.02)),
-        $color-surface;
-    border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.14);
-    border-radius: $radius-md $radius-md 0 0;
-    color: $color-text;
-    display: flex;
-    gap: 18px;
-    min-height: 132px;
-    padding: 22px 24px;
-    position: relative;
-
-    .itemDetailThumb {
-        background: rgba(var(--color-accent-rgb), 0.08);
-        border: 1px solid rgba(var(--color-accent-rgb), 0.16);
-        border-radius: 16px;
-        flex-shrink: 0;
-        height: 84px;
-        object-fit: cover;
-        width: 84px;
-    }
-
-    .itemDetailThumbPlaceholder {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.14);
-        border: 1px solid rgba(var(--color-accent-rgb), 0.18);
-        border-radius: 16px;
-        color: $color-accent;
-        display: flex;
-        flex-shrink: 0;
-        height: 84px;
-        justify-content: center;
-        width: 84px;
-
-        .zenpakGearIcon {
-            display: block;
-            height: 46px;
-            width: 52px;
-        }
-    }
-
-    .itemDetailHeaderInfo {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .itemDetailName {
-        font-size: 26px;
-        font-weight: $fontWeight-bold;
-        line-height: 1.08;
-        margin: 0 0 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .itemDetailBrand {
-        color: $color-text-muted;
-        font-size: $fontSize-base;
-        margin-bottom: 8px;
-    }
-
-    .itemDetailCategoryBadge {
-        background: rgba(var(--color-accent-rgb), 0.14);
-        border-radius: 99px;
-        color: $color-accent;
-        display: inline-block;
-        font-size: $fontSize-base;
-        font-weight: $fontWeight-bold;
-        line-height: 1;
-        padding: 10px 14px;
-    }
-
-    .itemDetailStar {
-        background: none;
-        border: none;
-        color: $color-text-muted;
-        cursor: pointer;
-        font-size: 20px;
-        line-height: 1;
-        padding: 4px 6px;
-        transition: color $transitionDurationFast ease, transform $transitionDurationFast ease;
-
-        &:hover {
-            color: #f59e0b;
-            transform: scale(1.15);
-        }
-
-        &.active {
-            color: #f59e0b;
-        }
-    }
-
-    .itemDetailClose {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.12);
-        border: none;
-        border-radius: 50%;
-        color: $color-accent;
-        cursor: pointer;
-        display: flex;
-        flex-shrink: 0;
-        font-size: 22px;
-        font-weight: $fontWeight-bold;
-        height: 44px;
-        justify-content: center;
-        line-height: 1;
-        margin-left: auto;
-        width: 44px;
-
-        &:hover {
-            background: rgba(var(--color-accent-rgb), 0.2);
-        }
-    }
-}
-
 /* Edit mode */
 .itemDetailEditForm {
     display: flex;
@@ -368,22 +250,17 @@
 
 <template>
     <div>
-        <!-- Edit mode header -->
-        <div class="itemDetailHeader">
-            <img v-if="thumbnailImage" class="itemDetailThumb" :src="thumbnailImage">
-            <div v-else class="itemDetailThumbPlaceholder" aria-label="No item image">
-                <zenpak-gear-icon />
-            </div>
-            <div class="itemDetailHeaderInfo">
-                <div class="itemDetailName">{{ editName || 'Unnamed item' }}</div>
-                <div v-if="editBrand" class="itemDetailBrand">{{ editBrand }}</div>
-                <span v-if="editCategory" class="itemDetailCategoryBadge">{{ editCategory }}</span>
-            </div>
-            <button class="itemDetailStar" :class="{ active: item.starred }" :title="item.starred ? 'Remove from favorites' : 'Add to favorites'" @click="toggleStar">
-                {{ item.starred ? '★' : '☆' }}
-            </button>
-            <button class="lpIconButton itemDetailClose" title="Close" @click="$emit('close')">×</button>
-        </div>
+        <item-detail-header
+            :name="editName || 'Unnamed item'"
+            :brand="editBrand || ''"
+            :category="editCategory || ''"
+            :image-key="item.image || ''"
+            :image-url="item.imageUrl || ''"
+            :starred="localStarred"
+            @toggle-star="toggleStar"
+            @close="$emit('close')"
+            @view-image="viewImage"
+        />
 
         <!-- Edit form -->
         <form class="itemDetailEditForm" @submit.prevent="saveEdit">
@@ -500,8 +377,9 @@
 </template>
 
 <script>
-import ZenpakGearIcon from './zenpak-gear-icon.vue';
+import ItemDetailHeader from './item-detail-header.vue';
 import ItemBrandInput from './item-brand-input.vue';
+import { openDialog } from '../services/dialogs';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -514,7 +392,7 @@ const UNITS = ['oz', 'lb', 'g', 'kg'];
 
 export default {
     name: 'ItemDetailEdit',
-    components: { ZenpakGearIcon, ItemBrandInput },
+    components: { ItemDetailHeader, ItemBrandInput },
     props: {
         item: { type: Object, required: true },
         categoryItem: { type: Object, default: null },
@@ -523,6 +401,7 @@ export default {
     emits: ['close', 'saved'],
     data() {
         return {
+            localStarred: false,
             editName: '',
             editDescription: '',
             editBrand: '',
@@ -552,7 +431,11 @@ export default {
             return this.item.imageUrl || null;
         },
     },
+    watch: {
+        'item.starred'(val) { this.localStarred = !!val; },
+    },
     created() {
+        this.localStarred = !!this.item?.starred;
         this.editName = this.item.name || '';
         this.editDescription = this.item.description || '';
         this.editBrand = this.item.brand || '';
@@ -567,8 +450,12 @@ export default {
     },
     methods: {
         toggleStar() {
-            const starred = !this.item.starred;
+            const starred = !this.localStarred;
             this.$store.commit('updateItem', { ...this.item, starred });
+            this.localStarred = starred;
+        },
+        viewImage() {
+            openDialog('itemViewImage', this.thumbnailImage);
         },
         saveEdit() {
             const weightFloat = parseFloat(this.editWeight) || 0;

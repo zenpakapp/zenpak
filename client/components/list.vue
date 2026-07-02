@@ -80,6 +80,27 @@
     }
 }
 
+.lpGetStartedBrand {
+    align-items: center;
+    display: flex;
+    gap: $spacingMedium;
+    margin: 0 0 $spacingMedium;
+}
+
+.lpGetStartedBrandIcon {
+    display: block;
+    flex: 0 0 44px;
+    height: 44px;
+    width: 44px;
+}
+
+.lpGetStartedBrandWordmark {
+    display: block;
+    height: auto;
+    max-width: 220px;
+    width: 100%;
+}
+
 .lpPackingBar {
     align-items: center;
     background: $color-surface;
@@ -222,6 +243,10 @@
         </div>
 
         <div v-if="isListNew" id="getStarted">
+            <div class="lpGetStartedBrand">
+                <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
+                <zenpak-brand-asset class="lpGetStartedBrandWordmark" variant="wordmark" alt="ZenPak" />
+            </div>
             <h2>Welcome to ZenPak!</h2>
             <p>Here's what you need to get started:</p>
             <ol>
@@ -268,6 +293,7 @@
 <script>
 import category from './category.vue';
 import listSummary from './list-summary.vue';
+import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { usePackingMode } from '../composables/usePackingMode.js';
@@ -280,6 +306,7 @@ export default {
     components: {
         listSummary,
         category,
+        ZenpakBrandAsset,
         categoryDragStartIndex: false,
         itemDragId: false,
     },
