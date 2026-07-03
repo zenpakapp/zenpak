@@ -29,6 +29,7 @@
                 :category="category"
                 @close="close"
                 @start-edit="startEdit"
+                @duplicate="duplicateItem"
             />
 
             <item-detail-edit
@@ -88,6 +89,15 @@ export default {
             this.item = { ...item };
             if (categoryItem) this.categoryItem = { ...categoryItem };
             this.editing = false;
+        },
+        duplicateItem() {
+            this.$store.commit('duplicateItem', this.item);
+            const library = this.$store.state.library;
+            const copy = library.items[library.items.length - 1];
+            this.item = { ...copy };
+            this.categoryItem = null;
+            this.category = null;
+            this.editing = true;
         },
     },
 };

@@ -299,6 +299,9 @@
                 Delete gear
             </a>
             <div class="itemDetailSpacer" />
+            <button class="lpButton lpButtonSecondary itemDetailDuplicate" @click="$emit('duplicate')">
+                Duplicate
+            </button>
             <button class="lpButton itemDetailEdit" @click="$emit('start-edit')">
                 Edit gear
             </button>
@@ -322,7 +325,7 @@ export default {
         categoryItem: { type: Object, default: null },
         category: { type: Object, default: null },
     },
-    emits: ['close', 'start-edit'],
+    emits: ['close', 'start-edit', 'duplicate'],
     data() {
         return {
             localStarred: false,

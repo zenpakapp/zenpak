@@ -27,6 +27,7 @@ const createInitialState = () => ({
     categoryItemVersion: 0,
     gearRoomOpen: false,
     billing: null,
+    stripeConfigured: null,
 });
 
 const store = createStore({
@@ -102,6 +103,9 @@ const store = createStore({
         setBilling(state, billing) {
             state.billing = billing;
         },
+        setStripeConfigured(state, val) {
+            state.stripeConfigured = val;
+        },
         setDefaultList(state, list) {
             state.library.defaultListId = list.id;
             state.library.getListById(state.library.defaultListId).calculateTotals();
@@ -147,6 +151,14 @@ const store = createStore({
             list.name = name || 'New list';
             state.library.newCategory({ list });
             list.calculateTotals();
+        },
+        duplicateItem(state, item) {
+            const copy = state.library.newItem({});
+            const fields = ['name', 'description', 'weight', 'authorUnit', 'price', 'image', 'imageUrl', 'url', 'shop', 'affiliateUrl', 'promoCode', 'promoLabel', 'brand', 'category', 'tags', 'starred'];
+            fields.forEach(f => {
+                if (item[f] !== undefined) copy[f] = Array.isArray(item[f]) ? [...item[f]] : item[f];
+            });
+            state.library.updateItem(copy);
         },
         removeItem(state, item) {
             state.library.removeItem(item.id);
@@ -523,6 +535,10 @@ const store = createStore({
     },
     actions: {
         init(context) {
+            fetch('/api/billing/config')
+                .then(r => r.ok ? r.json() : null)
+                .then(data => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
+                .catch(() => {});
             return context.dispatch('loadRemote').catch((error) => {
                 if (error && (error.statusCode === 401 || error.statusCode === 404)) {
                     if (hasLocalLibrary()) {
