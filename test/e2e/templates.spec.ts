@@ -6,7 +6,7 @@ test.describe("Template picker", () => {
   test("picker appears after register form submit", async ({ page }) => {
     await page.goto(testRoot);
 
-    const now = Date.now();
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
     await page.fill('.lpRegister input[name="username"]', `tpl${now}`);
     await page.fill(
       '.lpRegister input[name="email"]',
@@ -24,7 +24,7 @@ test.describe("Template picker", () => {
   });
 
   test("register with template populates list categories", async ({ page }) => {
-    const now = Date.now();
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
     const username = `tpl${now}`;
 
     let libraryPayload: string | null = null;
@@ -55,7 +55,7 @@ test.describe("Template picker", () => {
   test("dismiss picker starts blank — POST fires with empty library", async ({
     page,
   }) => {
-    const now = Date.now();
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
     const username = `tpl${now}`;
 
     let libraryPayload: string | null | undefined = undefined;
