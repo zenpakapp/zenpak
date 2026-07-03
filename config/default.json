@@ -21,6 +21,7 @@
     "stripeSecretKey": "",
     "stripeWebhookSecret": "",
     "stripePriceIdTrail": "",
+    "stripePriceIdTrailAnnual": "",
     "stripePriceIdGuide": "",
     "stripePriceIdGuideAnnual": "",
     "kofiWebhookToken": ""

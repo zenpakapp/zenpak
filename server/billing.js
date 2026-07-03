@@ -20,6 +20,7 @@ function getStripe() {
 function getPlanFromPriceId(priceId) {
     if (!priceId) return 'free';
     if (priceId === config.get('stripePriceIdTrail')) return 'supporter';
+    if (priceId === config.get('stripePriceIdTrailAnnual')) return 'supporter';
     if (priceId === config.get('stripePriceIdGuide')) return 'creator';
     if (priceId === config.get('stripePriceIdGuideAnnual')) return 'creator';
     return 'free';
@@ -27,7 +28,8 @@ function getPlanFromPriceId(priceId) {
 
 function getIntervalFromPriceId(priceId) {
     if (!priceId) return null;
-    if (priceId === config.get('stripePriceIdTrail')) return 'year';
+    if (priceId === config.get('stripePriceIdTrail')) return 'month';
+    if (priceId === config.get('stripePriceIdTrailAnnual')) return 'year';
     if (priceId === config.get('stripePriceIdGuide')) return 'month';
     if (priceId === config.get('stripePriceIdGuideAnnual')) return 'year';
     return null;
@@ -35,7 +37,13 @@ function getIntervalFromPriceId(priceId) {
 
 async function getOrCreateCustomer(user) {
     if (user.billing && user.billing.customerId) {
-        return user.billing.customerId;
+        try {
+            await getStripe().customers.retrieve(user.billing.customerId);
+            return user.billing.customerId;
+        } catch (err) {
+            if (err.code !== 'resource_missing') throw err;
+            user.billing.customerId = null;
+        }
     }
     const stripe = getStripe();
     const customer = await stripe.customers.create({

@@ -23,16 +23,17 @@ router.post('/checkout-session', billingRequired, (req, res) => {
         if (!priceId && plan) {
             const interval = req.body.interval; // 'month' | 'year' | undefined
             if (plan === 'trail') {
-                priceId = config.get('stripePriceIdTrail'); // annual-only, interval ignored
+                priceId = config.get('stripePriceIdTrail') || config.get('stripePriceIdTrailAnnual');
             } else if (plan === 'guide') {
                 priceId = interval === 'year'
                     ? config.get('stripePriceIdGuideAnnual')
-                    : config.get('stripePriceIdGuide');
+                    : (config.get('stripePriceIdGuide') || config.get('stripePriceIdGuideAnnual'));
             }
         }
 
         const validPriceIds = [
             config.get('stripePriceIdTrail'),
+            config.get('stripePriceIdTrailAnnual'),
             config.get('stripePriceIdGuide'),
             config.get('stripePriceIdGuideAnnual'),
         ].filter(Boolean);
@@ -90,6 +91,11 @@ router.post('/portal-session', billingRequired, (req, res) => {
             return res.status(500).json({ message: 'Failed to create portal session' });
         }
     });
+});
+
+// GET /config (public — server-level feature flags)
+router.get('/config', (req, res) => {
+    return res.json({ stripeEnabled: stripeEnabled() });
 });
 
 // GET /me

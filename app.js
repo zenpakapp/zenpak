@@ -92,11 +92,8 @@ app.use('/api/notifications', notificationEndpoints);
 app.use('/api/reports', reportEndpoints);
 app.use('/', oauthEndpoints);
 
-const { stripeEnabled } = require('./server/billing.js');
-if (stripeEnabled()) {
-    const billingEndpoints = require('./server/billing-endpoints.js');
-    app.use('/api/billing', billingEndpoints);
-}
+const billingEndpoints = require('./server/billing-endpoints.js');
+app.use('/api/billing', billingEndpoints);
 
 app.use('/', views);
 

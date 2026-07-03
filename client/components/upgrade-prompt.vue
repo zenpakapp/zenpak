@@ -108,6 +108,63 @@
         color: var(--color-warning);
         font-size: $fontSize-sm;
     }
+
+    .lpUpgradeIntervalToggle {
+        align-self: flex-start;
+        background: rgba(var(--color-accent-rgb), 0.08);
+        border-radius: 999px;
+        display: inline-flex;
+        margin-bottom: 20px;
+        padding: 3px;
+    }
+
+    .lpUpgradeIntervalBtn {
+        align-items: center;
+        background: none;
+        border: none;
+        border-radius: 999px;
+        color: $color-text-muted;
+        cursor: pointer;
+        display: flex;
+        font-size: $fontSize-sm;
+        font-weight: $fontWeight-medium;
+        gap: 5px;
+        padding: 5px 14px;
+        transition: background $transitionDurationFast ease, color $transitionDurationFast ease;
+
+        &.active {
+            background: $color-accent;
+            color: #fff;
+
+            .lpUpgradeIntervalSave {
+                background: rgba(255, 255, 255, 0.22);
+                color: #fff;
+            }
+        }
+    }
+
+    .lpUpgradeIntervalSave {
+        background: rgba(var(--color-accent-rgb), 0.18);
+        border-radius: 999px;
+        color: $color-accent;
+        font-size: 10px;
+        font-weight: $fontWeight-bold;
+        letter-spacing: 0.02em;
+        padding: 2px 6px;
+    }
+
+    .lpUpgradePrice {
+        color: $color-text;
+        font-size: 26px;
+        font-weight: $fontWeight-bold;
+        margin-bottom: 16px;
+
+        span {
+            color: $color-text-muted;
+            font-size: $fontSize-sm;
+            font-weight: $fontWeight-medium;
+        }
+    }
 }
 </style>
 
@@ -135,6 +192,21 @@
                 </ul>
 
                 <div v-if="stripeEnabled" class="lpUpgradeActions">
+                    <div v-if="tier === 'guide'" class="lpUpgradeIntervalToggle">
+                        <button
+                            class="lpUpgradeIntervalBtn"
+                            :class="{ active: interval === 'month' }"
+                            @click="interval = 'month'"
+                        >Monthly</button>
+                        <button
+                            class="lpUpgradeIntervalBtn"
+                            :class="{ active: interval === 'year' }"
+                            @click="interval = 'year'"
+                        >Annual <span class="lpUpgradeIntervalSave">−35%</span></button>
+                    </div>
+                    <div class="lpUpgradePrice">
+                        {{ priceDisplay }}<span>{{ priceUnit }}</span>
+                    </div>
                     <p v-if="checkoutError" class="lpUpgradeError">{{ checkoutError }}</p>
                     <button class="lpButton" :disabled="checkingOut" @click="checkout">
                         {{ checkingOut ? 'Redirecting…' : `Become a ${tierLabel}` }}
@@ -249,6 +321,7 @@ export default {
             formError: null,
             checkingOut: false,
             checkoutError: null,
+            interval: 'month',
         };
     },
     computed: {
@@ -265,7 +338,17 @@ export default {
             return this.tier === 'trail' ? TRAIL_BENEFITS : GUIDE_BENEFITS;
         },
         stripeEnabled() {
-            return this.$store.state.billing && this.$store.state.billing.stripeEnabled;
+            if (!this.$store.state.loggedIn) return false;
+            return this.$store.state.stripeConfigured === true ||
+                (this.$store.state.billing && this.$store.state.billing.stripeEnabled);
+        },
+        priceDisplay() {
+            if (this.tier === 'trail') return '€19';
+            return this.interval === 'year' ? '€39' : '€5';
+        },
+        priceUnit() {
+            if (this.tier === 'trail') return ' / year';
+            return this.interval === 'year' ? ' / year' : ' / month';
         },
     },
     watch: {
@@ -286,11 +369,11 @@ export default {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: this.tier }),
+                    body: JSON.stringify({ plan: this.tier, interval: this.tier === 'trail' ? 'year' : this.interval }),
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
-                else this.checkoutError = 'Something went wrong — give it another try.';
+                else this.checkoutError = data.message || 'Something went wrong — give it another try.';
             } catch (_) {
                 this.checkoutError = 'Looks like we lost the connection. Try again in a moment.';
             } finally {
