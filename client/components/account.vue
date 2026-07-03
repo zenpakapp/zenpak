@@ -200,6 +200,17 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    .accountBillingKinBtn {
+        background: transparent;
+        border-color: var(--color-border);
+        box-shadow: none;
+        color: var(--color-text);
+
+        &:hover:not(:disabled) {
+            background: var(--color-control-muted);
+        }
+    }
 }
 
 .accountIntervalToggle {
@@ -314,7 +325,7 @@
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
                         <p class="accountSectionText"><strong>Kin</strong> — €19/year</p>
-                        <button @click="openCheckout('trail')" class="lpButton lpButtonSecondary">
+                        <button @click="openCheckout('trail')" class="lpButton accountBillingKinBtn">
                             Upgrade to Kin
                         </button>
                     </div>
