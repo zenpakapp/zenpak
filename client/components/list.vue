@@ -448,7 +448,7 @@ export default {
                 this.categoryDrake.destroy();
             }
 
-            const drake = createDragDrop([this.$refs.categories], {
+            const drake = createDragDrop([this.$refs.categories.$el], {
                 moves(el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpCategoryHandle');
                 },

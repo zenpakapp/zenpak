@@ -420,6 +420,7 @@ export default {
             return GEAR_CATEGORIES;
         },
         filteredItems() {
+            if (!this.library || !this.library.items) return [];
             let i;
             let item;
             let filteredItems = [];
