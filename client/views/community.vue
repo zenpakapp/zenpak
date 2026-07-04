@@ -1,385 +1,5 @@
 <style lang="scss">
-@import "../css/_globals";
-
-.lpCommunity {
-    margin: 0 auto;
-    max-width: 680px;
-    padding: 24px 20px 48px;
-}
-
-/* ── Tabs ── */
-
-.lpCommunityTabs {
-    border-bottom: 1px solid $color-border;
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.lpCommunityTab {
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: $color-text-muted;
-    cursor: pointer;
-    font-size: $fontSize-base;
-    font-weight: $fontWeight-medium;
-    margin-bottom: -1px;
-    padding: 10px 16px;
-    transition: color $transitionDurationFast ease, border-color $transitionDurationFast ease;
-
-    &.active {
-        border-bottom-color: $color-accent;
-        color: $color-text;
-        font-weight: $fontWeight-bold;
-    }
-
-    &[aria-disabled] {
-        cursor: not-allowed;
-        opacity: 0.4;
-    }
-}
-
-/* ── Sort toolbar ── */
-
-.lpCommunitySort {
-    align-items: center;
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-}
-
-.lpCommunitySortLabel {
-    color: $color-text-muted;
-    font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
-    letter-spacing: $letterSpacing-caps;
-    margin-right: 4px;
-    text-transform: uppercase;
-}
-
-.lpCommunitySortBtn {
-    background: $color-control-muted;
-    border: 1px solid transparent;
-    border-radius: $radius-sm;
-    color: $color-text-muted;
-    cursor: pointer;
-    font-size: $fontSize-sm;
-    font-weight: $fontWeight-medium;
-    height: $control-height-sm;
-    padding: 0 12px;
-    transition: background $transitionDurationFast ease, color $transitionDurationFast ease, border-color $transitionDurationFast ease;
-
-    &:hover {
-        color: $color-text;
-    }
-
-    &.active {
-        background: $color-surface;
-        border-color: $color-border;
-        color: $color-text;
-        font-weight: $fontWeight-bold;
-    }
-}
-
-/* ── List cards ── */
-
-.lpCommunityCard {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    display: block;
-    margin-bottom: 6px;
-    padding: 14px 16px;
-    text-decoration: none;
-    transition: border-color $transitionDurationFast ease, box-shadow $transitionDurationFast ease;
-
-    &:hover {
-        border-color: $color-accent;
-        box-shadow: $shadow-soft;
-    }
-}
-
-.lpCommunityCardName {
-    color: $color-accent;
-    font-size: $fontSize-base;
-    font-weight: $fontWeight-bold;
-    margin-bottom: 4px;
-}
-
-.lpCommunityCardAuthor {
-    color: $color-text-muted;
-    font-size: $fontSize-sm;
-    margin-bottom: 8px;
-
-    a {
-        color: $color-text;
-        font-weight: $fontWeight-medium;
-        text-decoration: none;
-
-        &:hover { text-decoration: underline; }
-    }
-}
-
-.lpCommunityBadge {
-    background: rgba(var(--color-accent-rgb), 0.14);
-    border-radius: 4px;
-    color: $color-accent;
-    font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
-    letter-spacing: $letterSpacing-caps;
-    margin-left: 5px;
-    padding: 1px 5px;
-    text-transform: uppercase;
-    vertical-align: middle;
-}
-
-.lpCommunityCardMeta {
-    color: $color-text-muted;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: $fontSize-xs;
-    gap: 12px;
-}
-
-.lpCommunityCardMetaItem {
-    align-items: center;
-    display: flex;
-    gap: 4px;
-}
-
-/* ── Feed events ── */
-
-.lpCommunityEvent {
-    align-items: flex-start;
-    border-bottom: 1px solid $color-border;
-    display: flex;
-    gap: 12px;
-    padding: 14px 0;
-}
-
-.lpCommunityEventAvatar {
-    align-items: center;
-    background: $color-control-muted;
-    border: 1px solid $color-border;
-    border-radius: 50%;
-    color: $color-text-muted;
-    display: flex;
-    flex-shrink: 0;
-    font-size: $fontSize-md;
-    font-weight: $fontWeight-bold;
-    height: 36px;
-    justify-content: center;
-    width: 36px;
-}
-
-.lpCommunityEventBody {
-    flex: 1;
-    min-width: 0;
-}
-
-.lpCommunityEventLine {
-    font-size: $fontSize-base;
-    line-height: 1.4;
-
-    a {
-        color: $color-text;
-        font-weight: $fontWeight-bold;
-        text-decoration: none;
-
-        &:hover { text-decoration: underline; }
-    }
-
-    span {
-        color: $color-text-muted;
-    }
-}
-
-.lpCommunityEventList {
-    background: $color-control-muted;
-    border-radius: $radius-sm;
-    color: $color-text;
-    font-size: $fontSize-sm;
-    font-weight: $fontWeight-medium;
-    margin-top: 6px;
-    padding: 8px 12px;
-}
-
-.lpCommunityEventListDeleted {
-    color: $color-text-muted;
-    font-style: italic;
-}
-
-.lpCommunityEventTime {
-    color: $color-text-muted;
-    font-size: $fontSize-xs;
-    margin-top: 4px;
-}
-
-/* ── Nav ── */
-
-.lpCommunityNav {
-    margin-bottom: 20px;
-
-    a {
-        color: $color-text-muted;
-        font-size: $fontSize-sm;
-        text-decoration: none;
-
-        &:hover { color: $color-text; }
-    }
-}
-
-.lpCommunityHeader {
-    align-items: baseline;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-
-    h1 {
-        font-size: $fontSize-md;
-        font-weight: $fontWeight-bold;
-        margin: 0;
-    }
-}
-
-/* ── Empty / Loading states ── */
-
-.lpCommunityEmpty {
-    color: $color-text-muted;
-    font-size: $fontSize-base;
-    margin-top: 48px;
-    text-align: center;
-}
-
-/* ── Load more ── */
-
-.lpCommunityLoadMore {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    color: $color-text-muted;
-    cursor: pointer;
-    display: block;
-    font-size: $fontSize-sm;
-    font-weight: $fontWeight-medium;
-    height: $control-height-md;
-    margin: 20px auto 0;
-    padding: 0 24px;
-    transition: border-color $transitionDurationFast ease, color $transitionDurationFast ease;
-
-    &:hover:not(:disabled) {
-        border-color: $color-accent;
-        color: $color-text;
-    }
-
-    &:disabled {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-}
-
-/* ── User cards ── */
-
-.lpCommunityCardUser {
-    .lpCommunityCardAuthor {
-        color: $color-text-muted;
-        font-size: $fontSize-sm;
-        margin-top: 2px;
-    }
-}
-
-/* ── Search ── */
-
-.lpCommunitySearch {
-    margin-bottom: 16px;
-}
-
-.lpCommunitySearchInput {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    color: $color-text;
-    font-size: $fontSize-sm;
-    padding: 8px 12px;
-    width: 100%;
-
-    &:focus {
-        border-color: $color-accent;
-        outline: none;
-    }
-
-    &::placeholder {
-        color: $color-text-muted;
-    }
-}
-
-/* ── Featured section ── */
-
-.lpCommunityFeatured {
-    margin-bottom: 24px;
-}
-
-.lpCommunityFeaturedLabel {
-    color: $color-text-muted;
-    font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
-    letter-spacing: $letterSpacing-caps;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-.lpCommunityCardFeatured {
-    border-color: $color-accent;
-    position: relative;
-
-    &::before {
-        color: $color-accent;
-        content: '★';
-        font-size: 10px;
-        position: absolute;
-        right: 12px;
-        top: 12px;
-    }
-}
-
-/* ── Moderation panel ── */
-
-.lpModerationReport {
-    border-bottom: 1px solid $color-border;
-    padding: 14px 0;
-
-    &:last-child { border-bottom: none; }
-}
-
-.lpModerationReportMeta {
-    align-items: center;
-    color: $color-text-muted;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: $fontSize-xs;
-    gap: 8px;
-    margin-bottom: 6px;
-}
-
-.lpModerationReportTarget {
-    font-size: $fontSize-sm;
-    margin-bottom: 8px;
-
-    a {
-        color: $color-accent;
-        text-decoration: none;
-        word-break: break-all;
-
-        &:hover { text-decoration: underline; }
-    }
-}
-
-.lpModerationReportActions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
+@import "../css/_community";
 </style>
 
 <template>
@@ -430,7 +50,7 @@
         <!-- Discover tab -->
         <div v-if="activeTab === 'discover'">
             <div class="lpCommunitySort">
-                        <button
+                <button
                     class="lpCommunitySortBtn"
                     :class="{ active: discoverSort === 'recent' }"
                     data-sort="recent"
@@ -516,37 +136,7 @@
         </div>
 
         <!-- People tab -->
-        <div v-if="activeTab === 'people'">
-            <div class="lpCommunitySearch">
-                <input
-                    v-model="peopleQuery"
-                    type="text"
-                    class="lpCommunitySearchInput"
-                    placeholder="Search users…"
-                    @input="onPeopleInput"
-                    autofocus
-                />
-            </div>
-            <p v-if="peopleLoading" class="lpCommunityEmpty">Loading…</p>
-            <p v-else-if="peopleError" class="lpCommunityEmpty">{{ peopleError }}</p>
-            <p v-else-if="peopleQuery && peopleResults.length === 0" class="lpCommunityEmpty">No users found.</p>
-            <template v-else>
-                <router-link
-                    v-for="user in peopleResults"
-                    :key="user.username"
-                    :to="`/u/${user.username}`"
-                    class="lpCommunityCard lpCommunityCardUser"
-                >
-                    <div class="lpCommunityCardName">
-                        {{ user.displayName || user.username }}
-                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Kin</span>
-                    </div>
-                    <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
-                    <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
-                </router-link>
-            </template>
-        </div>
+        <community-people v-if="activeTab === 'people'" />
 
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
@@ -583,31 +173,10 @@
         </div>
 
         <!-- Moderation tab -->
-        <div v-if="activeTab === 'moderation' && isModerator">
-            <h2 style="font-size:14px;font-weight:700;margin-bottom:16px">Reports ({{ reports.length }} pending)</h2>
-            <p v-if="reportsLoading" class="lpCommunityEmpty">Loading…</p>
-            <p v-else-if="reports.length === 0" class="lpCommunityEmpty">No pending reports.</p>
-            <template v-else>
-                <div v-for="r in reports" :key="String(r._id)" class="lpModerationReport">
-                    <div class="lpModerationReportMeta">
-                        <span class="lpCommunityBadge">{{ r.targetType }}</span>
-                        <span>{{ r.reason }}</span>
-                        <span>by {{ r.reporterUsername }}</span>
-                        <span>{{ timeAgo(r.createdAt) }}</span>
-                    </div>
-                    <div class="lpModerationReportTarget">
-                        <a :href="r.targetType === 'list' ? `/p/${r.targetId}` : `/u/${r.targetId}`" target="_blank" class="lpHref">{{ r.targetId }}</a>
-                    </div>
-                    <div class="lpModerationReportActions">
-                        <button class="lpButton lpSmall" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
-                        <button class="lpButton lpSmall" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
-                        <button v-if="r.targetType === 'list'" class="lpButton lpSmall" @click="featureList(r.targetId)">★ Feature</button>
-                        <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublishList(r)">Unpublish</button>
-                        <button class="lpButton lpSmall lpButtonDanger" @click="banUser(r)">Ban</button>
-                    </div>
-                </div>
-            </template>
-        </div>
+        <community-moderation
+            v-if="activeTab === 'moderation' && isModerator"
+            @feature-list="featureList"
+        />
     </main>
 </template>
 
@@ -616,11 +185,13 @@ import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
+import CommunityModeration from '../components/community-moderation.vue';
+import CommunityPeople from '../components/community-people.vue';
 import reportButton from '../components/report-button.vue';
 
 export default {
     name: 'CommunityView',
-    components: { reportButton },
+    components: { CommunityModeration, CommunityPeople, reportButton },
     setup() {
         useTheme();
         const {
@@ -657,13 +228,6 @@ export default {
             activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
             searchQuery: '',
             searchTimeout: null,
-            peopleQuery: '',
-            peopleResults: [],
-            peopleLoading: false,
-            peopleError: null,
-            peopleTimeout: null,
-            reports: [],
-            reportsLoading: false,
             isModerator: false,
         };
     },
@@ -688,28 +252,6 @@ export default {
             const path = tab === 'feed' ? '/community/feed' : '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
-            if (tab === 'moderation' && this.reports.length === 0) this.loadReports();
-        },
-        onPeopleInput() {
-            clearTimeout(this.peopleTimeout);
-            this.peopleTimeout = setTimeout(() => this.searchPeople(), 300);
-        },
-        async searchPeople() {
-            if (!this.peopleQuery.trim()) {
-                this.peopleResults = [];
-                return;
-            }
-            this.peopleLoading = true;
-            this.peopleError = null;
-            try {
-                const params = new URLSearchParams({ q: this.peopleQuery.trim() });
-                const data = await fetchJson(`/api/community/users?${params}`);
-                this.peopleResults = data.users || [];
-            } catch {
-                this.peopleError = 'Could not load results.';
-            } finally {
-                this.peopleLoading = false;
-            }
         },
         onSearchInput() {
             clearTimeout(this.searchTimeout);
@@ -755,43 +297,8 @@ export default {
                 const data = await fetchJson('/api/auth/me');
                 this.isModerator = Boolean(data.isModerator);
             } catch {
-                this.moderatorFlag = false;
+                this.isModerator = false;
             }
-        },
-        async loadReports() {
-            this.reportsLoading = true;
-            try {
-                const data = await fetchJson('/api/reports');
-                this.reports = data.reports || [];
-            } catch {
-                this.reports = [];
-            } finally {
-                this.reportsLoading = false;
-            }
-        },
-        async resolveReport(report, status) {
-            try {
-                await fetchJson(`/api/reports/${report._id}`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ status }),
-                });
-                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
-            } catch {}
-        },
-        async banUser(report) {
-            const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
-            if (!username || !confirm(`Ban "${username}"?`)) return;
-            try {
-                await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
-                await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed.'); }
-        },
-        async unpublishList(report) {
-            if (!confirm(`Unpublish "${report.targetId}"?`)) return;
-            try {
-                await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
-                await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed.'); }
         },
     },
 };
