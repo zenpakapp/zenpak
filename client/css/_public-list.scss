@@ -1,0 +1,304 @@
+@import "globals";
+
+.lpPublicList {
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 32px 20px;
+}
+
+.lpPublicError {
+    margin: 80px auto;
+    max-width: 400px;
+    text-align: center;
+
+    h2 {
+        color: $color-text;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 16px;
+    }
+}
+
+.lpPublicErrorIcon {
+    color: $color-text-muted;
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lpPublicErrorBack {
+    color: $color-accent;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpPublicNav {
+    margin-bottom: 20px;
+
+    a {
+        color: $color-text-muted;
+        font-size: 13px;
+        text-decoration: none;
+
+        &:hover { color: $color-text; }
+    }
+}
+
+.lpPublicNavAuthor {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+}
+
+.lpPublicListBadge {
+    background: rgba(var(--color-accent-rgb), 0.1);
+    border-radius: $radius-sm;
+    color: $color-accent;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 2px 7px;
+}
+
+.lpPublicListTitle {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.lpPublicListSummary {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: 0 0 24px;
+}
+
+.lpPublicListActions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.lpPrintBtn {
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 16px;
+    transition: border-color $transitionDurationFast, color $transitionDurationFast;
+
+    &:hover {
+        border-color: $color-accent;
+        color: $color-accent;
+    }
+}
+
+.lpPublicChart {
+    align-items: flex-start;
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.lpPublicChartCanvas {
+    flex-shrink: 0;
+    height: 200px;
+    width: 200px;
+}
+
+.lpPublicChartTable {
+    border-collapse: collapse;
+    flex: 1;
+    font-size: 13px;
+
+    th {
+        border-bottom: 1px solid $color-border;
+        color: $color-text-muted;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        text-align: right;
+        text-transform: uppercase;
+
+        &:first-child { text-align: left; }
+    }
+
+    td {
+        border-bottom: 1px solid $color-border;
+        padding: 6px 8px;
+        text-align: right;
+
+        &:first-child { text-align: left; }
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+        font-weight: 700;
+    }
+
+    tr:hover td {
+        background: $color-surface;
+    }
+}
+
+.lpPublicChartSwatch {
+    border-radius: 2px;
+    display: inline-block;
+    height: 10px;
+    margin-right: 6px;
+    vertical-align: middle;
+    width: 10px;
+}
+
+.lpPublicListCategories {
+    display: grid;
+    gap: 16px;
+}
+
+.lpPublicListCategory h2 {
+    border-bottom: 1px solid $color-border;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 0 0 8px;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.lpPublicListItem {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 36px 1fr auto auto;
+    padding: 4px 0;
+
+    &:last-child { border-bottom: none; }
+
+    &.lpPublicListItemWithPrice {
+        grid-template-columns: 36px 1fr auto auto auto;
+    }
+}
+
+.lpPublicListItemImage {
+    border-radius: $radius-sm;
+    height: 36px;
+    object-fit: cover;
+    width: 36px;
+}
+
+.lpPublicListItemImagePlaceholder {
+    flex-shrink: 0;
+    height: 36px;
+    width: 36px;
+}
+
+.lpPublicListItemBody { min-width: 0; }
+
+.lpPublicListItemName {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+
+.lpPublicListItemMeta {
+    color: $color-text-muted;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lpPublicListItemWeight {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lpPublicListItemPrice {
+    color: $color-text-muted;
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.lpPublicListItemLink {
+    color: $color-accent;
+    font-size: 12px;
+    text-align: center;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpPublicListItemPromo {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.lpPublicListItemPromoLabel {
+    color: var(--color-text-muted);
+    font-size: 11px;
+}
+
+.lpPublicListItemPromoCode {
+    background: var(--color-badge-bg, #e8f4e8);
+    border-radius: 3px;
+    color: var(--color-badge-text, #2d6a2d);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+}
+
+.lpCopyListBtn {
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 16px;
+    transition: border-color $transitionDurationFast, color $transitionDurationFast;
+
+    &:hover:not(:disabled) {
+        border-color: $color-accent;
+        color: $color-accent;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}
+
+.lpCopyListSignIn {
+    color: $color-accent;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpCopyListError {
+    color: $color-danger;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.lpPublicDisclosure {
+    background: $color-surface;
+    border-left: 3px solid $color-accent;
+    margin: 24px 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $color-text-muted;
+}
