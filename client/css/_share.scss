@@ -1,325 +1,150 @@
-#main.lpShare, .lpList {
-    transition: none !important;
+@import "globals";
+
+.sharePopover {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 280px;
+    padding: 4px 0;
 }
 
-.lpShare {
-    .lpCategoryName {
-        color: $color-text;
-        font-size: 18px;
-        margin: 0;
-    }
-
-    .lpItem {
-        border-top-color: $color-border;
-
-        &:hover {
-            background: $color-bg;
-        }
-
-        .lpActionsCell {
-            flex-basis: 75px;
-        }
-
-        &.lpItemHasImage .lpImageCell {
-            padding-right: 5px;
-        }
-
-        &.lpQtyZero {
-            background: $color-bg;
-            color: $color-text-muted;
-
-            .lpName,
-            .lpDescription,
-            .lpWeightCell,
-            .lpQtyCell,
-            .lpPriceCell,
-            .lpHref,
-            .lpUnitSelect {
-                color: inherit;
-            }
-
-            .lpActionsCell {
-                opacity: 0.8;
-            }
-        }
-    }
-
-    .lpItemsHeader {
-        background: rgba(var(--color-accent-rgb), 0.06);
-        border-bottom: 1px solid $color-border;
-        color: $color-text;
-    }
-
-    .lpItemsFooter {
-        background: $color-bg;
-        border-top: 1px solid $color-border;
-    }
-
-    .lpWeightCell,
-    .lpQtyCell,
-    .lpPriceCell {
-        color: $color-text;
-    }
-
-    #lpListDescription {
-        margin: 30px 0;
-    }
+.shareSection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.lpUnitSelect {
-    border: 1px solid transparent;
-    cursor: pointer;
-    display: inline-block;
-    padding: 0 5px;
-    position: relative;
-
-    &:hover,
-    &.lpHover {
-        background: $color-surface;
-        border: 1px solid $color-border;
-
-        i {
-            opacity: 1;
-        }
-    }
-
-    i {
-        opacity: 0.6;
-    }
-
-    &.lpOpen {
-        background: $color-surface;
-
-        .lpUnitDropdown {
-            display: block;
-        }
-    }
-
-    .lpDisplay {
-        display: inline-block;
-        width: 1.1em;
-    }
-
-    .lpUnitDropdown {
-        background: $color-surface;
-        border: 1px solid $color-border;
-        display: none;
-        left: 0;
-        padding: 0;
-        position: absolute;
-        top: -1px;
-        z-index: $aboveSidebar+1;
-
-        &.lb {
-            top: -30px;
-        }
-
-        &.g {
-            top: -55px;
-        }
-
-        &.kg {
-            top: -81px;
-        }
-
-        li {
-            list-style: none;
-            padding: 2px 14px;
-
-            &:hover {
-                background: $color-accent;
-                color: $color-surface;
-            }
-        }
-    }
+.shareLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    text-transform: uppercase;
 }
 
-.lpDialog {
-    animation: fadein 0.25s linear 0s 1 forwards;
-    background: $color-surface;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+.shareInput {
+    appearance: none;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-sizing: border-box;
     color: $color-text;
-    opacity: 0;
-    left: 50%;
-    padding: 35px;
-    position: fixed;
-    text-align: left;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    width: 350px;
-    z-index: 100;
-  }
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .lpDialog.fadeout {
-    animation: fadeout 0.25s linear 0s 1 forwards;
-  }
-  @keyframes fadeout {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-  .lpModalOverlay {
-    animation: fadein 0.25s linear 0s 1 forwards;
-    opacity: 0;
-    background: rgba(0, 0, 0, 0.5);
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
+    font-size: $fontSize-sm;
+    font-variant-numeric: tabular-nums;
+    min-height: 36px;
+    padding: 0 10px;
     width: 100%;
-    z-index: 90;
-  }
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .lpModalOverlay.fadeout {
-    animation: fadeout 0.25s linear 0s 1 forwards;
-  }
-  @keyframes fadeout {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-@media only screen and (max-width: 720px) {
-    .lpChart {
-        max-width: 100%;
-    }
 
-    .lpItems {
-        position: relative;
-
-        .lpWeightCell {
-            flex-basis: 100px;
-        }
-
-        .lpPriceCell {
-            flex-basis: 65px;
-        }
-
-        .lpHeader {
-            .lpWeightCell,
-            .lpPriceCell,
-            .lpQtyCell {
-                display: none;
-            }
-        }
-
-        .lpFooter {
-            justify-content: flex-end;
-
-            .lpQtyCell {
-                display: none;
-            }
-        }
-    }
-
-    .lpItem {
-        align-items: baseline;
-        flex-flow: row wrap;
-        justify-content: flex-end;
-        padding: 3px 0;
-
-        .lpShowImages &.lpItemHasImage {
-            min-height: 90px;
-            padding-left: 100px;
-            position: relative;
-
-            .lpImageCell {
-                height: 90px;
-                left: 0;
-                position: absolute;
-                top: 0;
-                width: 90px;
-            }
-        }
-
-        .lpImageCell {
-            flex-basis: 0;
-        }
-
-        .lpName {
-            flex-basis: 90px;
-            font-weight: bold;
-            order: 2;
-        }
-
-        .lpQtyCell {
-            flex-basis: auto;
-            order: 1;
-
-            &[qty1] {
-                display: none;
-            }
-
-            &::after {
-                content: " x ";
-                display: inline;
-                margin-right: 5px;
-            }
-        }
-
-        .lpPriceCell {
-            order: 4;
-        }
-
-        .lpWeightCell {
-            order: 5;
-        }
-
-        .lpDescription {
-            flex-basis: calc(100% - 50px); /* Always wrap */
-            order: 98;
-        }
-
-        .lpActionsCell {
-            flex: 0 0 auto;
-            order: 99;
-            padding: 0 10px;
-            text-align: right;
-
-            .lpHidden,
-            i:not(.lpActive) {
-                display: none;
-            }
-        }
-    }
-
-    #lpImageDialog {
-        padding: 5px;
-        width: 90%;
-
-        img {
-            display: block;
-            max-width: 100%;
-        }
+    &:focus {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        outline: none;
     }
 }
 
-@media only screen and (max-width: 480px) {
-    .lpListSummary {
-        flex-direction: column;
-        margin-bottom: 30px;
-    }
+.shareSelectWrap {
+    position: relative;
+    width: 100%;
 
-    .lpChartContainer {
-        max-width: 200px;
+    &::after {
+        color: $color-text-muted;
+        content: "⌄";
+        font-size: 18px;
+        line-height: 1;
+        pointer-events: none;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-54%);
+    }
+}
+
+.shareSelect {
+    appearance: none;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-sizing: border-box;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    min-height: 36px;
+    padding: 0 32px 0 10px;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        outline: none;
+    }
+}
+
+.shareVisibilityHint {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin: 4px 0 0;
+}
+
+.shareCheckbox {
+    align-items: center;
+    color: $color-text;
+    cursor: pointer;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 8px;
+
+    input[type="checkbox"] {
+        accent-color: $color-accent;
+        cursor: pointer;
+        flex-shrink: 0;
+        height: 15px;
+        width: 15px;
+    }
+}
+
+.shareTextarea {
+    appearance: none;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-sizing: border-box;
+    color: $color-text-muted;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    min-height: 64px;
+    padding: 8px 10px;
+    resize: none;
+    width: 100%;
+
+    &:focus {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        outline: none;
+    }
+}
+
+.shareDivider {
+    border: none;
+    border-top: 1px solid $color-border;
+    margin: 0;
+}
+
+.shareFooter {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.shareCsvLink {
+    align-items: center;
+    color: $color-text-muted;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 4px;
+    text-decoration: none;
+    transition: color $transitionDurationFast ease;
+
+    &:hover {
+        color: $color-accent;
     }
 }

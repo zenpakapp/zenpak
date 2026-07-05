@@ -1,0 +1,85 @@
+@import "globals";
+
+.lpItem {
+    &:hover,
+    &.ui-sortable-helper {
+        background: $color-surface;
+
+        .lpRemove,
+        .lpWorn,
+        .lpConsumable,
+        .lpCamera,
+        .lpLink,
+        .lpHandle,
+        .lpArrows,
+        .lpStar,
+        .lpEdit {
+            visibility: visible;
+        }
+    }
+
+    input,
+    select {
+        padding: 3px;
+    }
+}
+
+.lpEdit {
+    background: none !important;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 14px;
+    height: auto;
+    line-height: 1;
+    visibility: hidden;
+    width: auto;
+
+    &::before {
+        content: "✎";
+    }
+
+    &:hover {
+        color: $color-accent;
+    }
+}
+
+.lpArrows {
+    display: inline-block;
+    height: 14px;
+    position: relative;
+    visibility: hidden;
+    width: 10px;
+
+    .lpUp,
+    .lpDown {
+        cursor: pointer;
+        left: 0;
+        margin: 2px;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .lpDown {
+        top: 11px;
+    }
+}
+
+.lpPackCheckbox {
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+}
+
+.lpItemPacked {
+    opacity: 0.4;
+
+    .lpName {
+        text-decoration: line-through;
+    }
+}
+

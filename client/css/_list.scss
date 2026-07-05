@@ -1,393 +1,17 @@
 @import "globals";
 
-.lpList {
-    background: inherit;
-    max-width: 960px;
-    min-height: 100%;
-    padding: 0 20px;
-    position: relative;
-    transition: all $transitionDurationSlow;
-    z-index: $aboveSidebar;
-
-    .lpHasSidebar & {
-        margin-left: 320px;
-        max-width: calc(100vw - 320px);
-    }
-
-    @media (max-width: 768px) {
-        padding: 0 12px;
-
-        .lpHasSidebar & {
-            margin-left: 0;
-        }
-    }
+.lp-list-enter-active {
+    animation: lpSlideDown 0.2s ease-out;
 }
 
-@media (max-width: 768px) {
-    .lpItem,
-    .lpItemsHeader,
-    .lpItemsFooter {
-        .lpPriceCell {
-            display: none;
-        }
-    }
-
-    .lpItem {
-        .lpDescription {
-            display: none;
-        }
-
-        .lpActionsCell {
-            flex-basis: 80px;
-        }
-    }
-
-    .lpCategory {
-        margin-bottom: 12px;
-    }
+.lp-list-leave-active {
+    animation: lpSlideDown 0.15s ease-in reverse;
 }
 
-@media (max-width: 480px) {
-    .lpItem,
-    .lpItemsHeader,
-    .lpItemsFooter {
-        padding: 0 8px;
-
-        .lpWeightCell {
-            flex: 0 0 80px;
-        }
-
-        .lpQtyCell {
-            flex: 0 0 44px;
-        }
-    }
-}
-
-#totals {
-    margin: 0;
-    padding: 0 0 0 10px;
-    text-align: left;
-}
-
-#chart.activeHover {
-    cursor: pointer;
-}
-
-.lpCategories {
-    margin: 0;
-    padding: 0;
-}
-
-.lpCategory {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    box-shadow: $shadow-soft;
-    list-style: none;
-    margin: 0 0 14px;
-    overflow: visible;
-
-    &.dropAccept {
-        background: $color-highlight;
-    }
-
-    &.dropHover {
-        background: rgba(var(--color-accent-rgb), 0.14);
-    }
-
-    &.gu-mirror {
-        background: $color-bg;
-        border: 1px solid $color-border;
-        box-shadow: $shadow-popover;
-    }
-}
-
-#lpListDescription {
-    h2 {
-        border-bottom: 1px solid #aaa;
-    }
-}
-
-input.lpCategoryName { /* specificity */
-    border: 1px solid transparent;
-    flex: 1 0 300px;
-    font-size: $fontSize-base;
-    font-weight: $fontWeight-bold;
-    letter-spacing: $letterSpacing-caps;
-    padding-bottom: 0;
-    text-transform: uppercase;
-}
-
-.lpSubtotal {
-    text-align: right;
-    white-space: nowrap;
-}
-
-.lpSubtotalUnit {
-    border-left: 1px solid transparent;
-    display: inline-block;
-    padding-left: 5px;
-    padding-right: 23px;
-    width: 43px;
-}
-
-.lpDisplaySubtotal,
-.lpTotalValue {
-    padding-right: 4px;
-}
-
-.lpItems {
-    margin: 0;
-    overflow: visible;
-    padding: 0;
-    width: 100%;
-}
-
-.lpItem,
-.lpItemsHeader,
-.lpItemsFooter {
-    align-items: center;
-    border-top: 1px solid $color-border;
-    display: flex;
-    flex-direction: row;
-    justify-content: stretch;
-    min-height: $row-height-min;
-    padding: 0 12px;
-
-    &.gu-mirror {
-        background: $color-bg;
-        border: 1px solid $color-border;
-    }
-
-    &.lpQtyZero {
-        background: $color-bg;
-        color: $color-text-muted;
-
-        .lpName,
-        .lpDescription,
-        .lpItemMeta,
-        .lpWeightCell,
-        .lpQtyCell,
-        .lpPriceCell,
-        .lpUnitSelect,
-        .lpHref {
-            color: inherit;
-        }
-
-        .lpActionsCell {
-            opacity: 0.8;
-        }
-    }
-
-    .lpHandleCell {
-        flex: 0 0 12px;
-        padding-right: 4px;
-    }
-
-    .lpImageCell {
-        flex: 0 0 90px;
-        padding-right: 12px;
-
-        .lpItemImage {
-            cursor: pointer;
-            max-width: 90px;
-            position: relative;
-            top: 3px;
-        }
-    }
-
-    .lpNameCell {
-        display: flex;
-        flex: 3 1 350px;
-        flex-wrap: wrap;
-        gap: 0 4px;
-        min-width: 0;
-    }
-
-    .lpName {
-        flex: 1 1 150px;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .lpDescription {
-        flex: 2 0 200px;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .lpItemMeta {
-        align-items: center;
-        color: $color-text-muted;
-        display: flex;
-        flex: 0 0 100%;
-        font-size: $fontSize-sm;
-        gap: 4px;
-        padding-bottom: 2px;
-    }
-
-    .lpItemBrand {
-        font-weight: $fontWeight-medium;
-    }
-
-    .lpItemMetaSep {
-        opacity: 0.4;
-    }
-
-    .lpItemCategory {
-        font-style: italic;
-    }
-
-    .lpActionsCell {
-        align-self: center;
-        flex: 0 0 130px;
-    }
-
-    .lpWeightCell {
-        flex: 0 0 110px;
-
-        .lpWeight {
-            width: 50px;
-        }
-    }
-
-    .lpPriceCell {
-        flex: 0 0 66px;
-        margin-right: 4px;
-
-        .lpPrice {
-            width: 66px;
-        }
-    }
-
-    .lpQtyCell {
-        flex: 0 0 60px;
-
-        .lpQty {
-            width: 39px;
-        }
-    }
-
-    .lpRemoveCell {
-        align-items: center;
-        align-self: stretch;
-        display: flex;
-        flex: 0 0 20px;
-        justify-content: center;
-    }
-
-    .lpCategoryName { /* Header */
-        flex: 1 1 auto;
-    }
-
-    .lpAddItemCell { /* Footer */
-        flex: 1 1 auto;
-    }
-}
-
-.lpItemsHeader {
-    align-items: center;
-    background: $color-control-muted;
-    border-bottom: 1px solid $color-border;
-    border-top: none;
-    color: $color-text;
-    min-height: 40px;
-}
-
-.lpItemsFooter {
-    background: $color-control-muted;
-    border-top: 1px solid $color-border;
-    justify-content: flex-end;
-    min-height: 42px;
-    overflow: visible;
-}
-
-.lpActionsCell {
-    align-items: center;
-    display: flex;
-    gap: 2px;
-
-    .lpWorn,
-    .lpConsumable,
-    .lpCamera,
-    .lpLink,
-    .lpTag,
-    .lpStar,
-    .lpEdit {
-        border-radius: $radius-sm;
-        cursor: pointer;
-        margin-right: 0;
-        opacity: 0.32;
-        transition: background $transitionDurationFast ease, opacity $transitionDurationFast ease, transform $transitionDurationFast ease;
-        visibility: hidden;
-
-        &:hover {
-            background-color: rgba(var(--color-accent-rgb), 0.10);
-            opacity: 1;
-            transform: translateY(-1px);
-            visibility: visible;
-        }
-
-        &.lpActive,
-        &.lpStar1,
-        &.lpStar2,
-        &.lpStar3 {
-            opacity: 1;
-            visibility: visible;
-        }
-    }
-
-    .lpLink.lpActive,
-    .lpWorn.lpActive,
-    .lpConsumable.lpActive,
-    .lpCamera.lpActive,
-    .lpTag.lpActive,
-    .lpStar.lpStar1,
-    .lpStar.lpStar2,
-    .lpStar.lpStar3 {
-        opacity: 1;
-        visibility: visible;
-    }
-}
-
-.lpHeader {
-    .lpWeightCell,
-    .lpQtyCell,
-    .lpPriceCell {
-        color: $color-text-muted;
-        font-size: $fontSize-xs;
-        font-weight: $fontWeight-bold;
-        letter-spacing: $letterSpacing-caps;
-        text-align: center;
-        text-transform: uppercase;
-    }
-}
-
-.lpCategoryName,
-.lpItemsFooter .lpSubtotal {
-    color: $color-text;
-}
-
-.lpItem {
-    transition: background $transitionDurationFast ease, color $transitionDurationFast ease;
-}
-
-.lpItem .lpPrice,
-.lpItem .lpWeight,
-.lpItem .lpQty {
-    color: $color-text;
-    font-variant-numeric: tabular-nums;
-}
-
-/* micro-interactions */
-.lpCategory {
-    animation: lpFadeUp 0.18s ease-out both;
-}
-
-@keyframes lpFadeUp {
+@keyframes lpSlideDown {
     from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(-8px);
     }
     to {
         opacity: 1;
@@ -395,16 +19,200 @@ input.lpCategoryName { /* specificity */
     }
 }
 
-.lpItem {
-    &:hover .lpActionsCell i {
-        visibility: visible;
+#listDescriptionContainer {
+    margin: 25px 0;
+
+    h3,
+    p {
+        display: inline-block;
+        margin: 0 0 5px;
+    }
+
+    h3 {
+        margin-right: 10px;
+    }
+
+    textarea {
+        height: 65px;
+        width: 100%;
     }
 }
 
-.lpActionsCell i {
-    transition: opacity $transitionDurationFast ease, transform $transitionDurationFast ease;
+#getStarted {
+    background: $color-bg;
+    border-radius: $radius-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.7;
+    margin-bottom: $spacingLarge;
+    min-height: 200px;
+    padding: $spacingLarge * 1.5;
 
-    &:active {
-        transform: scale(0.85);
+    h2 {
+        color: $color-text;
+        font-size: 22px;
+        font-weight: $fontWeight-bold;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin: 0 0 $spacingMedium;
+    }
+
+    p {
+        color: $color-text-muted;
+        font-size: $fontSize-base;
+        margin: 0 0 $spacingSmall;
+    }
+
+    ol {
+        color: $color-text-muted;
+        margin: 0 0 $spacingMedium;
+        padding-left: 20px;
+
+        li {
+            margin-bottom: 4px;
+        }
+    }
+
+    & > *:last-child {
+        margin-bottom: 0;
     }
 }
+
+.lpGetStartedBrand {
+    align-items: center;
+    display: flex;
+    gap: $spacingMedium;
+    margin: 0 0 $spacingMedium;
+}
+
+.lpGetStartedBrandIcon {
+    display: block;
+    flex: 0 0 44px;
+    height: 44px;
+    width: 44px;
+}
+
+.lpGetStartedBrandWordmark {
+    display: block;
+    height: auto;
+    max-width: 220px;
+    width: 100%;
+}
+
+.lpPackingBar {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    display: flex;
+    gap: $spacingMedium;
+    justify-content: space-between;
+    margin-bottom: $spacingMedium;
+    padding: $spacingSmall $spacingMedium;
+}
+
+.lpPackingProgress {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+}
+
+.lpPackingProgressTrack {
+    background: $color-control-muted;
+    border-radius: 99px;
+    flex: 1;
+    height: 6px;
+    overflow: hidden;
+}
+
+.lpPackingProgressFill {
+    background: $color-accent;
+    border-radius: 99px;
+    height: 100%;
+    transition: width 0.2s ease;
+}
+
+.lpPackBtn {
+    background: $color-accent;
+    border: none;
+    border-radius: $radius-sm;
+    color: #fff;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    padding: 6px 14px;
+
+    &:hover { background: $color-accent-hover; }
+}
+
+.lpPackBtnExit {
+    background: $color-control-muted;
+    color: $color-text;
+
+    &:hover { background: $color-border; }
+}
+
+.lpPackModal {
+    align-items: center;
+    background: var(--color-overlay);
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 200;
+}
+
+.lpPackModalInner {
+    background: $color-surface;
+    border-radius: $radius-lg;
+    box-shadow: var(--shadow-modal);
+    max-width: 400px;
+    padding: $spacingLarge * 1.5;
+    text-align: center;
+    width: 90%;
+}
+
+.lpPackModalPhrase {
+    font-size: 20px;
+    font-weight: $fontWeight-bold;
+    line-height: 1.4;
+    margin: 0 0 $spacingMedium;
+}
+
+.lpPackModalWeight {
+    color: $color-text-muted;
+    font-size: $fontSize-base;
+    margin: 0 0 $spacingLarge;
+}
+
+.lpPackModalActions {
+    display: flex;
+    gap: $spacingSmall;
+    justify-content: center;
+}
+
+.lpPackModalBtn {
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: $fontSize-base;
+    padding: 10px 20px;
+}
+
+.lpPackModalBtnReset {
+    background: $color-control-muted;
+    color: $color-text;
+
+    &:hover { background: $color-border; }
+}
+
+.lpPackModalBtnClose {
+    background: $color-accent;
+    color: #fff;
+
+    &:hover { background: $color-accent-hover; }
+}
+
