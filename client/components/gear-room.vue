@@ -159,6 +159,7 @@
 <script>
 import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils.js';
+import { useGearRoomFilters } from '../composables/useGearRoomFilters.js';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
 import GearRoomBatchBar from './gear-room-batch-bar.vue';
@@ -169,135 +170,22 @@ export default {
     name: 'GearRoom',
     components: { GearRoomComparePanel, GearRoomBatchBar },
     emits: ['close'],
+    setup() {
+        return useGearRoomFilters();
+    },
     data() {
         return {
-            search: '',
-            filterCategory: '',
-            filterOrphan: false,
-            filterStarred: false,
-            weightMin: null,
-            weightMax: null,
             selected: [],
-            sortKey: 'name',
-            sortAsc: true,
-            filterList: '',
             filtersOpen: false,
             compareOpen: false,
         };
     },
     computed: {
-        library() {
-            return this.$store.state.library;
-        },
-        allItems() {
-            void this.$store.state.itemVersion;
-            return this.library.items;
-        },
-        orphanItemIds() {
-            const library = this.$store.state.library;
-            const usedIds = new Set();
-            for (const list of library.lists) {
-                for (const catId of list.categoryIds) {
-                    const cat = library.getCategoryById(catId);
-                    if (!cat) continue;
-                    for (const ci of cat.categoryItems) {
-                        usedIds.add(ci.itemId);
-                    }
-                }
-            }
-            return new Set(this.allItems.filter(i => !usedIds.has(i.id)).map(i => i.id));
-        },
-        availableCategories() {
-            return [...new Set(this.allItems.map(i => i.category).filter(Boolean))].sort();
-        },
-        filteredItems() {
-            let items = this.allItems;
-            if (this.search) {
-                const q = this.search.toLowerCase();
-                items = items.filter(i =>
-                    (i.name || '').toLowerCase().includes(q) ||
-                    (i.description || '').toLowerCase().includes(q) ||
-                    (i.brand || '').toLowerCase().includes(q)
-                );
-            }
-            if (this.filterCategory) {
-                items = items.filter(i => i.category === this.filterCategory);
-            }
-            if (this.filterOrphan) {
-                items = items.filter(i => this.orphanItemIds.has(i.id));
-            }
-            if (this.filterStarred) {
-                items = items.filter(i => i.starred);
-            }
-            if (this.filterList) {
-                const list = this.library.lists.find(l => l.id === this.filterList);
-                if (list) {
-                    const itemIdsInList = new Set();
-                    for (const catId of list.categoryIds) {
-                        const cat = this.library.getCategoryById(catId);
-                        if (!cat) continue;
-                        for (const ci of cat.categoryItems) {
-                            itemIdsInList.add(ci.itemId);
-                        }
-                    }
-                    items = items.filter(i => itemIdsInList.has(i.id));
-                }
-            }
-            if (this.weightMin !== null && this.weightMin !== '') {
-                const minMg = this.weightMin * 1000;
-                items = items.filter(i => i.weight >= minMg);
-            }
-            if (this.weightMax !== null && this.weightMax !== '') {
-                const maxMg = this.weightMax * 1000;
-                items = items.filter(i => i.weight <= maxMg);
-            }
-            return items;
-        },
-        sortedItems() {
-            const items = [...this.filteredItems];
-            items.sort((a, b) => {
-                let va, vb;
-                if (this.sortKey === 'weight') {
-                    va = a.weight || 0;
-                    vb = b.weight || 0;
-                } else if (this.sortKey === 'price') {
-                    va = a.price || 0;
-                    vb = b.price || 0;
-                } else if (this.sortKey === 'starred') {
-                    va = a.starred ? 1 : 0;
-                    vb = b.starred ? 1 : 0;
-                } else if (this.sortKey === 'category') {
-                    va = (a.category || '').toLowerCase();
-                    vb = (b.category || '').toLowerCase();
-                } else {
-                    va = this.itemDisplayName(a).toLowerCase();
-                    vb = this.itemDisplayName(b).toLowerCase();
-                }
-                if (va < vb) return this.sortAsc ? -1 : 1;
-                if (va > vb) return this.sortAsc ? 1 : -1;
-                return 0;
-            });
-            return items;
-        },
         allSelected() {
             return this.filteredItems.length > 0 && this.filteredItems.every(i => this.selected.includes(i.id));
         },
         someSelected() {
             return this.filteredItems.some(i => this.selected.includes(i.id)) && !this.allSelected;
-        },
-        totalWeightDisplay() {
-            const totalMg = this.filteredItems.reduce((s, i) => s + (i.weight || 0), 0);
-            const kg = totalMg / 1000000;
-            return kg >= 1 ? kg.toFixed(2) + ' kg' : (totalMg / 1000).toFixed(0) + ' g';
-        },
-        totalValue() {
-            return this.filteredItems.reduce((s, i) => s + (i.price || 0), 0).toFixed(2).replace(/\.00$/, '');
-        },
-        showTotalValue() {
-            return this.filteredItems.some(i => i.price > 0);
-        },
-        showPrice() {
-            return this.allItems.some(i => i.price > 0);
         },
         compareItems() {
             return this.selected
@@ -311,21 +199,10 @@ export default {
     },
     methods: {
         displayWeight,
-        itemDisplayName(item) {
-            return [item.brand, item.name].filter(Boolean).join(' ');
-        },
         itemThumb(item) {
             if (item.image) return `https://i.imgur.com/${item.image}s.jpg`;
             if (item.imageUrl) return item.imageUrl;
             return '';
-        },
-        setSort(key) {
-            if (this.sortKey === key) {
-                this.sortAsc = !this.sortAsc;
-            } else {
-                this.sortKey = key;
-                this.sortAsc = true;
-            }
         },
         toggleSelectAll() {
             if (this.allSelected) {
@@ -352,7 +229,6 @@ export default {
                     this.$store.commit('updateItem', { ...item, name: item.description, description: item.name });
                 });
             this.selected.splice(0, this.selected.length);
-            this.activeBatchPanel = null;
         },
         applyBatchCategory(category) {
             const ids = new Set(this.selected);
@@ -416,9 +292,6 @@ export default {
                 },
                 { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
             );
-        },
-        getItemById(id) {
-            return this.library.getItemById(id);
         },
         itemUsedInLists(itemId) {
             return this.library.lists.filter(list =>
