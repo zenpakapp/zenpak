@@ -1,4 +1,5 @@
 @import "globals";
+@import "public-shared";
 
 .lpPublicProfile {
     background: $color-bg;
@@ -7,39 +8,10 @@
     padding: 20px 20px 40px;
 }
 
-.lpPublicError {
-    margin: 80px auto;
-    max-width: 400px;
-    text-align: center;
-
-    h2 {
-        color: $color-text;
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0 0 16px;
-    }
-}
-
-.lpPublicErrorIcon {
-    color: $color-text-muted;
-    font-size: 48px;
-    font-weight: 300;
-    line-height: 1;
-    margin-bottom: 16px;
-}
-
 .lpPublicErrorSub {
     color: $color-text-muted;
     font-size: 14px;
     margin: -8px 0 16px;
-}
-
-.lpPublicErrorBack {
-    color: $color-accent;
-    font-size: 13px;
-    text-decoration: none;
-
-    &:hover { text-decoration: underline; }
 }
 
 .lpPublicNav {

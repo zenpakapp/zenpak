@@ -101,6 +101,7 @@
 }
 
 .lpNumber {
+    font-variant-numeric: tabular-nums;
     text-align: right;
 }
 
@@ -413,10 +414,6 @@
     + .lpItem {
         border-top: none;
     }
-}
-
-.lpNumber {
-    font-variant-numeric: tabular-nums;
 }
 
 .lpTotal .lpSubtotal,
