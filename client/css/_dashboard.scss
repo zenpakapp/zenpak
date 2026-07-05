@@ -1,0 +1,344 @@
+@import "globals";
+
+#header {
+    align-items: center;
+    background: $color-surface;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    margin-left: -20px;
+    min-height: 60px;
+    padding: 0 8px;
+    position: sticky;
+    top: 0;
+    width: calc(100% + 40px);
+    z-index: $belowDialog;
+}
+
+.lpVerifyBanner {
+    align-items: center;
+    background: color-mix(in srgb, $color-accent 10%, transparent);
+    border: 1px solid color-mix(in srgb, $color-accent 30%, transparent);
+    border-radius: $radius-sm;
+    color: $color-text;
+    display: flex;
+    font-size: 13px;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+}
+
+.lpVerifyBannerBtn {
+    background: transparent;
+    border: 1px solid $color-accent;
+    border-radius: $radius-sm;
+    color: $color-accent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+
+    &:hover { opacity: 0.7; }
+}
+
+.lpVerifyBannerError {
+    color: $color-text-muted;
+}
+
+.lpVerifyBannerDismiss {
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: auto;
+    opacity: 0.6;
+    padding: 0 2px;
+
+    &:hover { opacity: 1; }
+}
+
+.lpBillingSuccessBanner {
+    background: #d1fae5;
+    border: 1px solid #34d399;
+    color: #065f46;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.lpBillingCancelBanner {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    color: #92400e;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.lpPastDueBanner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#hamburger {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    opacity: 0.6;
+    padding: 4px;
+    transition: transform $transitionDurationSlow, opacity $transitionDurationFast;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    .lpHasSidebar & {
+        opacity: 1;
+    }
+
+    .lpHamburgerLine {
+        background: $color-text;
+        border-radius: 2px;
+        display: block;
+        height: 2px;
+        transition: transform $transitionDurationFast, opacity $transitionDurationFast;
+        width: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-100%);
+        transition: transform $transitionDurationSlow ease-in-out;
+
+        .lpHasSidebar & {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    #main .lpList {
+        margin-left: 0 !important;
+    }
+}
+
+#lpListName {
+    background: transparent;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-size: $fontSize-md;
+    font-weight: $fontWeight-bold;
+    letter-spacing: -0.01em;
+    min-width: 0;
+    padding: 10px 14px;
+    width: 100%;
+
+    &::placeholder {
+        color: $color-text-muted;
+        font-weight: $fontWeight-normal;
+    }
+}
+
+.lpThemeToggleNav {
+    cursor: pointer;
+
+    .lpThemeIcon {
+        align-items: center;
+        display: inline-flex;
+        font-size: 16px;
+        height: 60px;
+    }
+}
+
+.headerItem {
+    flex: 0 0 auto;
+    color: $color-text-muted;
+    height: auto;
+    padding: 0;
+    position: relative;
+    transition: color $transitionDurationFast ease;
+
+    .lpPopover {
+        &:hover .lpTarget {
+            color: $color-accent;
+        }
+    }
+
+    .lpTarget {
+        align-items: center;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        color: $color-text;
+        display: inline-flex;
+        font-weight: 600;
+        gap: 8px;
+        line-height: 1;
+        min-height: 40px;
+        padding: 10px 14px;
+        text-decoration: none;
+        transition:
+            background-color $transitionDurationFast ease,
+            border-color $transitionDurationFast ease,
+            box-shadow $transitionDurationFast ease,
+            color $transitionDurationFast ease,
+            transform $transitionDurationFast ease;
+
+        i {
+            opacity: 0.95;
+        }
+    }
+
+    .lpPopover:hover .lpTarget,
+    .lpPopover.lpPopoverShown .lpTarget {
+        background: rgba(var(--color-accent-rgb), 0.04);
+        border-color: transparent;
+        box-shadow: none;
+        color: $color-text;
+        transform: none;
+    }
+
+    &#lpListName {
+        flex: 1 1 240px;
+        min-width: 0;
+    }
+
+    &.hasPopover {
+        padding: 0;
+    }
+
+    &.signInRegisterButtons {
+        height: auto;
+        padding: 0 16px;
+    }
+}
+
+.headerItem:not(#lpListName) {
+    align-items: center;
+    display: flex;
+    min-height: 60px;
+}
+
+.headerIconItem {
+    justify-content: center;
+    min-width: 40px;
+}
+
+.headerTruncateItem {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.headerTruncateItem .lpPopover,
+.headerTruncateItem .lpPopover .lpTarget {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.headerMenuLabel {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.headerItem .lpPopover {
+    align-items: center;
+    display: flex;
+    position: relative;
+}
+
+.headerItem .lpPopover::after {
+    content: "";
+    height: 12px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 100%;
+}
+
+.headerItem .lpPopover .lpTarget {
+    align-items: center;
+    display: inline-flex;
+    line-height: 1;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.headerItem .lpPopover .lpTarget > span {
+    align-items: center;
+    display: inline-flex;
+    gap: 8px;
+    line-height: 1;
+    position: relative;
+    top: -5px;
+}
+
+.headerItem .lpSprite {
+    flex: 0 0 auto;
+    top: 0;
+    vertical-align: middle;
+}
+
+@media (max-width: 1240px) {
+    #header {
+        gap: 2px;
+        padding: 0 6px;
+    }
+
+    #lpListName {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
+
+    .headerItem .lpTarget {
+        gap: 6px;
+        padding: 10px 10px;
+    }
+
+    .headerItem .lpPopover .lpTarget > span {
+        gap: 6px;
+    }
+
+    .headerTruncateItem .headerMenuLabel {
+        max-width: 128px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .headerItem .lpTarget {
+        font-size: 15px;
+        padding: 10px 8px;
+    }
+
+    .headerIconItem {
+        min-width: 32px;
+    }
+
+    .headerTruncateItem .headerMenuLabel {
+        max-width: 96px;
+    }
+}
+
+.lpSupportZone {
+    border-top: 1px solid $color-border;
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin-top: 32px;
+    padding: 16px 0 8px;
+
+    p {
+        margin: 0 0 6px;
+    }
+}
