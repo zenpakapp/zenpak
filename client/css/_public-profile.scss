@@ -1,0 +1,236 @@
+@import "globals";
+
+.lpPublicProfile {
+    background: $color-bg;
+    margin: 0 auto;
+    max-width: 680px;
+    padding: 20px 20px 40px;
+}
+
+.lpPublicError {
+    margin: 80px auto;
+    max-width: 400px;
+    text-align: center;
+
+    h2 {
+        color: $color-text;
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 16px;
+    }
+}
+
+.lpPublicErrorIcon {
+    color: $color-text-muted;
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lpPublicErrorSub {
+    color: $color-text-muted;
+    font-size: 14px;
+    margin: -8px 0 16px;
+}
+
+.lpPublicErrorBack {
+    color: $color-accent;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpPublicNav {
+    margin-bottom: 16px;
+
+    a {
+        color: $color-text-muted;
+        font-size: 13px;
+        text-decoration: none;
+
+        &:hover {
+            color: $color-text;
+        }
+    }
+}
+
+.lpPublicHero {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    margin-bottom: 12px;
+    padding: 20px;
+}
+
+.lpPublicHeroInner {
+    align-items: flex-start;
+    display: flex;
+    gap: 14px;
+}
+
+.lpPublicAvatar {
+    align-items: center;
+    background: linear-gradient(135deg, $color-accent, rgba(var(--color-accent-rgb), 0.5));
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 700;
+    height: 56px;
+    justify-content: center;
+    overflow: hidden;
+    width: 56px;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+.lpPublicHeroMeta {
+    flex: 1;
+    min-width: 0;
+}
+
+.lpPublicNameRow {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.lpPublicName {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.lpPublicBadge {
+    background: $color-accent;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    text-transform: uppercase;
+}
+
+.lpPublicBio {
+    color: $color-text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 10px;
+}
+
+.lpPublicStats {
+    display: flex;
+    font-size: 12px;
+    gap: 16px;
+    color: $color-text-muted;
+
+    strong {
+        color: $color-text;
+        font-weight: 600;
+    }
+}
+
+.lpPublicLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+
+    a {
+        color: $color-accent;
+        font-size: 12px;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.lpPublicTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.lpPublicTag {
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    font-size: 11px;
+    padding: 3px 8px;
+}
+
+.lpPublicListsHeader {
+    color: $color-text-muted;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.lpPublicListCard {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 8px;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: border-color $transitionDurationFast ease;
+
+    &:hover {
+        border-color: $color-accent;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.lpPublicListName {
+    color: $color-accent;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.lpPublicListDesc {
+    color: $color-text-muted;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.lpPublicListMeta {
+    color: $color-text-muted;
+    display: flex;
+    font-size: 11px;
+    gap: 14px;
+}
+
+.lpPublicDisclosure {
+    background: $color-surface;
+    border-left: 3px solid $color-accent;
+    border-radius: 0 $radius-sm $radius-sm 0;
+    color: $color-text-muted;
+    font-size: 12px;
+    margin-top: 16px;
+    padding: 10px 14px;
+}
