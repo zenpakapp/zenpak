@@ -168,7 +168,7 @@ function returnLibrary(req, res, user) {
     logWithRequest(req, { message: 'signed in', username: user.username });
     if (!user.syncToken) {
         user.syncToken = 0;
-        db.users.save(user);
+        db.users.updateOne({ _id: user._id }, { $set: { syncToken: 0 } });
     }
     return res.json({ username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified });
 }

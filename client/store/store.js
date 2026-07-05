@@ -100,10 +100,10 @@ const store = createStore({
                 context.commit('setSaveType', 'remote');
                 context.commit('setLoggedIn', response.username);
                 context.commit('setEmailVerified', response.emailVerified ?? null);
-                try {
-                    const billingRes = await fetch('/api/billing/me', { credentials: 'include' });
-                    if (billingRes.ok) context.commit('setBilling', await billingRes.json());
-                } catch (_) {}
+                fetch('/api/billing/me', { credentials: 'include' })
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => { if (data) context.commit('setBilling', data); })
+                    .catch(() => {});
             } catch (error) {
                 if (error && error.statusCode === 401) notifyUnauthorized(error.message);
                 return Promise.reject(error);

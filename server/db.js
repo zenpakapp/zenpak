@@ -105,6 +105,9 @@ function collection(name) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.aggregate(pipeline).toArray());
         },
+        updateOne(filter, update) {
+            return getCollection(name).then(col => col.updateOne(filter, update));
+        },
         updateMany(filter, update) {
             return getCollection(name).then(col => col.updateMany(filter, update));
         },
