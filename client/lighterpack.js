@@ -8,6 +8,7 @@ import { setRouter, redirect } from './services/navigation';
 import { showGlobalAlert } from './services/user-feedback';
 import { registerFocusDirectives } from './utils/focus';
 import store from './store/store';
+import { i18n } from './i18n';
 
 if (typeof window !== 'undefined') {
     window.history.scrollRestoration = 'manual';
@@ -73,6 +74,7 @@ var initLighterPack = function () {
 
     app.use(router);
     app.use(store);
+    app.use(i18n);
     registerFocusDirectives(app);
 
     router.isReady().then(() => {

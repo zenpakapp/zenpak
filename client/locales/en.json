@@ -1,0 +1,77 @@
+{
+  "nav": {
+    "share": "Share",
+    "signIn": "Sign in",
+    "register": "Create account"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "needToRegister": "Need to register?",
+    "alreadyHaveAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "usernameOrEmail": "Username or email",
+    "username": "Username",
+    "forgotUsername": "Forgot username?"
+  },
+  "welcome": {
+    "headline": "Pack light.",
+    "headlineSub": "Leave calm.",
+    "deck": "Build your gear library, create pack lists, track your weight to the gram — and share with the community.",
+    "statFree": "Free to start",
+    "statOpenSource": "Open source",
+    "statNoAds": "No ads",
+    "statBuiltOn": "Built on LighterPack",
+    "ctaRegister": "Get started — it's free",
+    "ctaSignIn": "Sign in",
+    "step1": "Click on things to edit them.",
+    "step2": "Click and drag the handle to reorder.",
+    "step3": "Use the share link to share your list."
+  },
+  "list": {
+    "addCategory": "Add new category",
+    "packThis": "Pack this list",
+    "reset": "Reset",
+    "done": "Done",
+    "listName": "List Name"
+  },
+  "share": {
+    "share": "Share",
+    "shareLink": "Share link",
+    "visibility": "Visibility",
+    "private": "Private",
+    "unlisted": "Unlisted",
+    "public": "Public",
+    "publicSearch": "Public + Search engines",
+    "sharedView": "Shared view",
+    "embed": "Embed",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "public": {
+    "category": "Category",
+    "price": "Price",
+    "weight": "Weight",
+    "qty": "Qty",
+    "total": "Total",
+    "worn": "Worn",
+    "baseWeight": "Base Weight",
+    "packWeight": "Pack Weight",
+    "totalWeight": "Total weight",
+    "getIt": "Get it",
+    "downloadCsv": "Export to CSV",
+    "copyList": "Copy list",
+    "loading": "Loading...",
+    "publicLists": "Public lists",
+    "noPublicLists": "No public lists yet.",
+    "listNotFound": "List not found.",
+    "print": "Print"
+  },
+  "errors": {
+    "saveFailed": "An error occurred while saving.",
+    "notFound": "Not found."
+  }
+}
