@@ -6,21 +6,21 @@
     <main class="lpPublicList">
         <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex" />
 
-        <p v-if="isLoading">Loading...</p>
+        <p v-if="isLoading">{{ $t('public.loading') }}</p>
         <div v-else-if="error" class="lpPublicError">
             <div class="lpPublicErrorIcon">×</div>
             <h2>{{ error }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">← Back to ZenPak</router-link>
+            <router-link to="/" class="lpPublicErrorBack">{{ $t('public.backToZenPak') }}</router-link>
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
-                <router-link v-if="backTo === '/community'" to="/community">← Back to Community</router-link>
+                <router-link v-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
                 <span v-else-if="username" class="lpPublicNavAuthor">
-                    <router-link :to="`/u/${username}`">← {{ username }}'s profile</router-link>
+                    <router-link :to="`/u/${username}`">{{ $t('public.backToProfile', { username }) }}</router-link>
                     <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
                     <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
                 </span>
-                <router-link v-else to="/">← Back to ZenPak</router-link>
+                <router-link v-else to="/">{{ $t('public.backToZenPak') }}</router-link>
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
@@ -34,10 +34,10 @@
                     {{ copyLabel }}
                 </button>
                 <router-link v-else-if="!isLoggedIn" to="/signin" class="lpCopyListSignIn">
-                    Sign in to copy this list
+                    {{ $t('public.signInToCopy') }}
                 </router-link>
                 <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
-                <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">Print / Save as PDF</button>
+                <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">{{ $t('public.printSaveAsPdf') }}</button>
             </div>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
 
@@ -47,9 +47,9 @@
                 <table class="lpPublicChartTable">
                     <thead>
                         <tr>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Weight</th>
+                            <th>{{ $t('public.category') }}</th>
+                            <th>{{ $t('public.price') }}</th>
+                            <th>{{ $t('public.weight') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,17 +64,17 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>Total</td>
+                            <td>{{ $t('public.total') }}</td>
                             <td>{{ currencySymbol }}{{ formatPrice(list.totalPrice) }}</td>
                             <td><strong>{{ displayWeight(list.totalWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr v-if="list.totalWornWeight">
-                            <td>Worn</td>
+                            <td>{{ $t('public.worn') }}</td>
                             <td></td>
                             <td><strong>{{ displayWeight(list.totalWornWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr>
-                            <td>Base Weight</td>
+                            <td>{{ $t('public.baseWeight') }}</td>
                             <td></td>
                             <td><strong>{{ displayWeight(list.totalBaseWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
@@ -107,7 +107,7 @@
                         </div>
                         <span v-if="publicFields.price" class="lpPublicListItemPrice">{{ item.price ? `${currencySymbol}${formatPrice(item.price)}` : '' }}</span>
                         <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ totalUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>
-                        <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" class="lpPublicListItemLink" @click="trackItemClick(item)">Get it ↗</a>
+                        <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" class="lpPublicListItemLink" @click="trackItemClick(item)">{{ $t('public.getItArrow') }}</a>
                         <span v-else />
                     </div>
                 </div>
@@ -159,9 +159,9 @@ export default {
             return this.$store.state.loggedIn === this.username;
         },
         copyLabel() {
-            if (this.copying) return 'Copying…';
-            if (this.copySuccess) return 'Copied!';
-            return 'Copy list';
+            if (this.copying) return this.$t('public.copying');
+            if (this.copySuccess) return this.$t('public.copied');
+            return this.$t('public.copyList');
         },
         chartCategories() {
             return this.categories.map((cat, i) => {
@@ -207,7 +207,7 @@ export default {
                 this.track('listView');
             })
             .catch((err) => {
-                this.error = err && err.status === 404 ? 'List not found.' : 'Unable to load this list.';
+                this.error = err && err.status === 404 ? this.$t('public.listNotFound') : this.$t('public.unableToLoad');
             })
             .finally(() => {
                 this.isLoading = false;
