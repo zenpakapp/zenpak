@@ -90,11 +90,11 @@
 
         <div class="itemDetailFooter">
             <div class="itemDetailFooterSecondary">
-                <a v-if="category" class="itemDetailRemove" @click="removeFromList">
+                <a v-if="category" class="lpButton lpButtonSecondary itemDetailRemove" @click="removeFromList">
                     Remove from list
                 </a>
                 <item-add-to-list v-else :item="item" @added="$emit('close')" />
-                <a class="itemDetailDelete" @click="deleteGear">
+                <a class="lpButton lpButtonSecondary itemDetailDelete" @click="deleteGear">
                     Delete
                 </a>
             </div>

@@ -160,64 +160,25 @@
         margin-left: auto;
     }
 
-    .itemDetailRemove {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.05);
-        border: 1px solid rgba(var(--color-accent-rgb), 0.12);
-        border-radius: $radius-md;
+    .lpButton.itemDetailRemove {
         color: $color-text-muted;
-        cursor: pointer;
-        display: inline-flex;
-        font-size: $fontSize-sm;
-        font-weight: $fontWeight-medium;
-        min-height: 44px;
-        justify-content: center;
         white-space: nowrap;
-        padding: 0 14px;
-        text-decoration: none;
-        transition: background-color $transitionDurationFast ease, border-color $transitionDurationFast ease, color $transitionDurationFast ease;
-
-        &:hover {
-            background: rgba(var(--color-accent-rgb), 0.09);
-            border-color: rgba(var(--color-accent-rgb), 0.18);
-            color: $color-text;
-        }
     }
 
-    .itemDetailDelete {
-        align-items: center;
-        background: rgba(var(--color-danger-rgb), 0.06);
-        border: 1px solid rgba(var(--color-danger-rgb), 0.16);
-        border-radius: $radius-md;
+    .lpButton.itemDetailDelete {
         color: $color-danger;
-        cursor: pointer;
-        display: flex;
-        font-size: $fontSize-sm;
-        font-weight: $fontWeight-medium;
-        min-height: $control-height-lg;
-        justify-content: center;
+        border-color: rgba(var(--color-danger-rgb), 0.3);
         white-space: nowrap;
-        padding: 0 14px;
-        text-decoration: none;
-        transition: background-color $transitionDurationFast ease, border-color $transitionDurationFast ease, color $transitionDurationFast ease;
 
-        &:hover {
-            background: rgba(var(--color-danger-rgb), 0.1);
-            border-color: rgba(var(--color-danger-rgb), 0.22);
+        &:hover:not(:disabled) {
+            background: rgba(var(--color-danger-rgb), 0.08);
+            border-color: rgba(var(--color-danger-rgb), 0.5);
             color: $color-danger-hover;
         }
     }
 
+    .lpButton.itemDetailDuplicate,
     .lpButton.itemDetailEdit {
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        min-height: 44px;
-        padding: 0 22px;
-        white-space: nowrap;
-    }
-
-    .lpButton.itemDetailDuplicate {
         white-space: nowrap;
     }
 }
