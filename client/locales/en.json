@@ -116,7 +116,10 @@
     "publicLists": "Public lists",
     "noPublicLists": "No public lists yet.",
     "listNotFound": "List not found.",
-    "print": "Print"
+    "print": "Print",
+    "items": "items",
+    "consumable": "Consumable",
+    "packWeightHint": "pack weight (consumable + base weight)"
   },
   "errors": {
     "saveFailed": "An error occurred while saving.",
