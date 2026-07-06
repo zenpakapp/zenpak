@@ -143,8 +143,22 @@
     border-top: 1px solid $color-border;
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: space-between;
     padding: 14px 20px;
+
+    .itemDetailFooterSecondary,
+    .itemDetailFooterPrimary {
+        align-items: center;
+        display: flex;
+        gap: 10px;
+    }
+
+    .itemDetailFooterPrimary {
+        flex: 0 0 auto;
+        justify-content: flex-end;
+        margin-left: auto;
+    }
 
     .itemDetailRemove {
         align-items: center;
@@ -157,6 +171,8 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-medium;
         min-height: 44px;
+        justify-content: center;
+        white-space: nowrap;
         padding: 0 14px;
         text-decoration: none;
         transition: background-color $transitionDurationFast ease, border-color $transitionDurationFast ease, color $transitionDurationFast ease;
@@ -179,6 +195,8 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-medium;
         min-height: $control-height-lg;
+        justify-content: center;
+        white-space: nowrap;
         padding: 0 14px;
         text-decoration: none;
         transition: background-color $transitionDurationFast ease, border-color $transitionDurationFast ease, color $transitionDurationFast ease;
@@ -190,14 +208,37 @@
         }
     }
 
-    .itemDetailSpacer {
-        flex: 1;
-    }
-
     .lpButton.itemDetailEdit {
         align-items: center;
         display: flex;
+        justify-content: center;
         min-height: 44px;
         padding: 0 22px;
+        white-space: nowrap;
+    }
+
+    .lpButton.itemDetailDuplicate {
+        white-space: nowrap;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .itemDetailFooter {
+        align-items: stretch;
+        flex-wrap: wrap;
+
+        .itemDetailFooterSecondary,
+        .itemDetailFooterPrimary {
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .itemDetailFooterPrimary {
+            margin-left: 0;
+
+            .lpButton {
+                flex: 1;
+            }
+        }
     }
 }

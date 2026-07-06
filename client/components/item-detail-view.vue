@@ -89,20 +89,23 @@
         </div>
 
         <div class="itemDetailFooter">
-            <a v-if="category" class="itemDetailRemove" @click="removeFromList">
-                Remove from list
-            </a>
-            <item-add-to-list v-else :item="item" @added="$emit('close')" />
-            <a class="itemDetailDelete" @click="deleteGear">
-                Delete gear
-            </a>
-            <div class="itemDetailSpacer" />
-            <button class="lpButton lpButtonSecondary itemDetailDuplicate" @click="$emit('duplicate')">
-                Duplicate
-            </button>
-            <button class="lpButton itemDetailEdit" @click="$emit('start-edit')">
-                Edit gear
-            </button>
+            <div class="itemDetailFooterSecondary">
+                <a v-if="category" class="itemDetailRemove" @click="removeFromList">
+                    Remove from list
+                </a>
+                <item-add-to-list v-else :item="item" @added="$emit('close')" />
+                <a class="itemDetailDelete" @click="deleteGear">
+                    Delete
+                </a>
+            </div>
+            <div class="itemDetailFooterPrimary">
+                <button class="lpButton lpButtonSecondary itemDetailDuplicate" @click="$emit('duplicate')">
+                    Duplicate
+                </button>
+                <button class="lpButton itemDetailEdit" @click="$emit('start-edit')">
+                    Edit gear
+                </button>
+            </div>
         </div>
     </div>
 </template>
