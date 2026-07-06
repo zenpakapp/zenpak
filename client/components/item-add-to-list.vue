@@ -155,12 +155,12 @@ export default {
 }
 
 .itemDetailAddToList {
-    width: 100%;
+    display: contents;
 }
 
 .itemDetailAddBtn {
+    position: relative;
     white-space: nowrap;
-    width: 100%;
 }
 
 .itemDetailAddDropdown {
