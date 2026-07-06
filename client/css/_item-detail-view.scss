@@ -146,16 +146,8 @@
     flex-wrap: nowrap;
     padding: 14px 20px;
 
-    .itemDetailFooterSecondary,
-    .itemDetailFooterPrimary {
-        align-items: center;
-        display: flex;
+    > * {
         flex: 1;
-        gap: 8px;
-
-        > * {
-            flex: 1;
-        }
     }
 
     .lpButton.itemDetailRemove {
@@ -185,19 +177,5 @@
     .itemDetailFooter {
         align-items: stretch;
         flex-wrap: wrap;
-
-        .itemDetailFooterSecondary,
-        .itemDetailFooterPrimary {
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        .itemDetailFooterPrimary {
-            margin-left: 0;
-
-            .lpButton {
-                flex: 1;
-            }
-        }
     }
 }
