@@ -154,8 +154,13 @@ export default {
     position: relative;
 }
 
+.itemDetailAddToList {
+    width: 100%;
+}
+
 .itemDetailAddBtn {
     white-space: nowrap;
+    width: 100%;
 }
 
 .itemDetailAddDropdown {
