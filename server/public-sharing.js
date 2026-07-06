@@ -75,6 +75,8 @@ function sanitizeListSummary(list) {
         totalPrice: Number(list.totalPrice) || 0,
         totalConsumablePrice: Number(list.totalConsumablePrice) || 0,
         totalQty: Number(list.totalQty) || 0,
+        seasons: Array.isArray(list.seasons) ? list.seasons.slice() : [],
+        listTypes: Array.isArray(list.listTypes) ? list.listTypes.slice() : [],
     };
 }
 

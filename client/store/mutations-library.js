@@ -119,6 +119,13 @@ module.exports = {
         const list = state.library.getListById(updatedList.id);
         list.description = updatedList.description;
     },
+    updateListDiscoveryTags(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (list) {
+            list.seasons = Array.isArray(args.seasons) ? args.seasons : [];
+            list.listTypes = Array.isArray(args.listTypes) ? args.listTypes : [];
+        }
+    },
     updatePublicProfile(state, profile) {
         state.library.publicProfile = { ...state.library.publicProfile, ...profile };
     },

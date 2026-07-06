@@ -27,6 +27,61 @@ function isCopyRateLimited(key) {
     return false;
 }
 
+function normalizeTagArray(value) {
+    if (!Array.isArray(value)) return [];
+    return value
+        .map(tag => String(tag || '').trim().toLowerCase())
+        .filter(Boolean)
+        .slice(0, 12);
+}
+
+function normalizeTier(plan) {
+    if (plan === 'creator') return 'guide';
+    if (plan === 'supporter') return 'trail';
+    return 'base';
+}
+
+function parseNumberParam(value) {
+    if (typeof value === 'undefined' || value === null || value === '') return null;
+    const number = Number(value);
+    return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+function listMatchesFilters(list, filters) {
+    if (filters.q && !String(list.name || '').toLowerCase().includes(filters.q)) return false;
+    const totalBaseWeight = Number(list.totalBaseWeight) || 0;
+    if (filters.minWeight !== null && totalBaseWeight < filters.minWeight) return false;
+    if (filters.maxWeight !== null && totalBaseWeight > filters.maxWeight) return false;
+    const seasons = normalizeTagArray(list.seasons);
+    const listTypes = normalizeTagArray(list.listTypes);
+    if (filters.season && !seasons.includes(filters.season)) return false;
+    if (filters.type && !listTypes.includes(filters.type)) return false;
+    return true;
+}
+
+function buildDiscoverItem(user, list) {
+    const insights = (user.library && user.library.insights) || {};
+    const listViews = insights.listViews || {};
+    const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+    const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
+
+    return {
+        externalId: list.externalId,
+        name: list.name || '',
+        description: list.description || '',
+        totalBaseWeight: Number(list.totalBaseWeight) || 0,
+        totalQty: Number(list.totalQty) || 0,
+        author: user.username || '',
+        authorTier: normalizeTier(plan),
+        copyCount: Number(list.copyCount) || 0,
+        viewCount: Number(listViews[list.externalId] || list.viewCount) || 0,
+        seasons: normalizeTagArray(list.seasons),
+        listTypes: normalizeTagArray(list.listTypes),
+        updatedAt: updatedAt.toISOString(),
+        featured: Boolean(list.featured),
+    };
+}
+
 // POST /api/community/follow/:username
 router.post('/follow/:username', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
@@ -187,93 +242,44 @@ router.get('/discover', async (req, res) => {
     if (cursor && isNaN(Date.parse(cursor))) {
         return res.status(400).json({ message: 'Invalid cursor' });
     }
-    const rawQ = String(req.query.q || '').trim().slice(0, 100);
-    const q = rawQ ? rawQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : null;
+    const filters = {
+        q: String(req.query.q || '').trim().toLowerCase().slice(0, 100),
+        minWeight: parseNumberParam(req.query.minWeight),
+        maxWeight: parseNumberParam(req.query.maxWeight),
+        season: String(req.query.season || '').trim().toLowerCase().slice(0, 40),
+        type: String(req.query.type || '').trim().toLowerCase().slice(0, 40),
+    };
 
     try {
-        const PAGE_SIZE = 20;
-
-        if (sort === 'popular') {
-            const pipeline = [
-                { $unwind: '$library.lists' },
-                { $match: (() => {
-                    const match = {
-                        'library.lists.visibility': { $in: ['discoverable', 'indexable'] },
-                        'library.lists.externalId': { $exists: true },
-                    };
-                    if (q) {
-                        match['library.lists.name'] = { $regex: q, $options: 'i' };
-                    }
-                    return match;
-                })() },
-                { $sort: { 'library.lists.copyCount': -1 } },
-                { $limit: PAGE_SIZE },
-                { $project: {
-                    _id: 0,
-                    externalId: '$library.lists.externalId',
-                    name: '$library.lists.name',
-                    description: { $ifNull: ['$library.lists.description', ''] },
-                    copyCount: { $ifNull: ['$library.lists.copyCount', 0] },
-                    totalBaseWeight: { $ifNull: ['$library.lists.totalBaseWeight', 0] },
-                    totalQty: { $ifNull: ['$library.lists.totalQty', 0] },
-                    updatedAt: '$library.lists.updatedAt',
-                    author: '$username',
-                    authorTier: { $ifNull: ['$library.entitlements.plan', 'free'] },
-                    featured: { $ifNull: ['$library.lists.featured', false] },
-                } },
-            ];
-
-            const items = await db.users.aggregate(pipeline);
-
-            // Normalize authorTier: plan values → tier labels
-            const normalized = items.map((item) => {
-                let tier = 'base';
-                if (item.authorTier === 'creator') tier = 'guide';
-                else if (item.authorTier === 'supporter') tier = 'trail';
-                return { ...item, authorTier: tier };
-            });
-
-            return res.json({ lists: normalized, nextCursor: null });
-        }
-
-        // sort === 'recent': cursor-based, full-scan filtered in JS
+        const PAGE_SIZE = Math.min(parseNumberParam(req.query.limit) || 20, 20);
         const allUsers = await db.users.findMany({});
-
         const items = [];
+
         for (const user of allUsers) {
             const lists = (user.library && user.library.lists) || [];
-            const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-            let tier = 'base';
-            if (plan === 'creator') tier = 'guide';
-            else if (plan === 'supporter') tier = 'trail';
-
             for (const list of lists) {
                 if (!list.externalId) continue;
                 if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
-                if (q && !list.name.toLowerCase().includes(q.toLowerCase())) continue;
+                if (!listMatchesFilters(list, filters)) continue;
 
                 const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-                if (cursor && updatedAt >= new Date(cursor)) continue;
+                if (sort === 'recent' && cursor && updatedAt >= new Date(cursor)) continue;
 
-                items.push({
-                    externalId: list.externalId,
-                    name: list.name || '',
-                    description: list.description || '',
-                    totalBaseWeight: Number(list.totalBaseWeight) || 0,
-                    totalQty: Number(list.totalQty) || 0,
-                    author: user.username || '',
-                    authorTier: tier,
-                    copyCount: Number(list.copyCount) || 0,
-                    updatedAt: updatedAt.toISOString(),
-                    featured: Boolean(list.featured),
-                });
+                items.push(buildDiscoverItem(user, list));
             }
         }
 
-        items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        if (sort === 'popular') {
+            items.sort((a, b) => {
+                if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
+                return new Date(b.updatedAt) - new Date(a.updatedAt);
+            });
+        } else {
+            items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+        }
 
         const page = items.slice(0, PAGE_SIZE);
-        const nextCursor = page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
+        const nextCursor = sort === 'recent' && page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
     } catch (err) {

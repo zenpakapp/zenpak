@@ -411,6 +411,34 @@
     }
 }
 
+.shareTagGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.shareTagCheckbox {
+    align-items: center;
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-medium;
+    gap: 5px;
+    min-height: 28px;
+    padding: 0 8px;
+
+    input[type="checkbox"] {
+        accent-color: $color-accent;
+        cursor: pointer;
+        height: 13px;
+        width: 13px;
+    }
+}
+
 .shareTextarea {
     appearance: none;
     background: $color-bg;

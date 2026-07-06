@@ -87,8 +87,13 @@ async function run() {
                 totalBaseWeight: 4200,
                 totalQty: 18,
                 copyCount: 5,
+                seasons: ['summer', '3-season'],
+                listTypes: ['thru-hike'],
                 updatedAt: new Date('2026-06-01'),
             }],
+            insights: {
+                listViews: { xyz: 42 },
+            },
         },
     });
 
@@ -103,6 +108,9 @@ async function run() {
     assert('list has author', responseData.lists[0].author === 'bob');
     assert('list has authorTier guide', responseData.lists[0].authorTier === 'guide');
     assert('list has copyCount', responseData.lists[0].copyCount === 5);
+    assert('list has viewCount', responseData.lists[0].viewCount === 42);
+    assert('list has seasons', Array.isArray(responseData.lists[0].seasons) && responseData.lists[0].seasons.includes('3-season'));
+    assert('list has listTypes', Array.isArray(responseData.lists[0].listTypes) && responseData.lists[0].listTypes[0] === 'thru-hike');
 
     // Test: visibility=indexed lists are included
     allUsers.length = 0;
@@ -134,18 +142,24 @@ async function run() {
     // Test: nextCursor is null when fewer than 20 items
     assert('nextCursor is null when fewer than 20 items', responseData.nextCursor === null);
 
-    // Test: sort=popular returns lists without cursor filtering and nextCursor is null
+    // Test: sort=popular returns lists ordered by viewCount without cursor filtering and nextCursor is null
     allUsers.length = 0;
     const popularLists = [];
+    const listViews = {};
     for (let i = 0; i < 25; i++) {
+        const externalId = `pop${i}`;
         popularLists.push({
             id: 100 + i,
-            externalId: `pop${i}`,
+            externalId,
             name: `List ${i}`,
             visibility: 'discoverable',
             copyCount: i,
+            totalBaseWeight: i * 1000,
+            seasons: i % 2 === 0 ? ['summer'] : ['winter'],
+            listTypes: i % 3 === 0 ? ['thru-hike'] : ['weekend'],
             updatedAt: new Date(`2026-05-${String(i + 1).padStart(2, '0')}`),
         });
+        listViews[externalId] = i === 3 ? 99 : i;
     }
     allUsers.push({
         _id: new ObjectId(),
@@ -153,6 +167,7 @@ async function run() {
         library: {
             entitlements: { plan: 'free' },
             lists: popularLists,
+            insights: { listViews },
         },
     });
 
@@ -166,7 +181,53 @@ async function run() {
 
     assert('sort=popular ignores cursor and returns results', responseData && responseData.lists.length === 20);
     assert('sort=popular nextCursor is null', responseData.nextCursor === null);
-    assert('sort=popular returns highest copyCount first', responseData.lists[0].copyCount === 24);
+    assert('sort=popular returns highest viewCount first', responseData.lists[0].externalId === 'pop3');
+    assert('sort=popular includes viewCount', responseData.lists[0].viewCount === 99);
+
+    // Test: filters by base weight range, season, and list type
+    responseData = null;
+    await new Promise(resolve => {
+        res.json = (data) => { responseData = data; resolve(); };
+        discoverRoute.route.stack[0].handle({
+            query: {
+                sort: 'popular',
+                minWeight: '4000',
+                maxWeight: '10000',
+                season: 'summer',
+                type: 'weekend',
+            },
+        }, res);
+    });
+
+    assert('filters return matching lists', responseData && responseData.lists.length > 0);
+    assert('filters by min/max weight', responseData.lists.every(l => l.totalBaseWeight >= 4000 && l.totalBaseWeight <= 10000));
+    assert('filters by season', responseData.lists.every(l => l.seasons.includes('summer')));
+    assert('filters by list type', responseData.lists.every(l => l.listTypes.includes('weekend')));
+
+    allUsers.length = 0;
+    allUsers.push({
+        _id: new ObjectId(),
+        username: 'frank',
+        library: {
+            entitlements: { plan: 'free' },
+            lists: [{
+                id: 301,
+                externalId: 'three-season',
+                name: 'Three Season Pack',
+                visibility: 'discoverable',
+                seasons: ['3-season'],
+                updatedAt: new Date('2026-06-06'),
+            }],
+        },
+    });
+
+    responseData = null;
+    await new Promise(resolve => {
+        res.json = (data) => { responseData = data; resolve(); };
+        discoverRoute.route.stack[0].handle({ query: { season: '3-season' } }, res);
+    });
+
+    assert('filters by 3-season pack label', responseData && responseData.lists.length === 1 && responseData.lists[0].externalId === 'three-season');
 
     // Test: cursor exclusion on sort=recent (item with matching date is excluded)
     allUsers.length = 0;

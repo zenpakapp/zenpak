@@ -12,10 +12,16 @@ test("My Feed tab is disabled when not logged in", async ({ page }) => {
   await expect(feedTab).toHaveAttribute("aria-disabled", "true");
 });
 
-test("sort toggle switches between Recent and Most copied", async ({
+test("sort toggle switches between Recent and Most viewed", async ({
   page,
 }) => {
   await page.goto("/community");
-  await page.click("text=Most copied");
+  await page.click("text=Most viewed");
   await expect(page.locator('[data-sort="popular"]')).toHaveClass(/active/);
+});
+
+test("season filter includes pack season labels", async ({ page }) => {
+  await page.goto("/community");
+  await expect(page.getByLabel("Filter by season")).toContainText("3-Season");
+  await expect(page.getByLabel("Filter by season")).toContainText("4-Season");
 });

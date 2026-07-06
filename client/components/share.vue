@@ -27,6 +27,30 @@
                     </div>
 
                     <div class="shareSection">
+                        <div class="shareLabel">Community tags</div>
+                        <div class="shareTagGroup" aria-label="Seasons">
+                            <label v-for="season in seasonOptions" :key="season.value" class="shareTagCheckbox">
+                                <input
+                                    type="checkbox"
+                                    :checked="selectedSeasons.includes(season.value)"
+                                    @change="toggleDiscoveryTag('seasons', season.value, $event.target.checked)"
+                                >
+                                {{ season.label }}
+                            </label>
+                        </div>
+                        <div class="shareTagGroup" aria-label="List types">
+                            <label v-for="listType in listTypeOptions" :key="listType.value" class="shareTagCheckbox">
+                                <input
+                                    type="checkbox"
+                                    :checked="selectedListTypes.includes(listType.value)"
+                                    @change="toggleDiscoveryTag('listTypes', listType.value, $event.target.checked)"
+                                >
+                                {{ listType.label }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="shareSection">
                         <div class="shareLabel">Shared view</div>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.price" @change="setPublicField('price', $event.target.checked)">
@@ -77,6 +101,20 @@ export default {
     data() {
         return {
             shareReady: true,
+            seasonOptions: [
+                { value: '3-season', label: '3-Season' },
+                { value: '4-season', label: '4-Season' },
+                { value: 'spring', label: 'Spring' },
+                { value: 'summer', label: 'Summer' },
+                { value: 'fall', label: 'Fall' },
+                { value: 'winter', label: 'Winter' },
+            ],
+            listTypeOptions: [
+                { value: 'day-hike', label: 'Day hike' },
+                { value: 'weekend', label: 'Weekend' },
+                { value: 'thru-hike', label: 'Thru-hike' },
+                { value: 'bikepacking', label: 'Bikepacking' },
+            ],
         };
     },
     computed: {
@@ -117,6 +155,12 @@ export default {
             }
             return '';
         },
+        selectedSeasons() {
+            return Array.isArray(this.list.seasons) ? this.list.seasons : [];
+        },
+        selectedListTypes() {
+            return Array.isArray(this.list.listTypes) ? this.list.listTypes : [];
+        },
     },
     methods: {
         selectShareUrl() {
@@ -143,6 +187,23 @@ export default {
             });
             return this.saveShareState().catch((err) => {
                 showGlobalAlert((err && err.message) || 'An error occurred while attempting to save your sharing settings. Please try again later.');
+            });
+        },
+        toggleDiscoveryTag(field, value, checked) {
+            const seasons = [...this.selectedSeasons];
+            const listTypes = [...this.selectedListTypes];
+            const target = field === 'seasons' ? seasons : listTypes;
+            const index = target.indexOf(value);
+            if (checked && index === -1) target.push(value);
+            if (!checked && index !== -1) target.splice(index, 1);
+
+            this.$store.commit('updateListDiscoveryTags', {
+                listId: this.list.id,
+                seasons,
+                listTypes,
+            });
+            return this.saveShareState().catch(() => {
+                showGlobalAlert('An error occurred while saving your community tags. Please try again later.');
             });
         },
         setSearchIndexing(allowSearchIndexing) {

@@ -1,11 +1,33 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
+const crypto = require('crypto');
 
 const { logWithRequest } = require('./log.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
 const db = require('./db.js');
 
 const router = express.Router();
+
+function hashViewerPart(value) {
+    return crypto.createHash('sha256').update(String(value || '')).digest('hex').slice(0, 32);
+}
+
+async function resolveViewerKey(req) {
+    const token = req.cookies && req.cookies.lp;
+    if (token) {
+        try {
+            const viewer = await db.users.findOne({ token });
+            if (viewer && viewer._id) {
+                return `user:${String(viewer._id)}`;
+            }
+        } catch (_) {}
+    }
+
+    const forwardedFor = typeof req.get === 'function' ? req.get('x-forwarded-for') : '';
+    const userAgent = typeof req.get === 'function' ? req.get('user-agent') : '';
+    const ip = String(forwardedFor || req.ip || '').split(',')[0].trim();
+    return `anon:${hashViewerPart(`${ip}|${userAgent}`)}`;
+}
 
 router.get('/api/public/profile/:username', async (req, res) => {
     const username = String(req.params.username || '').toLowerCase().trim();
@@ -75,7 +97,7 @@ router.post('/api/public/insight', (req, res) => {
         return res.status(400).json({ message: 'Invalid insight event' });
     }
 
-    db.users.findOne({ 'library.lists.externalId': externalId }, (err, user) => {
+    db.users.findOne({ 'library.lists.externalId': externalId }, async (err, user) => {
         if (err || !user || !user.library) {
             return res.status(200).json({ message: 'ok' });
         }
@@ -91,18 +113,32 @@ router.post('/api/public/insight', (req, res) => {
         const insights = user.library.insights;
         if (typeof insights.profileViews !== 'number') insights.profileViews = 0;
         if (!insights.listViews || typeof insights.listViews !== 'object') insights.listViews = {};
+        if (!insights.listViewers || typeof insights.listViewers !== 'object') insights.listViewers = {};
         if (!insights.listCopies || typeof insights.listCopies !== 'object') insights.listCopies = {};
         if (!insights.gearClicks || typeof insights.gearClicks !== 'object') insights.gearClicks = {};
         if (!insights.promoClicks || typeof insights.promoClicks !== 'object') insights.promoClicks = {};
 
+        let shouldSave = true;
         if (type === 'listView') {
-            insights.listViews[externalId] = (insights.listViews[externalId] || 0) + 1;
+            const viewerKey = await resolveViewerKey(req);
+            const viewers = Array.isArray(insights.listViewers[externalId]) ? insights.listViewers[externalId] : [];
+            if (viewers.includes(viewerKey)) {
+                shouldSave = false;
+            } else {
+                viewers.push(viewerKey);
+                insights.listViewers[externalId] = viewers;
+                insights.listViews[externalId] = (insights.listViews[externalId] || 0) + 1;
+            }
         } else if (type === 'listCopy') {
             insights.listCopies[externalId] = (insights.listCopies[externalId] || 0) + 1;
         } else if (type === 'gearClick' && itemId) {
             insights.gearClicks[itemId] = (insights.gearClicks[itemId] || 0) + 1;
         } else if (type === 'promoClick' && itemId) {
             insights.promoClicks[itemId] = (insights.promoClicks[itemId] || 0) + 1;
+        }
+
+        if (!shouldSave) {
+            return res.json({ message: 'ok' });
         }
 
         db.users.save(user, (saveErr) => {

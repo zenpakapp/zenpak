@@ -64,7 +64,7 @@
                     data-sort="popular"
                     @click="changeDiscoverSort('popular')"
                 >
-                    Most copied
+                    Most viewed
                 </button>
             </div>
 
@@ -78,60 +78,117 @@
                 />
             </div>
 
+            <div class="lpCommunityFilters">
+                <select v-model="filterSeason" class="lpCommunityFilterSelect" aria-label="Filter by season" @change="applyDiscoverFilters">
+                    <option value="">Any season</option>
+                    <option v-for="season in seasonOptions" :key="season.value" :value="season.value">{{ season.label }}</option>
+                </select>
+                <select v-model="filterType" class="lpCommunityFilterSelect" aria-label="Filter by list type" @change="applyDiscoverFilters">
+                    <option value="">Any type</option>
+                    <option v-for="listType in listTypeOptions" :key="listType.value" :value="listType.value">{{ listType.label }}</option>
+                </select>
+                <input
+                    v-model="filterMinWeight"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    class="lpCommunityFilterInput"
+                    placeholder="Min kg"
+                    aria-label="Minimum base weight in kilograms"
+                    @input="onFilterInput"
+                />
+                <input
+                    v-model="filterMaxWeight"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    class="lpCommunityFilterInput"
+                    placeholder="Max kg"
+                    aria-label="Maximum base weight in kilograms"
+                    @input="onFilterInput"
+                />
+                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">Reset</button>
+            </div>
+
             <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">Loading…</p>
             <p v-else-if="discoverError" class="lpCommunityEmpty">{{ discoverError }}</p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
                 No public lists yet. Be the first to share one.
             </p>
             <template v-else>
-                <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
-                    <div class="lpCommunityFeaturedLabel">Featured</div>
-                    <div
-                        v-for="list in featuredLists"
-                        :key="'f-' + list.externalId"
-                        class="lpCommunityCard lpCommunityCardFeatured"
-                        style="cursor:pointer"
-                        @click="$router.push(`/p/${list.externalId}`)"
-                    >
-                        <div class="lpCommunityCardName">{{ list.name }}</div>
-                        <div class="lpCommunityCardAuthor">
-                            by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                            <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                            <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                <div class="lpCommunityDiscoverLayout">
+                    <section class="lpCommunityResults">
+                        <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
+                            <div class="lpCommunityFeaturedLabel">Featured</div>
+                            <div
+                                v-for="list in featuredLists"
+                                :key="'f-' + list.externalId"
+                                class="lpCommunityCard lpCommunityCardFeatured"
+                                style="cursor:pointer"
+                                @click="$router.push(`/p/${list.externalId}`)"
+                            >
+                                <div class="lpCommunityCardName">{{ list.name }}</div>
+                                <div class="lpCommunityCardAuthor">
+                                    by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
+                                    <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                                    <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                </div>
+                                <div class="lpCommunityCardMeta">
+                                    <span class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
+                                    <span class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
+                                    <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ list.viewCount }} views</span>
+                                    <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                                </div>
+                                <div v-if="listTags(list).length" class="lpCommunityTags">
+                                    <span v-for="tag in listTags(list)" :key="list.externalId + '-f-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="lpCommunityCardMeta">
-                            <span class="lpCommunityCardMetaItem">{{ list.totalBaseWeight.toFixed(2) }} kg base</span>
-                            <span class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
-                            <span class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                        <div
+                            v-for="list in nonFeaturedLists"
+                            :key="list.externalId"
+                            class="lpCommunityCard"
+                            style="cursor:pointer"
+                            @click="$router.push(`/p/${list.externalId}`)"
+                        >
+                            <div class="lpCommunityCardName">{{ list.name }}</div>
+                            <div class="lpCommunityCardAuthor">
+                                by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
+                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                            </div>
+                            <div class="lpCommunityCardMeta">
+                                <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
+                                <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
+                                <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ list.viewCount }} views</span>
+                                <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                                <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
+                            </div>
+                            <div v-if="listTags(list).length" class="lpCommunityTags">
+                                <span v-for="tag in listTags(list)" :key="list.externalId + '-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
+                            </div>
+                            <div v-if="$store.state.loggedIn" @click.stop>
+                                <report-button target-type="list" :target-id="list.externalId" />
+                            </div>
                         </div>
-                    </div>
+                        <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
+                            {{ discoverLoading ? 'Loading…' : 'Load more' }}
+                        </button>
+                    </section>
+                    <aside class="lpCommunityPopular" aria-label="Popular packs">
+                        <div class="lpCommunityPopularTitle">Popular Packs</div>
+                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">Loading…</p>
+                        <router-link
+                            v-for="list in popularLists"
+                            :key="'popular-' + list.externalId"
+                            :to="`/p/${list.externalId}`"
+                            class="lpCommunityPopularItem"
+                        >
+                            <span class="lpCommunityPopularName">{{ list.name }}</span>
+                            <span class="lpCommunityPopularMeta">{{ list.viewCount }} views · {{ formatWeight(list.totalBaseWeight) }} base</span>
+                        </router-link>
+                    </aside>
                 </div>
-                <div
-                    v-for="list in nonFeaturedLists"
-                    :key="list.externalId"
-                    class="lpCommunityCard"
-                    style="cursor:pointer"
-                    @click="$router.push(`/p/${list.externalId}`)"
-                >
-                    <div class="lpCommunityCardName">{{ list.name }}</div>
-                    <div class="lpCommunityCardAuthor">
-                        by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                        <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                        <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
-                    </div>
-                    <div class="lpCommunityCardMeta">
-                        <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
-                        <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
-                        <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
-                        <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
-                    </div>
-                    <div v-if="$store.state.loggedIn" @click.stop>
-                        <report-button target-type="list" :target-id="list.externalId" />
-                    </div>
-                </div>
-                <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
-                    {{ discoverLoading ? 'Loading…' : 'Load more' }}
-                </button>
             </template>
         </div>
 
@@ -202,9 +259,16 @@ export default {
             sort: discoverSort,
             setSort: setDiscoverSort,
             setQuery: setDiscoverQuery,
+            setFilters: setDiscoverFilters,
             load: discoverLoad,
             loadMore: discoverLoadMore,
         } = useDiscover();
+
+        const {
+            lists: popularLists,
+            loading: popularLoading,
+            load: popularLoad,
+        } = useDiscover({ sort: 'popular', limit: 5 });
 
         const {
             events: feedEvents,
@@ -216,10 +280,12 @@ export default {
         } = useFeed();
 
         discoverLoad();
+        popularLoad();
 
         return {
             discoverLists, discoverLoading, discoverError, discoverHasMore,
-            discoverSort, setDiscoverSort, setDiscoverQuery, discoverLoadMore,
+            discoverSort, setDiscoverSort, setDiscoverQuery, setDiscoverFilters, discoverLoadMore,
+            popularLists, popularLoading,
             feedEvents, feedLoading, feedError, feedHasMore, feedLoad, feedLoadMore,
         };
     },
@@ -228,7 +294,26 @@ export default {
             activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
             searchQuery: '',
             searchTimeout: null,
+            filterTimeout: null,
+            filterSeason: '',
+            filterType: '',
+            filterMinWeight: '',
+            filterMaxWeight: '',
             isModerator: false,
+            seasonOptions: [
+                { value: '3-season', label: '3-Season' },
+                { value: '4-season', label: '4-Season' },
+                { value: 'spring', label: 'Spring' },
+                { value: 'summer', label: 'Summer' },
+                { value: 'fall', label: 'Fall' },
+                { value: 'winter', label: 'Winter' },
+            ],
+            listTypeOptions: [
+                { value: 'day-hike', label: 'Day hike' },
+                { value: 'weekend', label: 'Weekend' },
+                { value: 'thru-hike', label: 'Thru-hike' },
+                { value: 'bikepacking', label: 'Bikepacking' },
+            ],
         };
     },
     computed: {
@@ -240,6 +325,9 @@ export default {
         },
         nonFeaturedLists() {
             return this.discoverLists.filter(l => !l.featured);
+        },
+        filtersActive() {
+            return Boolean(this.filterSeason || this.filterType || this.filterMinWeight || this.filterMaxWeight);
         },
     },
     created() {
@@ -259,6 +347,25 @@ export default {
                 this.setDiscoverQuery(this.searchQuery);
             }, 300);
         },
+        onFilterInput() {
+            clearTimeout(this.filterTimeout);
+            this.filterTimeout = setTimeout(this.applyDiscoverFilters, 300);
+        },
+        applyDiscoverFilters() {
+            this.setDiscoverFilters({
+                season: this.filterSeason,
+                type: this.filterType,
+                minWeightKg: this.filterMinWeight,
+                maxWeightKg: this.filterMaxWeight,
+            });
+        },
+        resetDiscoverFilters() {
+            this.filterSeason = '';
+            this.filterType = '';
+            this.filterMinWeight = '';
+            this.filterMaxWeight = '';
+            this.applyDiscoverFilters();
+        },
         changeDiscoverSort(value) {
             this.searchQuery = '';
             this.setDiscoverSort(value);
@@ -269,10 +376,20 @@ export default {
             if (type === 'list.updated') return 'updated a list';
             return 'updated their gear';
         },
-        formatWeight(grams) {
-            if (!grams) return '';
-            const kg = grams / 1000;
-            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${grams} g`;
+        formatWeight(mg) {
+            if (!mg) return '';
+            const kg = mg / 1000000;
+            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${Math.round(mg / 1000)} g`;
+        },
+        listTags(list) {
+            return [
+                ...(Array.isArray(list.seasons) ? list.seasons : []),
+                ...(Array.isArray(list.listTypes) ? list.listTypes : []),
+            ];
+        },
+        formatTag(value) {
+            const label = [...this.seasonOptions, ...this.listTypeOptions].find(option => option.value === value);
+            return label ? label.label : value;
         },
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();
