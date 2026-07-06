@@ -15,7 +15,9 @@
     "or": "or",
     "usernameOrEmail": "Username or email",
     "username": "Username",
-    "forgotUsername": "Forgot username?"
+    "forgotUsername": "Forgot username?",
+    "createAccount": "Register an account",
+    "alreadyRegistered": "Already registered?"
   },
   "welcome": {
     "headline": "Pack light.",

@@ -7,10 +7,10 @@
         <modal id="register" :shown="true" :blackout="true">
             <div class="lpModalHeader">
                 <h2>
-                    Register an account
+                    {{ $t('auth.createAccount') }}
                 </h2>
                 <router-link to="/signin" class="lpHref">
-                    Already registered?
+                    {{ $t('auth.alreadyRegistered') }}
                 </router-link>
             </div>
 
