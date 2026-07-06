@@ -11,24 +11,24 @@
                         <zenpak-brand-asset class="lpWelcomeEyebrowMark" variant="wordmark-white" alt="ZenPak" />
                     </span>
                     <h1 class="lpWelcomeHeadline">
-                        Pack light.
-                        <span>Leave calm.</span>
+                        {{ $t('welcome.headline') }}
+                        <span>{{ $t('welcome.headlineSub') }}</span>
                     </h1>
                     <p class="lpWelcomeDeck">
-                        Build your gear library, create pack lists, track your weight to the gram — and share with the community.
+                        {{ $t('welcome.deck') }}
                     </p>
                     <div class="lpWelcomeStats">
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">100%</span>
-                            <span class="lpWelcomeStatLabel">Free to start</span>
+                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statFree') }}</span>
                         </div>
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">Open source</span>
-                            <span class="lpWelcomeStatLabel">Built on LighterPack</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.statOpenSource') }}</span>
+                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statBuiltOn') }}</span>
                         </div>
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">No ads</span>
-                            <span class="lpWelcomeStatLabel">Ever</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.statNoAds') }}</span>
+                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statEver') }}</span>
                         </div>
                     </div>
                 </div>
@@ -40,18 +40,18 @@
                 <div class="lpWelcomeFeaturesGrid">
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">01</span>
-                        <h3 class="lpWelcomeFeatureTitle">Gear library</h3>
-                        <p class="lpWelcomeFeatureText">Add every piece of kit once — weight, brand, category. Reuse across trips, filter, compare.</p>
+                        <h3 class="lpWelcomeFeatureTitle">{{ $t('welcome.feature1Title') }}</h3>
+                        <p class="lpWelcomeFeatureText">{{ $t('welcome.feature1Text') }}</p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">02</span>
-                        <h3 class="lpWelcomeFeatureTitle">Pack lists</h3>
-                        <p class="lpWelcomeFeatureText">Build lists per trip, see base weight / worn / consumables live. Packing mode to check items off as you go.</p>
+                        <h3 class="lpWelcomeFeatureTitle">{{ $t('welcome.feature2Title') }}</h3>
+                        <p class="lpWelcomeFeatureText">{{ $t('welcome.feature2Text') }}</p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">03</span>
-                        <h3 class="lpWelcomeFeatureTitle">Community</h3>
-                        <p class="lpWelcomeFeatureText">Publish lists publicly, follow other hikers, discover curated loadouts from the community.</p>
+                        <h3 class="lpWelcomeFeatureTitle">{{ $t('welcome.feature3Title') }}</h3>
+                        <p class="lpWelcomeFeatureText">{{ $t('welcome.feature3Text') }}</p>
                     </div>
                 </div>
             </div>
@@ -63,12 +63,12 @@
 
                 <aside class="lpWelcomeAuthRail">
                     <section class="lpWelcomeCard lpWelcomeCardPrimary">
-                        <span class="lpWelcomeCardKicker">New here</span>
+                        <span class="lpWelcomeCardKicker">{{ $t('welcome.kickerRegister') }}</span>
                         <h2 class="lpWelcomeCardTitle">
-                            Create an account
+                            {{ $t('welcome.titleRegister') }}
                         </h2>
                         <p class="lpWelcomeCardText">
-                            Save your lists online, sync across devices, and get started in minutes.
+                            {{ $t('welcome.textRegister') }}
                         </p>
                         <a href="/api/auth/google" class="lpButtonGoogle">
                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -77,19 +77,19 @@
                                 <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
                                 <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
                             </svg>
-                            Continue with Google
+                            {{ $t('auth.continueWithGoogle') }}
                         </a>
-                        <div class="lpOAuthDivider"><span>or</span></div>
+                        <div class="lpOAuthDivider"><span>{{ $t('auth.or') }}</span></div>
                         <registerForm />
                     </section>
 
                     <section class="lpWelcomeCard lpWelcomeCardSecondary">
-                        <span class="lpWelcomeCardKicker">Returning users</span>
+                        <span class="lpWelcomeCardKicker">{{ $t('welcome.kickerSignin') }}</span>
                         <h2 class="lpWelcomeCardTitle">
-                            Sign in
+                            {{ $t('welcome.titleSignin') }}
                         </h2>
                         <p class="lpWelcomeCardText lpWelcomeCardTextStrong">
-                            Jump back into your lists right away.
+                            {{ $t('welcome.textSignin') }}
                         </p>
                         <SigninForm />
                     </section>
@@ -99,19 +99,19 @@
 
         <section class="lpWelcomeFaq">
             <div class="lpContainer">
-                <h2 class="lpWelcomeFaqTitle">Questions</h2>
+                <h2 class="lpWelcomeFaqTitle">{{ $t('welcome.faqTitle') }}</h2>
                 <div class="lpWelcomeFaqList">
                     <details class="lpWelcomeFaqItem">
-                        <summary class="lpWelcomeFaqQ">Already using LighterPack?</summary>
-                        <p class="lpWelcomeFaqA">ZenPak picks up where LighterPack left off. It keeps the simple public gear-list spirit, then adds a reusable gear library, public profiles, community discovery, packing mode, and active ongoing development.</p>
+                        <summary class="lpWelcomeFaqQ">{{ $t('welcome.faq1Q') }}</summary>
+                        <p class="lpWelcomeFaqA">{{ $t('welcome.faq1A') }}</p>
                     </details>
                     <details class="lpWelcomeFaqItem">
-                        <summary class="lpWelcomeFaqQ">Is it really free?</summary>
-                        <p class="lpWelcomeFaqA">Yes. The core stays free and open-source, including self-hosting. Kin is a simple support plan for the hosted app, and Wayfarer is the creator layer with affiliate links, promo codes, and insights.</p>
+                        <summary class="lpWelcomeFaqQ">{{ $t('welcome.faq2Q') }}</summary>
+                        <p class="lpWelcomeFaqA">{{ $t('welcome.faq2A') }}</p>
                     </details>
                     <details class="lpWelcomeFaqItem">
-                        <summary class="lpWelcomeFaqQ">Can I import my existing lists?</summary>
-                        <p class="lpWelcomeFaqA">Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak. Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand.</p>
+                        <summary class="lpWelcomeFaqQ">{{ $t('welcome.faq3Q') }}</summary>
+                        <p class="lpWelcomeFaqA">{{ $t('welcome.faq3A') }}</p>
                     </details>
                 </div>
             </div>
