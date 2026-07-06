@@ -34,6 +34,9 @@ function getRuntimeEnvironment() {
 
 const templates = {};
 
+let privacyTemplate = '';
+let termsTemplate = '';
+
 const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/' },
     { path: '/signin' },
@@ -100,6 +103,14 @@ for (let i = 0; i < vueRoutes.length; i++) {
         res.send(index);
     });
 }
+
+router.get('/privacy', (req, res) => {
+    res.send(privacyTemplate || '<h1>Privacy Policy</h1><p>Loading...</p>');
+});
+
+router.get('/terms', (req, res) => {
+    res.send(termsTemplate || '<h1>Terms of Service</h1><p>Loading...</p>');
+});
 
 router.get('*', (req, res) => {
     res.status(404).send(index);
@@ -383,6 +394,22 @@ function init() {
                 embedTemplate = embedTemplate.replace(/\r?\n|\r/g, '');
             } else {
                 logger.info('ERROR reading embed.mustache');
+            }
+        });
+
+        fs.readFile(path.join(__dirname, '../templates/privacy.mustache'), (err, data) => {
+            if (!err) {
+                privacyTemplate = data.toString();
+            } else {
+                logger.info('ERROR reading privacy.mustache');
+            }
+        });
+
+        fs.readFile(path.join(__dirname, '../templates/terms.mustache'), (err, data) => {
+            if (!err) {
+                termsTemplate = data.toString();
+            } else {
+                logger.info('ERROR reading terms.mustache');
             }
         });
 

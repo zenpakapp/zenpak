@@ -57,7 +57,12 @@ router.post('/checkout-session', billingRequired, (req, res) => {
                 billing_address_collection: 'required',
                 tax_id_collection: { enabled: true },
                 customer_update: { name: 'auto', address: 'auto' },
-
+                consent_collection: { terms_of_service: 'required' },
+                custom_text: {
+                    terms_of_service_acceptance: {
+                        message: `I agree to the [Terms of Service](${deployUrl}/terms) and [Privacy Policy](${deployUrl}/privacy).`,
+                    },
+                },
                 metadata: { username: user.username },
             });
 

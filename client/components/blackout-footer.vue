@@ -10,6 +10,10 @@
         <div class="lpContact">
             <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">Open source</a>
             -
+            <a class="lpHref" href="/privacy">Privacy</a>
+            -
+            <a class="lpHref" href="/terms">Terms</a>
+            -
             <a class="lpHref" href="mailto:info@zenpak.app">Contact</a>
         </div>
     </div>
