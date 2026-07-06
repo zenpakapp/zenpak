@@ -116,6 +116,22 @@ router.get('/api/backup', (req, res) => {
     });
 });
 
+router.post('/api/restore', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const { library } = req.body || {};
+        if (!library || typeof library !== 'object' || Array.isArray(library)) {
+            return res.status(400).json({ error: 'Invalid backup: missing library object.' });
+        }
+        try {
+            await db.users.updateOne({ _id: user._id }, { $set: { library } });
+            return res.json({ ok: true });
+        } catch (err) {
+            logWithRequest(req, 'restore error', err);
+            return res.status(500).json({ error: 'Restore failed.' });
+        }
+    });
+});
+
 router.post('/api/import/lighterpack', async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: 'No URL provided.' });
