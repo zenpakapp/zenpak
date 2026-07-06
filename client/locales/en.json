@@ -128,7 +128,15 @@
     "backToProfile": "← {username}'s profile",
     "items": "items",
     "consumable": "Consumable",
-    "packWeightHint": "pack weight (consumable + base weight)"
+    "packWeightHint": "pack weight (consumable + base weight)",
+    "profileNotFoundTitle": "This trail goes nowhere.",
+    "profileNotFoundSub": "The profile you're looking for doesn't exist.",
+    "unableToLoadProfile": "Unable to load this profile.",
+    "statLists": "lists",
+    "statFollowers": "followers",
+    "statFollowing": "following",
+    "follow": "Follow",
+    "following": "Following"
   },
   "errors": {
     "saveFailed": "An error occurred while saving.",

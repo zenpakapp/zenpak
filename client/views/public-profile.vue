@@ -10,13 +10,13 @@
             <router-link :to="backTo">{{ backLabel }}</router-link>
         </nav>
 
-        <p v-if="isLoading">Loading...</p>
+        <p v-if="isLoading">{{ $t('public.loading') }}</p>
         <div v-else-if="error" class="lpPublicError">
             <div class="lpPublicErrorIcon">×</div>
-            <h2 v-if="error === 'Profile not found.'">This trail goes nowhere.</h2>
-            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">The profile you're looking for doesn't exist.</p>
-            <h2 v-else>{{ error }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">← Back to ZenPak</router-link>
+            <h2 v-if="error === 'Profile not found.'">{{ $t('public.profileNotFoundTitle') }}</h2>
+            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">{{ $t('public.profileNotFoundSub') }}</p>
+            <h2 v-else>{{ $t('public.unableToLoadProfile') }}</h2>
+            <router-link to="/" class="lpPublicErrorBack">{{ $t('public.backToZenPak') }}</router-link>
         </div>
         <template v-else-if="profile">
 
@@ -37,9 +37,9 @@
                         <upgrade-prompt v-if="isOwnProfile && !isTrail && !profile.bio" tier="trail" feature="profileCustomization" mode="inline" />
                         <p v-else-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
                         <div class="lpPublicStats">
-                            <span><strong>{{ lists.length }}</strong> lists</span>
-                            <span><strong>{{ followerCount }}</strong> followers</span>
-                            <span><strong>{{ followingCount }}</strong> following</span>
+                            <span><strong>{{ lists.length }}</strong> {{ $t('public.statLists') }}</span>
+                            <span><strong>{{ followerCount }}</strong> {{ $t('public.statFollowers') }}</span>
+                            <span><strong>{{ followingCount }}</strong> {{ $t('public.statFollowing') }}</span>
                         </div>
                         <upgrade-prompt v-if="isOwnProfile && !isTrail && !safeLinks.length" tier="trail" feature="profileCustomization" mode="inline" />
                         <ul v-else-if="safeLinks.length" class="lpPublicLinks">
@@ -58,14 +58,14 @@
                         :disabled="followLoading"
                         @click="toggleFollow"
                     >
-                        {{ following ? 'Following' : 'Follow' }}
+                        {{ following ? $t('public.following') : $t('public.follow') }}
                     </button>
                 </div>
             </div>
 
             <!-- Listes -->
             <div v-if="lists && lists.length">
-                <div class="lpPublicListsHeader">Public lists</div>
+                <div class="lpPublicListsHeader">{{ $t('public.publicLists') }}</div>
                 <router-link
                     v-for="list in lists"
                     :key="list.externalId"
@@ -80,7 +80,7 @@
                     </div>
                 </router-link>
             </div>
-            <p v-else style="color: var(--color-text-muted); font-size: 14px;">No public lists yet.</p>
+            <p v-else style="color: var(--color-text-muted); font-size: 14px;">{{ $t('public.noPublicLists') }}</p>
 
             <aside v-if="affiliateDisclosure" class="lpPublicDisclosure">
                 {{ affiliateDisclosure }}
