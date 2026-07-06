@@ -139,15 +139,22 @@
 }
 
 .itemDetailFooter {
-    align-items: center;
     border-top: 1px solid $color-border;
-    display: flex;
+    display: grid;
     gap: 8px;
-    flex-wrap: nowrap;
+    grid-template-columns: repeat(4, 1fr);
     padding: 14px 20px;
 
     > * {
-        flex: 1;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .itemDetailAddBtn {
+        width: 100%;
     }
 
     .lpButton.itemDetailRemove {

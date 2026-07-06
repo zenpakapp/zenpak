@@ -1,6 +1,6 @@
 <template>
     <div class="itemDetailAddToList">
-        <button class="lpButton lpSmall lpButtonSecondary itemDetailAddBtn" @click="open = !open; selectedListId = null">
+        <button class="lpButton lpButtonSecondary itemDetailAddBtn" @click="open = !open; selectedListId = null">
             + Add to list ▾
         </button>
         <ul v-if="open" class="itemDetailAddDropdown">
