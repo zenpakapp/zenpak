@@ -342,7 +342,7 @@ export default {
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
-                else this.billingError = 'Something went wrong — give it another try.';
+                else this.billingError = data.message || 'Something went wrong — give it another try.';
             } catch (_) {
                 this.billingError = 'Looks like we lost the connection. Try again in a moment.';
             }

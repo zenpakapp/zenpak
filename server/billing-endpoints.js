@@ -93,7 +93,8 @@ router.post('/portal-session', billingRequired, (req, res) => {
 
             return res.json({ url: session.url });
         } catch (err) {
-            return res.status(500).json({ message: 'Failed to create portal session' });
+            console.error('portal-session error:', err.message, err.type, err.code);
+            return res.status(500).json({ message: err.message || 'Failed to create portal session' });
         }
     });
 });
