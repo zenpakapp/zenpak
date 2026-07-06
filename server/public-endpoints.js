@@ -126,6 +126,7 @@ router.post('/api/public/insight', (req, res) => {
                 shouldSave = false;
             } else {
                 viewers.push(viewerKey);
+                if (viewers.length > 500) viewers.splice(0, viewers.length - 500);
                 insights.listViewers[externalId] = viewers;
                 insights.listViews[externalId] = (insights.listViews[externalId] || 0) + 1;
             }
