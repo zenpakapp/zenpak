@@ -5,29 +5,29 @@
 <template>
     <span v-if="isSignedIn" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="share" @shown="focusShare">
-            <template #target><span title="Share"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">Share</span></span></template>
+            <template #target><span title="Share"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">{{ $t('share.share') }}</span></span></template>
             <template #content>
                 <div class="sharePopover">
                     <div class="shareSection">
-                        <div class="shareLabel">Share link</div>
+                        <div class="shareLabel">{{ $t('share.shareLink') }}</div>
                         <input id="shareUrl" ref="shareUrlInput" v-select-on-focus type="text" class="shareInput" :value="shareUrl" readonly>
                     </div>
 
                     <div class="shareSection">
-                        <div class="shareLabel">Visibility</div>
+                        <div class="shareLabel">{{ $t('share.visibility') }}</div>
                         <div class="shareSelectWrap">
                             <select id="listVisibility" class="shareSelect" :value="list.visibility" @change="setVisibility($event.target.value)">
-                                <option value="private">Private</option>
-                                <option value="shareable">Unlisted</option>
-                                <option value="discoverable">Public</option>
-                                <option value="indexable">Public + Search engines</option>
+                                <option value="private">{{ $t('share.private') }}</option>
+                                <option value="shareable">{{ $t('share.unlisted') }}</option>
+                                <option value="discoverable">{{ $t('share.public') }}</option>
+                                <option value="indexable">{{ $t('share.publicSearch') }}</option>
                             </select>
                         </div>
                         <p class="shareVisibilityHint">{{ visibilityHint }}</p>
                     </div>
 
                     <div class="shareSection">
-                        <div class="shareLabel">Community tags</div>
+                        <div class="shareLabel">{{ $t('share.communityTags') }}</div>
                         <div class="shareTagGroup" aria-label="Seasons">
                             <label v-for="season in seasonOptions" :key="season.value" class="shareTagCheckbox">
                                 <input
@@ -51,27 +51,27 @@
                     </div>
 
                     <div class="shareSection">
-                        <div class="shareLabel">Shared view</div>
+                        <div class="shareLabel">{{ $t('share.sharedView') }}</div>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.price" @change="setPublicField('price', $event.target.checked)">
-                            Show prices
+                            {{ $t('share.showPrices') }}
                         </label>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.links" @change="setPublicField('links', $event.target.checked)">
-                            Show "Get it" links
+                            {{ $t('share.showGetItLinks') }}
                         </label>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.images" @change="setPublicField('images', $event.target.checked)">
-                            Show images
+                            {{ $t('share.showImages') }}
                         </label>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.downloadable" @change="setPublicField('downloadable', $event.target.checked)">
-                            Allow CSV download
+                            {{ $t('share.allowCsvDownload') }}
                         </label>
                     </div>
 
                     <div class="shareSection">
-                        <div class="shareLabel">Embed</div>
+                        <div class="shareLabel">{{ $t('share.embed') }}</div>
                         <textarea v-select-on-focus class="shareTextarea" readonly>&lt;script src="{{ this.baseUrl }}/e/{{ this.externalId }}"&gt;&lt;/script&gt;&lt;div id="{{ this.externalId }}"&gt;&lt;/div&gt;</textarea>
                     </div>
 
@@ -79,7 +79,7 @@
 
                     <div class="shareFooter">
                         <a :href="csvUrl" target="_blank" class="shareCsvLink">
-                            <i class="lpSprite lpSpriteDownload" /> Export to CSV
+                            <i class="lpSprite lpSpriteDownload" /> {{ $t('share.exportToCsv') }}
                         </a>
                     </div>
                 </div>
@@ -120,10 +120,10 @@ export default {
     computed: {
         visibilityHint() {
             const hints = {
-                private: 'Only you can see this list.',
-                shareable: 'Anyone with the link can view it. Won\'t appear on your profile or in feeds.',
-                discoverable: 'Visible on your profile and in your followers\' feed.',
-                indexable: 'Visible on your profile, in feeds, and indexed by search engines.',
+                private: this.$t('share.hintPrivate'),
+                shareable: this.$t('share.hintUnlisted'),
+                discoverable: this.$t('share.hintDiscoverable'),
+                indexable: this.$t('share.hintIndexable'),
             };
             return hints[this.list && this.list.visibility] || '';
         },
@@ -176,7 +176,7 @@ export default {
                 [field]: value,
             });
             return this.saveShareState().catch(() => {
-                showGlobalAlert('An error occurred while saving your sharing settings. Please try again later.');
+                showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
         setVisibility(visibility) {
@@ -186,7 +186,7 @@ export default {
                 allowSearchIndexing: visibility === 'indexable' && this.list.allowSearchIndexing,
             });
             return this.saveShareState().catch((err) => {
-                showGlobalAlert((err && err.message) || 'An error occurred while attempting to save your sharing settings. Please try again later.');
+                showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
             });
         },
         toggleDiscoveryTag(field, value, checked) {
@@ -203,7 +203,7 @@ export default {
                 listTypes,
             });
             return this.saveShareState().catch(() => {
-                showGlobalAlert('An error occurred while saving your community tags. Please try again later.');
+                showGlobalAlert(this.$t('share.errorSavingTags'));
             });
         },
         setSearchIndexing(allowSearchIndexing) {
@@ -213,7 +213,7 @@ export default {
                 allowSearchIndexing,
             });
             return this.saveShareState().catch((err) => {
-                showGlobalAlert((err && err.message) || 'An error occurred while attempting to save your sharing settings. Please try again later.');
+                showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
             });
         },
         focusShare() {
@@ -235,7 +235,7 @@ export default {
                         this.selectShareUrl();
                     })
                     .catch((err) => {
-                        showGlobalAlert((err && err.message) || 'An error occurred while attempting to get an ID for your list. Please try again later.');
+                        showGlobalAlert((err && err.message) || this.$t('share.errorGettingId'));
                     });
             }
             this.shareReady = false;
@@ -245,7 +245,7 @@ export default {
                     this.selectShareUrl();
                 })
                 .catch(() => {
-                    showGlobalAlert('An error occurred while attempting to save your sharing settings. Please try again later.');
+                    showGlobalAlert(this.$t('share.errorSavingSettingsDetail'));
                 });
         },
         ensureShareable() {
