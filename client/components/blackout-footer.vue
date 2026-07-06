@@ -14,6 +14,8 @@
             -
             <a class="lpHref" href="/terms">Terms</a>
             -
+            <a class="lpHref" href="/legal">Legal</a>
+            -
             <a class="lpHref" href="mailto:info@zenpak.app">Contact</a>
         </div>
     </div>

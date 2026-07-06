@@ -36,6 +36,7 @@ const templates = {};
 
 let privacyTemplate = '';
 let termsTemplate = '';
+let legalTemplate = '';
 
 const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/' },
@@ -110,6 +111,10 @@ router.get('/privacy', (req, res) => {
 
 router.get('/terms', (req, res) => {
     res.send(termsTemplate || '<h1>Terms of Service</h1><p>Loading...</p>');
+});
+
+router.get('/legal', (req, res) => {
+    res.send(legalTemplate || '<h1>Legal Notice</h1><p>Loading...</p>');
 });
 
 router.get('*', (req, res) => {
@@ -410,6 +415,14 @@ function init() {
                 termsTemplate = data.toString();
             } else {
                 logger.info('ERROR reading terms.mustache');
+            }
+        });
+
+        fs.readFile(path.join(__dirname, '../templates/legal.mustache'), (err, data) => {
+            if (!err) {
+                legalTemplate = data.toString();
+            } else {
+                logger.info('ERROR reading legal.mustache');
             }
         });
 
