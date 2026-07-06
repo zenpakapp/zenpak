@@ -151,13 +151,12 @@
     .itemDetailFooterPrimary {
         align-items: center;
         display: flex;
-        gap: 10px;
-    }
+        flex: 1;
+        gap: 8px;
 
-    .itemDetailFooterPrimary {
-        flex: 0 0 auto;
-        justify-content: flex-end;
-        margin-left: auto;
+        > * {
+            flex: 1;
+        }
     }
 
     .lpButton.itemDetailRemove {
