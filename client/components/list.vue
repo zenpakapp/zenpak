@@ -6,21 +6,21 @@
     <div class="lpListBody">
         <!-- Packing mode bar -->
         <div v-if="isPackingMode" class="lpPackingBar">
-            <span class="lpPackingProgress">{{ packingProgress.packed }} / {{ packingProgress.total }} items packed</span>
+            <span class="lpPackingProgress">{{ $t('list.itemsPacked', { packed: packingProgress.packed, total: packingProgress.total }) }}</span>
             <div class="lpPackingProgressTrack">
                 <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
             </div>
-            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">Exit Packing</button>
+            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">{{ $t('list.exitPacking') }}</button>
         </div>
 
         <!-- Completion modal -->
         <div v-if="showCompletionModal" class="lpPackModal" @click.self="showCompletionModal = false">
             <div class="lpPackModalInner">
                 <p class="lpPackModalPhrase">{{ completionPhrase }}</p>
-                <p class="lpPackModalWeight">Total: {{ packTotalWeight }}</p>
+                <p class="lpPackModalWeight">{{ $t('list.packTotal', { weight: packTotalWeight }) }}</p>
                 <div class="lpPackModalActions">
-                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">Reset</button>
-                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">Close</button>
+                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">{{ $t('list.reset') }}</button>
+                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">{{ $t('list.close') }}</button>
                 </div>
             </div>
         </div>
@@ -30,29 +30,27 @@
                 <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
                 <zenpak-brand-asset class="lpGetStartedBrandWordmark" variant="wordmark" alt="ZenPak" />
             </div>
-            <h2>Welcome to ZenPak!</h2>
-            <p>Here's what you need to get started:</p>
+            <h2>{{ $t('list.getStartedTitle') }}</h2>
+            <p>{{ $t('list.getStartedIntro') }}</p>
             <ol>
-                <li>Click on things to edit them. Give your list and category a name.</li>
-                <li>Add new categories and give items weights to start the visualization.</li>
-                <li v-if="!isLocalSaving">
-                    When you're done, share your list with others!
-                </li>
+                <li>{{ $t('list.getStartedStep1') }}</li>
+                <li>{{ $t('list.getStartedStep2') }}</li>
+                <li v-if="!isLocalSaving">{{ $t('list.getStartedStep3') }}</li>
             </ol>
             <p v-if="isLocalSaving" class="lpWarning">
-                <strong>Note:</strong> Your data is being saved to your local computer. In order to share your lists please register an account.
+                <strong>{{ $t('list.localSavingNoteLabel') }}</strong> {{ $t('list.localSavingNote') }}
             </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
         <div v-if="!isListNew && !isPackingMode" style="margin-bottom: 10px;">
-            <button class="lpPackBtn" @click="enterPackingMode">🎒 Pack this list</button>
+            <button class="lpPackBtn" @click="enterPackingMode">🎒 {{ $t('list.packThis') }}</button>
         </div>
 
         <div style="clear: both;" />
 
         <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
-            <h3>List Description</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> supported)</p>
+            <h3>{{ $t('list.listDescription') }}</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> supported)</p>
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
@@ -69,7 +67,7 @@
 
         <hr>
 
-        <a v-if="!isPackingMode" class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />Add new category</a>
+        <a v-if="!isPackingMode" class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />{{ $t('list.addCategory') }}</a>
     </div>
 </template>
 

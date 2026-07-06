@@ -58,7 +58,19 @@
     "packThis": "Pack this list",
     "reset": "Reset",
     "done": "Done",
-    "listName": "List Name"
+    "close": "Close",
+    "listName": "List Name",
+    "listDescription": "List Description",
+    "exitPacking": "Exit Packing",
+    "itemsPacked": "{packed} / {total} items packed",
+    "packTotal": "Total: {weight}",
+    "getStartedTitle": "Welcome to ZenPak!",
+    "getStartedIntro": "Here's what you need to get started:",
+    "getStartedStep1": "Click on things to edit them. Give your list and category a name.",
+    "getStartedStep2": "Add new categories and give items weights to start the visualization.",
+    "getStartedStep3": "When you're done, share your list with others!",
+    "localSavingNoteLabel": "Note:",
+    "localSavingNote": "Your data is being saved to your local computer. In order to share your lists please register an account."
   },
   "share": {
     "share": "Share",
