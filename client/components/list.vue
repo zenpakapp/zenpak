@@ -111,6 +111,7 @@ export default {
         list() {
             void this.$store.state.listVersion;
             const lib = this.$store.state.library;
+            if (!lib || typeof lib.getListById !== 'function') return null;
             return lib.getListById(lib.defaultListId);
         },
         categories() {
