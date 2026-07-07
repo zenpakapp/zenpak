@@ -12,18 +12,18 @@
             <div class="columns">
                 <div class="lpHalf">
                     <h3>
-                        Forgot Your Password?
+                        {{ $t('auth.forgotPasswordTitle') }}
                     </h3>
 
                     <div v-if="forgotPasswordSent">
-                        <p>A reset link has been sent to your email.</p>
+                        <p>{{ $t('auth.forgotPasswordCheckEmail') }}</p>
                     </div>
                     <div v-else>
-                        <p>Please enter your username.</p>
+                        <p>{{ $t('auth.forgotPasswordEnterUsername') }}</p>
                         <form class="forgotPassword" @submit.prevent="resetPassword">
                             <div class="lpFields">
-                                <input v-model="forgotPasswordUsername" type="text" placeholder="Username" name="username" class="username">
-                                <input type="submit" value="Submit" class="lpButton">
+                                <input v-model="forgotPasswordUsername" type="text" :placeholder="$t('auth.username')" name="username" class="username">
+                                <input type="submit" :value="$t('auth.forgotPasswordSubmit')" class="lpButton">
                             </div>
 
                             <errors :errors="forgotPasswordErrors" />
@@ -32,18 +32,18 @@
                 </div>
                 <div class="lpHalf">
                     <h3>
-                        Forgot Your Username?
+                        {{ $t('auth.forgotUsernameTitle') }}
                     </h3>
 
                     <div v-if="forgotUsernameSent">
-                        <p>If that email is registered, check your mailbox. Your username is on its way.</p>
+                        <p>{{ $t('auth.forgotUsernameCheckInbox') }}</p>
                     </div>
                     <div v-else>
-                        <p>Please enter your email address.</p>
+                        <p>{{ $t('auth.forgotUsernameEnterEmail') }}</p>
                         <form class="forgotUsername" @submit.prevent="forgotUsername">
                             <div class="lpFields">
-                                <input v-model="forgotUsernameEmail" type="text" placeholder="Email Address" name="email" class="email">
-                                <input type="submit" value="Submit" class="lpButton">
+                                <input v-model="forgotUsernameEmail" type="text" :placeholder="$t('auth.email')" name="email" class="email">
+                                <input type="submit" :value="$t('auth.forgotPasswordSubmit')" class="lpButton">
                             </div>
 
                             <errors :errors="forgotUsernameErrors" />
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <router-link to="/signin" class="lpHref">
-                    &larr; Return to sign in
+                    &larr; {{ $t('auth.backToSignIn') }}
                 </router-link>
             </div>
         </modal>

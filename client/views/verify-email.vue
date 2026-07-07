@@ -35,37 +35,37 @@
         <modal id="verifyEmail" :shown="true" :blackout="true">
             <template v-if="status === 'success'">
                 <div class="lpVerifyIcon" style="color: var(--color-accent);">✓</div>
-                <h2>Email verified!</h2>
-                <p class="lpVerifyMessage">You can now share your lists publicly with the community.</p>
+                <h2>{{ $t('auth.emailVerifiedTitle') }}</h2>
+                <p class="lpVerifyMessage">{{ $t('auth.emailVerifiedMessage') }}</p>
                 <div class="lpButtons">
-                    <button class="lpButton" @click="goToPack">Back to my pack</button>
+                    <button class="lpButton" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
                 </div>
             </template>
             <template v-else-if="status === 'error'">
                 <div class="lpVerifyIcon" style="color: var(--color-danger);">✗</div>
-                <h2>Link expired or invalid</h2>
-                <p class="lpVerifyMessage">This verification link has already been used or is no longer valid.</p>
+                <h2>{{ $t('auth.linkExpiredTitle') }}</h2>
+                <p class="lpVerifyMessage">{{ $t('auth.linkExpiredMessage') }}</p>
                 <div class="lpButtons">
                     <template v-if="alreadyVerified">
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">Your email is verified — go to your pack</button>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.alreadyVerified') }}</button>
                     </template>
                     <template v-else-if="resendSent">
-                        <p class="lpVerifyMessage" style="margin:0 0 16px;">Check your inbox — a new link is on its way.</p>
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">Back to my pack</button>
+                        <p class="lpVerifyMessage" style="margin:0 0 16px;">{{ $t('auth.newLinkSent') }}</p>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
                     </template>
                     <template v-else>
-                        <button class="lpButton" @click="resend">Send a new link</button>
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">Back to my pack</button>
+                        <button class="lpButton" @click="resend">{{ $t('auth.sendNewLink') }}</button>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
                     </template>
                 </div>
                 <p v-if="resendError" class="lpVerifyError">{{ resendError }}</p>
             </template>
             <template v-else>
                 <div class="lpVerifyIcon" style="color: var(--color-accent);">✉</div>
-                <h2>Check your inbox</h2>
-                <p class="lpVerifyMessage">We sent a verification link to your email. Click it to unlock public sharing on ZenPak.</p>
+                <h2>{{ $t('auth.checkInboxTitle') }}</h2>
+                <p class="lpVerifyMessage">{{ $t('auth.checkInboxMessage') }}</p>
                 <div class="lpButtons">
-                    <button class="lpButton lpButtonSecondary" @click="goToPack">Back to my pack</button>
+                    <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
                 </div>
             </template>
         </modal>
@@ -109,7 +109,7 @@ export default {
                         this.resendSent = true;
                     }
                 })
-                .catch((err) => { this.resendError = (err && err.message) || 'An error occurred. Try from your dashboard.'; });
+                .catch((err) => { this.resendError = (err && err.message) || this.$t('auth.verifyEmailError'); });
         },
     },
 };

@@ -7,20 +7,20 @@
 <template>
     <div id="resetPasswordContainer">
         <modal id="resetPassword" :shown="true" :blackout="true">
-            <h3>Reset your password</h3>
+            <h3>{{ $t('auth.resetPasswordTitle') }}</h3>
 
             <div v-if="success">
-                <p>Password updated. <router-link to="/welcome" class="lpHref">Sign in →</router-link></p>
+                <p>{{ $t('auth.passwordUpdated') }} <router-link to="/welcome" class="lpHref">{{ $t('auth.signIn') }} →</router-link></p>
             </div>
             <div v-else-if="!token">
-                <p>Invalid reset link. <router-link to="/forgot-password" class="lpHref">Request a new one →</router-link></p>
+                <p>{{ $t('auth.invalidResetLink') }} <router-link to="/forgot-password" class="lpHref">{{ $t('auth.requestNewResetLink') }} →</router-link></p>
             </div>
             <div v-else>
                 <form @submit.prevent="submit">
                     <div class="lpFields">
-                        <input v-model="password" type="password" placeholder="New password (min 6 chars)" autocomplete="new-password">
-                        <input v-model="confirm" type="password" placeholder="Confirm new password" autocomplete="new-password">
-                        <input type="submit" value="Set new password" class="lpButton" :disabled="loading">
+                        <input v-model="password" type="password" :placeholder="$t('auth.newPasswordPlaceholder')" autocomplete="new-password">
+                        <input v-model="confirm" type="password" :placeholder="$t('auth.confirmPasswordPlaceholder')" autocomplete="new-password">
+                        <input type="submit" :value="$t('auth.setNewPassword')" class="lpButton" :disabled="loading">
                     </div>
                     <errors :errors="errors" />
                 </form>
@@ -53,11 +53,11 @@ export default {
         async submit() {
             this.errors = [];
             if (this.password.length < 6) {
-                this.errors = [{ message: 'Password must be at least 6 characters.' }];
+                this.errors = [{ message: this.$t('auth.passwordMinLength') }];
                 return;
             }
             if (this.password !== this.confirm) {
-                this.errors = [{ message: 'Passwords do not match.' }];
+                this.errors = [{ message: this.$t('auth.passwordsDoNotMatch') }];
                 return;
             }
             this.loading = true;
@@ -69,7 +69,7 @@ export default {
                 });
                 this.success = true;
             } catch (e) {
-                this.errors = (e.json && e.json.errors) || [{ message: 'An error occurred, please try again.' }];
+                this.errors = (e.json && e.json.errors) || [{ message: this.$t('auth.resetPasswordError') }];
             } finally {
                 this.loading = false;
             }
