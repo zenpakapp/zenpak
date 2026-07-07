@@ -58,7 +58,7 @@ Category.prototype.calculateSubtotal = function () {
             continue;
         }
         this.subtotalWeight += item.weight * categoryItem.qty;
-        this.subtotalPrice += item.price * categoryItem.qty;
+        this.subtotalPrice += (isNaN(item.price) ? 0 : item.price) * categoryItem.qty;
 
         if (this.library.optionalFields.worn && categoryItem.worn) {
             this.subtotalWornWeight += item.weight * ((categoryItem.qty > 0) ? 1 : 0);

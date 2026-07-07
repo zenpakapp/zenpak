@@ -31,8 +31,10 @@ Item.prototype.save = function () {
 Item.prototype.load = function (input) {
     assignIn(this, input);
     if (typeof this.price === 'string') {
-        this.price = parseFloat(this.price, 10);
+        const parsed = parseFloat(this.price, 10);
+        this.price = isNaN(parsed) ? 0 : parsed;
     }
+    if (typeof this.price !== 'number' || isNaN(this.price)) this.price = 0;
 };
 
 module.exports = { Item };
