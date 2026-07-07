@@ -110,7 +110,7 @@
         <PopoverHover id="headerPopover">
             <template #target>
                 <span class="accountDropdownTarget" :title="username">
-                    <span class="accountDropdownLead">Signed in as</span>
+                    <span class="accountDropdownLead">{{ $t('dash.signedInAs') }}</span>
                     <strong class="accountDropdownName">{{ username }}</strong>
                     <i class="lpSprite lpExpand accountDropdownCaret" />
                 </span>
@@ -118,14 +118,14 @@
             <template #content>
                 <div class="accountDropdownMenu">
                     <div class="accountDropdownUser">
-                        Signed in as
+                        {{ $t('dash.signedInAs') }}
                         <span class="accountDropdownUsername">{{ username }}</span>
                     </div>
-                    <a class="accountDropdownItem" @click="showAccount">Account Settings</a>
-                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">My Profile</router-link>
-                    <a class="accountDropdownItem" @click="showHelp">Help</a>
+                    <a class="accountDropdownItem" @click="showAccount">{{ $t('dash.accountSettings') }}</a>
+                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.myProfile') }}</router-link>
+                    <a class="accountDropdownItem" @click="showHelp">{{ $t('dash.help') }}</a>
                     <hr class="accountDropdownDivider">
-                    <a class="accountDropdownItem accountDropdownDanger" @click="signout">Sign Out</a>
+                    <a class="accountDropdownItem accountDropdownDanger" @click="signout">{{ $t('dash.signOut') }}</a>
                 </div>
             </template>
         </PopoverHover>

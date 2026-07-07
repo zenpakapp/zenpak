@@ -23,41 +23,41 @@
                     <notifications />
                 </span>
                 <span v-if="isSignedIn" class="headerItem">
-                    <router-link to="/community" class="lpTarget">Community</router-link>
+                    <router-link to="/community" class="lpTarget">{{ $t('dash.community') }}</router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">
-                    <router-link to="/guide" class="lpTarget">Wayfarer</router-link>
+                    <router-link to="/guide" class="lpTarget">{{ $t('dash.guide') }}</router-link>
                 </span>
                 <share />
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />
                 <span v-else class="headerItem signInRegisterButtons">
-                    <router-link to="/register" class="lpButton lpSmall">Register</router-link>
+                    <router-link to="/register" class="lpButton lpSmall">{{ $t('dash.register') }}</router-link>
                     or
-                    <router-link to="/signin" class="lpButton lpSmall">Sign In</router-link>
+                    <router-link to="/signin" class="lpButton lpSmall">{{ $t('dash.signIn') }}</router-link>
                 </span>
                 <span class="clearfix" />
             </div>
 
             <div v-if="isSignedIn && emailVerified === false && !verifyBannerDismissed" class="lpVerifyBanner">
-                <span v-if="verifyResendSent">Verification email sent! Check your inbox.</span>
+                <span v-if="verifyResendSent">{{ $t('dash.verificationEmailSent') }}</span>
                 <template v-else>
-                    <span>Verify your email to share lists publicly.</span>
-                    <button class="lpVerifyBannerBtn" @click="resendVerification">Resend email</button>
+                    <span>{{ $t('dash.verifyEmailPrompt') }}</span>
+                    <button class="lpVerifyBannerBtn" @click="resendVerification">{{ $t('dash.resendEmail') }}</button>
                     <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
                 </template>
                 <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">✕</button>
             </div>
 
             <div v-if="billingSuccess" class="lpBillingSuccessBanner">
-                ✓ Thank you for supporting ZenPak! Your {{ planLabel }} plan is now active.
+                ✓ {{ $t('dash.thankYouZenPak') }} {{ $t('dash.planNowActive', { plan: planLabel }) }}
             </div>
             <div v-if="billingCancelled" class="lpBillingCancelBanner">
-                No worries — you can upgrade whenever you're ready.
+                {{ $t('dash.billingCancelled') }}
             </div>
 <div v-if="isPastDue" class="lpPastDueBanner">
-                <span>⚠ Your payment failed. Update your payment method to keep your {{ planLabel }} plan.</span>
-                <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">Fix payment</button>
+                <span>⚠ {{ $t('dash.paymentFailed') }} {{ planLabel }} {{ $t('dash.plan') }}.</span>
+                <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">{{ $t('dash.fixPayment') }}</button>
             </div>
 
             <list />
@@ -68,25 +68,25 @@
                 <profile-insights v-if="isGuide" />
                 <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
                 <template v-else>
-                    <p>Enjoying the app? Support the project and get a public profile to share your picks with the community.</p>
-                    <router-link to="/about" class="lpHref">Learn more →</router-link>
+                    <p>{{ $t('dash.enjoyingApp') }}</p>
+                    <router-link to="/about" class="lpHref">{{ $t('dash.learnMore') }}</router-link>
                 </template>
             </div>
 
             <div id="lpFooter">
                 <div class="lpSiteBy">
-                    ZenPak is an independent open-source packing tool built on <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">LighterPack</a>.
+                    {{ $t('dash.footerBuiltOn') }} <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">LighterPack</a>.
                 </div>
                 <div class="lpContact">
-                    <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">Open source</a>
+                    <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('dash.footerOpenSource') }}</a>
                     -
-                    <a class="lpHref" href="/privacy">Privacy</a>
+                    <a class="lpHref" href="/privacy">{{ $t('dash.footerPrivacy') }}</a>
                     -
-                    <a class="lpHref" href="/terms">Terms</a>
+                    <a class="lpHref" href="/terms">{{ $t('dash.footerTerms') }}</a>
                     -
-                    <a class="lpHref" href="/legal">Legal</a>
+                    <a class="lpHref" href="/legal">{{ $t('dash.footerLegal') }}</a>
                     -
-                    <a class="lpHref" href="mailto:info@zenpak.app">Contact</a>
+                    <a class="lpHref" href="mailto:info@zenpak.app">{{ $t('dash.footerContact') }}</a>
                 </div>
             </div>
         </div>

@@ -158,13 +158,13 @@ $sidebarPadding: 20px;
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
         <div id="scrollable">
-            <h1>ZenPak</h1>
+            <h1>{{ $t('dash.zenPakSidebar') }}</h1>
 
             <libraryLists />
             <section class="lpGearSection">
                 <h2 class="lpGearSectionHeader">
-                    Items
-                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">Item Library</button>
+                    {{ $t('dash.items') }}
+                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">{{ $t('dash.itemLibrary') }}</button>
                 </h2>
                 <libraryItems :show-title="false" />
             </section>

@@ -170,5 +170,37 @@
   "errors": {
     "saveFailed": "An error occurred while saving.",
     "notFound": "Not found."
+  },
+  "dash": {
+    "community": "Community",
+    "guide": "Wayfarer",
+    "register": "Register",
+    "signIn": "Sign In",
+    "verificationEmailSent": "Verification email sent! Check your inbox.",
+    "verifyEmailPrompt": "Verify your email to share lists publicly.",
+    "resendEmail": "Resend email",
+    "thankYouZenPak": "Thank you for supporting ZenPak!",
+    "planNowActive": "Your {plan} plan is now active.",
+    "billingCancelled": "No worries — you can upgrade whenever you're ready.",
+    "paymentFailed": "Your payment failed. Update your payment method to keep your",
+    "plan": "plan",
+    "fixPayment": "Fix payment",
+    "enjoyingApp": "Enjoying the app? Support the project and get a public profile to share your picks with the community.",
+    "learnMore": "Learn more →",
+    "zenPakSidebar": "ZenPak",
+    "items": "Items",
+    "itemLibrary": "Item Library",
+    "footerBuiltOn": "ZenPak is an independent open-source packing tool built on LighterPack.",
+    "footerAbout": "About",
+    "footerOpenSource": "Open source",
+    "footerPrivacy": "Privacy",
+    "footerTerms": "Terms",
+    "footerLegal": "Legal",
+    "footerContact": "Contact",
+    "signedInAs": "Signed in as",
+    "accountSettings": "Account Settings",
+    "myProfile": "My Profile",
+    "help": "Help",
+    "signOut": "Sign Out"
   }
 }
