@@ -3,6 +3,13 @@
 </style>
 
 <template>
+    <teleport to="head">
+        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path" />
+    </teleport>
     <div id="lpWelcomeContainer">
         <section class="lpWelcomeHero">
             <div class="lpContainer lpWelcomeHeroInner">
@@ -159,6 +166,11 @@ export default {
         return {
             showOnboarding: false,
         };
+    },
+    computed: {
+        canonicalBase() {
+            return window.location.origin;
+        },
     },
     created() {
         const query = this.$route?.query || {};

@@ -3,6 +3,13 @@
 </style>
 
 <template>
+    <teleport to="head">
+        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path" />
+    </teleport>
     <main class="lpPublicProfile">
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
 
@@ -130,6 +137,9 @@ export default {
         };
     },
     computed: {
+        canonicalBase() {
+            return window.location.origin;
+        },
         safeLinks() {
             if (!this.profile || !Array.isArray(this.profile.links)) return [];
             return this.profile.links.filter((link) => {
