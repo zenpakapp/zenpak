@@ -1,0 +1,10 @@
+{
+  "category": "Kategorie",
+  "price": "Preis",
+  "weight": "Gewicht",
+  "total": "Gesamt",
+  "worn": "Getragen",
+  "consumable": "Verbrauchsmaterial",
+  "baseWeight": "Basisgewicht",
+  "description": "Beschreibung"
+}

@@ -1,0 +1,10 @@
+{
+  "category": "Catégorie",
+  "price": "Prix",
+  "weight": "Poids",
+  "total": "Total",
+  "worn": "Porté",
+  "consumable": "Consommable",
+  "baseWeight": "Poids de base",
+  "description": "Description"
+}

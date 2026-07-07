@@ -2,15 +2,15 @@
     <li class="lpRow lpHeader">
         <span class="lpCell">&nbsp;</span>
         <span class="lpCell">
-            Category
+            {{t.category}}
         </span>
         {{#showPrices}}
         <span class="lpCell">
-            Price
+            {{t.price}}
         </span>
         {{/showPrices}}
         <span class="lpCell">
-            Weight
+            {{t.weight}}
         </span>
     </li>
     {{#categories}}
@@ -32,7 +32,7 @@
     <li class="lpRow lpFooter lpTotal">
         <span class="lpCell"></span>
         <span class="lpCell lpSubtotal" title="{{totalQty}} items">
-            Total
+            {{t.total}}
         </span>
         {{#showPrices}}<span class="lpCell lpNumber lpSubtotal items">{{totalPriceDisplay}}</span>{{/showPrices}}
         <span class="lpCell lpNumber lpSubtotal">
@@ -44,7 +44,7 @@
         <li data-weight-type="consumable" class="lpRow lpFooter lpBreakdown lpConsumableWeight">
             <span class="lpCell"></span>
             <span class="lpCell lpSubtotal">
-                Consumable
+                {{t.consumable}}
             </span>
             {{#showPrices}}
             <span class="lpCell"></span>
@@ -59,7 +59,7 @@
         <li data-weight-type="worn" class="lpRow lpFooter lpBreakdown lpWornWeight">
             <span class="lpCell"></span>
             <span class="lpCell lpSubtotal">
-                Worn
+                {{t.worn}}
             </span>
             {{#showPrices}}
             <span class="lpCell"></span>
@@ -74,7 +74,7 @@
         <li data-weight-type="base" class="lpRow lpFooter lpBreakdown lpPackWeight">
             <span class="lpCell"></span>
             <span class="lpCell lpSubtotal">
-                Base Weight
+                {{t.baseWeight}}
             </span>
             {{#showPrices}}
             <span class="lpCell"></span>

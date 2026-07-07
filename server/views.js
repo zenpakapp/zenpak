@@ -2,6 +2,20 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 
+const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es'];
+const serverLocales = {};
+SUPPORTED_LOCALES.forEach((lang) => {
+    serverLocales[lang] = JSON.parse(
+        fs.readFileSync(path.join(__dirname, `locales/${lang}.json`), 'utf8')
+    );
+});
+
+function resolveLocale(req) {
+    const header = req.headers['accept-language'] || '';
+    const lang = header.slice(0, 2).toLowerCase();
+    return SUPPORTED_LOCALES.includes(lang) ? lang : 'en';
+}
+
 const router = express.Router();
 const Mustache = require('mustache');
 const markdown = require('markdown').markdown;
@@ -163,7 +177,8 @@ router.get('/r/:id', (req, res) => {
             currencySymbol: library.currencySymbol,
         });
 
-        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+        const t = serverLocales[resolveLocale(req)];
+        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect, t);
 
         let model = {
             listName: list.name,
@@ -174,6 +189,7 @@ router.get('/r/:id', (req, res) => {
             renderedDescription: markdown.toHTML(list.description),
             scripts: shareScriptsHtml,
             styles: shareStylesHtml,
+            t,
         };
 
         model = Object.assign(model, templates);
@@ -228,7 +244,8 @@ router.get('/e/:id', (req, res) => {
             currencySymbol: library.currencySymbol,
         });
 
-        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect);
+        const t = serverLocales[resolveLocale(req)];
+        const renderedTotals = renderLibraryTotals(library, templates.t_totals, templates.t_unitSelect, t);
 
         let model = {
             externalId: id,
@@ -241,6 +258,7 @@ router.get('/e/:id', (req, res) => {
             baseUrl: getDeployUrl(req),
             styles: shareStylesLinks,
             scripts: shareScriptsLinks,
+            t,
         };
         model = Object.assign(model, templates);
         model.renderedTemplate = escape(Mustache.render(embedTemplate, model));
@@ -508,7 +526,7 @@ var renderLibrary = function (library, args) {
     return renderList(library.getListById(library.defaultListId), renderArgs);
 };
 
-const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, unit) {
+const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, unit, t) {
     let totalWeight = 0;
     let totalWornWeight = 0;
     let totalConsumableWeight = 0;
@@ -556,11 +574,12 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     out.totalConsumablePriceDisplay = formatDisplayPrice(totalConsumablePrice || 0, list.library.currencySymbol);
     out.showPrices = list.library.optionalFields.price;
 
+    if (t) out.t = t;
     return Mustache.render(totalsTemplate, out);
 };
 
-var renderLibraryTotals = function (library, totalsTemplate, unitSelectTemplate) {
-    return renderListTotals(library.getListById(library.defaultListId), totalsTemplate, unitSelectTemplate, library.totalUnit);
+var renderLibraryTotals = function (library, totalsTemplate, unitSelectTemplate, t) {
+    return renderListTotals(library.getListById(library.defaultListId), totalsTemplate, unitSelectTemplate, library.totalUnit, t);
 };
 
 function renderUnitSelect(unit, unitSelectTemplate, weight) {
