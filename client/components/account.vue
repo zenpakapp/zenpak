@@ -4,36 +4,36 @@
 
 <template>
     <modal id="accountSettings" :shown="shown" @hide="shown = false">
-        <h2 class="accountSettingsTitle">Account Settings</h2>
+        <h2 class="accountSettingsTitle">{{ $t('acct.accountSettings') }}</h2>
 
         <section class="accountSection">
             <form id="accountForm" @submit.prevent="updateAccount()">
                 <div class="accountFieldGroup">
                     <div class="accountField">
-                        <span class="accountFieldLabel">Username</span>
+                        <span class="accountFieldLabel">{{ $t('acct.username') }}</span>
                         <input type="text" name="username" class="accountFieldInput" disabled :value="username">
                     </div>
                     <div class="accountField">
-                        <span class="accountFieldLabel">Current password</span>
-                        <input v-model="currentPassword" type="password" class="accountFieldInput" placeholder="Required to make changes" name="currentPassword">
+                        <span class="accountFieldLabel">{{ $t('acct.currentPassword') }}</span>
+                        <input v-model="currentPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.requiredToMakeChanges')" name="currentPassword">
                     </div>
 
                     <hr class="accountFieldGroupDivider">
 
                     <div class="accountField">
-                        <span class="accountFieldLabel">New email</span>
-                        <input v-model="newEmail" type="email" class="accountFieldInput" placeholder="Leave blank to keep current" name="newEmail">
+                        <span class="accountFieldLabel">{{ $t('acct.newEmail') }}</span>
+                        <input v-model="newEmail" type="email" class="accountFieldInput" :placeholder="$t('acct.leaveBlankEmail')" name="newEmail">
                     </div>
 
                     <hr class="accountFieldGroupDivider">
 
                     <div class="accountField">
-                        <span class="accountFieldLabel">New password</span>
-                        <input v-model="newPassword" type="password" class="accountFieldInput" placeholder="Leave blank to keep current" name="newPassword">
+                        <span class="accountFieldLabel">{{ $t('acct.newPassword') }}</span>
+                        <input v-model="newPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.leaveBlankEmail')" name="newPassword">
                     </div>
                     <div class="accountField">
-                        <span class="accountFieldLabel">Confirm new password</span>
-                        <input v-model="confirmNewPassword" type="password" class="accountFieldInput" placeholder="Repeat new password" name="confirmNewPassword">
+                        <span class="accountFieldLabel">{{ $t('acct.confirmNewPassword') }}</span>
+                        <input v-model="confirmNewPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.repeatNewPassword')" name="confirmNewPassword">
                     </div>
                 </div>
 
@@ -41,34 +41,34 @@
 
                 <div class="accountActions">
                     <button class="lpButton">
-                        Save changes
+                        {{ $t('acct.saveChanges') }}
                         <spinner v-if="saving" />
                     </button>
                     <div class="accountActionsRight">
-                        <a class="accountCancelLink" @click="shown = false">Cancel</a>
-                        <a class="accountDangerLink" @click="showDeleteAccount">Delete account</a>
+                        <a class="accountCancelLink" @click="shown = false">{{ $t('acct.cancel') }}</a>
+                        <a class="accountDangerLink" @click="showDeleteAccount">{{ $t('acct.deleteAccount') }}</a>
                     </div>
                 </div>
             </form>
         </section>
 
         <section class="accountSection">
-            <h3 class="accountSectionTitle">Library backup</h3>
+            <h3 class="accountSectionTitle">{{ $t('acct.libraryBackup') }}</h3>
             <template v-if="hasBackup">
-                <p class="accountSectionText">Download or restore your full gear library.</p>
+                <p class="accountSectionText">{{ $t('acct.libraryBackupDesc') }}</p>
                 <div class="accountBackupActions">
                     <button class="lpButton" @click="downloadBackup" :disabled="backupLoading">
-                        {{ backupLoading ? 'Preparing…' : 'Download backup' }}
+                        {{ backupLoading ? $t('acct.preparing') : $t('acct.downloadBackup') }}
                     </button>
                     <button class="lpButton lpButtonSecondary" @click="triggerRestoreFile" :disabled="restoreLoading">
-                        {{ restoreLoading ? 'Restoring…' : 'Restore from backup' }}
+                        {{ restoreLoading ? $t('acct.restoring') : $t('acct.restoreFromBackup') }}
                     </button>
                 </div>
                 <div v-if="restoreConfirm" class="accountRestoreConfirm">
-                    <p class="accountRestoreConfirmText">⚠ This will replace your entire library. This cannot be undone.</p>
+                    <p class="accountRestoreConfirmText">{{ $t('acct.restoreWarning') }}</p>
                     <div class="accountRestoreConfirmActions">
-                        <button class="lpButton lpButtonDanger" @click="confirmRestore">Yes, restore</button>
-                        <a class="accountCancelLink" @click="restoreConfirm = false; restoreFile = null">Cancel</a>
+                        <button class="lpButton lpButtonDanger" @click="confirmRestore">{{ $t('acct.yesRestore') }}</button>
+                        <a class="accountCancelLink" @click="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
                     </div>
                 </div>
                 <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />
@@ -79,21 +79,21 @@
             <h3 class="accountSectionTitle">Subscription</h3>
 
             <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
-                Payment failed — update your payment method to keep your plan.
+                {{ $t('acct.paymentFailed') }}
                 <div class="accountActions">
-                    <button class="lpButton lpButtonDanger" @click="openPortal">Update payment</button>
+                    <button class="lpButton lpButtonDanger" @click="openPortal">{{ $t('acct.updatePayment') }}</button>
                 </div>
             </div>
 
             <div v-if="billingError" class="accountBillingError">{{ billingError }}</div>
 
             <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
-                <p class="accountSectionText">Unlock more features by upgrading your plan.</p>
+                <p class="accountSectionText">{{ $t('acct.upgradePrompt') }}</p>
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Kin</strong> — €19/year</p>
+                        <p class="accountSectionText"><strong>Kin</strong> — {{ $t('acct.kinPrice') }}</p>
                         <button @click="openCheckout('trail')" class="lpButton accountBillingKinBtn">
-                            Upgrade to Kin
+                            {{ $t('acct.upgradeToKin') }}
                         </button>
                     </div>
                     <div class="accountBillingOption">
@@ -103,20 +103,20 @@
                                 :class="['lpButton', selectedGuideInterval === 'month' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
                                 @click="selectedGuideInterval = 'month'"
                             >
-                                €5/month
+                                {{ $t('acct.wayfarerMonthPrice') }}
                             </button>
                             <button
                                 :class="['lpButton', selectedGuideInterval === 'year' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
                                 @click="selectedGuideInterval = 'year'"
                             >
-                                €39/year
+                                {{ $t('acct.wayfarerYearPrice') }}
                             </button>
                         </div>
                         <button
                             @click="openCheckout('guide', selectedGuideInterval)"
                             class="lpButton lpButtonPrimary"
                         >
-                            Upgrade to Wayfarer
+                            {{ $t('acct.upgradeToWayfarer') }}
                         </button>
                     </div>
                 </div>
@@ -124,22 +124,22 @@
 
             <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    Current plan: <strong>Kin</strong>
-                    <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
+                    {{ $t('acct.currentPlan') }}<strong>Kin</strong>
+                    <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonPrimary" @click="openPortal">Upgrade to Wayfarer</button>
-                    <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
+                    <button class="lpButton lpButtonPrimary" @click="openPortal">{{ $t('acct.upgradeToWayfarer') }}</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal">{{ $t('acct.manageSubscription') }}</button>
                 </div>
             </div>
 
             <div v-if="billing.plan === 'creator'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    Current plan: <strong>Wayfarer</strong>
-                    <span v-if="billing.cancelAtPeriodEnd"> — cancels {{ formatDate(billing.currentPeriodEnd) }}</span>
+                    {{ $t('acct.currentPlan') }}<strong>Wayfarer</strong>
+                    <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonSecondary" @click="openPortal">Manage subscription</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal">{{ $t('acct.manageSubscription') }}</button>
                 </div>
             </div>
         </section>
@@ -261,15 +261,15 @@ export default {
             this.errors = [];
 
             if (!this.currentPassword) {
-                this.errors.push({ field: 'currentPassword', message: 'Please enter your current password.' });
+                this.errors.push({ field: 'currentPassword', message: this.$t('acct.errorCurrentPassword') });
             }
 
             if (this.newPassword && this.newPassword != this.confirmNewPassword) {
-                this.errors.push({ field: 'newPassword', message: "Your passwords don't match." });
+                this.errors.push({ field: 'newPassword', message: this.$t('acct.errorPasswordsNoMatch') });
             }
 
             if (this.newPassword && (this.newPassword.length < 5 || this.newPassword.length > 60)) {
-                this.errors.push({ field: 'newPassword', message: 'Please enter a password between 5 and 60 characters.' });
+                this.errors.push({ field: 'newPassword', message: this.$t('acct.errorPasswordLength') });
             }
 
             if (this.errors.length) {

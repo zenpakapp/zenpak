@@ -151,10 +151,10 @@
 
 <template>
     <section class="profileSettings">
-        <h3 class="profileSettingsSectionTitle">Default units</h3>
+        <h3 class="profileSettingsSectionTitle">{{ $t('acct.defaultUnits') }}</h3>
         <div class="profileSettingsGrid">
             <div class="profileSettingsField">
-                <span class="profileSettingsLabel">Item weight</span>
+                <span class="profileSettingsLabel">{{ $t('acct.itemWeight') }}</span>
                 <div class="profileSettingsSelectWrap">
                     <select class="profileSettingsSelect" :value="library.itemUnit" @change="updateDefaultUnit('itemUnit', $event.target.value)">
                         <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
@@ -162,7 +162,7 @@
                 </div>
             </div>
             <div class="profileSettingsField">
-                <span class="profileSettingsLabel">List totals</span>
+                <span class="profileSettingsLabel">{{ $t('acct.listTotals') }}</span>
                 <div class="profileSettingsSelectWrap">
                     <select class="profileSettingsSelect" :value="library.totalUnit" @change="updateDefaultUnit('totalUnit', $event.target.value)">
                         <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="profileSettingsField">
-                <span class="profileSettingsLabel">Default currency</span>
+                <span class="profileSettingsLabel">{{ $t('acct.defaultCurrency') }}</span>
                 <input
                     type="text"
                     class="profileSettingsInput"
@@ -181,9 +181,9 @@
             </div>
         </div>
 
-        <h3 class="profileSettingsSectionTitle">Public profile</h3>
+        <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
         <div class="profileSettingsField">
-            <span class="profileSettingsLabel">Avatar</span>
+            <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
             <div class="profileSettingsAvatar">
                 <div class="profileSettingsAvatarPreview">
                     <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
@@ -191,40 +191,40 @@
                 </div>
                 <div class="profileSettingsAvatarActions">
                     <label class="lpButton lpSmall profileSettingsAvatarBtn">
-                        {{ avatarUploading ? 'Uploading…' : 'Upload photo' }}
+                        {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
                         <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
                     </label>
-                    <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">Remove</button>
+                    <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">{{ $t('acct.remove') }}</button>
                 </div>
                 <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
             </div>
         </div>
         <div class="profileSettingsField">
-            <span class="profileSettingsLabel">Display name</span>
+            <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
             <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
         </div>
         <div class="profileSettingsField">
-            <span class="profileSettingsLabel">Trail name</span>
+            <span class="profileSettingsLabel">{{ $t('acct.trailName') }}</span>
             <input type="text" class="profileSettingsInput" :value="profile.trailName" @input="update('trailName', $event.target.value)">
         </div>
         <div class="profileSettingsField">
-            <span class="profileSettingsLabel">Bio</span>
+            <span class="profileSettingsLabel">{{ $t('acct.bio') }}</span>
             <textarea class="profileSettingsTextarea" :value="profile.bio" @input="update('bio', $event.target.value)" />
         </div>
         <div class="profileSettingsField">
-            <span class="profileSettingsLabel">Visibility</span>
+            <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
             <div class="profileSettingsSelectWrap">
                 <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
-                    <option value="private">Private</option>
-                    <option value="shareable">Shareable</option>
-                    <option value="discoverable">Discoverable</option>
-                    <option value="indexable">Indexable</option>
+                    <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
+                    <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
+                    <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
+                    <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
                 </select>
             </div>
         </div>
         <label class="profileSettingsCheckbox">
             <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
-            Allow search indexing
+            {{ $t('acct.allowSearchIndexing') }}
         </label>
     </section>
 </template>

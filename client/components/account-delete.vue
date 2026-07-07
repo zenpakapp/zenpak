@@ -6,24 +6,24 @@
 
 <template>
     <modal id="deleteAccount" :shown="shown" @hide="shown = false">
-        <h2>Delete account?</h2>
+        <h2>{{ $t('acct.deleteAccountTitle') }}</h2>
 
         <form id="accountForm" @submit.prevent="deleteAccount()">
             <p class="lpWarning">
-                <strong>This action is permanent and cannot be undone.</strong>
+                <strong>{{ $t('acct.deleteAccountPermanent') }}</strong>
             </p>
-            <p>If you want to delete your account, please enter your current password and the text <strong>delete my account</strong>:</p>
+            <p v-html="$t('acct.deleteAccountInstructions')"></p>
             <div class="lpFields">
-                <input v-model="currentPassword" type="password" placeholder="Current password" name="currentPassword" class="currentPassword">
+                <input v-model="currentPassword" type="password" :placeholder="$t('acct.currentPassword')" name="currentPassword" class="currentPassword">
 
-                <input v-model="confirmationText" type="text" name="confirmationText" placeholder="Confirmation text">
+                <input v-model="confirmationText" type="text" name="confirmationText" :placeholder="$t('acct.confirmationText')">
             </div>
 
             <errors :errors="errors" />
 
             <div class="lpButtons">
-                <input type="submit" value="Permanently delete account" :class="{'lpButton': true, 'lpButtonDisabled': !isConfirmationComplete}">
-                <a class="lpHref" @click="shown = false">Cancel</a>
+                <input type="submit" :value="$t('acct.permanentlyDelete')" :class="{'lpButton': true, 'lpButtonDisabled': !isConfirmationComplete}">
+                <a class="lpHref" @click="shown = false">{{ $t('acct.cancel') }}</a>
             </div>
         </form>
     </modal>
