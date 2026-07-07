@@ -250,6 +250,7 @@ module.exports = function (args) {
             return;
         }
         container.addEventListener('mousemove', hoverHandle);
+        container.addEventListener('mouseleave', mouseLeaveHandle);
         container.addEventListener('click', clickHandle);
         eventsAttached = true;
     }
@@ -259,6 +260,7 @@ module.exports = function (args) {
             return;
         }
         container.removeEventListener('mousemove', hoverHandle);
+        container.removeEventListener('mouseleave', mouseLeaveHandle);
         container.removeEventListener('click', clickHandle);
         eventsAttached = false;
     }
@@ -271,6 +273,16 @@ module.exports = function (args) {
         }
 
         tooltip = null;
+    }
+
+    function mouseLeaveHandle() {
+        if (hovered) {
+            drawSlice(hovered);
+            if (hoverCallback) hoverCallback(null);
+        }
+        hovered = 0;
+        container.classList.remove('activeHover');
+        if (tooltip) tooltip.style.display = 'none';
     }
 
     function hoverHandle(evt) {
