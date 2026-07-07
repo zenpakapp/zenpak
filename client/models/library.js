@@ -182,7 +182,9 @@ Library.prototype.copyList = function (id) {
 };
 
 Library.prototype.renderChart = function (type) {
-    return this.getListById(this.defaultListId).renderChart(type);
+    const list = this.getListById(this.defaultListId);
+    if (!list) return false;
+    return list.renderChart(type);
 };
 
 Library.prototype.getCategoryById = function (id) {

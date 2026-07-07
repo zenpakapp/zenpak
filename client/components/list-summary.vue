@@ -175,6 +175,7 @@ export default {
         displayWeight,
         displayPrice,
         updateChart(type) {
+            if (!this.library || typeof this.library.renderChart !== 'function') return;
             const chartData = this.library.renderChart(type);
 
             if (chartData) {
