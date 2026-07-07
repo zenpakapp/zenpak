@@ -88,7 +88,7 @@ module.exports = {
         const item = state.library.getItemById(args.itemId);
         const dropCategory = state.library.getCategoryById(args.categoryId);
         if (item && dropCategory) {
-            dropCategory.addItem({ itemId: item.id });
+            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id });
             const categoryItem = dropCategory.getCategoryItemById(item.id);
             const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
             if (categoryItem && categoryItemIndex !== -1) {
@@ -228,9 +228,11 @@ module.exports = {
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
         state.library.getListById(state.library.defaultListId).calculateTotals();
+        state.categoryItemVersion += 1;
     },
     copyList(state, listId) {
         const copiedList = state.library.copyList(listId);
+        if (!copiedList) return;
         state.library.defaultListId = copiedList.id;
     },
 };

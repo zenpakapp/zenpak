@@ -40,7 +40,7 @@ Category.prototype.updateCategoryItem = function (categoryItem) {
 Category.prototype.removeItem = function (itemId) {
     const categoryItem = this.getCategoryItemById(itemId);
     const index = this.categoryItems.indexOf(categoryItem);
-    this.categoryItems.splice(index, 1);
+    if (index !== -1) this.categoryItems.splice(index, 1);
 };
 
 Category.prototype.calculateSubtotal = function () {

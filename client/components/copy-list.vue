@@ -62,11 +62,12 @@ export default {
     },
     methods: {
         copyList() {
-            if (!this.listId) {
-                return; // TODO: errors
+            if (!this.listId) return;
+            try {
+                this.$store.commit('copyList', this.listId);
+            } finally {
+                this.shown = false;
             }
-            this.$store.commit('copyList', this.listId);
-            this.shown = false;
         },
     },
 };
