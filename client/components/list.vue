@@ -115,6 +115,8 @@ export default {
             return lib.getListById(lib.defaultListId);
         },
         categories() {
+            void this.$store.state.listVersion;
+            if (!this.list) return [];
             return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
         },
         isListNew() {
