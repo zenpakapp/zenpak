@@ -95,6 +95,7 @@ module.exports = {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
             }
             state.library.getListById(state.library.defaultListId).calculateTotals();
+            state.categoryItemVersion += 1;
         }
     },
     createCategoryAndAddItem(state, args) {
