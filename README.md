@@ -4,46 +4,64 @@
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
-ZenPak is an open-source packing tool for hikers, travelers, pilgrims, cyclists, and anyone who wants to pack smarter. Built on the foundation of [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly.
+Open-source gear list tool for ultralight hikers. Build a reusable gear library, organize pack lists by category, track base weight to the gram. Share publicly or keep it private.
+
+No gear database. No pricing suggestions. You manage your gear.
+
+Built on [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly — actively maintained fork with community features, creator tools, and a billing layer to keep the hosted version alive.
 
 ## Features
 
-- **Gear library** — build a reusable catalog of your gear, weights, and photos
-- **Pack lists** — organize by category, track base weight to the gram
-- **Public sharing** — private, link-only, or discoverable by the community
-- **Public profiles** — showcase your gear philosophy and featured lists
-- **Community discover** — browse and copy lists from other packers
-- **Image upload** — attach photos to any gear item
-- **CSV import/export** — full round-trip fidelity with lighterpack.com
-
-## Plans
-
-The app is free — self-hosted or on **zenpak.app** (coming soon). Optional plans to support the project:
-
-- **Trail** (~3 €/month) — full library export (JSON), enhanced public profile, supporter badge
-- **Guide** (~8 €/month) — affiliate links, promo codes, and insights (views, copies, clicks)
-
-Self-hosting is always free and open-source. Plans are a way to support the project, not a paywall.
+- **Gear library** — reusable catalog with weights, photos, tags
+- **Pack lists** — organize by category, real-time weight chart
+- **Season and activity tags** — tag lists as 3-Season, Thru-hike, Winter Camping, Ultralight…
+- **Community discover** — browse public lists, filter by season, type, and base weight
+- **Public profiles** — gear philosophy, linked lists, follow system
+- **Packing mode** — check items off as you pack
+- **Import from lighterpack.com** — paste a URL or upload a CSV
+- **Creator tools** — affiliate links, promo codes, view/copy insights (Guide plan)
+- **Self-hosting** — full functionality, no account required
 
 ## Migrating from lighterpack.com
 
-1. On lighterpack.com → **Settings → Export CSV**
-2. Create an account on ZenPak
-3. **Settings → Import CSV** — upload the file
+```
+1. lighterpack.com → Settings → Export CSV
+2. Create a ZenPak account
+3. Settings → Import CSV
+```
 
-Lists, items, weights, and notes carry over.
+Or paste any public lighterpack.com list URL directly into the import dialog. Lists, items, weights, and categories carry over.
 
 ## Self-hosting
 
-Requirements: Node.js, npm, MongoDB.
+Requires Node.js 18+, npm, MongoDB 6+.
 
 ```bash
+git clone https://github.com/fxbenard/lighterpack
+cd lighterpack
 npm install
+cp config/default.json config/local.json
 npm run dev
 ```
 
-Open `http://localhost:8080`. MongoDB expected at `localhost/lighterpack`.
+`http://localhost:8080` — MongoDB at `localhost/lighterpack` by default.
+
+Stripe, email, and S3 are optional. Everything in `config/default.json`.
+
+## Plans
+
+Free on **zenpak.app**, free to self-host.
+
+| | **Kin** | **Wayfarer** |
+|--|---------|--------------|
+| Price | ~3 €/mo | ~8 €/mo |
+| JSON export | ✓ | ✓ |
+| Enhanced profile + badge | ✓ | ✓ |
+| Affiliate links + promo codes | | ✓ |
+| Insights (views, copies, clicks) | | ✓ |
+
+Plans support the project. Self-hosting is always fully functional.
 
 ## License
 
-Licensed under [GPL v2](LICENSE). Built from [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly. Not affiliated with lighterpack.com.
+[GPL v2](LICENSE). Not affiliated with lighterpack.com.
