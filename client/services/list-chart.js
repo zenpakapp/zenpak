@@ -27,7 +27,9 @@ export function renderListChart({ chart, canvas, processedData, hoverCallback })
     if (chart) {
         chart._categories = categories;
         chart.data.labels = categories.map((c) => c.name);
-        chart.data.datasets[0] = buildDataset(categories);
+        const ds = buildDataset(categories);
+        chart.data.datasets[0].data = ds.data;
+        chart.data.datasets[0].backgroundColor = ds.backgroundColor;
         chart.update();
         return chart;
     }

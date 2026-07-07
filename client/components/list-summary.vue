@@ -152,13 +152,7 @@ export default {
         },
     },
     watch: {
-        '$store.state.library.defaultListId'() {
-            if (this.chart) {
-                this.chart.destroy();
-                this.chart = null;
-            }
-            this.updateChart();
-        },
+        '$store.state.library.defaultListId': 'updateChart',
         'list.totalWeight': 'updateChart',
         'list.categoryIds': 'updateChart',
     },
