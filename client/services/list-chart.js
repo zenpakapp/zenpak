@@ -15,6 +15,7 @@ function buildDataset(categories) {
         borderWidth: 3,
         hoverBorderColor: 'rgb(50,50,50)',
         hoverBorderWidth: 2,
+        hoverOffset: 0,
     };
 }
 
@@ -44,6 +45,7 @@ export function renderListChart({ chart, canvas, processedData, hoverCallback })
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    caretSize: 0,
                     displayColors: false,
                     callbacks: {
                         label: () => null,
@@ -53,6 +55,9 @@ export function renderListChart({ chart, canvas, processedData, hoverCallback })
             onHover(event, elements, c) {
                 const cat = elements.length > 0 ? (c._categories?.[elements[0].index] ?? null) : null;
                 if (hoverCallback) hoverCallback(cat);
+                if (event.native) {
+                    event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+                }
             },
         },
     });

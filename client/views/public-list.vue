@@ -60,7 +60,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(cat, i) in chartCategories" :key="cat.id || cat.name">
+                        <tr v-for="(cat, i) in chartCategories" :key="cat.id || cat.name" :class="{ lpPublicChartRowActive: hoveredCategoryIdx === i }">
                             <td>
                                 <span class="lpPublicChartSwatch" :style="{ background: cat.color }" />
                                 {{ cat.name }}
@@ -124,14 +124,16 @@
 </template>
 
 <script>
+import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 import { fetchJson } from '../utils/utils';
 import { useTheme } from '../composables/useTheme';
 import { useRouter } from 'vue-router';
 import { useBackNav } from '../composables/useBackNav';
 import { useCopyList } from '../composables/useCopyList';
-const pies = require('../pies.js');
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
+
+Chart.register(DoughnutController, ArcElement, Tooltip);
 
 export default {
     name: 'PublicList',
@@ -156,6 +158,7 @@ export default {
             authorTier: null,
             chart: null,
             copySuccess: false,
+            hoveredCategoryIdx: null,
         };
     },
     computed: {
@@ -242,26 +245,47 @@ export default {
         },
         renderChart() {
             const canvas = this.$refs.chartCanvas;
-            if (!canvas || !this.chartCategories.length) return;
-            const total = this.chartCategories.reduce((sum, cat) => sum + cat.subtotalWeight, 0);
+            const categories = this.chartCategories;
+            if (!canvas || !categories.length) return;
+            const total = categories.reduce((sum, cat) => sum + cat.subtotalWeight, 0);
             if (!total) return;
 
-            // pies.js preprocess() attend { catName: { itemName: weightMg } }
-            const rawData = {};
-            this.chartCategories.forEach((cat) => {
-                const catData = {};
-                (cat.items || []).forEach((item) => {
-                    const value = (item.weight || 0) * (item.qty || 1);
-                    if (value > 0) catData[item.name || item.id] = value;
-                });
-                if (Object.keys(catData).length) rawData[cat.name] = catData;
-            });
-
-            // Always recreate so backgroundColor reflects the current theme
-            if (this.chart && typeof this.chart.destroy === 'function') {
+            if (this.chart) {
                 this.chart.destroy();
+                this.chart = null;
             }
-            this.chart = pies({ container: canvas, data: rawData, backgroundColor: this.getChartBg() });
+
+            const unit = this.totalUnit;
+            this.chart = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: categories.map((cat) => `${cat.name}: ${weightUtils.MgToWeight(cat.subtotalWeight, unit)} ${unit}`),
+                    datasets: [{
+                        data: categories.map((cat) => cat.subtotalWeight),
+                        backgroundColor: categories.map((cat) => cat.color),
+                        borderColor: this.getChartBg(),
+                        borderWidth: 3,
+                        hoverBorderColor: 'rgb(50,50,50)',
+                        hoverBorderWidth: 2,
+                        hoverOffset: 0,
+                    }],
+                },
+                options: {
+                    responsive: false,
+                    cutout: '60%',
+                    animation: { duration: 400 },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false },
+                    },
+                    onHover: (event, elements) => {
+                        this.hoveredCategoryIdx = elements.length > 0 ? elements[0].index : null;
+                        if (event.native) {
+                            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+                        }
+                    },
+                },
+            });
         },
         track(type, itemId) {
             if (!this.list || !this.list.externalId) return Promise.resolve();

@@ -36,7 +36,6 @@ module.exports = {
             './client/lighterpack.js',
         ],
         share: [
-            './public/js/pies.js',
             './public/js/share.js',
             './client/css/share.scss',
         ],

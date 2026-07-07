@@ -114,7 +114,8 @@
         font-weight: 700;
     }
 
-    tr:hover td {
+    tr:hover td,
+    tr.lpPublicChartRowActive td {
         background: $color-surface;
     }
 }
