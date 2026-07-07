@@ -109,6 +109,7 @@ export default {
             return this.$store.state.library;
         },
         list() {
+            void this.$store.state.listVersion;
             return this.$store.getters.activeList;
         },
         categories() {
