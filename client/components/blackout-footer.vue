@@ -8,6 +8,8 @@
             ZenPak is an independent open-source packing tool built on <a class="lpHref" href="https://github.com/galenmaly/lighterpack" target="_blank" rel="noopener noreferrer">LighterPack</a>.
         </div>
         <div class="lpContact">
+            <a class="lpHref" href="/about">About</a>
+            -
             <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">Open source</a>
             -
             <a class="lpHref" href="/privacy">Privacy</a>
