@@ -102,6 +102,7 @@
 <script>
 import colorPicker from './colorpicker.vue';
 import unitSelect from './unit-select.vue';
+import { markRaw } from 'vue';
 import { renderListChart } from '../services/list-chart';
 import { useUtils } from '../composables/useUtils.js';
 const colorUtils = require('../utils/color.js');
@@ -173,12 +174,12 @@ export default {
             const chartData = this.library.renderChart(type);
 
             if (chartData) {
-                this.chart = renderListChart({
+                this.chart = markRaw(renderListChart({
                     chart: this.chart,
                     canvas: this.$refs.chartCanvas,
                     processedData: chartData,
                     hoverCallback: this.chartHover,
-                });
+                }));
             }
             return chartData;
         },
