@@ -110,7 +110,8 @@ export default {
         },
         list() {
             void this.$store.state.listVersion;
-            return this.$store.getters.activeList;
+            const lib = this.$store.state.library;
+            return lib.getListById(lib.defaultListId);
         },
         categories() {
             return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
