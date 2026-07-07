@@ -35,6 +35,12 @@ Item.prototype.load = function (input) {
         this.price = isNaN(parsed) ? 0 : parsed;
     }
     if (typeof this.price !== 'number' || isNaN(this.price)) this.price = 0;
+
+    if (typeof this.weight === 'string') {
+        const parsed = parseFloat(this.weight, 10);
+        this.weight = isNaN(parsed) ? 0 : parsed;
+    }
+    if (typeof this.weight !== 'number' || isNaN(this.weight)) this.weight = 0;
 };
 
 module.exports = { Item };

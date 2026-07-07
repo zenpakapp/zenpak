@@ -57,17 +57,21 @@ Category.prototype.calculateSubtotal = function () {
         if (!item) {
             continue;
         }
-        this.subtotalWeight += item.weight * categoryItem.qty;
-        this.subtotalPrice += (isNaN(item.price) ? 0 : item.price) * categoryItem.qty;
+        const weight = isNaN(item.weight) ? 0 : item.weight;
+        const price = isNaN(item.price) ? 0 : item.price;
+        const qty = isNaN(categoryItem.qty) ? 0 : categoryItem.qty;
+
+        this.subtotalWeight += weight * qty;
+        this.subtotalPrice += price * qty;
 
         if (this.library.optionalFields.worn && categoryItem.worn) {
-            this.subtotalWornWeight += item.weight * ((categoryItem.qty > 0) ? 1 : 0);
+            this.subtotalWornWeight += weight * ((qty > 0) ? 1 : 0);
         }
         if (this.library.optionalFields.consumable && categoryItem.consumable) {
-            this.subtotalConsumableWeight += item.weight * categoryItem.qty;
-            this.subtotalConsumablePrice += item.price * categoryItem.qty;
+            this.subtotalConsumableWeight += weight * qty;
+            this.subtotalConsumablePrice += price * qty;
         }
-        this.subtotalQty += categoryItem.qty;
+        this.subtotalQty += qty;
     }
 };
 
