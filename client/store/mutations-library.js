@@ -4,7 +4,6 @@ module.exports = {
     setDefaultList(state, list) {
         state.library.defaultListId = list.id;
         state.library.getListById(state.library.defaultListId).calculateTotals();
-        state.listVersion += 1;
     },
     setTotalUnit(state, unit) { state.library.totalUnit = unit; },
     setDefaultUnits(state, units) {
@@ -236,6 +235,5 @@ module.exports = {
         const copiedList = state.library.copyList(listId);
         if (!copiedList) return;
         state.library.defaultListId = copiedList.id;
-        state.listVersion += 1;
     },
 };

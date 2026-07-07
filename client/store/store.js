@@ -21,7 +21,6 @@ const createInitialState = () => ({
     globalAlerts: [],
     itemVersion: 0,
     categoryItemVersion: 0,
-    listVersion: 0,
     gearRoomOpen: false,
     billing: null,
     stripeConfigured: null,

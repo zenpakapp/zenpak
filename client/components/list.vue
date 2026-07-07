@@ -109,14 +109,9 @@ export default {
             return this.$store.state.library;
         },
         list() {
-            void this.$store.state.listVersion;
-            const lib = this.$store.state.library;
-            if (!lib || typeof lib.getListById !== 'function') return null;
-            return lib.getListById(lib.defaultListId);
+            return this.$store.getters.activeList;
         },
         categories() {
-            void this.$store.state.listVersion;
-            if (!this.list) return [];
             return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
         },
         isListNew() {
