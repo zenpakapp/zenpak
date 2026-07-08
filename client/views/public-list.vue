@@ -89,8 +89,17 @@
                 </table>
             </div>
 
-            <aside v-if="affiliateDisclosure" class="lpPublicDisclosure">
-                {{ affiliateDisclosure }}
+            <aside v-if="affiliateDisclosure || creatorCodes.length" class="lpPublicDisclosure">
+                <p v-if="affiliateDisclosure">{{ affiliateDisclosure }}</p>
+                <div v-if="creatorCodes.length" class="lpPublicCreatorCodes">
+                    <strong>{{ $t('public.creatorCodes') }}</strong>
+                    <ul>
+                        <li v-for="cc in creatorCodes" :key="cc.code">
+                            <a v-if="cc.url" :href="cc.url" target="_blank" rel="noopener noreferrer"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
+                            <span v-else><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></span>
+                        </li>
+                    </ul>
+                </div>
             </aside>
 
             <!-- Items par catégorie -->
@@ -155,6 +164,7 @@ export default {
             publicFields: { price: false, links: false, images: false },
             categories: [],
             affiliateDisclosure: null,
+            creatorCodes: [],
             authorTier: null,
             chart: null,
             copySuccess: false,
@@ -216,6 +226,7 @@ export default {
                 this.publicFields = payload.publicFields || { price: false, links: false, images: false };
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
+                this.creatorCodes = payload.creatorCodes || [];
                 this.updateDocumentMeta();
                 this.track('listView');
             })

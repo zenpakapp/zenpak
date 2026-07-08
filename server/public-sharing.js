@@ -105,77 +105,28 @@ function findById(collection, id) {
 
 function resolvePublicItemLink(item, creator) {
     if (!item) {
-        return {
-            url: '',
-            promoCode: '',
-            promoLabel: '',
-            hasAffiliateLink: false,
-        };
+        return { url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false };
     }
 
-    if (normalizeString(item.affiliateUrl)) {
-        return {
-            url: normalizeString(item.affiliateUrl),
-            promoCode: item.promoCode || '',
-            promoLabel: item.promoLabel || '',
-            hasAffiliateLink: true,
-        };
-    }
+    const itemUrl = normalizeString(item.affiliateUrl) || normalizeString(item.url);
+    const hasExplicitAffiliate = !!normalizeString(item.affiliateUrl);
 
     const rules = creator && Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [];
     const hostname = normalizeHostname(item.url);
-    const isUsableRule = (candidate) => candidate && (normalizeString(candidate.affiliateUrl) || normalizeString(candidate.appendParam) || normalizeString(candidate.promoCode));
-    const shopRule = rules.find((candidate) => {
-        if (!isUsableRule(candidate)) return false;
-        return candidate.type === 'shop' && matchesText(item.shop, candidate.match);
-    });
-    const domainRule = rules.find((candidate) => {
-        if (!isUsableRule(candidate)) return false;
-        return candidate.type === 'domain' && hostname && matchesText(hostname, candidate.match);
-    });
-    const brandRule = rules.find((candidate) => {
-        if (!isUsableRule(candidate)) return false;
-        return candidate.type === 'brand' && matchesText(item.brand, candidate.match);
-    });
+    const hasPromo = (r) => r && (normalizeString(r.promoCode) || normalizeString(r.promoLabel));
+    const shopRule = rules.find((r) => hasPromo(r) && r.type === 'shop' && matchesText(item.shop, r.match));
+    const domainRule = rules.find((r) => hasPromo(r) && r.type === 'domain' && hostname && matchesText(hostname, r.match));
+    const brandRule = rules.find((r) => hasPromo(r) && r.type === 'brand' && matchesText(item.brand, r.match));
     const rule = shopRule || domainRule || brandRule;
 
-    if (rule) {
-        if (normalizeString(rule.affiliateUrl)) {
-            return {
-                url: normalizeString(rule.affiliateUrl),
-                promoCode: rule.promoCode || '',
-                promoLabel: rule.promoLabel || '',
-                hasAffiliateLink: true,
-            };
-        }
-        const paramString = normalizeString(rule.appendParam).replace(/^\?/, '');
-        if (paramString && normalizeString(item.url)) {
-            try {
-                const itemUrl = new URL(item.url);
-                new URLSearchParams(paramString).forEach((v, k) => itemUrl.searchParams.set(k, v));
-                return {
-                    url: itemUrl.toString(),
-                    promoCode: rule.promoCode || '',
-                    promoLabel: rule.promoLabel || '',
-                    hasAffiliateLink: true,
-                };
-            } catch {
-                // invalid URL, fall through
-            }
-        }
-        return {
-            url: normalizeString(item.url),
-            promoCode: rule.promoCode || '',
-            promoLabel: rule.promoLabel || '',
-            hasAffiliateLink: !!(rule.promoCode || rule.promoLabel),
-        };
-    }
+    const promoCode = item.promoCode || (rule && rule.promoCode) || '';
+    const promoLabel = item.promoLabel || (rule && rule.promoLabel) || '';
 
     return {
-        url: normalizeString(item.url),
-        promoCode: '',
-        promoLabel: '',
-        hasAffiliateLink: false,
+        url: itemUrl,
+        promoCode,
+        promoLabel,
+        hasAffiliateLink: hasExplicitAffiliate || !!(promoCode || promoLabel),
     };
 }
 
@@ -242,6 +193,21 @@ function buildPublicProfile(user) {
         return null;
     }
 
+    const rules = (library.creator && Array.isArray(library.creator.affiliateRules)) ? library.creator.affiliateRules : [];
+    const seenCodes = new Set();
+    const creatorCodes = [];
+    for (const rule of rules) {
+        const code = normalizeString(rule.promoCode);
+        const label = normalizeString(rule.promoLabel);
+        if (code && !seenCodes.has(code)) {
+            seenCodes.add(code);
+            const url = rule.type === 'domain' && normalizeString(rule.match)
+                ? `https://${normalizeString(rule.match)}`
+                : '';
+            creatorCodes.push({ name: normalizeString(rule.match), code, label, url });
+        }
+    }
+
     return {
         username: user.username || '',
         profile: sanitizeProfile(profile),
@@ -249,6 +215,7 @@ function buildPublicProfile(user) {
         lists: publicListsForProfile(library),
         affiliateDisclosure: library.creator && library.creator.disclosure ? library.creator.disclosure : '',
         hasAffiliateDisclosure: Boolean(library.creator && library.creator.disclosure),
+        creatorCodes,
     };
 }
 
@@ -264,6 +231,22 @@ function buildPublicList(user, externalId) {
     const categories = buildPublicCategories(library, list, creator);
     const hasAffiliateLinks = categories.some(category => category.items.some(item => item.hasAffiliateLink));
 
+    const seenCodes = new Set();
+    const creatorCodes = [];
+    for (const cat of categories) {
+        for (const item of cat.items) {
+            if (item.promoCode && !seenCodes.has(item.promoCode)) {
+                seenCodes.add(item.promoCode);
+                creatorCodes.push({
+                    name: item.shop || item.brand || '',
+                    code: item.promoCode,
+                    label: item.promoLabel || '',
+                    url: item.publicUrl || '',
+                });
+            }
+        }
+    }
+
     const payload = {
         username: user.username || '',
         authorTier: (library.entitlements && library.entitlements.plan) || null,
@@ -278,6 +261,7 @@ function buildPublicList(user, externalId) {
         },
         categories,
         hasAffiliateLinks,
+        creatorCodes,
     };
 
     if (hasAffiliateLinks) {

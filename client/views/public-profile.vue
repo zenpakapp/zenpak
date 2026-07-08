@@ -89,8 +89,17 @@
             </div>
             <p v-else style="color: var(--color-text-muted); font-size: 14px;">{{ $t('public.noPublicLists') }}</p>
 
-            <aside v-if="affiliateDisclosure" class="lpPublicDisclosure">
-                {{ affiliateDisclosure }}
+            <aside v-if="affiliateDisclosure || creatorCodes.length" class="lpPublicDisclosure">
+                <p v-if="affiliateDisclosure">{{ affiliateDisclosure }}</p>
+                <div v-if="creatorCodes.length" class="lpPublicCreatorCodes">
+                    <strong>{{ $t('public.creatorCodes') }}</strong>
+                    <ul>
+                        <li v-for="cc in creatorCodes" :key="cc.code">
+                            <a v-if="cc.url" :href="cc.url" target="_blank" rel="noopener noreferrer"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
+                            <span v-else><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></span>
+                        </li>
+                    </ul>
+                </div>
             </aside>
 
         </template>
@@ -131,6 +140,7 @@ export default {
             entitlements: null,
             lists: [],
             affiliateDisclosure: null,
+            creatorCodes: [],
             followerCount: 0,
             followingCount: 0,
             isLoggedIn: false,
@@ -174,6 +184,7 @@ export default {
                 this.entitlements = payload.entitlements;
                 this.lists = payload.lists || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
+                this.creatorCodes = payload.creatorCodes || [];
                 this.followerCount = payload.followerCount || 0;
                 this.followingCount = payload.followingCount || 0;
                 this.updateDocumentMeta();
