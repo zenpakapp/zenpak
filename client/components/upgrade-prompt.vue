@@ -6,7 +6,7 @@
     <div>
         <div v-if="mode === 'inline'" class="lpUpgradeLock" @click="showModal = true">
             <span class="lpUpgradeLockText">{{ inlineText }}</span>
-            <span class="lpUpgradeLockCta">Upgrade to {{ tierLabel }} →</span>
+            <span class="lpUpgradeLockCta">{{ $t('guide.upgrade.inlineTextDefault', { tier: tierLabel }) }} →</span>
         </div>
 
         <modal :shown="showModal" @hide="closeModal">
@@ -14,7 +14,7 @@
                 <div class="lpModalHeader">
                     <div>
                         <div class="lpUpgradeTier">{{ tierLabel }}</div>
-                        <h2>Support the project</h2>
+                        <h2>{{ $t('guide.upgrade.supportProject') }}</h2>
                     </div>
                     <a class="lpHref close" @click="closeModal">✕</a>
                 </div>
@@ -31,53 +31,53 @@
                             class="lpUpgradeIntervalBtn"
                             :class="{ active: interval === 'month' }"
                             @click="interval = 'month'"
-                        >Monthly</button>
+                        >{{ $t('guide.upgrade.monthly') }}</button>
                         <button
                             class="lpUpgradeIntervalBtn"
                             :class="{ active: interval === 'year' }"
                             @click="interval = 'year'"
-                        >Annual <span class="lpUpgradeIntervalSave">−35%</span></button>
+                        >{{ $t('guide.upgrade.annual') }} <span class="lpUpgradeIntervalSave">{{ $t('guide.upgrade.annualSave') }}</span></button>
                     </div>
                     <div class="lpUpgradePrice">
                         {{ priceDisplay }}<span>{{ priceUnit }}</span>
                     </div>
                     <p v-if="checkoutError" class="lpUpgradeError">{{ checkoutError }}</p>
                     <button class="lpButton" :disabled="checkingOut" @click="checkout">
-                        {{ checkingOut ? 'Redirecting…' : `Become a ${tierLabel}` }}
+                        {{ checkingOut ? $t('guide.upgrade.redirecting') : $t('guide.upgrade.becomeButton', { tier: tierLabel }) }}
                     </button>
                 </div>
 
                 <template v-else>
                     <div v-if="!submitted" class="lpUpgradeActions">
                         <button class="lpButton" @click="showForm = !showForm">
-                            {{ showForm ? 'Cancel' : "I'm interested" }}
+                            {{ showForm ? $t('guide.upgrade.cancel') : $t('guide.upgrade.interested') }}
                         </button>
 
                         <div v-if="showForm" class="lpUpgradeInterestForm">
                             <div>
-                                <label>Your email</label>
-                                <input v-model="email" type="email" placeholder="you@example.com" />
+                                <label>{{ $t('guide.upgrade.yourEmail') }}</label>
+                                <input v-model="email" type="email" :placeholder="$t('guide.upgrade.yourEmailPlaceholder')" />
                             </div>
                             <div>
-                                <label>Which plan?</label>
+                                <label>{{ $t('guide.upgrade.whichPlan') }}</label>
                                 <select v-model="selectedTier">
                                     <option value="trail">Kin</option>
                                     <option value="guide">Wayfarer</option>
                                 </select>
                             </div>
                             <div>
-                                <label>Message (optional)</label>
-                                <textarea v-model="message" placeholder="Tell us a bit about how you use ZenPak" rows="3" />
+                                <label>{{ $t('guide.upgrade.message') }}</label>
+                                <textarea v-model="message" :placeholder="$t('guide.upgrade.messagePlaceholder')" rows="3" />
                             </div>
                             <p v-if="formError" class="lpUpgradeError">{{ formError }}</p>
                             <button class="lpButton" :disabled="submitting" @click="submit">
-                                {{ submitting ? 'Sending…' : 'Send' }}
+                                {{ submitting ? $t('guide.upgrade.sending') : $t('guide.upgrade.send') }}
                             </button>
                         </div>
                     </div>
 
                     <div v-else class="lpUpgradeConfirm">
-                        Thanks! We'll be in touch soon.
+                        {{ $t('guide.upgrade.thankYou') }}
                     </div>
                 </template>
             </div>
@@ -89,32 +89,32 @@
 import modal from './modal.vue';
 import { fetchJson } from '../utils/utils.js';
 
-const TRAIL_BENEFITS = [
-    'Kin badge on your public profile',
-    'Public profile with avatar, bio, and links',
-    'Improved public list presentation',
+const TRAIL_BENEFITS_KEYS = [
+    'guide.upgrade.trailBenefit1',
+    'guide.upgrade.trailBenefit2',
+    'guide.upgrade.trailBenefit3',
 ];
 
-const GUIDE_BENEFITS = [
-    'Public profile with avatar, bio, and links',
-    'Wayfarer badge on your profile and lists',
-    'Library backup and restore',
-    'Insights: views, copies, top lists',
-    'Affiliate links and promo codes per item',
-    'Automatic affiliate disclosure',
+const GUIDE_BENEFITS_KEYS = [
+    'guide.upgrade.guideBenefit1',
+    'guide.upgrade.guideBenefit2',
+    'guide.upgrade.guideBenefit3',
+    'guide.upgrade.guideBenefit4',
+    'guide.upgrade.guideBenefit5',
+    'guide.upgrade.guideBenefit6',
 ];
 
-const INLINE_TEXTS = {
-    publicProfile: 'Kin — Share your gear identity',
-    profileCustomization: 'Kin — Personalize your profile',
-    creatorInsights: "Your lists inspire others — see who reads them and earn from what you recommend.",
-    creatorLinks: 'Wayfarer — Add your affiliate links',
-    promoCode: 'Wayfarer — Add a promo code',
+const INLINE_TEXTS_KEYS = {
+    publicProfile: 'guide.upgrade.inlineTextPublicProfile',
+    profileCustomization: 'guide.upgrade.inlineTextProfileCustomization',
+    creatorInsights: 'guide.upgrade.inlineTextCreatorInsights',
+    creatorLinks: 'guide.upgrade.inlineTextCreatorLinks',
+    promoCode: 'guide.upgrade.inlineTextPromoCode',
 };
 
-const TAGLINES = {
-    trail: 'A small contribution keeps ZenPak independent and open source. In return, you get a public profile to share your gear identity with the community.',
-    guide: 'For those who publish their lists and want to help others gear up. Affiliate links, insights, and a full public profile — everything you need to share your expertise.',
+const TAGLINES_KEYS = {
+    trail: 'guide.upgrade.taglineTrail',
+    guide: 'guide.upgrade.taglineGuide',
 };
 
 export default {
@@ -163,13 +163,16 @@ export default {
             return this.tier === 'trail' ? 'Kin' : 'Wayfarer';
         },
         inlineText() {
-            return INLINE_TEXTS[this.feature] || `${this.tierLabel} — Unlock this feature`;
+            const key = INLINE_TEXTS_KEYS[this.feature];
+            return key ? this.$t(key) : this.$t('guide.upgrade.inlineTextDefault', { tier: this.tierLabel });
         },
         tagline() {
-            return TAGLINES[this.tier];
+            const key = TAGLINES_KEYS[this.tier];
+            return key ? this.$t(key) : '';
         },
         benefits() {
-            return this.tier === 'trail' ? TRAIL_BENEFITS : GUIDE_BENEFITS;
+            const keys = this.tier === 'trail' ? TRAIL_BENEFITS_KEYS : GUIDE_BENEFITS_KEYS;
+            return keys.map(key => this.$t(key));
         },
         stripeEnabled() {
             if (!this.$store.state.loggedIn) return false;
@@ -207,9 +210,9 @@ export default {
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
-                else this.checkoutError = data.message || 'Something went wrong — give it another try.';
+                else this.checkoutError = data.message || this.$t('guide.upgrade.checkoutError');
             } catch (_) {
-                this.checkoutError = 'Looks like we lost the connection. Try again in a moment.';
+                this.checkoutError = this.$t('guide.upgrade.connectionError');
             } finally {
                 this.checkingOut = false;
             }
@@ -218,7 +221,7 @@ export default {
             this.formError = null;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(this.email)) {
-                this.formError = 'Please enter a valid email address.';
+                this.formError = this.$t('guide.upgrade.formError');
                 return;
             }
             this.submitting = true;
