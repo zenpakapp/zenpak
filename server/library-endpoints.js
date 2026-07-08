@@ -47,6 +47,21 @@ function saveLibrary(req, res, user) {
 
     const oldLists = (user.library && user.library.lists) || [];
 
+    const serverCreator = user.library && user.library.creator ? { ...user.library.creator } : null;
+    const serverProfile = user.library && user.library.publicProfile ? user.library.publicProfile : null;
+    const serverEntitlements = user.library && user.library.entitlements ? { ...user.library.entitlements } : null;
+    const serverInsights = user.library && user.library.insights ? user.library.insights : null;
+    const serverItemMap = {};
+    if (user.library && user.library.items) {
+        for (const item of user.library.items) {
+            serverItemMap[String(item.id)] = {
+                affiliateUrl: item.affiliateUrl || '',
+                promoCode: item.promoCode || '',
+                promoLabel: item.promoLabel || '',
+            };
+        }
+    }
+
     if (!user.emailVerified && library && library.lists) {
         const { isPublicVisibility } = require('../client/services/public-visibility.js');
         const storedVisibilityMap = {};
@@ -68,6 +83,27 @@ function saveLibrary(req, res, user) {
 
     user.library = library;
     user.syncToken++;
+
+    if (serverCreator) user.library.creator = serverCreator;
+    if (serverEntitlements) user.library.entitlements = serverEntitlements;
+    if (serverInsights) user.library.insights = serverInsights;
+    if (serverProfile) {
+        if (!user.library.publicProfile) user.library.publicProfile = {};
+        user.library.publicProfile.bio = serverProfile.bio || '';
+        user.library.publicProfile.links = serverProfile.links || [];
+        user.library.publicProfile.gearPhilosophy = serverProfile.gearPhilosophy || [];
+    }
+    if (user.library.items) {
+        for (const item of user.library.items) {
+            const saved = serverItemMap[String(item.id)];
+            if (saved) {
+                item.affiliateUrl = saved.affiliateUrl;
+                item.promoCode = saved.promoCode;
+                item.promoLabel = saved.promoLabel;
+            }
+        }
+    }
+
     db.users.save(user, () => {
         logWithRequest(req, { message: 'saved library', username: user.username });
 
