@@ -10,17 +10,17 @@
 
 <template>
     <modal id="itemLinkDialog" :shown="shown" @hide="shown = false">
-        <h2>Add a link for this item</h2>
+        <h2>{{ $t('item.linkDialogTitle') }}</h2>
         <form id="itemLinkForm" @submit.prevent="addLink">
             <div class="lpModalBody">
                 <div>
-                    <label for="itemLink">Item link</label>
-                    <input id="itemLink" v-model="url" type="text" placeholder="https://example.com/gear-item">
+                    <label for="itemLink">{{ $t('item.linkLabelUrl') }}</label>
+                    <input id="itemLink" v-model="url" type="text" :placeholder="$t('item.linkPlaceholder')">
                 </div>
             </div>
             <div class="lpModalActions">
-                <a class="lpHref close" @click="shown = false">Cancel</a>
-                <input type="submit" class="lpButton" value="Save link">
+                <a class="lpHref close" @click="shown = false">{{ $t('item.linkButtonCancel') }}</a>
+                <input type="submit" class="lpButton" :value="$t('item.linkButtonSave')">
             </div>
         </form>
     </modal>

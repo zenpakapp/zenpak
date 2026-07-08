@@ -19,24 +19,24 @@
         <!-- Edit form -->
         <form class="itemDetailEditForm" @submit.prevent="saveEdit">
             <div class="itemDetailField">
-                <label>Name</label>
-                <input v-model="editName" type="text" placeholder="Item name" autofocus>
+                <label>{{ $t('item.editLabelName') }}</label>
+                <input v-model="editName" type="text" :placeholder="$t('item.editPlaceholderName')" autofocus>
             </div>
 
             <div class="itemDetailField">
-                <label>Description</label>
-                <textarea v-model="editDescription" placeholder="Description"></textarea>
+                <label>{{ $t('item.editLabelDescription') }}</label>
+                <textarea v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')"></textarea>
             </div>
 
             <div class="itemDetailField">
-                <label>Brand</label>
+                <label>{{ $t('item.editLabelBrand') }}</label>
                 <item-brand-input v-model="editBrand" />
             </div>
 
             <div class="itemDetailField">
-                <label>Type</label>
+                <label>{{ $t('item.editLabelType') }}</label>
                 <div class="itemDetailTypeWrap">
-                    <input v-model="editCategory" type="text" placeholder="ex: Shelter"
+                    <input v-model="editCategory" type="text" :placeholder="$t('item.editPlaceholderType')"
                         @focus="showCategoryDropdown = true"
                         @blur="showCategoryDropdown = false">
                     <ul v-if="showCategoryDropdown && filteredGearCategories.length" class="itemDetailTypeSuggestions">
@@ -47,7 +47,7 @@
 
             <div class="itemDetailFieldRow">
                 <div class="itemDetailField">
-                    <label>Weight</label>
+                    <label>{{ $t('item.editLabelWeight') }}</label>
                     <div class="itemDetailUnitRow">
                         <input v-model="editWeight" type="text" placeholder="0">
                         <div class="itemDetailSelectWrap itemDetailSelectUnit">
@@ -58,21 +58,21 @@
                     </div>
                 </div>
                 <div class="itemDetailField">
-                    <label>Price</label>
+                    <label>{{ $t('item.editLabelPrice') }}</label>
                     <input v-model="editPrice" type="text" placeholder="0.00">
                 </div>
                 <div class="itemDetailField">
-                    <label>Qty</label>
+                    <label>{{ $t('item.editLabelQty') }}</label>
                     <input v-model="editQty" type="text" placeholder="1">
                 </div>
             </div>
 
             <div class="itemDetailField">
-                <label>Purchase URL</label>
+                <label>{{ $t('item.editLabelPurchaseUrl') }}</label>
                 <div class="itemDetailUrlRow">
-                    <input v-model="editUrl" type="text" placeholder="https://…" @keydown.enter.prevent="fetchGear">
+                    <input v-model="editUrl" type="text" :placeholder="$t('item.editPlaceholderUrl')" @keydown.enter.prevent="fetchGear">
                     <button type="button" class="lpButton lpSmall lpButtonSecondary itemDetailFetchBtn" :disabled="fetchLoading || !editUrl" @click="fetchGear">
-                        {{ fetchLoading ? '…' : '⬇ Fetch' }}
+                        {{ fetchLoading ? $t('item.editButtonFetching') : $t('item.editButtonFetch') }}
                     </button>
                 </div>
                 <span v-if="fetchError" class="itemDetailFetchError">{{ fetchError }}</span>
@@ -80,7 +80,7 @@
             </div>
 
             <div class="itemDetailField">
-                <label>Image <span class="itemDetailFieldOptional">(optional)</span></label>
+                <label>{{ $t('item.editLabelImage') }} <span class="itemDetailFieldOptional">{{ $t('item.editLabelImageOptional') }}</span></label>
                 <div
                     class="itemDetailDropZone"
                     :class="{ 'itemDetailDropZoneActive': imageDragOver, 'itemDetailDropZoneHasImage': editImageUrl || editImageUploading }"
@@ -91,7 +91,7 @@
                 >
                     <input ref="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" @change="onImageFileChange">
                     <template v-if="editImageUploading">
-                        <span class="itemDetailDropZoneUploading">Uploading…</span>
+                        <span class="itemDetailDropZoneUploading">{{ $t('item.editImageUploading') }}</span>
                     </template>
                     <template v-else-if="editImageUrl">
                         <img :src="editImageUrl" class="itemDetailDropZonePreview">
@@ -103,15 +103,15 @@
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <path d="m21 15-5-5L5 21"/>
                         </svg>
-                        <span class="itemDetailDropZoneText">Drop an image here, or <strong>click to browse</strong></span>
-                        <span class="itemDetailDropZoneHint">PNG, JPG up to 5MB</span>
+                        <span class="itemDetailDropZoneText">{{ $t('item.editDropZoneText') }}</span>
+                        <span class="itemDetailDropZoneHint">{{ $t('item.editDropZoneHint') }}</span>
                     </template>
                 </div>
                 <span v-if="imageUploadError" class="itemDetailFetchError">{{ imageUploadError }}</span>
             </div>
 
             <div class="itemDetailField">
-                <label>Tags</label>
+                <label>{{ $t('item.editLabelTags') }}</label>
                 <div class="itemDetailTagsEdit">
                     <span v-for="tag in editTags" :key="tag" class="itemDetailTagChip">
                         {{ tag }}
@@ -119,15 +119,15 @@
                     </span>
                 </div>
                 <div class="itemDetailTagInput">
-                    <input v-model="tagInput" type="text" placeholder="Add a tag…" @keydown.enter.prevent="addTag">
-                    <button type="button" class="lpButton lpSmall lpButtonSecondary" @click="addTag">Add</button>
+                    <input v-model="tagInput" type="text" :placeholder="$t('item.editPlaceholderTags')" @keydown.enter.prevent="addTag">
+                    <button type="button" class="lpButton lpSmall lpButtonSecondary" @click="addTag">{{ $t('item.editButtonAddTag') }}</button>
                 </div>
             </div>
         </form>
 
         <div class="itemDetailEditFooter">
-            <a class="lpHref close" @click="$emit('close')">Cancel</a>
-            <button class="lpButton" @click="saveEdit">Save</button>
+            <a class="lpHref close" @click="$emit('close')">{{ $t('item.editButtonCancel') }}</a>
+            <button class="lpButton" @click="saveEdit">{{ $t('item.editButtonSave') }}</button>
         </div>
     </div>
 </template>
@@ -273,8 +273,8 @@ export default {
                     filled.push('image');
                 }
                 this.fetchSuccess = filled.length
-                    ? `Filled: ${filled.join(', ')}`
-                    : 'No data found — fields unchanged';
+                    ? this.$t('item.editMessageFilling', { fields: filled.join(', ') })
+                    : this.$t('item.editMessageNoDataFound');
             } catch (err) {
                 this.fetchError = err.message;
             } finally {
@@ -306,11 +306,11 @@ export default {
         async uploadImageFile(file) {
             const VALID = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
             if (!VALID.includes(file.type)) {
-                this.imageUploadError = 'File must be PNG, JPG, GIF or WebP.';
+                this.imageUploadError = this.$t('item.editImageError');
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                this.imageUploadError = 'File must be under 5 MB.';
+                this.imageUploadError = this.$t('item.editImageErrorSize');
                 return;
             }
             this.imageUploadError = '';

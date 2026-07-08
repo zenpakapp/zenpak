@@ -5,39 +5,39 @@
 <template>
     <div>
         <modal id="itemImageDialog" :shown="shown" @hide="shown = false">
-            <h2 class="itemImageTitle">Item image</h2>
+            <h2 class="itemImageTitle">{{ $t('item.imageDialogTitle') }}</h2>
 
             <div class="itemImageSections">
                 <!-- Current image -->
                 <div v-if="item && (item.image || item.imageUrl)" class="itemImageSection">
-                    <div class="itemImageSectionLabel">Current image</div>
+                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionCurrent') }}</div>
                     <div class="itemImageCurrentWrap">
                         <img class="itemImageCurrentThumb" :src="currentThumb" alt="Current item image">
-                        <span class="itemImageCurrentLabel">Image attached</span>
-                        <button class="lpButton lpSmall lpButtonDanger" @click="removeItemImage">Remove</button>
+                        <span class="itemImageCurrentLabel">{{ $t('item.imageLabelAttached') }}</span>
+                        <button class="lpButton lpSmall lpButtonDanger" @click="removeItemImage">{{ $t('item.imageButtonRemove') }}</button>
                     </div>
                 </div>
 
                 <!-- URL input -->
                 <div class="itemImageSection">
-                    <div class="itemImageSectionLabel">Image URL</div>
+                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionUrl') }}</div>
                     <form class="itemImageUrlRow" @submit.prevent="saveImageUrl">
                         <input
                             v-model="imageUrl"
                             type="text"
                             class="itemImageUrlInput"
-                            placeholder="https://example.com/image.jpg"
+                            :placeholder="$t('item.imageUrlPlaceholder')"
                             autocomplete="off"
                         >
-                        <button type="submit" class="lpButton lpSmall">Save</button>
+                        <button type="submit" class="lpButton lpSmall">{{ $t('item.imageButtonSave') }}</button>
                     </form>
                 </div>
 
-                <div class="itemImageDivider">or</div>
+                <div class="itemImageDivider">{{ $t('item.imageOrDivider') }}</div>
 
                 <!-- Upload -->
                 <div class="itemImageSection">
-                    <div class="itemImageSectionLabel">Upload from device</div>
+                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionUpload') }}</div>
                     <div
                         class="itemImageDropZone"
                         :class="{ dragover: isDragOver }"
@@ -47,18 +47,18 @@
                         @drop.prevent="onDrop"
                     >
                         <span class="itemImageDropIcon">📎</span>
-                        <span class="itemImageDropText">Click to select or drag & drop</span>
-                        <span class="itemImageDropHint">PNG, JPG, GIF — max 2.5 MB</span>
+                        <span class="itemImageDropText">{{ $t('item.imageDropText') }}</span>
+                        <span class="itemImageDropHint">{{ $t('item.imageDropHint') }}</span>
                     </div>
-                    <p v-if="uploading" class="itemImageStatus">Uploading…</p>
+                    <p v-if="uploading" class="itemImageStatus">{{ $t('item.imageUploading') }}</p>
                     <p class="itemImageNotice">
-                        Images are stored securely via Cloudinary.
+                        {{ $t('item.imageNotice') }}
                     </p>
                 </div>
             </div>
 
             <div class="itemImageFooter">
-                <a class="itemImageCancel" @click="shown = false">Cancel</a>
+                <a class="itemImageCancel" @click="shown = false">{{ $t('item.imageButtonCancel') }}</a>
             </div>
         </modal>
 
@@ -122,15 +122,15 @@ export default {
         },
         processFile(file) {
             if (!FormData) {
-                showGlobalAlert('Your browser does not support file uploads.');
+                showGlobalAlert(this.$t('item.imageErrorBrowser'));
                 return;
             }
             if (file.size > 2500000) {
-                showGlobalAlert('Please upload a file smaller than 2.5 MB.');
+                showGlobalAlert(this.$t('item.imageErrorSize'));
                 return;
             }
             if (!['image/png', 'image/jpg', 'image/jpeg', 'image/gif'].includes(file.type)) {
-                showGlobalAlert('File must be PNG, JPG or GIF.');
+                showGlobalAlert(this.$t('item.imageErrorType'));
                 return;
             }
             const formData = new FormData();
@@ -148,7 +148,7 @@ export default {
                 })
                 .catch(() => {
                     this.uploading = false;
-                    showGlobalAlert('Upload failed. Please try again.');
+                    showGlobalAlert(this.$t('item.imageErrorUpload'));
                 });
         },
         removeItemImage() {

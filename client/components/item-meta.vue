@@ -4,16 +4,16 @@
 
 <template>
     <modal id="itemMetaDialog" :shown="shown" @hide="cancel">
-        <h2>Edit gear details</h2>
+        <h2>{{ $t('item.metaDialogTitle') }}</h2>
         <form class="itemMetaForm" @submit.prevent="save">
             <div class="itemMetaField">
-                <span class="itemMetaLabel">Brand</span>
+                <span class="itemMetaLabel">{{ $t('item.metaLabelBrand') }}</span>
                 <input
                     id="itemMetaBrand"
                     v-model="brand"
                     type="text"
                     class="itemMetaInput"
-                    placeholder="e.g. Sea to Summit"
+                    :placeholder="$t('item.metaBrandPlaceholder')"
                     autocomplete="off"
                     @focus="brandDropdownOpen = true; brandActiveIndex = -1"
                     @blur="closeBrandDropdown"
@@ -34,17 +34,17 @@
             </div>
 
             <div class="itemMetaField">
-                <span class="itemMetaLabel">Type</span>
+                <span class="itemMetaLabel">{{ $t('item.metaLabelType') }}</span>
                 <div class="itemMetaSelectWrap">
                     <select id="itemMetaCategory" v-model="category" class="itemMetaSelect">
-                        <option value="">— none —</option>
+                        <option value="">{{ $t('item.metaSelectNone') }}</option>
                         <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
                     </select>
                 </div>
             </div>
 
             <div class="itemMetaField">
-                <span class="itemMetaLabel">Tags</span>
+                <span class="itemMetaLabel">{{ $t('item.metaLabelTags') }}</span>
                 <div class="itemMetaTags">
                     <span v-for="tag in tags" :key="tag" class="itemMetaTag">
                         {{ tag }}
@@ -52,14 +52,14 @@
                     </span>
                 </div>
                 <div class="itemMetaTagInput">
-                    <input v-model="tagInput" type="text" class="itemMetaInput" placeholder="Add a tag…" @keydown.enter.prevent="addTag">
-                    <button type="button" @click="addTag">Add</button>
+                    <input v-model="tagInput" type="text" class="itemMetaInput" :placeholder="$t('item.metaTagPlaceholder')" @keydown.enter.prevent="addTag">
+                    <button type="button" @click="addTag">{{ $t('item.metaButtonAdd') }}</button>
                 </div>
             </div>
 
             <div class="itemMetaActions">
-                <a class="lpHref close" @click="cancel">Cancel</a>
-                <input type="submit" class="lpButton" value="Save">
+                <a class="lpHref close" @click="cancel">{{ $t('item.metaButtonCancel') }}</a>
+                <input type="submit" class="lpButton" :value="$t('item.metaButtonSave')">
             </div>
         </form>
     </modal>

@@ -1,7 +1,7 @@
 <template>
     <div class="itemDetailAddToList">
         <button class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null">
-            + Add to list ▾
+            {{ $t('item.addToListButtonText') }}
         </button>
         <ul v-if="open" class="itemDetailAddDropdown">
             <template v-if="!selectedListId">
@@ -14,23 +14,23 @@
                     {{ list.name || 'Unnamed list' }} ›
                 </li>
                 <li class="itemDetailAddCreate">
-                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">+ New list</div>
+                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">{{ $t('item.addToListNewList') }}</div>
                     <div v-else class="itemDetailAddCreateRow">
                         <input
                             ref="newListInput"
                             v-model="newListName"
                             type="text"
                             class="itemDetailAddCreateInput"
-                            placeholder="List name"
+                            :placeholder="$t('item.addToListPlaceholderNewList')"
                             @keydown.enter.prevent="createListAndNavigate"
                             @keydown.esc="creatingList = false"
                         >
-                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">Create</button>
+                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">{{ $t('item.addToListCreate') }}</button>
                     </div>
                 </li>
             </template>
             <template v-else>
-                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">‹ Back</li>
+                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">{{ $t('item.addToListBack') }}</li>
                 <li
                     v-for="cat in selectedListCategories"
                     :key="cat.id"
@@ -45,12 +45,12 @@
                             :value="newCategoryName"
                             type="text"
                             class="itemDetailAddCreateInput"
-                            placeholder="New category"
+                            :placeholder="$t('item.addToListPlaceholderNewCategory')"
                             @input="newCategoryName = $event.target.value"
                             @keydown.enter.prevent="createCategoryAndAdd"
                         >
                         <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd">
-                            Create
+                            {{ $t('item.addToListCreate') }}
                         </button>
                     </div>
                 </li>

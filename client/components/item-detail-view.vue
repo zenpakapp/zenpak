@@ -20,19 +20,19 @@
 
         <div class="itemDetailStats">
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">Weight</div>
+                <div class="itemDetailStatLabel">{{ $t('item.viewLabelWeight') }}</div>
                 <div class="itemDetailStatValue">{{ displayWeight }} {{ item.authorUnit }}</div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">Price</div>
+                <div class="itemDetailStatLabel">{{ $t('item.viewLabelPrice') }}</div>
                 <div class="itemDetailStatValue">{{ item.price ? item.price.toFixed(2) : '—' }}</div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">Qty</div>
+                <div class="itemDetailStatLabel">{{ $t('item.viewLabelQty') }}</div>
                 <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">Rating</div>
+                <div class="itemDetailStatLabel">{{ $t('item.viewLabelRating') }}</div>
                 <div class="itemDetailStatValue itemDetailStarRow">
                     <span
                         v-for="n in 3"
@@ -47,25 +47,25 @@
 
         <div class="itemDetailBody">
             <div class="itemDetailSection">
-                <div class="itemDetailSectionLabel">Description</div>
+                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelDescription') }}</div>
                 <div :class="['itemDetailSectionValue', { muted: !item.description }]">
-                    {{ item.description || 'No description added' }}
+                    {{ item.description || $t('item.viewNoDescription') }}
                 </div>
             </div>
 
             <hr v-if="item.url" class="itemDetailDivider">
 
             <div v-if="item.url" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">Purchase Link</div>
+                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelLink') }}</div>
                 <a :href="item.url" target="_blank" rel="noopener" class="itemDetailLink">
-                    ↗ View product page
+                    {{ $t('item.viewLinkText') }}
                 </a>
             </div>
 
             <hr v-if="item.tags && item.tags.length" class="itemDetailDivider">
 
             <div v-if="item.tags && item.tags.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">Tags</div>
+                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelTags') }}</div>
                 <div class="itemDetailTags">
                     <span v-for="tag in item.tags" :key="tag" class="itemDetailTag">{{ tag }}</span>
                 </div>
@@ -74,7 +74,7 @@
             <hr v-if="itemUsedInLists.length" class="itemDetailDivider">
 
             <div v-if="itemUsedInLists.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">Used in</div>
+                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelUsedIn') }}</div>
                 <div class="itemDetailUsedInLists">
                     <button
                         v-for="list in itemUsedInLists"
@@ -90,17 +90,17 @@
 
         <div class="itemDetailFooter">
             <a v-if="category" class="lpButton lpButtonGhost itemDetailRemove" @click="removeFromList">
-                Remove from list
+                {{ $t('item.viewButtonRemoveFromList') }}
             </a>
             <item-add-to-list v-else :item="item" @added="$emit('close')" />
             <a class="lpButton lpButtonGhost itemDetailDelete" @click="deleteGear">
-                Delete
+                {{ $t('item.viewButtonDelete') }}
             </a>
             <button class="lpButton lpButtonGhost itemDetailDuplicate" @click="$emit('duplicate')">
-                Duplicate
+                {{ $t('item.viewButtonDuplicate') }}
             </button>
             <button class="lpButton itemDetailEdit" @click="$emit('start-edit')">
-                Edit gear
+                {{ $t('item.viewButtonEdit') }}
             </button>
         </div>
     </div>
