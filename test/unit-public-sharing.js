@@ -74,5 +74,18 @@ assert('null item hasAffiliateLink false', r11.hasAffiliateLink === false);
 const r12 = resolvePublicItemLink({ url: 'https://example.com/gear', affiliateUrl: '', brand: 'Zpacks', shop: '', promoCode: '', promoLabel: '' }, null);
 assert('no creator falls back to item.url', r12.url === 'https://example.com/gear');
 
+// 13. invalid protocol in affiliateUrl → blocked, falls back to item.url
+const r13 = resolvePublicItemLink({ url: 'https://example.com/gear', affiliateUrl: 'javascript:alert(1)', brand: '', shop: '', promoCode: '', promoLabel: '' }, null);
+assert('javascript: affiliateUrl blocked', r13.url === 'https://example.com/gear');
+assert('javascript: affiliateUrl not treated as affiliate', r13.hasAffiliateLink === false);
+
+// 14. invalid protocol in item.url → empty URL returned
+const r14 = resolvePublicItemLink({ url: 'javascript:void(0)', affiliateUrl: '', brand: '', shop: '', promoCode: '', promoLabel: '' }, null);
+assert('javascript: item.url blocked', r14.url === '');
+
+// 15. ftp: protocol blocked
+const r15 = resolvePublicItemLink({ url: 'ftp://files.example.com/gear.zip', affiliateUrl: '', brand: '', shop: '', promoCode: '', promoLabel: '' }, null);
+assert('ftp: item.url blocked', r15.url === '');
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

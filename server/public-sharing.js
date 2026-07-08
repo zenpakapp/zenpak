@@ -103,13 +103,26 @@ function findById(collection, id) {
     return (collection || []).find(entry => entry.id == id) || null;
 }
 
+function isSafeUrl(value) {
+    const s = normalizeString(value);
+    if (!s) return false;
+    try {
+        const p = new URL(s).protocol;
+        return p === 'http:' || p === 'https:';
+    } catch { return false; }
+}
+
 function resolvePublicItemLink(item, creator) {
     if (!item) {
         return { url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false };
     }
 
-    const itemUrl = normalizeString(item.affiliateUrl) || normalizeString(item.url);
-    const hasExplicitAffiliate = !!normalizeString(item.affiliateUrl);
+    const rawAffiliate = normalizeString(item.affiliateUrl);
+    const rawUrl = normalizeString(item.url);
+    const safeAffiliate = isSafeUrl(rawAffiliate) ? rawAffiliate : '';
+    const safeUrl = isSafeUrl(rawUrl) ? rawUrl : '';
+    const itemUrl = safeAffiliate || safeUrl;
+    const hasExplicitAffiliate = !!safeAffiliate;
 
     const rules = creator && Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [];
     const hostname = normalizeHostname(item.url);
