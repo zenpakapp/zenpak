@@ -180,7 +180,8 @@
     "statFollowers": "followers",
     "statFollowing": "following",
     "follow": "Follow",
-    "following": "Following"
+    "following": "Following",
+    "creatorCodes": "Creator codes"
   },
   "acct": {
     "accountSettings": "Account Settings",
@@ -381,6 +382,8 @@
     "markAllRead": "Mark all read",
     "noNotifications": "No notifications yet.",
     "copyList": "Copy list",
+    "copyingWarning": "Copying a list will link the items between your lists. Updating an item in one list will alter that item in all other lists that item is in.",
+    "sourceList": "Source list",
     "copied": "Copied!",
     "report": "Report",
     "reportThis": "Report this",
@@ -388,6 +391,8 @@
     "views": "Views",
     "copies": "Copies",
     "followers": "Followers",
+    "loading": "Loading…",
+    "send": "Send",
     "backToZenPak": "← Back to ZenPak",
     "aboutTitle": "Why ZenPak",
     "aboutDeck": "An open-source gear list tool — built by one person, maintained for the people who care about their base weight.",

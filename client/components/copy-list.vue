@@ -14,7 +14,7 @@
         <h2>{{ $t('misc.copyList') }}</h2>
         <div class="copyListBody">
             <div>
-                <label for="listToCopy">Source list</label>
+                <label for="listToCopy">{{ $t('misc.sourceList') }}</label>
                 <select id="listToCopy" v-model="listId">
                     <option v-for="list in library.lists" :value="list.id">
                         {{ list.name }}
@@ -22,7 +22,7 @@
                 </select>
             </div>
             <p class="lpWarning">
-                <b>Note:</b> Copying a list will link the items between your lists. Updating an item in one list will alter that item in all other lists that item is in.
+                <b>Note:</b> {{ $t('misc.copyingWarning') }}
             </p>
             <div class="lpModalActions">
                 <a class="lpButton close" @click="shown = false">{{ $t('misc.cancel') }}</a>

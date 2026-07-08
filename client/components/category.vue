@@ -70,9 +70,9 @@
                     <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" title="Reorder this category" />
                 </span>
                 <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
-                <span v-if="library.optionalFields['price']" class="lpPriceCell">Price</span>
-                <span class="lpWeightCell">Weight</span>
-                <span class="lpQtyCell">qty</span>
+                <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
+                <span class="lpWeightCell">{{ $t('public.weight') }}</span>
+                <span class="lpQtyCell">{{ $t('public.qty') }}</span>
                 <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" :title="$t('misc.deleteCategory')" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
             </li>
             <item

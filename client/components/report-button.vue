@@ -102,7 +102,7 @@
                 <div class="lpReportActions">
                     <button class="lpReportCancel" @click="open = false">{{ $t('misc.cancel') }}</button>
                     <button class="lpReportSubmit" :disabled="!reason || submitting" @click="submit">
-                        {{ submitting ? '…' : 'Send' }}
+                        {{ submitting ? '…' : $t('misc.send') }}
                     </button>
                 </div>
             </div>

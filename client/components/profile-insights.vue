@@ -66,7 +66,7 @@
     <div class="lpInsights">
         <div class="lpInsightsTitle">{{ $t('misc.insights') }}</div>
 
-        <p v-if="loading">Loading…</p>
+        <p v-if="loading">{{ $t('misc.loading') }}</p>
         <p v-else-if="error" style="color: var(--color-text-muted); font-size: 13px;">{{ error }}</p>
         <template v-else-if="data">
             <div class="lpInsightsTotals">
