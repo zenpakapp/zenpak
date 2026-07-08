@@ -4,28 +4,28 @@
 <template>
     <div class="lpGearRoom">
         <div class="lpGearRoomHeader">
-            <button class="lpButton lpSmall lpButtonSecondary" @click="$emit('close')">← Back to lists</button>
-            <h1 class="lpGearRoomTitle">Your Gear</h1>
-            <button class="lpButton lpSmall" @click="createItem">+ New item</button>
+            <button class="lpButton lpSmall lpButtonSecondary" @click="$emit('close')">{{ $t('gearroom.backToLists') }}</button>
+            <h1 class="lpGearRoomTitle">{{ $t('gearroom.title') }}</h1>
+            <button class="lpButton lpSmall" @click="createItem">{{ $t('gearroom.newItem') }}</button>
         </div>
 
         <button class="lpGearRoomFiltersToggle" @click="filtersOpen = !filtersOpen">
-            {{ filtersOpen ? 'Hide filters' : 'Filters' }}
+            {{ filtersOpen ? $t('gearroom.hideFilters') : $t('gearroom.filters') }}
         </button>
 
         <div class="lpGearRoomBody">
             <div :class="['lpGearRoomFilters', { open: filtersOpen }]">
                 <div>
-                    <div class="lpGearRoomFiltersLabel">Search</div>
-                    <input v-model="search" class="lpGearRoomSearch" type="text" placeholder="Name, brand, description…">
+                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.search') }}</div>
+                    <input v-model="search" class="lpGearRoomSearch" type="text" :placeholder="$t('gearroom.searchPlaceholder')">
                 </div>
                 <div v-if="library.lists.length > 0">
-                    <div class="lpGearRoomFiltersLabel">List</div>
+                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterList') }}</div>
                     <div class="lpGearRoomCategoryChips">
                         <button
                             :class="['lpGearRoomChip', { active: filterList === '' }]"
                             @click="filterList = ''; filterOrphan = false; filterStarred = false"
-                        >All</button>
+                        >{{ $t('gearroom.filterAll') }}</button>
                         <button
                             v-for="list in library.lists"
                             :key="list.id"
@@ -35,17 +35,17 @@
                     </div>
                 </div>
                 <div>
-                    <div class="lpGearRoomFiltersLabel">Type</div>
+                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterType') }}</div>
                     <div class="lpGearRoomCategoryChips">
-                        <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">All</button>
+                        <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">{{ $t('gearroom.filterAll') }}</button>
                         <button
                             :class="['lpGearRoomChip', { active: filterOrphan }]"
                             @click="filterOrphan = !filterOrphan; filterCategory = ''; filterStarred = false; filterList = ''"
-                        >No list</button>
+                        >{{ $t('gearroom.filterNoList') }}</button>
                         <button
                             :class="['lpGearRoomChip', { active: filterStarred }]"
                             @click="filterStarred = !filterStarred; filterCategory = ''; filterOrphan = false; filterList = ''"
-                        >★ Favorites</button>
+                        >{{ $t('gearroom.filterFavorites') }}</button>
                         <button
                             v-for="cat in availableCategories"
                             :key="cat"
@@ -55,20 +55,20 @@
                     </div>
                 </div>
                 <div>
-                    <div class="lpGearRoomFiltersLabel">Weight (g)</div>
+                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterWeight') }}</div>
                     <div class="lpGearRoomWeightRange">
-                        <input v-model.number="weightMin" class="lpGearRoomWeightInput" type="number" min="0" placeholder="Min">
+                        <input v-model.number="weightMin" class="lpGearRoomWeightInput" type="number" min="0" :placeholder="$t('gearroom.filterMin')">
                         <span>–</span>
-                        <input v-model.number="weightMax" class="lpGearRoomWeightInput" type="number" min="0" placeholder="Max">
+                        <input v-model.number="weightMax" class="lpGearRoomWeightInput" type="number" min="0" :placeholder="$t('gearroom.filterMax')">
                     </div>
                 </div>
             </div>
 
             <div class="lpGearRoomMain">
                 <div class="lpGearRoomStats">
-                    <span class="lpGearRoomStat"><strong>{{ totalWeightDisplay }}</strong> total</span>
-                    <span class="lpGearRoomStat"><strong>{{ filteredItems.length }}</strong> items</span>
-                    <span v-if="showTotalValue" class="lpGearRoomStat"><strong>€{{ totalValue }}</strong> value</span>
+                    <span class="lpGearRoomStat"><strong>{{ totalWeightDisplay }}</strong> {{ $t('gearroom.statTotal') }}</span>
+                    <span class="lpGearRoomStat"><strong>{{ filteredItems.length }}</strong> {{ $t('gearroom.statItems') }}</span>
+                    <span v-if="showTotalValue" class="lpGearRoomStat"><strong>€{{ totalValue }}</strong> {{ $t('gearroom.statValue') }}</span>
                 </div>
 
                 <div class="lpGearRoomTableWrap">
@@ -85,19 +85,19 @@
                                 </th>
                                 <th class="lpGRImgCol"></th>
                                 <th class="lpGRSortable" @click="setSort('name')">
-                                    Item {{ sortKey === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    {{ $t('gearroom.tableHeaderItem') }} {{ sortKey === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
-                                <th class="lpGRSortable lpGRStarCol" @click="setSort('starred')" title="Sort by favorites">
+                                <th class="lpGRSortable lpGRStarCol" @click="setSort('starred')" :title="$t('gearroom.tableHeaderStarred')">
                                     ★ {{ sortKey === 'starred' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRCategoryCol lpGRSortable" @click="setSort('category')">
-                                    List category {{ sortKey === 'category' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    {{ $t('gearroom.tableHeaderCategory') }} {{ sortKey === 'category' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRWeightCol lpGRSortable" @click="setSort('weight')">
-                                    Weight {{ sortKey === 'weight' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    {{ $t('gearroom.tableHeaderWeight') }} {{ sortKey === 'weight' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th v-if="showPrice" class="lpGRPriceCol lpGRSortable" @click="setSort('price')">
-                                    Price {{ sortKey === 'price' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    {{ $t('gearroom.tableHeaderPrice') }} {{ sortKey === 'price' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                             </tr>
                         </thead>

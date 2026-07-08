@@ -171,8 +171,8 @@
 <template>
     <div :class="['lpGearRoomComparePanel', { 'lpGearRoomComparePanel--open': open }]">
         <div class="lpGearRoomCompareHeader">
-            <span class="lpGearRoomCompareTitle">Compare {{ items.length }} items</span>
-            <button class="lpGearRoomCompareClose" @click="$emit('close')">✕ Close</button>
+            <span class="lpGearRoomCompareTitle">{{ $t('gearroom.batchCompare') }} {{ items.length }} items</span>
+            <button class="lpGearRoomCompareClose" @click="$emit('close')">{{ $t('gearroom.compareClose') }}</button>
         </div>
         <div class="lpGearRoomCompareScroll">
             <table class="lpGearRoomCompareTable">
@@ -191,45 +191,45 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Image</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareImage') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             <img v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomCompareThumb" :alt="item.name">
                             <div v-else class="lpGearRoomCompareThumbPlaceholder"></div>
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Name</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareName') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareNameCell">
                             {{ itemDisplayName(item) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Brand</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareBrand') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             {{ item.brand || '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Description</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareDescription') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareDescCell">
                             {{ item.description || '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Type</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareType') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
                             <span v-else class="lpGearRoomCompareMuted">—</span>
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Tags</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareTags') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareDescCell">
                             {{ item.tags && item.tags.length ? item.tags.join(', ') : '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Weight</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareWeight') }}</td>
                         <td
                             v-for="item in items"
                             :key="item.id"
@@ -239,13 +239,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Price</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.comparePrice') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             {{ item.price > 0 ? '€' + item.price : '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">Used in lists</td>
+                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareUsedInLists') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             {{ item._usedInLists }} list{{ item._usedInLists !== 1 ? 's' : '' }}
                         </td>

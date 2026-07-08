@@ -7,11 +7,11 @@
         <!-- Panel: Set type -->
         <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">Set type for {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchSetTypeButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
                 <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Type</span>
+                <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchType') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Shelter"
                         @focus="showTypeDropdown = true"
@@ -28,11 +28,11 @@
         <!-- Panel: Set brand -->
         <div v-else-if="activeBatchPanel === 'brand'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">Set brand for {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchSetBrandButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
                 <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Brand</span>
+                <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchBrand') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia"
                         @focus="showBrandDropdown = true"
@@ -49,11 +49,11 @@
         <!-- Panel: Add tag -->
         <div v-else-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">Add tag to {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }}</div>
+                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchAddTagButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
                 <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">Tag</span>
+                <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchTag') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking"
                         @focus="showTagDropdown = true"
@@ -70,7 +70,7 @@
         <!-- Panel: Merge -->
         <div v-else-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">Merge — keep which item?</div>
+                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchMergeTitle') }}</div>
                 <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
             </div>
             <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
@@ -85,17 +85,17 @@
                     <span style="color:#aaa;margin-left:8px;font-size:11px">{{ getItemById(id).description }}</span>
                 </button>
             </div>
-            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">Merge &amp; delete duplicate</button>
+            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">{{ $t('gearroom.batchMergeButton') }}</button>
         </div>
 
         <!-- Panel: Add to list -->
         <div v-else-if="activeBatchPanel === 'addToList'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">Add {{ selected.length }} item{{ selected.length !== 1 ? 's' : '' }} to list</div>
+                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchAddToListButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
                 <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">List</span>
+                <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchList') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="Find or create a list..."
                         @focus="showListDropdown = true; batchListId = ''"
@@ -108,7 +108,7 @@
                 </div>
             </div>
             <div v-if="batchListId && batchListId !== '__new__'" class="lpGearRoomBatchPanelRow">
-                <span class="lpGearRoomBatchPanelLabel">List cat.</span>
+                <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchListCat') }}</span>
                 <div class="lpBrandInputWrap">
                     <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
                         @click="showListCatDropdown = !showListCatDropdown"
@@ -123,18 +123,18 @@
 
         <!-- Action buttons -->
         <div class="lpGearRoomBatchActions">
-            <span class="lpGearRoomBatchCount">{{ selected.length }} selected</span>
+            <span class="lpGearRoomBatchCount">{{ $t('gearroom.batchCount', { count: selected.length }) }}</span>
             <span class="lpGearRoomBatchSep">|</span>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">⇄ Merge</button>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? 'Close compare' : '⇔ Compare' }}</button>
-            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">Swap name ↔ desc</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">Set type</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('brand')">Set brand</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">Add tag</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">Add to list</button>
-            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">Delete</button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">{{ $t('gearroom.batchMerge') }}</button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? $t('gearroom.batchCloseCompare') : $t('gearroom.batchCompare') }}</button>
+            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">{{ $t('gearroom.batchSwapNameDesc') }}</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">{{ $t('gearroom.batchSetTypeButton') }}</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('brand')">{{ $t('gearroom.batchSetBrandButton') }}</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">{{ $t('gearroom.batchAddTagButton') }}</button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">{{ $t('gearroom.batchAddToListButton') }}</button>
+            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">{{ $t('gearroom.batchDelete') }}</button>
             <span class="lpGearRoomBatchSep">|</span>
-            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">✕ Cancel</button>
+            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">{{ $t('gearroom.batchCancel') }}</button>
         </div>
     </div>
 </template>
