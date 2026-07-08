@@ -5,33 +5,33 @@
 <template>
     <div id="importCSV">
         <modal id="importValidate" :shown="shown" @hide="shown = false">
-            <h2>Confirm your import <span v-if="importItemCount">({{ importItemCount }} items)</span></h2>
+            <h2>{{ $t('library.confirmImportTitle') }} <span v-if="importItemCount">({{ importItemCount }} {{ $t('library.importItemsCount') }})</span></h2>
             <p class="importSummary">
-                <span class="importBadge">{{ acceptedRowCount }} accepted</span>
-                <span v-if="rejectedRowCount" class="importBadge isRejected">{{ rejectedRowCount }} rejected</span>
+                <span class="importBadge">{{ acceptedRowCount }} {{ $t('library.importAccepted') }}</span>
+                <span v-if="rejectedRowCount" class="importBadge isRejected">{{ rejectedRowCount }} {{ $t('library.importRejected') }}</span>
             </p>
             <p v-if="importData.mergeCount || reviewCount" class="importSummary">
-                <span v-if="importData.mergeCount" class="importBadge">{{ importData.mergeCount }} will merge with existing gear</span>
-                <span v-if="reviewCount" class="importBadge isAmbiguous">{{ reviewCount }} need your review</span>
+                <span v-if="importData.mergeCount" class="importBadge">{{ importData.mergeCount }} {{ $t('library.importMergeCount') }}</span>
+                <span v-if="reviewCount" class="importBadge isAmbiguous">{{ reviewCount }} {{ $t('library.importNeedsReview') }}</span>
             </p>
             <ul v-if="rejectedRowCount" class="importErrors">
                 <li v-for="row in importData.rejectedRows" :key="row.rowNumber">
-                    Row {{ row.rowNumber }}: {{ row.reason }}
+                    {{ $t('library.importRowError', { rowNumber: row.rowNumber, reason: row.reason }) }}
                 </li>
             </ul>
             <div id="importData">
                 <ul class="lpTable lpDataTable">
                     <li class="lpRow lpHeader">
-                        <span class="lpCell">Item Name</span>
-                        <span class="lpCell">Type</span>
-                        <span class="lpCell">Description</span>
-                        <span class="lpCell lpNumber">Qty</span>
-                        <span class="lpCell lpNumber">Weight</span>
-                        <span class="lpCell">Unit</span>
-                        <span class="lpCell">Link</span>
-                        <span class="lpCell lpNumber">Price</span>
-                        <span class="lpCell">Worn</span>
-                        <span class="lpCell">Consumable</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderName') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderType') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderDescription') }}</span>
+                        <span class="lpCell lpNumber">{{ $t('library.importTableHeaderQty') }}</span>
+                        <span class="lpCell lpNumber">{{ $t('library.importTableHeaderWeight') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderUnit') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderLink') }}</span>
+                        <span class="lpCell lpNumber">{{ $t('library.importTableHeaderPrice') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderWorn') }}</span>
+                        <span class="lpCell">{{ $t('library.importTableHeaderConsumable') }}</span>
                     </li>
                     <li v-for="(row, index) in importData.data" :key="index" class="lpRow">
                         <span class="lpCell">{{ row.name }}</span>
@@ -40,82 +40,82 @@
                         <span class="lpCell">{{ row.qty }}</span>
                         <span class="lpCell">{{ row.weight }}</span>
                         <span class="lpCell">{{ row.unit }}</span>
-                        <span class="lpCell">{{ row.url ? 'Yes' : '' }}</span>
+                        <span class="lpCell">{{ row.url ? $t('library.importYesValue') : '' }}</span>
                         <span class="lpCell">{{ row.price }}</span>
-                        <span class="lpCell">{{ row.worn ? 'Yes' : '' }}</span>
-                        <span class="lpCell">{{ row.consumable ? 'Yes' : '' }}</span>
+                        <span class="lpCell">{{ row.worn ? $t('library.importYesValue') : '' }}</span>
+                        <span class="lpCell">{{ row.consumable ? $t('library.importYesValue') : '' }}</span>
                     </li>
                 </ul>
             </div>
             <div v-if="reviewCount" class="importReview">
-                <h3>Review these items</h3>
+                <h3>{{ $t('library.importReviewTitle') }}</h3>
                 <div v-for="(row, index) in ambiguousRows" :key="index" class="importReviewRow">
                     <div class="importReviewCol">
-                        <p class="importReviewLabel">Imported</p>
+                        <p class="importReviewLabel">{{ $t('library.importReviewLabelImported') }}</p>
                         <p class="importReviewName">{{ row.name }}</p>
                         <p class="importReviewMeta">{{ row.weight }} {{ row.unit }}<span v-if="row.brand"> · {{ row.brand }}</span></p>
                     </div>
                     <div class="importReviewCol">
-                        <p class="importReviewLabel">Existing match</p>
+                        <p class="importReviewLabel">{{ $t('library.importReviewLabelExisting') }}</p>
                         <p class="importReviewName">{{ row._match.item.name }}</p>
                         <p class="importReviewMeta">{{ displayWeight(row._match.item.weight, row._match.item.authorUnit) }} {{ row._match.item.authorUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span></p>
                     </div>
                     <div class="importReviewActions">
-                        <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">Merge</button>
-                        <button class="lpButton lpButtonSm lpButtonSecondary" @click="resolveReview(index, 'new')">Keep both</button>
+                        <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">{{ $t('library.importReviewMergeButton') }}</button>
+                        <button class="lpButton lpButtonSm lpButtonSecondary" @click="resolveReview(index, 'new')">{{ $t('library.importReviewKeepBothButton') }}</button>
                     </div>
                 </div>
             </div>
             <div class="lpModalActions">
-                <a class="lpButton close" @click="shown = false">Cancel Import</a>
-                <a id="importConfirm" class="lpButton" @click="importList">Import List</a>
+                <a class="lpButton close" @click="shown = false">{{ $t('library.importCancelButton') }}</a>
+                <a id="importConfirm" class="lpButton" @click="importList">{{ $t('library.importConfirmButton') }}</a>
             </div>
         </modal>
         <modal id="importText" :shown="showTextInput" @hide="closeTextInput">
-            <h2>Paste your gear list</h2>
-            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">YouTube descriptions, affiliate link lists, any text with <code>-CATEGORY</code> and <code>*Item - URL</code> format.</p>
+            <h2>{{ $t('library.textImportTitle') }}</h2>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">{{ $t('library.textImportHint') }}</p>
             <textarea
                 v-model="textInput"
                 class="lpImportTextarea"
-                placeholder="-PACKING&#10;*Palate V2 Backpack - https://...&#10;&#10;-SLEEPING&#10;*Zpacks Duplex Lite Tent - https://..."
+                :placeholder="$t('library.textImportPlaceholder')"
                 rows="10"
             />
-            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">List name</label>
+            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">{{ $t('library.textImportListNameLabel') }}</label>
             <input
                 v-model="textName"
                 class="lpImportUrlInput"
                 type="text"
-                placeholder="My gear list"
+                :placeholder="$t('library.textImportListNamePlaceholder')"
             >
             <p v-if="textError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ textError }}</p>
             <div class="lpModalActions">
-                <a class="lpButton lpButtonSecondary" @click="closeTextInput">Cancel</a>
-                <a class="lpButton" @click="importFromText">Import</a>
+                <a class="lpButton lpButtonSecondary" @click="closeTextInput">{{ $t('library.textImportCancelButton') }}</a>
+                <a class="lpButton" @click="importFromText">{{ $t('library.textImportButton') }}</a>
             </div>
         </modal>
         <modal id="importLP" :shown="showLPInput" @hide="closeLPInput">
-            <h2>Import from LighterPack</h2>
-            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">Paste your public LighterPack list URL below.</p>
+            <h2>{{ $t('library.lpImportTitle') }}</h2>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">{{ $t('library.lpImportHint') }}</p>
             <input
                 v-model="lpUrl"
                 class="lpImportUrlInput"
                 type="url"
-                placeholder="https://lighterpack.com/r/abc123"
+                :placeholder="$t('library.lpImportUrlPlaceholder')"
                 @keyup.enter="importFromLP"
             >
-            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">List name</label>
+            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">{{ $t('library.lpImportListNameLabel') }}</label>
             <input
                 v-model="lpName"
                 class="lpImportUrlInput"
                 type="text"
-                placeholder="My gear list"
+                :placeholder="$t('library.lpImportListNamePlaceholder')"
                 @keyup.enter="importFromLP"
             >
             <p v-if="lpError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ lpError }}</p>
             <div class="lpModalActions">
-                <a class="lpButton lpButtonSecondary" @click="closeLPInput">Cancel</a>
+                <a class="lpButton lpButtonSecondary" @click="closeLPInput">{{ $t('library.lpImportCancelButton') }}</a>
                 <a class="lpButton" :class="{ disabled: lpLoading }" @click="importFromLP">
-                    {{ lpLoading ? 'Importing…' : 'Import' }}
+                    {{ lpLoading ? $t('library.lpImportLoadingButton') : $t('library.lpImportButton') }}
                 </a>
             </div>
         </modal>
@@ -234,11 +234,11 @@ export default {
                 return;
             }
             if (file.size > 1000000) {
-                showGlobalAlert('File is too big');
+                showGlobalAlert(this.$t('library.csvImportErrorFileToBig'));
                 return;
             }
             if (name.substring(name.length - 4).toLowerCase() !== '.csv') {
-                showGlobalAlert('Please select a CSV.');
+                showGlobalAlert(this.$t('library.csvImportErrorNotCsv'));
                 return;
             }
             const reader = new FileReader();
@@ -254,7 +254,7 @@ export default {
             this.importData = computeDedup(this.importData, this.library.items);
 
             if (!this.importData.data.length) {
-                showGlobalAlert('Unable to load spreadsheet - please verify the format.');
+                showGlobalAlert(this.$t('library.csvImportErrorLoadFailed'));
             } else {
                 this.shown = true;
             }
@@ -274,15 +274,15 @@ export default {
             this.textError = '';
             const text = this.textInput.trim();
             if (!text) {
-                this.textError = 'Please paste a gear list.';
+                this.textError = this.$t('library.textImportErrorEmpty');
                 return;
             }
             const items = textImportUtils.parseTextList(text);
             if (!items.length) {
-                this.textError = 'No items found. Use *Item - URL format.';
+                this.textError = this.$t('library.textImportErrorNoItems');
                 return;
             }
-            const name = this.textName.trim() || 'Imported list';
+            const name = this.textName.trim() || this.$t('library.textImportDefaultListName');
             this.showTextInput = false;
             const importData = {
                 data: items,
@@ -307,7 +307,7 @@ export default {
             this.lpError = '';
             const url = this.lpUrl.trim();
             if (!url) {
-                this.lpError = 'Please enter a URL.';
+                this.lpError = this.$t('library.lpImportErrorUrlEmpty');
                 return;
             }
             this.lpLoading = true;
@@ -319,14 +319,14 @@ export default {
                 });
                 const data = await res.json();
                 if (!res.ok) {
-                    this.lpError = data.error || 'Import failed.';
+                    this.lpError = data.error || this.$t('library.lpImportErrorDefault');
                     return;
                 }
                 if (!this.lpName) this.lpName = data.name;
                 this.showLPInput = false;
                 this.validateImport(data.csv, this.lpName || data.name);
             } catch {
-                this.lpError = 'Network error. Please try again.';
+                this.lpError = this.$t('library.lpImportErrorNetwork');
             } finally {
                 this.lpLoading = false;
             }

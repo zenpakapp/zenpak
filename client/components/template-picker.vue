@@ -95,18 +95,18 @@
     <teleport to="body">
         <div class="lpTemplatePicker" @click.self="onDismiss">
             <div class="lpTemplatePickerModal">
-                <p class="lpTemplatePickerTitle">Start with a template</p>
-                <p class="lpTemplatePickerSubtitle">Pick a starter list or begin from scratch.</p>
+                <p class="lpTemplatePickerTitle">{{ $t('library.templatePickerTitle') }}</p>
+                <p class="lpTemplatePickerSubtitle">{{ $t('library.templatePickerSubtitle') }}</p>
                 <div class="lpTemplatePickerCards">
                     <div v-for="template in templates" :key="template.id" class="lpTemplatePickerCard">
                         <div class="lpTemplatePickerCardBody">
                             <p class="lpTemplatePickerCardName">{{ template.name }}</p>
                             <p class="lpTemplatePickerCardDesc">{{ template.description }}</p>
                         </div>
-                        <button class="lpButton" @click="onSelect(template)">Select</button>
+                        <button class="lpButton" @click="onSelect(template)">{{ $t('library.templatePickerSelectButton') }}</button>
                     </div>
                 </div>
-                <a class="lpHref lpTemplatePickerBlank" @click="onDismiss">Start blank</a>
+                <a class="lpHref lpTemplatePickerBlank" @click="onDismiss">{{ $t('library.templatePickerBlankLink') }}</a>
             </div>
         </div>
     </teleport>

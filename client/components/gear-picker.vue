@@ -122,15 +122,15 @@
     <modal id="gearPickerDialog" :shown="shown" @hide="reset">
         <div class="gearPicker">
             <div class="gearPickerHeader">
-                <p class="gearPickerTitle">Add gear</p>
-                <p class="gearPickerSubtitle">to {{ categoryName }}</p>
+                <p class="gearPickerTitle">{{ $t('library.gearPickerTitle') }}</p>
+                <p class="gearPickerSubtitle">{{ $t('library.gearPickerSubtitle', { categoryName }) }}</p>
             </div>
 
             <input
                 v-model="search"
                 class="gearPickerSearch"
                 type="text"
-                placeholder="Search by name or brand..."
+                :placeholder="$t('library.gearPickerSearchPlaceholder')"
             >
 
             <ul class="gearPickerList">
@@ -140,18 +140,18 @@
                     :class="['gearPickerItem', { alreadyAdded: isAlreadyInCategory(gearItem) }]"
                     @click="pickItem(gearItem)"
                 >
-                    <span class="gearPickerItemName">{{ gearItem.name || 'Unnamed item' }}</span>
+                    <span class="gearPickerItemName">{{ gearItem.name || $t('library.gearPickerUnnamedItem') }}</span>
                     <span v-if="gearItem.brand" class="gearPickerItemBrand">{{ gearItem.brand }}</span>
                     <span class="gearPickerItemWeight">{{ formatWeight(gearItem.weight, gearItem.authorUnit) }}</span>
                 </li>
                 <li v-if="filteredItems.length === 0" class="gearPickerEmpty">
-                    No matching gear found.
+                    {{ $t('library.gearPickerNoResults') }}
                 </li>
             </ul>
 
             <div class="gearPickerFooter">
                 <button class="lpButton lpSmall lpButtonSecondary gearPickerCreate" @click="createNew">
-                    + Create new item{{ search ? ` "${search}"` : '' }}
+                    {{ $t('library.gearPickerCreatePrefix') }}{{ search ? ` "${search}"` : '' }}
                 </button>
             </div>
         </div>

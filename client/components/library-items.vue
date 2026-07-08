@@ -5,13 +5,13 @@
 <template>
     <section class="libraryContainer">
         <div v-if="showTitle" class="libraryHeader">
-            <h2>Items</h2>
-            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">New gear item</button>
+            <h2>{{ $t('library.itemsTitle') }}</h2>
+            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">{{ $t('library.newGearButton') }}</button>
         </div>
         <div class="lpLibraryFilters">
             <div class="lpLibraryFilterSelectWrap">
                 <select v-model="filterCategory" class="lpLibraryFilterSelect">
-                    <option value="">All categories</option>
+                    <option value="">{{ $t('library.allCategories') }}</option>
                     <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
                 </select>
             </div>
@@ -21,13 +21,13 @@
                     class="librarySearch"
                     v-model="searchText"
                     type="text"
-                    placeholder="Search..."
+                    :placeholder="$t('library.searchPlaceholder')"
                 >
                 <button
                     v-if="searchText"
                     class="librarySearchClear"
                     type="button"
-                    aria-label="Clear gear search"
+                    :aria-label="$t('library.clearSearchAria')"
                     @click="clearSearch"
                 >
                     ×
@@ -42,7 +42,7 @@
                 v-model="tagInput"
                 type="text"
                 class="lpTagInput"
-                placeholder="Filter by tag..."
+                :placeholder="$t('library.filterByTagPlaceholder')"
                 @keydown.enter.prevent="addFilterTag"
                 @focus="tagInputFocused = true"
                 @blur="tagInputFocused = false"
@@ -59,9 +59,9 @@
                 <span class="lpDescription">
                     {{ item.description }}
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" title="Delete this item permanently" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
-                <button class="lpLibraryItemEdit" title="View item details" @click.stop="openDetail(item)">⋯</button>
-                <div class="lpHandle lpLibraryItemHandle" title="Drag to add to list" />
+                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
+                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">⋯</button>
+                <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
             </li>
         </ul>
     </section>
@@ -259,7 +259,7 @@ export default {
                 this.$store.commit('removeItem', item);
             };
             const speedbumpOptions = {
-                body: 'Are you sure you want to delete this item? This cannot be undone.',
+                body: this.$t('library.deleteItemConfirm'),
             };
             openSpeedbump(callback, speedbumpOptions);
         },

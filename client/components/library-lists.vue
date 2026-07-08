@@ -101,25 +101,25 @@
 <template>
     <section id="listContainer">
         <div class="listContainerHeader">
-            <h2>Lists</h2>
+            <h2>{{ $t('library.listsTitle') }}</h2>
             <PopoverHover id="addListFlyout" placement="right">
-                <template #target><span><a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a></span></template>
+                <template #target><span><a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span></template>
                 <template #content><div style="display:flex;flex-direction:column;gap:8px;">
-                    <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />Add new list</a>
-                    <a class="lpAdd" @click="importText"><i class="lpSprite lpSpriteUpload" />Paste gear list</a>
-                    <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />Import CSV</a>
-                    <a class="lpAdd" @click="importLP"><i class="lpSprite lpSpriteUpload" />Import from LighterPack</a>
-                    <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />Copy a list</a>
+                    <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
+                    <a class="lpAdd" @click="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
+                    <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
+                    <a class="lpAdd" @click="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
+                    <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
                 </div></template>
             </PopoverHover>
         </div>
         <ul id="lists" ref="lists">
             <li v-for="list in library.lists" :key="list.id" class="lpLibraryList" :class="{lpActive: (library.defaultListId == list.id)}">
-                <div class="lpHandle" title="Reorder this item" />
+                <div class="lpHandle" :title="$t('library.reorderItemTitle')" />
                 <span class="lpLibraryListSwitch lpListName" @click="setDefaultList(list)">
                     {{ listName(list) }}
                 </span>
-                <a class="lpRemove" title="Remove this list" @click="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a class="lpRemove" :title="$t('library.removeListTitle')" @click="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
             </li>
         </ul>
     </section>
@@ -163,7 +163,7 @@ export default {
             this.$store.commit('setDefaultList', list);
         },
         listName(list) {
-            return list.name || 'New list';
+            return list.name || this.$t('library.newListDefault');
         },
         newList() {
             this.$store.commit('newList');
@@ -204,7 +204,7 @@ export default {
                 this.$store.commit('removeList', list);
             };
             const speedbumpOptions = {
-                body: 'Are you sure you want to delete this list? This cannot be undone.',
+                body: this.$t('library.deleteListConfirm'),
             };
             openSpeedbump(callback, speedbumpOptions);
         },
