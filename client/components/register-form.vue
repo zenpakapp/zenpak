@@ -7,18 +7,18 @@
         <template-picker v-if="showTemplatePicker" @select="submitWithTemplate" @dismiss="submitWithTemplate(null)" />
         <form class="lpRegister lpFields" @submit.prevent="submit">
             <div class="lpFields">
-                <input v-model="username" v-focus-on-create type="text" placeholder="Username" name="username">
-                <input v-model="email" type="email" placeholder="Email" name="email">
-                <input v-model="password" type="password" placeholder="Password" name="password">
-                <input v-model="passwordConfirm" type="password" placeholder="Confirm password" name="passwordConfirm">
+                <input v-model="username" v-focus-on-create type="text" :placeholder="$t('auth.username')" name="username">
+                <input v-model="email" type="email" :placeholder="$t('auth.email')" name="email">
+                <input v-model="password" type="password" :placeholder="$t('auth.password')" name="password">
+                <input v-model="passwordConfirm" type="password" :placeholder="$t('auth.confirmPassword')" name="passwordConfirm">
             </div>
             <errors :errors="errors" />
             <div class="lpButtons">
                 <button class="lpButton">
-                    Register
+                    {{ $t('auth.register') }}
                     <spinner v-if="saving" />
                 </button>
-                <a href="" class="lpHref lpGetStarted" @click.prevent="loadLocal">Skip account for now</a>
+                <a href="" class="lpHref lpGetStarted" @click.prevent="loadLocal">{{ $t('auth.skipForNow') }}</a>
             </div>
         </form>
     </div>
@@ -86,31 +86,31 @@ export default {
             this.errors = [];
 
             if (!this.username) {
-                this.errors.push({ field: 'username', message: 'Please enter a username.' });
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameRequired') });
             }
 
             if (this.username && (this.username.length < 3 || this.username.length > 32)) {
-                this.errors.push({ field: 'username', message: 'Please enter a username between 3 and 32 characters.' });
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameLengthError') });
             }
 
             if (!this.email) {
-                this.errors.push({ field: 'email', message: 'Please enter an email.' });
+                this.errors.push({ field: 'email', message: this.$t('auth.emailRequired') });
             }
 
             if (!this.password) {
-                this.errors.push({ field: 'password', message: 'Please enter a password.' });
+                this.errors.push({ field: 'password', message: this.$t('auth.passwordRequired') });
             }
 
             if (!this.passwordConfirm) {
-                this.errors.push({ field: 'passwordConfirm', message: 'Please enter a password confirmation.' });
+                this.errors.push({ field: 'passwordConfirm', message: this.$t('auth.passwordConfirmRequired') });
             }
 
             if (this.password && this.passwordConfirm && this.password !== this.passwordConfirm) {
-                this.errors.push({ field: 'password', message: "Your passwords don't match." });
+                this.errors.push({ field: 'password', message: this.$t('auth.passwordsDoNotMatch') });
             }
 
             if (this.password && (this.password.length < 5 || this.password.length > 60)) {
-                this.errors.push({ field: 'password', message: 'Please enter a password between 5 and 60 characters.' });
+                this.errors.push({ field: 'password', message: this.$t('auth.passwordLengthError') });
             }
 
             if (this.errors.length) {
@@ -160,7 +160,7 @@ export default {
                         moveLocalLibraryToRegistered();
                     }
                     this.saving = false;
-                    this.$store.commit('pushGlobalAlert', { message: 'Welcome! Check your inbox to verify your email.' });
+                    this.$store.commit('pushGlobalAlert', { message: this.$t('auth.welcomeCheckEmail') });
                     push('/');
                 })
                 .catch((err) => {

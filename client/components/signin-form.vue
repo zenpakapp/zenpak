@@ -4,20 +4,20 @@
             {{ message }}
         </p>
         <div class="lpFields">
-            <input v-model="username" v-focus-on-create type="text" placeholder="Username" name="username" class="username">
-            <input ref="passwordInput" v-model="password" type="password" placeholder="Password" name="password" class="password">
+            <input v-model="username" v-focus-on-create type="text" :placeholder="$t('auth.username')" name="username" class="username">
+            <input ref="passwordInput" v-model="password" type="password" :placeholder="$t('auth.password')" name="password" class="password">
         </div>
 
         <errors :errors="errors" />
 
         <div class="lpButtons">
             <button class="lpButton">
-                Sign in
+                {{ $t('auth.signIn') }}
                 <spinner v-if="fetching" />
             </button>
 
             <router-link to="/forgot-password" class="lpHref signin-forgot-password">
-                Forgot username/password?
+                {{ $t('auth.forgotUsernamePassword') }}
             </router-link>
         </div>
     </form>
@@ -48,11 +48,11 @@ export default {
             this.errors = [];
 
             if (!this.username) {
-                this.errors.push({ field: 'username', message: 'Please enter a username.' });
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameRequired') });
             }
 
             if (!this.password) {
-                this.errors.push({ field: 'password', message: 'Please enter a password.' });
+                this.errors.push({ field: 'password', message: this.$t('auth.passwordRequired') });
             }
 
             if (this.errors.length) {

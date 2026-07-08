@@ -46,7 +46,18 @@
     "sendNewLink": "Send a new link",
     "verifyEmailError": "An error occurred. Try from your dashboard.",
     "checkInboxTitle": "Check your inbox",
-    "checkInboxMessage": "We sent a verification link to your email. Click it to unlock public sharing on ZenPak."
+    "checkInboxMessage": "We sent a verification link to your email. Click it to unlock public sharing on ZenPak.",
+    "confirmPassword": "Confirm password",
+    "register": "Register",
+    "skipForNow": "Skip account for now",
+    "usernameRequired": "Please enter a username.",
+    "usernameLengthError": "Please enter a username between 3 and 32 characters.",
+    "emailRequired": "Please enter an email.",
+    "passwordRequired": "Please enter a password.",
+    "passwordConfirmRequired": "Please enter a password confirmation.",
+    "passwordLengthError": "Please enter a password between 5 and 60 characters.",
+    "welcomeCheckEmail": "Welcome! Check your inbox to verify your email.",
+    "forgotUsernamePassword": "Forgot username/password?"
   },
   "welcome": {
     "headline": "Pack light.",
