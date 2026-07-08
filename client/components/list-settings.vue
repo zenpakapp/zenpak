@@ -84,7 +84,7 @@
 <template>
     <span v-if="isSignedIn" id="settings" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover>
-            <template #target><span title="Settings"><i class="lpSprite lpSettings" /> <span class="headerMenuLabel">Settings</span></span></template>
+            <template #target><span :title="$t('list.settings')"><i class="lpSprite lpSettings" /> <span class="headerMenuLabel">{{ $t('list.settings') }}</span></span></template>
             <template #content><div>
                 <ul id="lpOptionalFields">
                     <li v-for="optionalField in optionalFieldsLookup" :key="optionalField.name" class="lpOptionalField">

@@ -88,10 +88,10 @@
 
 <template>
     <div style="position:relative;display:inline-block">
-        <button class="lpReportBtn" @click.stop.prevent="open = !open">Report</button>
+        <button class="lpReportBtn" @click.stop.prevent="open = !open">{{ $t('misc.report') }}</button>
         <div v-if="open" class="lpReportModal" @click.stop>
             <div v-if="!submitted">
-                <div class="lpReportTitle">Report this {{ targetType }}</div>
+                <div class="lpReportTitle">{{ $t('misc.reportThis') }} {{ targetType }}</div>
                 <div class="lpReportReasons">
                     <label v-for="r in reasons" :key="r.value" class="lpReportReason">
                         <input type="radio" v-model="reason" :value="r.value" />
@@ -100,7 +100,7 @@
                 </div>
                 <div v-if="error" style="color:var(--color-warning,#e53e3e);font-size:11px;margin-bottom:8px">{{ error }}</div>
                 <div class="lpReportActions">
-                    <button class="lpReportCancel" @click="open = false">Cancel</button>
+                    <button class="lpReportCancel" @click="open = false">{{ $t('misc.cancel') }}</button>
                     <button class="lpReportSubmit" :disabled="!reason || submitting" @click="submit">
                         {{ submitting ? '…' : 'Send' }}
                     </button>

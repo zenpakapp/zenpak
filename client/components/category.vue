@@ -69,11 +69,11 @@
                 <span class="lpHandleCell">
                     <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" title="Reorder this category" />
                 </span>
-                <input v-focus-on-create="category._isNew" type="text" :value="category.name" placeholder="Category Name" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
+                <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">Price</span>
                 <span class="lpWeightCell">Weight</span>
                 <span class="lpQtyCell">qty</span>
-                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" title="Remove this category" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
+                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" :title="$t('misc.deleteCategory')" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
             </li>
             <item
                 v-for="itemContainer in itemContainers"
@@ -98,7 +98,7 @@
                         @keydown.escape="dismissSuggestions"
                         @blur="dismissSuggestions"
                     />
-                    <a v-else class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />Add new item</a>
+                    <a v-else class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
                     <ul v-if="showSuggestions" class="lpSuggestions">
                         <li
                             v-for="item in suggestions"
@@ -246,7 +246,7 @@ export default {
                 this.$store.commit('removeCategory', category);
             };
             const speedbumpOptions = {
-                body: 'Are you sure you want to delete this category? This cannot be undone.',
+                body: this.$t('misc.deleteCategory'),
             };
             openSpeedbump(callback, speedbumpOptions);
         },

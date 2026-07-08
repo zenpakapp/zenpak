@@ -132,10 +132,10 @@
 
         <div v-if="open" class="lpNotifDropdown" @click.stop>
             <div class="lpNotifHeader">
-                <span>Notifications</span>
-                <button v-if="unreadCount > 0" @click="markAllRead">Mark all read</button>
+                <span>{{ $t('misc.notifications') }}</span>
+                <button v-if="unreadCount > 0" @click="markAllRead">{{ $t('misc.markAllRead') }}</button>
             </div>
-            <p v-if="notifications.length === 0" class="lpNotifEmpty">No notifications yet.</p>
+            <p v-if="notifications.length === 0" class="lpNotifEmpty">{{ $t('misc.noNotifications') }}</p>
             <div
                 v-for="n in notifications"
                 :key="String(n._id)"

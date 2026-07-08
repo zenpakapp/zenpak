@@ -64,7 +64,7 @@
 
 <template>
     <div class="lpInsights">
-        <div class="lpInsightsTitle">Insights</div>
+        <div class="lpInsightsTitle">{{ $t('misc.insights') }}</div>
 
         <p v-if="loading">Loading…</p>
         <p v-else-if="error" style="color: var(--color-text-muted); font-size: 13px;">{{ error }}</p>
@@ -72,24 +72,24 @@
             <div class="lpInsightsTotals">
                 <div class="lpInsightsStat">
                     <strong>{{ data.totals.followers }}</strong>
-                    <span>Followers</span>
+                    <span>{{ $t('misc.followers') }}</span>
                 </div>
                 <div class="lpInsightsStat">
                     <strong>{{ data.totals.views }}</strong>
-                    <span>Views</span>
+                    <span>{{ $t('misc.views') }}</span>
                 </div>
                 <div class="lpInsightsStat">
                     <strong>{{ data.totals.copies }}</strong>
-                    <span>Copies</span>
+                    <span>{{ $t('misc.copies') }}</span>
                 </div>
             </div>
 
             <table v-if="data.lists.length" class="lpInsightsTable">
                 <thead>
                     <tr>
-                        <th>List</th>
-                        <th>Views</th>
-                        <th>Copies</th>
+                        <th>{{ $t('public.items') }}</th>
+                        <th>{{ $t('misc.views') }}</th>
+                        <th>{{ $t('misc.copies') }}</th>
                     </tr>
                 </thead>
                 <tbody>

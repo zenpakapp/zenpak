@@ -11,7 +11,7 @@
 
 <template>
     <modal id="copyListDialog" :shown="shown" @hide="shown = false">
-        <h2>Choose the list to copy</h2>
+        <h2>{{ $t('misc.copyList') }}</h2>
         <div class="copyListBody">
             <div>
                 <label for="listToCopy">Source list</label>
@@ -25,8 +25,8 @@
                 <b>Note:</b> Copying a list will link the items between your lists. Updating an item in one list will alter that item in all other lists that item is in.
             </p>
             <div class="lpModalActions">
-                <a class="lpButton close" @click="shown = false">Cancel</a>
-                <a id="copyConfirm" class="lpButton" @click="copyList">Copy List</a>
+                <a class="lpButton close" @click="shown = false">{{ $t('misc.cancel') }}</a>
+                <a id="copyConfirm" class="lpButton" @click="copyList">{{ $t('misc.copyList') }}</a>
             </div>
         </div>
     </modal>

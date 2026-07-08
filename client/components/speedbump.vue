@@ -34,12 +34,6 @@ export default {
     },
     data() {
         return {
-            defaultMessages: {
-                title: '',
-                body: '',
-                confirm: 'Yes',
-                cancel: 'No',
-            },
             messages: {},
             callback: null,
             shown: false,
@@ -54,7 +48,12 @@ export default {
     methods: {
         initSpeedbump(callback, options) {
             this.callback = callback;
-            this.messages = { ...this.defaultMessages };
+            this.messages = {
+                title: '',
+                body: '',
+                confirm: this.$t('misc.yes'),
+                cancel: this.$t('misc.no'),
+            };
             if (typeof options === 'string') {
                 this.messages.body = options;
             } else {
