@@ -68,12 +68,12 @@
 
 <template>
     <div class="lpNotFound">
-        <div class="lpNotFoundCode">404</div>
-        <h1 class="lpNotFoundTitle">Trail not found</h1>
-        <p class="lpNotFoundSub">Looks like this path leads nowhere. Maybe the trail was renamed, moved, or never existed.</p>
+        <div class="lpNotFoundCode">{{ $t('misc.notFoundCode') }}</div>
+        <h1 class="lpNotFoundTitle">{{ $t('misc.notFoundTitle') }}</h1>
+        <p class="lpNotFoundSub">{{ $t('misc.notFoundSub') }}</p>
         <div class="lpNotFoundActions">
-            <router-link to="/" class="lpNotFoundBtn lpNotFoundBtn--primary">Back to my pack</router-link>
-            <router-link to="/community" class="lpNotFoundBtn lpNotFoundBtn--ghost">Explore community</router-link>
+            <router-link to="/" class="lpNotFoundBtn lpNotFoundBtn--primary">{{ $t('misc.notFoundBackPack') }}</router-link>
+            <router-link to="/community" class="lpNotFoundBtn lpNotFoundBtn--ghost">{{ $t('misc.notFoundExploreCommunity') }}</router-link>
         </div>
     </div>
 </template>
@@ -82,7 +82,7 @@
 export default {
     name: 'NotFound',
     mounted() {
-        document.title = 'Trail not found — ZenPak';
+        document.title = this.$t('misc.notFoundPageTitle');
     },
 };
 </script>

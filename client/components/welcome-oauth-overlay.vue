@@ -1,14 +1,14 @@
 <template>
     <div v-if="showUsernameSetup" class="lpOAuthSetup">
         <div class="lpOAuthSetupCard">
-            <h2 class="lpOAuthSetupTitle">Choose your username</h2>
-            <p class="lpOAuthSetupText">Pick a unique username to complete your account setup.</p>
+            <h2 class="lpOAuthSetupTitle">{{ $t('misc.oauthSetupTitle') }}</h2>
+            <p class="lpOAuthSetupText">{{ $t('misc.oauthSetupText') }}</p>
             <div v-if="setupError" class="lpError">{{ setupError }}</div>
             <input
                 v-model="setupUsername"
                 class="lpOAuthSetupInput"
                 type="text"
-                placeholder="Username"
+                :placeholder="$t('misc.oauthSetupPlaceholder')"
                 maxlength="20"
                 @keyup.enter="submit"
             />
@@ -18,7 +18,7 @@
                     :disabled="loading"
                     @click="submit"
                 >
-                    {{ loading ? 'Saving…' : 'Confirm username' }}
+                    {{ loading ? $t('misc.oauthSetupSaving') : $t('misc.oauthSetupButton') }}
                 </button>
             </div>
         </div>

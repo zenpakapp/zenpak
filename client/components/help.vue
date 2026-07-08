@@ -8,22 +8,22 @@
 
 <template>
     <modal id="help" :shown="shown" @hide="shown = false">
-        <h2>Help</h2>
+        <h2>{{ $t('misc.helpTitle') }}</h2>
 
-        <p>Getting Started:</p>
+        <p>{{ $t('misc.helpGettingStarted') }}</p>
         <ol>
-            <li>Click on things to edit them. Give your list and category a name.</li>
-            <li>Add new categories and items to your list.</li>
-            <li>When you're done, share your list with others!</li>
+            <li>{{ $t('misc.helpStep1') }}</li>
+            <li>{{ $t('misc.helpStep2') }}</li>
+            <li>{{ $t('misc.helpStep3') }}</li>
         </ol>
         <hr>
-        <strong>Quantity and worn values</strong>
-        <p>If you have multiple quantity of an item and mark that item as worn, only the first quantity will count towards your worn weight. The rest will count towards your pack weight. This is because most items you have multiple of, you only wear one at once. This means you can't list your shoes/trekking poles with weights as individual weights and quantity of two - you should list as the combined weight with quantity of one.</p>
+        <strong>{{ $t('misc.helpQtyWornTitle') }}</strong>
+        <p>{{ $t('misc.helpQtyWornText') }}</p>
         <hr>
-        <strong>Items in multiple lists</strong>
-        <p>If you copy your list or drag an item from the gear library into a second list, those items are now <strong>linked</strong>. This means that changes to an item in one place will update that list everywhere. If you want to copy your list without links, for now you can export to CSV and re-import the list.</p>
+        <strong>{{ $t('misc.helpLinkedItemsTitle') }}</strong>
+        <p>{{ $t('misc.helpLinkedItemsText') }}</p>
         <hr>
-        <p><a class="lpHref" href="mailto:info@zenpak.app">More help available via email.</a></p>
+        <p><a class="lpHref" href="mailto:info@zenpak.app">{{ $t('misc.helpEmailCta') }}</a></p>
     </modal>
 </template>
 

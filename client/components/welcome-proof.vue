@@ -1,7 +1,7 @@
 <template>
     <section class="lpWelcomeProof">
         <div class="lpWelcomeProofHeader">
-            <span class="lpWelcomeProofEyebrow">Product preview</span>
+            <span class="lpWelcomeProofEyebrow">{{ $t('misc.productPreview') }}</span>
             <div class="lpWelcomeProofTabs">
                 <button
                     v-for="tab in tabs"
@@ -34,21 +34,21 @@
 </template>
 
 <script>
-const TABS = [
-    { id: 'gear', label: 'Gear library', src: '/images/screenshot-gear.png' },
-    { id: 'list', label: 'Pack list', src: '/images/screenshot-list.png' },
-    { id: 'community', label: 'Community', src: '/images/screenshot-community.png' },
-];
-
 export default {
     name: 'WelcomeProof',
     data() {
         return {
             activeTab: 'gear',
-            tabs: TABS,
         };
     },
     computed: {
+        tabs() {
+            return [
+                { id: 'gear', label: this.$t('misc.proofTabGearLibrary'), src: '/images/screenshot-gear.png' },
+                { id: 'list', label: this.$t('misc.proofTabPackList'), src: '/images/screenshot-list.png' },
+                { id: 'community', label: this.$t('misc.proofTabCommunity'), src: '/images/screenshot-community.png' },
+            ];
+        },
         activeTabData() {
             return this.tabs.find(t => t.id === this.activeTab);
         },
