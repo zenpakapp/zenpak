@@ -4,11 +4,11 @@
 
 <template>
     <div id="lp-moderation">
-        <h1>Admin panel</h1>
+        <h1>{{ $t('community.moderationTitle') }}</h1>
 
         <form @submit.prevent="searchUsers">
-            <input v-model="searchQuery" type="text" placeholder="Search for a user..." />
-            <button>Search</button>
+            <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')" />
+            <button>{{ $t('community.moderationSearchButton') }}</button>
         </form>
         <ul v-if="resultsLoaded" class="lp-moderation-search-results">
             <li v-for="result in searchResults" @click="setUser(result)" :key="result.username">
@@ -19,10 +19,10 @@
         <div v-if="userToInspect" class="lp-moderation-user-to-inspect">
             <h2>{{userToInspect.username}}</h2>
             <section>
-                <button @click="clearSession(userToInspect)">Clear session</button>
-                <button @click="resetPassword(userToInspect)">Reset password</button>
+                <button @click="clearSession(userToInspect)">{{ $t('community.moderationClearSession') }}</button>
+                <button @click="resetPassword(userToInspect)">{{ $t('community.moderationResetPassword') }}</button>
                 <template v-if="newPassword">
-                    <strong>New Password:</strong> {{ newPassword }}
+                    <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
                 </template>
             </section>
             <section>
@@ -31,8 +31,8 @@
         </div>
 
         <div class="lp-moderation-reports">
-            <h2>Reports ({{ reports.length }} pending)</h2>
-            <p v-if="reports.length === 0" style="color:#888">No pending reports.</p>
+            <h2>{{ $t('community.moderationReports') }} ({{ reports.length }} pending)</h2>
+            <p v-if="reports.length === 0" style="color:#888">{{ $t('community.moderationNoPendingReports') }}</p>
             <table v-else class="lp-reports-table">
                 <thead>
                     <tr>

@@ -5,14 +5,14 @@
                 v-model="peopleQuery"
                 type="text"
                 class="lpCommunitySearchInput"
-                placeholder="Search users…"
+                :placeholder="$t('community.peopleSearchPlaceholder')"
                 autofocus
                 @input="onInput"
             />
         </div>
-        <p v-if="loading" class="lpCommunityEmpty">Loading…</p>
+        <p v-if="loading" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
         <p v-else-if="error" class="lpCommunityEmpty">{{ error }}</p>
-        <p v-else-if="peopleQuery && results.length === 0" class="lpCommunityEmpty">No users found.</p>
+        <p v-else-if="peopleQuery && results.length === 0" class="lpCommunityEmpty">{{ $t('community.peopleNoUsersFound') }}</p>
         <template v-else>
             <router-link
                 v-for="user in results"
@@ -63,7 +63,7 @@ export default {
                 const data = await fetchJson(`/api/community/users?${params}`);
                 this.results = data.users || [];
             } catch {
-                this.error = 'Could not load results.';
+                this.error = this.$t('community.peopleLoadError');
             } finally {
                 this.loading = false;
             }

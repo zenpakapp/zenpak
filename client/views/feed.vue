@@ -99,12 +99,12 @@
 
 <template>
     <main class="lpFeed">
-        <h1>Activity</h1>
+        <h1>{{ $t('community.feedActivityTitle') }}</h1>
 
-        <p v-if="loading && events.length === 0">Loading...</p>
+        <p v-if="loading && events.length === 0">{{ $t('community.loading') }}</p>
         <p v-else-if="error" class="lpFeedEmpty">{{ error }}</p>
         <p v-else-if="events.length === 0" class="lpFeedEmpty">
-            Nothing here yet. Follow some users to see their list activity.
+            {{ $t('community.feedEmptyNone') }}
         </p>
 
         <template v-else>
@@ -121,14 +121,14 @@
                         {{ event.listName }}
                     </div>
                     <div v-else-if="event.listDeleted" class="lpFeedListCard lpFeedListDeleted">
-                        List no longer available
+                        {{ $t('community.listNoLongerAvailable') }}
                     </div>
                     <div class="lpFeedEventMeta">{{ timeAgo(event.createdAt) }}</div>
                 </div>
             </article>
 
             <button v-if="hasMore" class="lpBtn lpFeedLoadMore" :disabled="loading" @click="loadMore">
-                {{ loading ? 'Loading...' : 'Load more' }}
+                {{ loading ? $t('community.loading') : $t('community.feedLoadMore') }}
             </button>
         </template>
     </main>

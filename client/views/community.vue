@@ -18,7 +18,7 @@
                 :class="{ active: activeTab === 'discover' }"
                 @click="setTab('discover')"
             >
-                Discover
+                {{ $t('community.tabDiscover') }}
             </button>
             <button
                 class="lpCommunityTab"
@@ -28,14 +28,14 @@
                 data-tab="feed"
                 @click="canSeeFeed && setTab('feed')"
             >
-                My Feed
+                {{ $t('community.tabFeed') }}
             </button>
             <button
                 class="lpCommunityTab"
                 :class="{ active: activeTab === 'people' }"
                 @click="setTab('people')"
             >
-                People
+                {{ $t('community.tabPeople') }}
             </button>
             <button
                 v-if="isModerator"
@@ -43,7 +43,7 @@
                 :class="{ active: activeTab === 'moderation' }"
                 @click="setTab('moderation')"
             >
-                Moderation
+                {{ $t('community.tabModeration') }}
             </button>
         </div>
 
@@ -56,7 +56,7 @@
                     data-sort="recent"
                     @click="changeDiscoverSort('recent')"
                 >
-                    Recent
+                    {{ $t('community.sortRecent') }}
                 </button>
                 <button
                     class="lpCommunitySortBtn"
@@ -64,7 +64,7 @@
                     data-sort="popular"
                     @click="changeDiscoverSort('popular')"
                 >
-                    Most viewed
+                    {{ $t('community.sortPopular') }}
                 </button>
             </div>
 
@@ -73,18 +73,18 @@
                     v-model="searchQuery"
                     type="text"
                     class="lpCommunitySearchInput"
-                    placeholder="Search lists…"
+                    :placeholder="$t('community.searchListsPlaceholder')"
                     @input="onSearchInput"
                 />
             </div>
 
             <div class="lpCommunityFilters">
                 <select v-model="filterSeason" class="lpCommunityFilterSelect" aria-label="Filter by season" @change="applyDiscoverFilters">
-                    <option value="">Any season</option>
+                    <option value="">{{ $t('community.filterSeasonAny') }}</option>
                     <option v-for="season in seasonOptions" :key="season.value" :value="season.value">{{ season.label }}</option>
                 </select>
                 <select v-model="filterType" class="lpCommunityFilterSelect" aria-label="Filter by list type" @change="applyDiscoverFilters">
-                    <option value="">Any type</option>
+                    <option value="">{{ $t('community.filterTypeAny') }}</option>
                     <option v-for="listType in listTypeOptions" :key="listType.value" :value="listType.value">{{ listType.label }}</option>
                 </select>
                 <input
@@ -93,7 +93,7 @@
                     min="0"
                     step="0.1"
                     class="lpCommunityFilterInput"
-                    placeholder="Min kg"
+                    :placeholder="$t('community.filterMinKgPlaceholder')"
                     aria-label="Minimum base weight in kilograms"
                     @input="onFilterInput"
                 />
@@ -103,23 +103,23 @@
                     min="0"
                     step="0.1"
                     class="lpCommunityFilterInput"
-                    placeholder="Max kg"
+                    :placeholder="$t('community.filterMaxKgPlaceholder')"
                     aria-label="Maximum base weight in kilograms"
                     @input="onFilterInput"
                 />
-                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">Reset</button>
+                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">{{ $t('community.filterReset') }}</button>
             </div>
 
-            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">Loading…</p>
+            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
             <p v-else-if="discoverError" class="lpCommunityEmpty">{{ discoverError }}</p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
-                No public lists yet. Be the first to share one.
+                {{ $t('community.emptyDiscoverNone') }}
             </p>
             <template v-else>
                 <div class="lpCommunityDiscoverLayout">
                     <section class="lpCommunityResults">
                         <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
-                            <div class="lpCommunityFeaturedLabel">Featured</div>
+                            <div class="lpCommunityFeaturedLabel">{{ $t('community.featuredLabel') }}</div>
                             <div
                                 v-for="list in featuredLists"
                                 :key="'f-' + list.externalId"
@@ -172,12 +172,12 @@
                             </div>
                         </div>
                         <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
-                            {{ discoverLoading ? 'Loading…' : 'Load more' }}
+                            {{ discoverLoading ? $t('community.loading') : $t('community.feedLoadMore') }}
                         </button>
                     </section>
                     <aside class="lpCommunityPopular" aria-label="Popular packs">
-                        <div class="lpCommunityPopularTitle">Popular Packs</div>
-                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">Loading…</p>
+                        <div class="lpCommunityPopularTitle">{{ $t('community.popularPacksTitle') }}</div>
+                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">{{ $t('community.loading') }}</p>
                         <router-link
                             v-for="list in popularLists"
                             :key="'popular-' + list.externalId"
@@ -197,10 +197,10 @@
 
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
-            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">Loading…</p>
+            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
             <p v-else-if="feedError" class="lpCommunityEmpty">{{ feedError }}</p>
             <p v-else-if="feedEvents.length === 0" class="lpCommunityEmpty">
-                Nothing here yet. Follow some users to see their activity.
+                {{ $t('community.emptyFeedNone') }}
             </p>
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
@@ -218,13 +218,13 @@
                             {{ event.listName }}
                         </div>
                         <div v-else-if="event.listDeleted" class="lpCommunityEventList lpCommunityEventListDeleted">
-                            List no longer available
+                            {{ $t('community.listNoLongerAvailable') }}
                         </div>
                         <div class="lpCommunityEventTime">{{ timeAgo(event.createdAt) }}</div>
                     </div>
                 </article>
                 <button v-if="feedHasMore" class="lpCommunityLoadMore" :disabled="feedLoading" @click="feedLoadMore">
-                    {{ feedLoading ? 'Loading…' : 'Load more' }}
+                    {{ feedLoading ? $t('community.loading') : $t('community.feedLoadMore') }}
                 </button>
             </template>
         </div>
