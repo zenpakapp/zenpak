@@ -116,7 +116,7 @@
                 <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">{{ $t('misc.becomeKin') }}</button>
                 <button class="lpButton" @click="showGuidePrompt = true">{{ $t('misc.becomeWayfarer') }}</button>
             </div>
-            <p class="lpAboutKofiNote">Or <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a> — {{ $t('misc.kofiNote') }}.</p>
+            <p class="lpAboutKofiNote">{{ $t('auth.or') }} <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a> — {{ $t('misc.kofiNote') }}.</p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>
