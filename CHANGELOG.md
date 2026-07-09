@@ -34,7 +34,8 @@ All notable changes to ZenPak are documented here.
 
 ### Profile & settings
 - **Avatar upload** — Cloudinary (`200×200`, face crop, `q_auto f_auto`), remove button with immediate server persistence
-- **Public profile settings** — display name, trail name, bio, visibility, search indexing toggle
+- **Random avatar** — hash-based HSL color + initials for users without a photo (free tier)
+- **Public profile settings** — display name, trail name, bio, visibility, search indexing toggle — saved via `PUT /api/profile`, available to all users; avatar/bio/trail name gated behind Kin+
 - **Default units** — item weight, list totals, currency symbol
 
 ### App & UX
@@ -47,12 +48,14 @@ All notable changes to ZenPak are documented here.
 - **Legal pages** — `/privacy`, `/terms`, `/legal` (LCEN compliance)
 - **Billing** — Stripe checkout + customer portal, plan-aware UI, cancel banner, trial awareness
 
-### Internationalisation (i18n Phase 1)
-- **vue-i18n@9** — installed, `en` locale complete (117 keys), FR/DE/ES stubs
-- **Migrated views** — `welcome`, `signin`, `register`, `list`, `share`, `list-summary`, `public-list`, `public-profile`
-- **FR/DE/ES locales** — 117 keys each, 100% parity with EN
+### Internationalisation (i18n Phase 1 + 2)
+- **vue-i18n@9** — installed, browser-language auto-detection, localStorage override
+- **Language selector** — in account settings, immediate locale switch without reload
+- **EN/FR/DE/ES complete** — 500+ keys across all views and components, 100% parity
+- **Migrated views** — dashboard, welcome, signin, register, list, share, list-summary, public-list, public-profile, about, community, feed, guide, item detail, gear room, account, upgrade prompts
 - **Server-side Mustache** — `resolveLocale()`, `t_totals.mustache`, `embed.mustache`, `server/locales/` folder
 - **hreflang meta tags** — `<teleport to="head">` on 3 public routes (`/u/:username`, `/list/:id`, `/community`)
+- **Copy polish** — symmetric "Already a member / Not yet a member" kickers, welcome page copy rewritten across 4 locales, shortened button labels for long-form languages
 
 ### Stack modernisation
 - **Vue 3** — full migration from Vue 2 (Composition API, `setup()`, composables)

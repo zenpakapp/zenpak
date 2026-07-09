@@ -20,6 +20,7 @@ Built on [LighterPack](https://github.com/galenmaly/lighterpack) by Galen Maly �
 - **Packing mode** — check items off as you pack
 - **Import from lighterpack.com** — paste a URL or upload a CSV
 - **Creator tools** — affiliate links, promo codes, view/copy insights (Guide plan)
+- **Multi-language** — English, French, German, Spanish — browser-detected or manually set in account settings
 - **Self-hosting** — full functionality, no account required
 
 ## Migrating from lighterpack.com
