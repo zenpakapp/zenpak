@@ -647,7 +647,7 @@
   "library": {
     "itemsTitle": "Articles",
     "newGearButton": "Nouvel article",
-    "allCategories": "Toutes les catégories",
+    "allCategories": "Toutes catégories",
     "searchPlaceholder": "Rechercher...",
     "clearSearchAria": "Effacer la recherche",
     "filterByTagPlaceholder": "Filtrer par tag...",
