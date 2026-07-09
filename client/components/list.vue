@@ -26,11 +26,10 @@
         </div>
 
         <div v-if="isListNew" id="getStarted">
-            <div class="lpGetStartedBrand">
+            <h2>
                 <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
-                <zenpak-brand-asset class="lpGetStartedBrandWordmark" variant="wordmark" alt="ZenPak" />
-            </div>
-            <h2>{{ $t('list.getStartedTitle') }}</h2>
+                {{ $t('list.getStartedTitle') }}
+            </h2>
             <p>{{ $t('list.getStartedIntro') }}</p>
             <ol>
                 <li>{{ $t('list.getStartedStep1') }}</li>
