@@ -63,8 +63,7 @@ const Library = function () {
 
 Library.prototype.firstRun = function () {
     const firstList = this.newList();
-    const firstCategory = this.newCategory({ list: firstList });
-    const firstItem = this.newItem({ category: firstCategory });
+    this.newCategory({ list: firstList });
 };
 
 Library.prototype.newItem = function ({ category, _isNew }) {
