@@ -185,7 +185,7 @@
             </div>
         </div>
 
-        <template v-if="hasPublicProfile">
+        <template>
             <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
@@ -243,7 +243,6 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'ProfileSettings',
@@ -266,9 +265,6 @@ export default {
         },
         username() {
             return this.$store.state.loggedIn;
-        },
-        hasPublicProfile() {
-            return hasFeature(this.library && this.library.entitlements, FEATURES.PUBLIC_PROFILE);
         },
     },
     methods: {
