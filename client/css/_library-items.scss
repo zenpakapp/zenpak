@@ -223,7 +223,7 @@
     line-height: 1.2;
     min-height: 32px;
     padding: 0 24px 0 8px;
-    width: 100%;
+    width: auto;
 
     &:focus {
         border-color: $color-accent;
@@ -233,7 +233,7 @@
 }
 
 .lpLibraryFilterSelectWrap {
-    flex: 1;
+    flex: 0 0 auto;
     position: relative;
 }
 
