@@ -79,11 +79,11 @@
             </div>
 
             <div class="lpCommunityFilters">
-                <select v-model="filterSeason" class="lpCommunityFilterSelect" aria-label="Filter by season" @change="applyDiscoverFilters">
+                <select v-model="filterSeason" class="lpCommunityFilterSelect" :aria-label="$t('community.ariaFilterSeason')" @change="applyDiscoverFilters">
                     <option value="">{{ $t('community.filterSeasonAny') }}</option>
                     <option v-for="season in seasonOptions" :key="season.value" :value="season.value">{{ season.label }}</option>
                 </select>
-                <select v-model="filterType" class="lpCommunityFilterSelect" aria-label="Filter by list type" @change="applyDiscoverFilters">
+                <select v-model="filterType" class="lpCommunityFilterSelect" :aria-label="$t('community.ariaFilterType')" @change="applyDiscoverFilters">
                     <option value="">{{ $t('community.filterTypeAny') }}</option>
                     <option v-for="listType in listTypeOptions" :key="listType.value" :value="listType.value">{{ listType.label }}</option>
                 </select>
@@ -94,7 +94,7 @@
                     step="0.1"
                     class="lpCommunityFilterInput"
                     :placeholder="$t('community.filterMinKgPlaceholder')"
-                    aria-label="Minimum base weight in kilograms"
+                    :aria-label="$t('community.ariaMinWeight')"
                     @input="onFilterInput"
                 />
                 <input
@@ -104,7 +104,7 @@
                     step="0.1"
                     class="lpCommunityFilterInput"
                     :placeholder="$t('community.filterMaxKgPlaceholder')"
-                    aria-label="Maximum base weight in kilograms"
+                    :aria-label="$t('community.ariaMaxWeight')"
                     @input="onFilterInput"
                 />
                 <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">{{ $t('community.filterReset') }}</button>
@@ -175,7 +175,7 @@
                             {{ discoverLoading ? $t('community.loading') : $t('community.feedLoadMore') }}
                         </button>
                     </section>
-                    <aside class="lpCommunityPopular" aria-label="Popular packs">
+                    <aside class="lpCommunityPopular" :aria-label="$t('community.ariaPopularPacks')">
                         <div class="lpCommunityPopularTitle">{{ $t('community.popularPacksTitle') }}</div>
                         <p v-if="popularLoading" class="lpCommunityPopularEmpty">{{ $t('community.loading') }}</p>
                         <router-link
@@ -300,23 +300,27 @@ export default {
             filterMinWeight: '',
             filterMaxWeight: '',
             isModerator: false,
-            seasonOptions: [
-                { value: '3-season', label: '3-Season' },
-                { value: '4-season', label: '4-Season' },
-                { value: 'spring', label: 'Spring' },
-                { value: 'summer', label: 'Summer' },
-                { value: 'fall', label: 'Fall' },
-                { value: 'winter', label: 'Winter' },
-            ],
-            listTypeOptions: [
-                { value: 'day-hike', label: 'Day hike' },
-                { value: 'weekend', label: 'Weekend' },
-                { value: 'thru-hike', label: 'Thru-hike' },
-                { value: 'bikepacking', label: 'Bikepacking' },
-            ],
         };
     },
     computed: {
+        seasonOptions() {
+            return [
+                { value: '3-season', label: this.$t('list.season3') },
+                { value: '4-season', label: this.$t('list.season4') },
+                { value: 'spring', label: this.$t('list.seasonSpring') },
+                { value: 'summer', label: this.$t('list.seasonSummer') },
+                { value: 'fall', label: this.$t('list.seasonFall') },
+                { value: 'winter', label: this.$t('list.seasonWinter') },
+            ];
+        },
+        listTypeOptions() {
+            return [
+                { value: 'day-hike', label: this.$t('list.typeDay') },
+                { value: 'weekend', label: this.$t('list.typeWeekend') },
+                { value: 'thru-hike', label: this.$t('list.typeThru') },
+                { value: 'bikepacking', label: this.$t('list.typeBike') },
+            ];
+        },
         canSeeFeed() {
             return Boolean(this.$store.state.loggedIn);
         },

@@ -114,7 +114,17 @@
     "settings": "Paramètres de la liste",
     "description": "Description",
     "type": "Type",
-    "season": "Saison"
+    "season": "Saison",
+    "season3": "3 saisons",
+    "season4": "4 saisons",
+    "seasonSpring": "Printemps",
+    "seasonSummer": "Été",
+    "seasonFall": "Automne",
+    "seasonWinter": "Hiver",
+    "typeDay": "Randonnée journée",
+    "typeWeekend": "Week-end",
+    "typeThru": "Grande randonnée",
+    "typeBike": "Bikepacking"
   },
   "share": {
     "share": "Partager",
@@ -238,9 +248,10 @@
     "allowSearchIndexing": "Autoriser l'indexation des moteurs de recherche",
     "deleteAccountTitle": "Supprimer le compte ?",
     "deleteAccountPermanent": "Cette action est permanente et ne peut pas être annulée.",
-    "deleteAccountInstructions": "Si vous souhaitez supprimer votre compte, veuillez entrer votre mot de passe actuel et le texte <strong>supprimer mon compte</strong> :",
+    "deleteAccountInstructions": "Si vous souhaitez supprimer votre compte, veuillez entrer votre mot de passe actuel et le texte <strong>delete my account</strong> :",
     "confirmationText": "Texte de confirmation",
-    "permanentlyDelete": "Supprimer définitivement le compte"
+    "permanentlyDelete": "Supprimer définitivement le compte",
+    "leaveBlankPassword": "Laissez vide pour conserver le mot de passe actuel"
   },
   "guide": {
     "viewProfile": "Voir mon profil →",
@@ -366,7 +377,12 @@
     "peopleSearchPlaceholder": "Rechercher des utilisateurs…",
     "peopleLoading": "Chargement…",
     "peopleNoUsersFound": "Aucun utilisateur trouvé.",
-    "peopleLoadError": "Impossible de charger les résultats."
+    "peopleLoadError": "Impossible de charger les résultats.",
+    "ariaFilterSeason": "Filtrer par saison",
+    "ariaFilterType": "Filtrer par type de liste",
+    "ariaMinWeight": "Poids de base minimum en kilogrammes",
+    "ariaMaxWeight": "Poids de base maximum en kilogrammes",
+    "ariaPopularPacks": "Packs populaires"
   },
   "misc": {
     "areYouSure": "Êtes-vous sûr ?",
@@ -442,7 +458,8 @@
     "productPreview": "Aperçu du produit",
     "proofTabGearLibrary": "Bibliothèque d'équipement",
     "proofTabPackList": "Liste de sac",
-    "proofTabCommunity": "Communauté"
+    "proofTabCommunity": "Communauté",
+    "itemNamePlaceholder": "Nom de l'article..."
   },
   "errors": {
     "saveFailed": "Une erreur est survenue lors de l'enregistrement.",
@@ -531,7 +548,16 @@
     "compareTags": "Tags",
     "compareWeight": "Poids",
     "comparePrice": "Prix",
-    "compareUsedInLists": "Utilisé dans les listes"
+    "compareUsedInLists": "Utilisé dans les listes",
+    "compareClose": "Fermer",
+    "placeholderType": "ex : Abri",
+    "placeholderBrand": "ex : Patagonia",
+    "placeholderTag": "ex : bikepacking",
+    "placeholderList": "Trouver ou créer une liste...",
+    "placeholderChoose": "— choisir —",
+    "apply": "Appliquer",
+    "unnamed": "Sans nom",
+    "createList": "+ Créer"
   },
   "item": {
     "editLabelName": "Nom",

@@ -29,7 +29,7 @@
 
                     <div class="accountField">
                         <span class="accountFieldLabel">{{ $t('acct.newPassword') }}</span>
-                        <input v-model="newPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.leaveBlankEmail')" name="newPassword">
+                        <input v-model="newPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.leaveBlankPassword')" name="newPassword">
                     </div>
                     <div class="accountField">
                         <span class="accountFieldLabel">{{ $t('acct.confirmNewPassword') }}</span>

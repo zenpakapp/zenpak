@@ -114,7 +114,17 @@
     "settings": "Configuración de lista",
     "description": "Descripción",
     "type": "Tipo",
-    "season": "Estación"
+    "season": "Estación",
+    "season3": "3 estaciones",
+    "season4": "4 estaciones",
+    "seasonSpring": "Primavera",
+    "seasonSummer": "Verano",
+    "seasonFall": "Otoño",
+    "seasonWinter": "Invierno",
+    "typeDay": "Excursión de día",
+    "typeWeekend": "Fin de semana",
+    "typeThru": "Senderismo largo",
+    "typeBike": "Bikepacking"
   },
   "share": {
     "share": "Compartir",
@@ -240,7 +250,8 @@
     "deleteAccountPermanent": "Esta acción es permanente y no se puede deshacer.",
     "deleteAccountInstructions": "Si deseas eliminar tu cuenta, por favor ingresa tu contraseña actual y el texto <strong>delete my account</strong>:",
     "confirmationText": "Texto de confirmación",
-    "permanentlyDelete": "Eliminar cuenta permanentemente"
+    "permanentlyDelete": "Eliminar cuenta permanentemente",
+    "leaveBlankPassword": "Deja en blanco para conservar el actual"
   },
   "guide": {
     "viewProfile": "Ver mi perfil →",
@@ -366,7 +377,12 @@
     "peopleSearchPlaceholder": "Buscar usuarios…",
     "peopleLoading": "Cargando…",
     "peopleNoUsersFound": "No se encontraron usuarios.",
-    "peopleLoadError": "No se pudieron cargar los resultados."
+    "peopleLoadError": "No se pudieron cargar los resultados.",
+    "ariaFilterSeason": "Filtrar por estación",
+    "ariaFilterType": "Filtrar por tipo de lista",
+    "ariaMinWeight": "Peso base mínimo en kilogramos",
+    "ariaMaxWeight": "Peso base máximo en kilogramos",
+    "ariaPopularPacks": "Mochilas populares"
   },
   "misc": {
     "areYouSure": "¿Estás seguro?",
@@ -442,7 +458,8 @@
     "productPreview": "Vista previa del producto",
     "proofTabGearLibrary": "Biblioteca de equipo",
     "proofTabPackList": "Lista de mochila",
-    "proofTabCommunity": "Comunidad"
+    "proofTabCommunity": "Comunidad",
+    "itemNamePlaceholder": "Nombre del artículo..."
   },
   "errors": {
     "saveFailed": "Ocurrió un error al guardar.",
@@ -531,7 +548,16 @@
     "compareTags": "Etiquetas",
     "compareWeight": "Peso",
     "comparePrice": "Precio",
-    "compareUsedInLists": "Usado en listas"
+    "compareUsedInLists": "Usado en listas",
+    "compareClose": "Cerrar",
+    "placeholderType": "ej: Shelter",
+    "placeholderBrand": "ej: Patagonia",
+    "placeholderTag": "ej: bikepacking",
+    "placeholderList": "Buscar o crear una lista...",
+    "placeholderChoose": "— elegir —",
+    "apply": "Aplicar",
+    "unnamed": "Sin nombre",
+    "createList": "+ Crear"
   },
   "item": {
     "editLabelName": "Nombre",

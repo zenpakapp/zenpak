@@ -114,7 +114,17 @@
     "settings": "List settings",
     "description": "Description",
     "type": "Type",
-    "season": "Season"
+    "season": "Season",
+    "season3": "3-Season",
+    "season4": "4-Season",
+    "seasonSpring": "Spring",
+    "seasonSummer": "Summer",
+    "seasonFall": "Fall",
+    "seasonWinter": "Winter",
+    "typeDay": "Day hike",
+    "typeWeekend": "Weekend",
+    "typeThru": "Thru-hike",
+    "typeBike": "Bikepacking"
   },
   "share": {
     "share": "Share",
@@ -240,7 +250,8 @@
     "deleteAccountPermanent": "This action is permanent and cannot be undone.",
     "deleteAccountInstructions": "If you want to delete your account, please enter your current password and the text <strong>delete my account</strong>:",
     "confirmationText": "Confirmation text",
-    "permanentlyDelete": "Permanently delete account"
+    "permanentlyDelete": "Permanently delete account",
+    "leaveBlankPassword": "Leave blank to keep current"
   },
   "guide": {
     "viewProfile": "View my profile →",
@@ -366,7 +377,12 @@
     "peopleSearchPlaceholder": "Search users…",
     "peopleLoading": "Loading…",
     "peopleNoUsersFound": "No users found.",
-    "peopleLoadError": "Could not load results."
+    "peopleLoadError": "Could not load results.",
+    "ariaFilterSeason": "Filter by season",
+    "ariaFilterType": "Filter by list type",
+    "ariaMinWeight": "Minimum base weight in kilograms",
+    "ariaMaxWeight": "Maximum base weight in kilograms",
+    "ariaPopularPacks": "Popular packs"
   },
   "misc": {
     "areYouSure": "Are you sure?",
@@ -442,7 +458,8 @@
     "productPreview": "Product preview",
     "proofTabGearLibrary": "Gear library",
     "proofTabPackList": "Pack list",
-    "proofTabCommunity": "Community"
+    "proofTabCommunity": "Community",
+    "itemNamePlaceholder": "Item name..."
   },
   "errors": {
     "saveFailed": "An error occurred while saving.",
@@ -531,7 +548,16 @@
     "compareTags": "Tags",
     "compareWeight": "Weight",
     "comparePrice": "Price",
-    "compareUsedInLists": "Used in lists"
+    "compareUsedInLists": "Used in lists",
+    "compareClose": "Close",
+    "placeholderType": "ex: Shelter",
+    "placeholderBrand": "ex: Patagonia",
+    "placeholderTag": "ex: bikepacking",
+    "placeholderList": "Find or create a list...",
+    "placeholderChoose": "— choose —",
+    "apply": "Apply",
+    "unnamed": "Unnamed",
+    "createList": "+ Create"
   },
   "library": {
     "itemsTitle": "Items",

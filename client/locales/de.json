@@ -114,7 +114,17 @@
     "settings": "Listeneinstellungen",
     "description": "Beschreibung",
     "type": "Typ",
-    "season": "Jahreszeit"
+    "season": "Jahreszeit",
+    "season3": "3-Jahreszeiten",
+    "season4": "4-Jahreszeiten",
+    "seasonSpring": "Frühling",
+    "seasonSummer": "Sommer",
+    "seasonFall": "Herbst",
+    "seasonWinter": "Winter",
+    "typeDay": "Tageswanderung",
+    "typeWeekend": "Wochenende",
+    "typeThru": "Fernwanderung",
+    "typeBike": "Bikepacking"
   },
   "share": {
     "share": "Teilen",
@@ -240,7 +250,8 @@
     "deleteAccountPermanent": "Diese Aktion ist permanent und kann nicht rückgängig gemacht werden.",
     "deleteAccountInstructions": "Wenn du dein Konto löschen möchtest, gib bitte dein aktuelles Passwort und den Text <strong>delete my account</strong> ein:",
     "confirmationText": "Bestätigungstext",
-    "permanentlyDelete": "Konto dauerhaft löschen"
+    "permanentlyDelete": "Konto dauerhaft löschen",
+    "leaveBlankPassword": "Leer lassen, um aktuelles beizubehalten"
   },
   "guide": {
     "viewProfile": "Profil anzeigen →",
@@ -366,7 +377,12 @@
     "peopleSearchPlaceholder": "Benutzer durchsuchen…",
     "peopleLoading": "Lädt…",
     "peopleNoUsersFound": "Keine Benutzer gefunden.",
-    "peopleLoadError": "Ergebnisse konnten nicht geladen werden."
+    "peopleLoadError": "Ergebnisse konnten nicht geladen werden.",
+    "ariaFilterSeason": "Nach Jahreszeit filtern",
+    "ariaFilterType": "Nach Listentyp filtern",
+    "ariaMinWeight": "Minimales Basisgewicht in Kilogramm",
+    "ariaMaxWeight": "Maximales Basisgewicht in Kilogramm",
+    "ariaPopularPacks": "Beliebte Packs"
   },
   "misc": {
     "areYouSure": "Bist du sicher?",
@@ -442,7 +458,8 @@
     "productPreview": "Produktvorschau",
     "proofTabGearLibrary": "Ausrüstungsbibliothek",
     "proofTabPackList": "Packliste",
-    "proofTabCommunity": "Community"
+    "proofTabCommunity": "Community",
+    "itemNamePlaceholder": "Artikelname..."
   },
   "errors": {
     "saveFailed": "Beim Speichern ist ein Fehler aufgetreten.",
@@ -531,7 +548,16 @@
     "compareTags": "Tags",
     "compareWeight": "Gewicht",
     "comparePrice": "Preis",
-    "compareUsedInLists": "Verwendet in Listen"
+    "compareUsedInLists": "Verwendet in Listen",
+    "compareClose": "Schließen",
+    "placeholderType": "z.B.: Shelter",
+    "placeholderBrand": "z.B.: Patagonia",
+    "placeholderTag": "z.B.: Bikepacking",
+    "placeholderList": "Liste suchen oder erstellen...",
+    "placeholderChoose": "— wählen —",
+    "apply": "Anwenden",
+    "unnamed": "Unbenannt",
+    "createList": "+ Erstellen"
   },
   "item": {
     "editLabelName": "Name",

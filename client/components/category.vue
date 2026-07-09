@@ -91,7 +91,7 @@
                         v-model="newItemName"
                         type="text"
                         class="lpSilent lpAddItemInput"
-                        placeholder="Item name..."
+                        :placeholder="$t('misc.itemNamePlaceholder')"
                         @input="onNewItemInput"
                         @keydown.enter.prevent="createInlineItem('description')"
                         @keydown.tab.exact.prevent="createInlineItem('description')"

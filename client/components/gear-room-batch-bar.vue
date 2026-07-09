@@ -13,7 +13,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchType') }}</span>
                 <div class="lpBrandInputWrap">
-                    <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Shelter"
+                    <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderType')"
                         @focus="showTypeDropdown = true"
                         @blur="showTypeDropdown = false"
                         @keydown.enter="applyCategory">
@@ -22,7 +22,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyCategory">Apply</button>
+            <button class="lpGearRoomBatchApply" @click="applyCategory">{{ $t('gearroom.apply') }}</button>
         </div>
 
         <!-- Panel: Set brand -->
@@ -34,7 +34,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchBrand') }}</span>
                 <div class="lpBrandInputWrap">
-                    <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: Patagonia"
+                    <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderBrand')"
                         @focus="showBrandDropdown = true"
                         @blur="showBrandDropdown = false"
                         @keydown.enter="applyBrand">
@@ -43,7 +43,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyBrand">Apply</button>
+            <button class="lpGearRoomBatchApply" @click="applyBrand">{{ $t('gearroom.apply') }}</button>
         </div>
 
         <!-- Panel: Add tag -->
@@ -55,7 +55,7 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchTag') }}</span>
                 <div class="lpBrandInputWrap">
-                    <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" placeholder="ex: bikepacking"
+                    <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderTag')"
                         @focus="showTagDropdown = true"
                         @blur="showTagDropdown = false"
                         @keydown.enter="applyTag">
@@ -64,7 +64,7 @@
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyTag">Apply</button>
+            <button class="lpGearRoomBatchApply" @click="applyTag">{{ $t('gearroom.apply') }}</button>
         </div>
 
         <!-- Panel: Merge -->
@@ -97,12 +97,12 @@
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchList') }}</span>
                 <div class="lpBrandInputWrap">
-                    <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" placeholder="Find or create a list..."
+                    <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderList')"
                         @focus="showListDropdown = true; batchListId = ''"
                         @blur="showListDropdown = false"
                         @keydown.enter="filteredLists.length ? selectList(filteredLists[0]) : createAndSelectList()">
                     <ul v-if="showListDropdown" class="lpBrandSuggestions">
-                        <li v-if="showCreateList" class="lpBrandSuggestionsCreate" @mousedown.prevent="createAndSelectList()">+ Create "{{ batchListName }}"</li>
+                        <li v-if="showCreateList" class="lpBrandSuggestionsCreate" @mousedown.prevent="createAndSelectList()">{{ $t('gearroom.createList') }} "{{ batchListName }}"</li>
                         <li v-for="list in filteredLists" :key="list.id" @mousedown.prevent="selectList(list)">{{ list.name }}</li>
                     </ul>
                 </div>
@@ -110,15 +110,15 @@
             <div v-if="batchListId && batchListId !== '__new__'" class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchListCat') }}</span>
                 <div class="lpBrandInputWrap">
-                    <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" placeholder="— choose —" readonly
+                    <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderChoose')" readonly
                         @click="showListCatDropdown = !showListCatDropdown"
                         @blur="showListCatDropdown = false">
                     <ul v-if="showListCatDropdown && categoriesForSelectedList.length" class="lpBrandSuggestions">
-                        <li v-for="cat in categoriesForSelectedList" :key="cat.id" @mousedown.prevent="selectListCat(cat)">{{ cat.name || 'Unnamed' }}</li>
+                        <li v-for="cat in categoriesForSelectedList" :key="cat.id" @mousedown.prevent="selectListCat(cat)">{{ cat.name || $t('gearroom.unnamed') }}</li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" :disabled="!batchListId || (batchListId !== '__new__' && !batchCategoryId)" @click="applyAddToList">Apply</button>
+            <button class="lpGearRoomBatchApply" :disabled="!batchListId || (batchListId !== '__new__' && !batchCategoryId)" @click="applyAddToList">{{ $t('gearroom.apply') }}</button>
         </div>
 
         <!-- Action buttons -->
@@ -236,7 +236,7 @@ export default {
         },
         selectedCatName() {
             const cat = this.categoriesForSelectedList.find(c => c.id === this.batchCategoryId);
-            return cat ? (cat.name || 'Unnamed') : '';
+            return cat ? (cat.name || this.$t('gearroom.unnamed')) : '';
         },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
