@@ -185,8 +185,9 @@
             </div>
         </div>
 
-        <template>
-            <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
+        <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
+
+        <template v-if="hasProfileCustomization">
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
                 <div class="profileSettingsAvatar">
@@ -204,10 +205,14 @@
                     <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
                 </div>
             </div>
-            <div class="profileSettingsField">
-                <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
-                <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
-            </div>
+        </template>
+
+        <div class="profileSettingsField">
+            <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
+            <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
+        </div>
+
+        <template v-if="hasProfileCustomization">
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.trailName') }}</span>
                 <input type="text" class="profileSettingsInput" :value="profile.trailName" @input="update('trailName', $event.target.value)">
@@ -216,33 +221,35 @@
                 <span class="profileSettingsLabel">{{ $t('acct.bio') }}</span>
                 <textarea class="profileSettingsTextarea" :value="profile.bio" @input="update('bio', $event.target.value)" />
             </div>
-            <div class="profileSettingsField">
-                <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
-                <div class="profileSettingsSelectWrap">
-                    <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
-                        <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
-                        <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
-                        <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
-                        <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
-                    </select>
-                </div>
-            </div>
-            <label class="profileSettingsCheckbox">
-                <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
-                {{ $t('acct.allowSearchIndexing') }}
-            </label>
-            <div class="profileSettingsActions">
-                <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
-                    {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
-                </button>
-                <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
-            </div>
         </template>
+
+        <div class="profileSettingsField">
+            <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
+            <div class="profileSettingsSelectWrap">
+                <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
+                    <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
+                    <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
+                    <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
+                    <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
+                </select>
+            </div>
+        </div>
+        <label class="profileSettingsCheckbox">
+            <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
+            {{ $t('acct.allowSearchIndexing') }}
+        </label>
+        <div class="profileSettingsActions">
+            <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
+                {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
+            </button>
+            <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
+        </div>
     </section>
 </template>
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'ProfileSettings',
@@ -265,6 +272,9 @@ export default {
         },
         username() {
             return this.$store.state.loggedIn;
+        },
+        hasProfileCustomization() {
+            return hasFeature(this.library && this.library.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
         },
     },
     methods: {

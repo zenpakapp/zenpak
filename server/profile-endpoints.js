@@ -79,11 +79,6 @@ function imageUpload(req, res, user) {
 
 router.put('/api/profile', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
-        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-        if (plan !== 'supporter' && plan !== 'creator') {
-            return res.status(403).json({ message: 'Supporter plan required' });
-        }
-
         if (!user.library.publicProfile) user.library.publicProfile = {};
         const p = user.library.publicProfile;
 
