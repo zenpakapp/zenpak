@@ -101,6 +101,7 @@
     "close": "Close",
     "listName": "List Name",
     "listDescription": "List Description",
+    "markdownSupported": "supported",
     "exitPacking": "Exit Packing",
     "itemsPacked": "{packed} / {total} items packed",
     "packTotal": "Total: {weight}",

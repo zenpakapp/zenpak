@@ -101,6 +101,7 @@
     "close": "Schließen",
     "listName": "Listenname",
     "listDescription": "Listenbeschreibung",
+    "markdownSupported": "unterstützt",
     "exitPacking": "Packmodus beenden",
     "itemsPacked": "{packed} / {total} Gegenstände gepackt",
     "packTotal": "Gesamt: {weight}",

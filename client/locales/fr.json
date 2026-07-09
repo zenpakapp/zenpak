@@ -101,6 +101,7 @@
     "close": "Fermer",
     "listName": "Nom de la liste",
     "listDescription": "Description de la liste",
+    "markdownSupported": "supporté",
     "exitPacking": "Quitter la préparation",
     "itemsPacked": "{packed} / {total} articles préparés",
     "packTotal": "Total : {weight}",

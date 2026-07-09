@@ -101,6 +101,7 @@
     "close": "Cerrar",
     "listName": "Nombre de la lista",
     "listDescription": "Descripción de la lista",
+    "markdownSupported": "soportado",
     "exitPacking": "Salir del modo empaque",
     "itemsPacked": "{packed} / {total} artículos empacados",
     "packTotal": "Total: {weight}",

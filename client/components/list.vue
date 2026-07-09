@@ -50,7 +50,7 @@
         <div style="clear: both;" />
 
         <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
-            <h3>{{ $t('list.listDescription') }}</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> supported)</p>
+            <h3>{{ $t('list.listDescription') }}</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> {{ $t('list.markdownSupported') }})</p>
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
