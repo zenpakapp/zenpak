@@ -124,6 +124,10 @@
     width: 100%;
 }
 
+.profileSettingsActions {
+    margin-bottom: 20px;
+}
+
 .profileSettingsCheckbox {
     align-items: center;
     color: $color-text;
@@ -181,56 +185,65 @@
             </div>
         </div>
 
-        <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
-        <div class="profileSettingsField">
-            <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
-            <div class="profileSettingsAvatar">
-                <div class="profileSettingsAvatarPreview">
-                    <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
-                    <span v-else>{{ (profile.displayName || username || '?').charAt(0).toUpperCase() }}</span>
+        <template v-if="hasPublicProfile">
+            <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
+            <div class="profileSettingsField">
+                <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
+                <div class="profileSettingsAvatar">
+                    <div class="profileSettingsAvatarPreview">
+                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
+                        <span v-else>{{ (profile.displayName || username || '?').charAt(0).toUpperCase() }}</span>
+                    </div>
+                    <div class="profileSettingsAvatarActions">
+                        <label class="lpButton lpSmall profileSettingsAvatarBtn">
+                            {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
+                            <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
+                        </label>
+                        <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">{{ $t('acct.remove') }}</button>
+                    </div>
+                    <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
                 </div>
-                <div class="profileSettingsAvatarActions">
-                    <label class="lpButton lpSmall profileSettingsAvatarBtn">
-                        {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
-                        <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
-                    </label>
-                    <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">{{ $t('acct.remove') }}</button>
+            </div>
+            <div class="profileSettingsField">
+                <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
+                <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
+            </div>
+            <div class="profileSettingsField">
+                <span class="profileSettingsLabel">{{ $t('acct.trailName') }}</span>
+                <input type="text" class="profileSettingsInput" :value="profile.trailName" @input="update('trailName', $event.target.value)">
+            </div>
+            <div class="profileSettingsField">
+                <span class="profileSettingsLabel">{{ $t('acct.bio') }}</span>
+                <textarea class="profileSettingsTextarea" :value="profile.bio" @input="update('bio', $event.target.value)" />
+            </div>
+            <div class="profileSettingsField">
+                <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
+                <div class="profileSettingsSelectWrap">
+                    <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
+                        <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
+                        <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
+                        <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
+                        <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
+                    </select>
                 </div>
-                <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
             </div>
-        </div>
-        <div class="profileSettingsField">
-            <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
-            <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
-        </div>
-        <div class="profileSettingsField">
-            <span class="profileSettingsLabel">{{ $t('acct.trailName') }}</span>
-            <input type="text" class="profileSettingsInput" :value="profile.trailName" @input="update('trailName', $event.target.value)">
-        </div>
-        <div class="profileSettingsField">
-            <span class="profileSettingsLabel">{{ $t('acct.bio') }}</span>
-            <textarea class="profileSettingsTextarea" :value="profile.bio" @input="update('bio', $event.target.value)" />
-        </div>
-        <div class="profileSettingsField">
-            <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
-            <div class="profileSettingsSelectWrap">
-                <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
-                    <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
-                    <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
-                    <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
-                    <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
-                </select>
+            <label class="profileSettingsCheckbox">
+                <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
+                {{ $t('acct.allowSearchIndexing') }}
+            </label>
+            <div class="profileSettingsActions">
+                <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
+                    {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
+                </button>
+                <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
             </div>
-        </div>
-        <label class="profileSettingsCheckbox">
-            <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
-            {{ $t('acct.allowSearchIndexing') }}
-        </label>
+        </template>
     </section>
 </template>
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'ProfileSettings',
@@ -239,6 +252,9 @@ export default {
             units: ['oz', 'lb', 'g', 'kg'],
             avatarUploading: false,
             avatarError: null,
+            profileSaving: false,
+            profileSaved: false,
+            profileError: null,
         };
     },
     computed: {
@@ -250,6 +266,9 @@ export default {
         },
         username() {
             return this.$store.state.loggedIn;
+        },
+        hasPublicProfile() {
+            return hasFeature(this.library && this.library.entitlements, FEATURES.PUBLIC_PROFILE);
         },
     },
     methods: {
@@ -282,6 +301,30 @@ export default {
             } finally {
                 this.avatarUploading = false;
                 event.target.value = '';
+            }
+        },
+        async saveProfile() {
+            this.profileSaving = true;
+            this.profileSaved = false;
+            this.profileError = null;
+            try {
+                await fetchJson('/api/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        displayName: this.profile.displayName || '',
+                        trailName: this.profile.trailName || '',
+                        bio: this.profile.bio || '',
+                        visibility: this.profile.visibility || 'private',
+                        allowSearchIndexing: !!this.profile.allowSearchIndexing,
+                    }),
+                });
+                this.profileSaved = true;
+                setTimeout(() => { this.profileSaved = false; }, 2000);
+            } catch {
+                this.profileError = 'Failed to save profile';
+            } finally {
+                this.profileSaving = false;
             }
         },
         async removeAvatar() {

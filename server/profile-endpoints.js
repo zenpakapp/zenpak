@@ -77,6 +77,32 @@ function imageUpload(req, res, user) {
     });
 }
 
+router.put('/api/profile', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+        if (plan !== 'supporter' && plan !== 'creator') {
+            return res.status(403).json({ message: 'Supporter plan required' });
+        }
+
+        if (!user.library.publicProfile) user.library.publicProfile = {};
+        const p = user.library.publicProfile;
+
+        if (typeof req.body.displayName === 'string') p.displayName = req.body.displayName.slice(0, 100);
+        if (typeof req.body.trailName === 'string') p.trailName = req.body.trailName.slice(0, 100);
+        if (typeof req.body.bio === 'string') p.bio = req.body.bio.slice(0, 500);
+        const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];
+        if (VALID_VISIBILITY.includes(req.body.visibility)) p.visibility = req.body.visibility;
+        if (typeof req.body.allowSearchIndexing === 'boolean') p.allowSearchIndexing = req.body.allowSearchIndexing;
+
+        try {
+            await db.users.save(user);
+            return res.json({ ok: true });
+        } catch (e) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
 router.delete('/api/profile/avatar', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         try {

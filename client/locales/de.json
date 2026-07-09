@@ -253,6 +253,8 @@
     "confirmationText": "Bestätigungstext",
     "permanentlyDelete": "Konto dauerhaft löschen",
     "leaveBlankPassword": "Leer lassen, um aktuelles beizubehalten",
+    "saveProfile": "Profil speichern",
+    "saved": "Gespeichert!",
     "language": "Sprache",
     "languageAuto": "Auto (Browser)"
   },

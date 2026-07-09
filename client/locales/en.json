@@ -253,6 +253,8 @@
     "confirmationText": "Confirmation text",
     "permanentlyDelete": "Permanently delete account",
     "leaveBlankPassword": "Leave blank to keep current",
+    "saveProfile": "Save profile",
+    "saved": "Saved!",
     "language": "Language",
     "languageAuto": "Auto (browser)"
   },

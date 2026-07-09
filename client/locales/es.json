@@ -253,6 +253,8 @@
     "confirmationText": "Texto de confirmación",
     "permanentlyDelete": "Eliminar cuenta permanentemente",
     "leaveBlankPassword": "Deja en blanco para conservar el actual",
+    "saveProfile": "Guardar perfil",
+    "saved": "¡Guardado!",
     "language": "Idioma",
     "languageAuto": "Auto (navegador)"
   },
