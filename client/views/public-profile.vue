@@ -33,7 +33,7 @@
                     <div class="lpPublicAvatar">
                         <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName" />
                         <upgrade-prompt v-else-if="isOwnProfile && !isTrail" tier="trail" feature="profileCustomization" mode="inline" />
-                        <span v-else>{{ (profile.displayName || '?').charAt(0).toUpperCase() }}</span>
+                        <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                     </div>
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
@@ -114,6 +114,7 @@ import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
 import upgradePrompt from '../components/upgrade-prompt.vue';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { avatarColor, avatarInitial } from '../utils/avatar.js';
 
 export default {
     name: 'PublicProfile',
@@ -170,6 +171,12 @@ export default {
         },
         isOwnProfile() {
             return this.$store.state.loggedIn === this.$route.params.username;
+        },
+        avatarBgColor() {
+            return avatarColor(this.$route.params.username);
+        },
+        avatarLetter() {
+            return avatarInitial(this.profile && this.profile.displayName, this.$route.params.username);
         },
         isTrail() {
             const lib = this.$store.state.library;

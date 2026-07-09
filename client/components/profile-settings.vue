@@ -187,14 +187,14 @@
 
         <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
 
-        <template v-if="hasProfileCustomization">
-            <div class="profileSettingsField">
-                <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
-                <div class="profileSettingsAvatar">
-                    <div class="profileSettingsAvatarPreview">
-                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
-                        <span v-else>{{ (profile.displayName || username || '?').charAt(0).toUpperCase() }}</span>
-                    </div>
+        <div class="profileSettingsField">
+            <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
+            <div class="profileSettingsAvatar">
+                <div class="profileSettingsAvatarPreview">
+                    <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
+                    <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
+                </div>
+                <template v-if="hasProfileCustomization">
                     <div class="profileSettingsAvatarActions">
                         <label class="lpButton lpSmall profileSettingsAvatarBtn">
                             {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
@@ -203,9 +203,9 @@
                         <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">{{ $t('acct.remove') }}</button>
                     </div>
                     <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
-                </div>
+                </template>
             </div>
-        </template>
+        </div>
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
@@ -250,6 +250,7 @@
 <script>
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { avatarColor, avatarInitial } from '../utils/avatar.js';
 
 export default {
     name: 'ProfileSettings',
@@ -275,6 +276,12 @@ export default {
         },
         hasProfileCustomization() {
             return hasFeature(this.library && this.library.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
+        },
+        avatarBgColor() {
+            return avatarColor(this.username);
+        },
+        avatarLetter() {
+            return avatarInitial(this.profile && this.profile.displayName, this.username);
         },
     },
     methods: {
