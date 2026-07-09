@@ -252,7 +252,9 @@
     "deleteAccountInstructions": "Si deseas eliminar tu cuenta, por favor ingresa tu contraseña actual y el texto <strong>delete my account</strong>:",
     "confirmationText": "Texto de confirmación",
     "permanentlyDelete": "Eliminar cuenta permanentemente",
-    "leaveBlankPassword": "Deja en blanco para conservar el actual"
+    "leaveBlankPassword": "Deja en blanco para conservar el actual",
+    "language": "Idioma",
+    "languageAuto": "Auto (navegador)"
   },
   "guide": {
     "viewProfile": "Ver mi perfil →",

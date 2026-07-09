@@ -252,7 +252,9 @@
     "deleteAccountInstructions": "Si vous souhaitez supprimer votre compte, veuillez entrer votre mot de passe actuel et le texte <strong>delete my account</strong> :",
     "confirmationText": "Texte de confirmation",
     "permanentlyDelete": "Supprimer définitivement le compte",
-    "leaveBlankPassword": "Laissez vide pour conserver le mot de passe actuel"
+    "leaveBlankPassword": "Laissez vide pour conserver le mot de passe actuel",
+    "language": "Langue",
+    "languageAuto": "Auto (navigateur)"
   },
   "guide": {
     "viewProfile": "Voir mon profil →",

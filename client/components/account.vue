@@ -144,6 +144,19 @@
             </div>
         </section>
 
+        <section class="accountSection">
+            <h3 class="accountSectionTitle">{{ $t('acct.language') }}</h3>
+            <div class="accountField">
+                <select class="accountFieldInput" v-model="selectedLocale" @change="changeLocale">
+                    <option value="auto">{{ $t('acct.languageAuto') }}</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="es">Español</option>
+                </select>
+            </div>
+        </section>
+
         <profileSettings />
         <creatorLinks />
     </modal>
@@ -159,6 +172,7 @@ import upgradePrompt from './upgrade-prompt.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { setLocale } from '../i18n';
 
 export default {
     name: 'Account',
@@ -185,6 +199,7 @@ export default {
             restoreFile: null,
             billingError: null,
             selectedGuideInterval: 'month',
+            selectedLocale: localStorage.getItem('zp-locale') || 'auto',
         };
     },
     computed: {
@@ -214,6 +229,9 @@ export default {
         unregisterDialogOpener('account');
     },
     methods: {
+        changeLocale() {
+            setLocale(this.selectedLocale);
+        },
         async downloadBackup() {
             this.backupLoading = true;
             try {
