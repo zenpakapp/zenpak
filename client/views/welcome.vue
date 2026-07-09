@@ -26,8 +26,8 @@
                     </p>
                     <div class="lpWelcomeStats">
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">100%</span>
-                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statFree') }}</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.statFree') }}</span>
+                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statFreeLabel') }}</span>
                         </div>
                         <div class="lpWelcomeStat">
                             <span class="lpWelcomeStatNum">{{ $t('welcome.statOpenSource') }}</span>
