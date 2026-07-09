@@ -33,7 +33,7 @@
                 <accountDropdown v-if="isSignedIn" />
                 <span v-else class="headerItem signInRegisterButtons">
                     <router-link to="/register" class="lpButton lpSmall">{{ $t('dash.register') }}</router-link>
-                    or
+                    {{ $t('auth.or') }}
                     <router-link to="/signin" class="lpButton lpSmall">{{ $t('dash.signIn') }}</router-link>
                 </span>
                 <span class="clearfix" />
