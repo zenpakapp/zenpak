@@ -55,9 +55,9 @@ Free on **zenpak.app**, free to self-host.
 
 | | **Kin** | **Wayfarer** |
 |--|---------|--------------|
-| Price | ~3 €/mo | ~8 €/mo |
-| JSON export | ✓ | ✓ |
+| Price | €19/year | €5/mo or €39/year |
 | Enhanced profile + badge | ✓ | ✓ |
+| Managed backups | ✓ | ✓ |
 | Affiliate links + promo codes | | ✓ |
 | Insights (views, copies, clicks) | | ✓ |
 
