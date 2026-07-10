@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plans — ZenPak</title>
+    <link rel="icon" type="image/svg+xml" href="/brand/zenpak-z-app.svg" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            background: #F8F7F5;
+            color: #1A1A1A;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+        .wrap {
+            margin: 0 auto;
+            max-width: 860px;
+            padding: 48px 24px 80px;
+        }
+        header {
+            border-bottom: 1px solid #E0E0E0;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+        }
+        .brand {
+            color: #2D7A4F;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 8px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #6B7280;
+            font-size: 16px;
+            margin: 0 0 48px;
+            text-align: center;
+        }
+        .plans {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            margin-bottom: 48px;
+        }
+        .plan {
+            background: #fff;
+            border: 1px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 28px 24px;
+        }
+        .plan.featured {
+            border-color: #2D7A4F;
+            border-width: 2px;
+        }
+        .plan-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 4px;
+        }
+        .plan-price {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 8px 0 4px;
+        }
+        .plan-price span {
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .plan-desc {
+            color: #6B7280;
+            font-size: 13px;
+            margin: 0 0 20px;
+        }
+        .plan ul {
+            list-style: none;
+            margin: 0 0 24px;
+            padding: 0;
+        }
+        .plan li {
+            font-size: 14px;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .plan li::before {
+            color: #2D7A4F;
+            content: '✓';
+            left: 0;
+            position: absolute;
+        }
+        .btn {
+            background: #2D7A4F;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            text-align: center;
+            text-decoration: none;
+            width: 100%;
+        }
+        .btn:hover { background: #246040; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #D1D5DB;
+            color: #1A1A1A;
+        }
+        .btn-ghost:hover { background: #F3F4F6; }
+        .badge {
+            background: #ECFDF5;
+            border-radius: 4px;
+            color: #2D7A4F;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-left: 8px;
+            padding: 2px 6px;
+            text-transform: uppercase;
+        }
+        .legal-note {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            color: #6B7280;
+            font-size: 13px;
+            margin-bottom: 32px;
+            padding: 16px 20px;
+        }
+        .legal-note strong { color: #374151; }
+        .faq { margin-bottom: 40px; }
+        .faq h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 20px;
+        }
+        .faq dt {
+            font-weight: 600;
+            margin: 0 0 4px;
+        }
+        .faq dd {
+            color: #4B5563;
+            margin: 0 0 20px 0;
+        }
+        a { color: #2D7A4F; }
+        footer {
+            border-top: 1px solid #E0E0E0;
+            color: #6B7280;
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 13px;
+            gap: 8px;
+            justify-content: space-between;
+            margin-top: 60px;
+            padding-top: 20px;
+        }
+        footer a { color: #6B7280; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <a class="brand" href="/">ZenPak</a>
+        </header>
+
+        <h1>Simple, honest pricing</h1>
+        <p class="subtitle">The core is free and open-source. Paid plans support the hosted service.</p>
+
+        <div class="plans">
+            <div class="plan">
+                <div class="plan-name">Free</div>
+                <div class="plan-price">€0 <span>/ month</span></div>
+                <div class="plan-desc">Everything you need to pack smarter.</div>
+                <ul>
+                    <li>Unlimited gear lists</li>
+                    <li>Reusable item library</li>
+                    <li>Packing mode</li>
+                    <li>Community discover</li>
+                    <li>Public profile (display name)</li>
+                    <li>CSV import / export</li>
+                    <li>Self-hosting supported</li>
+                </ul>
+                <a href="/welcome" class="btn btn-ghost">Get started free</a>
+            </div>
+
+            <div class="plan featured">
+                <div class="plan-name">Kin <span class="badge">Supporter</span></div>
+                <div class="plan-price">€3 <span>/ month</span></div>
+                <div class="plan-desc">Support the project and unlock your public identity.</div>
+                <ul>
+                    <li>Everything in Free</li>
+                    <li>Supporter badge on profile</li>
+                    <li>Avatar, bio, trail name</li>
+                    <li>Managed backups</li>
+                    <li>Priority support</li>
+                </ul>
+                <a href="/welcome" class="btn">Become Kin</a>
+            </div>
+
+            <div class="plan">
+                <div class="plan-name">Wayfarer</div>
+                <div class="plan-price">€8 <span>/ month</span></div>
+                <div class="plan-desc">For creators who share and monetise their gear knowledge.</div>
+                <ul>
+                    <li>Everything in Kin</li>
+                    <li>Affiliate links per item</li>
+                    <li>Promo codes</li>
+                    <li>Guide dashboard</li>
+                    <li>View, copy &amp; click insights</li>
+                    <li>Creator badge</li>
+                </ul>
+                <a href="/welcome" class="btn">Become Wayfarer</a>
+            </div>
+        </div>
+
+        <div class="legal-note">
+            <strong>Billing note —</strong> Payments are processed by <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a>. Subscriptions renew monthly and can be cancelled at any time from the customer portal. Access continues until the end of the billing period. By subscribing, you expressly request immediate performance of the service and acknowledge the waiver of your 14-day right of withdrawal (art. L221-28 Code de la consommation). <strong>TVA non applicable, art. 293 B du CGI</strong> — FX Bénard, auto-entrepreneur, SIRET 75082412000026.
+        </div>
+
+        <div class="faq">
+            <h2>Questions</h2>
+            <dl>
+                <dt>Is self-hosting fully featured?</dt>
+                <dd>Yes. The open-source repo is billing-agnostic — all core features work without a Stripe account. Paid plans only apply to the hosted service at zenpak.app.</dd>
+
+                <dt>Can I migrate from lighterpack.com?</dt>
+                <dd>Yes. Export your CSV from lighterpack.com and import it in ZenPak settings. Lists, items, weights, and categories carry over.</dd>
+
+                <dt>What happens if I cancel?</dt>
+                <dd>Your account reverts to the Free tier at the end of the billing period. Your data is never deleted.</dd>
+
+                <dt>Do you offer refunds?</dt>
+                <dd>Contact <a href="mailto:info@zenpak.app">info@zenpak.app</a> within 14 days of a charge. We handle refunds on a case-by-case basis.</dd>
+            </dl>
+        </div>
+
+        <footer>
+            <span>© 2026 FX Bénard — ZenPak</span>
+            <span>
+                <a href="/">Home</a> ·
+                <a href="/about">About</a> ·
+                <a href="/terms">Terms</a> ·
+                <a href="/privacy">Privacy</a> ·
+                <a href="/legal">Legal notice</a> ·
+                <a href="mailto:info@zenpak.app">Contact</a>
+            </span>
+        </footer>
+    </div>
+</body>
+</html>
