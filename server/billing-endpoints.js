@@ -86,9 +86,11 @@ router.post('/portal-session', billingRequired, (req, res) => {
             const stripe = getStripe();
             const deployUrl = config.get('deployUrl');
 
+            const portalConfigId = config.get('stripePortalConfigurationId');
             const session = await stripe.billingPortal.sessions.create({
                 customer: customerId,
                 return_url: `${deployUrl}/?billing=success`,
+                ...(portalConfigId ? { configuration: portalConfigId } : {}),
             });
 
             return res.json({ url: session.url });

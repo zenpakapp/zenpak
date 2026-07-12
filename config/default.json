@@ -24,5 +24,6 @@
     "stripePriceIdTrailAnnual": "",
     "stripePriceIdGuide": "",
     "stripePriceIdGuideAnnual": "",
+    "stripePortalConfigurationId": "",
     "kofiWebhookToken": ""
 }
