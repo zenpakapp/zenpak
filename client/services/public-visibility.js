@@ -19,8 +19,8 @@ function isPublicVisibility(value) {
     return normalizeVisibility(value) !== VISIBILITY_PRIVATE;
 }
 
-function allowsSearchIndexing(value, allowSearchIndexing) {
-    return normalizeVisibility(value) === VISIBILITY_INDEXABLE && allowSearchIndexing === true;
+function allowsSearchIndexing(value) {
+    return normalizeVisibility(value) === VISIBILITY_INDEXABLE;
 }
 
 module.exports = {

@@ -54,7 +54,7 @@ function sanitizeProfile(profile) {
         links: Array.isArray(source.links) ? source.links.slice() : [],
         gearPhilosophy: Array.isArray(source.gearPhilosophy) ? source.gearPhilosophy.slice() : [],
         visibility: source.visibility,
-        allowSearchIndexing: allowsSearchIndexing(source.visibility, source.allowSearchIndexing),
+        allowSearchIndexing: allowsSearchIndexing(source.visibility),
     };
 }
 
@@ -66,7 +66,7 @@ function sanitizeListSummary(list) {
         summary: list.summary || '',
         description: list.description || '',
         visibility: list.visibility,
-        allowSearchIndexing: allowsSearchIndexing(list.visibility, list.allowSearchIndexing),
+        allowSearchIndexing: allowsSearchIndexing(list.visibility),
         totalWeight: Number(list.totalWeight) || 0,
         totalWornWeight: Number(list.totalWornWeight) || 0,
         totalConsumableWeight: Number(list.totalConsumableWeight) || 0,

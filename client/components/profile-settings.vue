@@ -105,6 +105,14 @@
         object-fit: cover;
         width: 100%;
     }
+
+    span {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        width: 100%;
+    }
 }
 
 .profileSettingsAvatarActions {
@@ -234,10 +242,6 @@
                 </select>
             </div>
         </div>
-        <label class="profileSettingsCheckbox">
-            <input type="checkbox" :checked="profile.allowSearchIndexing" @change="update('allowSearchIndexing', $event.target.checked)">
-            {{ $t('acct.allowSearchIndexing') }}
-        </label>
         <div class="profileSettingsActions">
             <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
                 {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
