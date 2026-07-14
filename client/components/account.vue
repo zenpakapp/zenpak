@@ -81,7 +81,7 @@
             <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
                 {{ $t('acct.paymentFailed') }}
                 <div class="accountActions">
-                    <button class="lpButton lpButtonDanger" @click="openPortal">{{ $t('acct.updatePayment') }}</button>
+                    <button class="lpButton lpButtonDanger" @click="openPortal()">{{ $t('acct.updatePayment') }}</button>
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
                 </p>
                 <div class="accountActions">
                     <button class="lpButton lpButtonPrimary" @click="openPortal(billing.subscriptionId)">{{ $t('acct.upgradeToWayfarer') }}</button>
-                    <button class="lpButton lpButtonSecondary" @click="openPortal">{{ $t('acct.manageSubscription') }}</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal()">{{ $t('acct.manageSubscription') }}</button>
                 </div>
             </div>
 
@@ -139,7 +139,7 @@
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonSecondary" @click="openPortal">{{ $t('acct.manageSubscription') }}</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal()">{{ $t('acct.manageSubscription') }}</button>
                 </div>
             </div>
         </section>
