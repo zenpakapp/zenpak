@@ -223,6 +223,10 @@ export default {
     mounted() {
         registerDialogOpener('account', () => {
             this.shown = true;
+            fetch('/api/billing/me', { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .catch(() => {});
         });
     },
     beforeUnmount() {
