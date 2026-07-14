@@ -85,13 +85,25 @@ router.post('/portal-session', billingRequired, (req, res) => {
         try {
             const stripe = getStripe();
             const deployUrl = config.get('deployUrl');
-
+            const returnUrl = `${deployUrl}/?billing=success`;
             const portalConfigId = config.get('stripePortalConfigurationId');
-            const session = await stripe.billingPortal.sessions.create({
+            const { subscriptionId } = req.body || {};
+
+            const sessionParams = {
                 customer: customerId,
-                return_url: `${deployUrl}/?billing=success`,
+                return_url: returnUrl,
                 ...(portalConfigId ? { configuration: portalConfigId } : {}),
-            });
+            };
+
+            if (subscriptionId) {
+                sessionParams.flow_data = {
+                    type: 'subscription_update',
+                    subscription_update: { subscription: subscriptionId },
+                    after_completion: { type: 'redirect', redirect: { return_url: returnUrl } },
+                };
+            }
+
+            const session = await stripe.billingPortal.sessions.create(sessionParams);
 
             return res.json({ url: session.url });
         } catch (err) {
@@ -117,6 +129,7 @@ router.get('/me', (req, res) => {
             currentPeriodEnd: billing.currentPeriodEnd || null,
             provider: billing.provider || null,
             interval: billing.interval || null,
+            subscriptionId: billing.subscriptionId || null,
             stripeEnabled: stripeEnabled(),
         });
     });

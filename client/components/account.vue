@@ -128,7 +128,7 @@
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonPrimary" @click="openPortal">{{ $t('acct.upgradeToWayfarer') }}</button>
+                    <button class="lpButton lpButtonPrimary" @click="openPortal(billing.subscriptionId)">{{ $t('acct.upgradeToWayfarer') }}</button>
                     <button class="lpButton lpButtonSecondary" @click="openPortal">{{ $t('acct.manageSubscription') }}</button>
                 </div>
             </div>
@@ -350,13 +350,15 @@ export default {
                 this.billingError = 'Looks like we lost the connection. Try again in a moment.';
             }
         },
-        async openPortal() {
+        async openPortal(subscriptionId) {
             this.billingError = null;
             try {
+                const body = subscriptionId ? { subscriptionId } : {};
                 const res = await fetch('/api/billing/portal-session', {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
