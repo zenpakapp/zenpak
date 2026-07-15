@@ -147,13 +147,7 @@
         <section class="accountSection">
             <h3 class="accountSectionTitle">{{ $t('acct.language') }}</h3>
             <div class="accountField">
-                <select class="accountFieldInput" v-model="selectedLocale" @change="changeLocale">
-                    <option value="auto">{{ $t('acct.languageAuto') }}</option>
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
-                    <option value="de">Deutsch</option>
-                    <option value="es">Español</option>
-                </select>
+                <lp-select :value="selectedLocale" :options="localeOptions" @change="selectLocale" />
             </div>
         </section>
 
@@ -169,6 +163,7 @@ import spinner from './spinner.vue';
 import profileSettings from './profile-settings.vue';
 import creatorLinks from './creator-links.vue';
 import upgradePrompt from './upgrade-prompt.vue';
+import LpSelect from './lp-select.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
@@ -183,6 +178,7 @@ export default {
         profileSettings,
         creatorLinks,
         upgradePrompt,
+        LpSelect,
     },
     data() {
         return {
@@ -219,6 +215,15 @@ export default {
             const map = { supporter: 'Kin', creator: 'Wayfarer', free: 'Base' };
             return map[this.billing && this.billing.plan] || 'Base';
         },
+        localeOptions() {
+            return [
+                { value: 'auto', label: this.$t('acct.languageAuto') },
+                { value: 'en', label: 'English' },
+                { value: 'fr', label: 'Français' },
+                { value: 'de', label: 'Deutsch' },
+                { value: 'es', label: 'Español' },
+            ];
+        },
     },
     mounted() {
         registerDialogOpener('account', () => {
@@ -233,6 +238,10 @@ export default {
         unregisterDialogOpener('account');
     },
     methods: {
+        selectLocale(val) {
+            this.selectedLocale = val;
+            this.changeLocale();
+        },
         changeLocale() {
             setLocale(this.selectedLocale);
         },

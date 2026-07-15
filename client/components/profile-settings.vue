@@ -35,7 +35,6 @@
 }
 
 .profileSettingsInput,
-.profileSettingsSelect,
 .profileSettingsTextarea {
     appearance: none;
     background: $color-bg;
@@ -66,22 +65,6 @@
     color: $color-text-muted;
     font-size: $fontSize-xs;
     margin: 4px 0 0;
-}
-
-.profileSettingsSelectWrap {
-    position: relative;
-
-    &::after {
-        color: $color-text-muted;
-        content: "⌄";
-        font-size: 18px;
-        line-height: 1;
-        pointer-events: none;
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-54%);
-    }
 }
 
 .profileSettingsAvatar {
@@ -173,19 +156,11 @@
         <div class="profileSettingsGrid">
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.itemWeight') }}</span>
-                <div class="profileSettingsSelectWrap">
-                    <select class="profileSettingsSelect" :value="library.itemUnit" @change="updateDefaultUnit('itemUnit', $event.target.value)">
-                        <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
-                    </select>
-                </div>
+                <lp-select :value="library.itemUnit" :options="unitOptions" @change="updateDefaultUnit('itemUnit', $event)" />
             </div>
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.listTotals') }}</span>
-                <div class="profileSettingsSelectWrap">
-                    <select class="profileSettingsSelect" :value="library.totalUnit" @change="updateDefaultUnit('totalUnit', $event.target.value)">
-                        <option v-for="unit in units" :key="unit" :value="unit">{{ unit }}</option>
-                    </select>
-                </div>
+                <lp-select :value="library.totalUnit" :options="unitOptions" @change="updateDefaultUnit('totalUnit', $event)" />
             </div>
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.defaultCurrency') }}</span>
@@ -288,6 +263,9 @@ export default {
         },
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.username);
+        },
+        unitOptions() {
+            return this.units.map(u => ({ value: u, label: u }));
         },
         visibilityOptions() {
             return [
