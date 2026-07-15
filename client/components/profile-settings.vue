@@ -62,6 +62,12 @@
     resize: vertical;
 }
 
+.profileSettingsHint {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    margin: 4px 0 0;
+}
+
 .profileSettingsSelectWrap {
     position: relative;
 
@@ -241,6 +247,7 @@
                     <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
                 </select>
             </div>
+            <p v-if="visibilityHint" class="profileSettingsHint">{{ visibilityHint }}</p>
         </div>
         <div class="profileSettingsActions">
             <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
@@ -286,6 +293,15 @@ export default {
         },
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.username);
+        },
+        visibilityHint() {
+            const map = {
+                private: this.$t('acct.visibilityHintPrivate'),
+                shareable: this.$t('acct.visibilityHintShareable'),
+                discoverable: this.$t('acct.visibilityHintDiscoverable'),
+                indexable: this.$t('acct.visibilityHintIndexable'),
+            };
+            return map[this.profile && this.profile.visibility] || '';
         },
     },
     methods: {
