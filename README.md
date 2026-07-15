@@ -35,19 +35,39 @@ Or paste any public lighterpack.com list URL directly into the import dialog. Li
 
 ## Self-hosting
 
-Requires Node.js 18+, npm, MongoDB 6+.
+**Requirements:** Node.js 18+, MongoDB 6+
 
 ```bash
-git clone https://github.com/fxbenard/lighterpack
-cd lighterpack
+git clone https://github.com/zenpakapp/zenpak
+cd zenpak
 npm install
 cp config/default.json config/local.json
-npm run dev
+# edit config/local.json (see below)
+npm run dev      # dev server → http://localhost:8080
+npm run start    # production build + start → http://localhost:3000
 ```
 
-`http://localhost:8080` — MongoDB at `localhost/lighterpack` by default.
+**Minimum config** (`config/local.json`):
 
-Stripe, email, and S3 are optional. Everything in `config/default.json`.
+```json
+{
+  "environment": "production",
+  "databaseUrl": "mongodb://localhost/zenpak",
+  "deployUrl": "https://your-domain.com",
+  "publicUrl": "https://your-domain.com",
+  "port": 3000
+}
+```
+
+**Optional services** — leave fields empty to disable:
+
+| Service | Config keys | Purpose |
+|---------|-------------|---------|
+| Mailgun | `mailgunDomain`, `mailgunAPIKey`, `mailgunBaseURL` | Email verification, password reset |
+| Cloudinary | `cloudinaryCloudName`, `cloudinaryApiKey`, `cloudinaryApiSecret` | Item image uploads |
+| Google OAuth | `googleClientId`, `googleClientSecret`, `googleCallbackUrl` | Sign in with Google |
+
+**Billing:** Leave all `stripe*` and `kofiWebhookToken` fields empty. The full app runs without billing — no feature gates apply in self-hosted mode. Paid plans (Kin, Wayfarer) are hosted-only at zenpak.app.
 
 ## Plans
 
