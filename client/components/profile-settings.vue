@@ -239,14 +239,7 @@
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
-            <div class="profileSettingsSelectWrap">
-                <select class="profileSettingsSelect" :value="profile.visibility" @change="update('visibility', $event.target.value)">
-                    <option value="private">{{ $t('acct.visibilityPrivate') }}</option>
-                    <option value="shareable">{{ $t('acct.visibilityShareable') }}</option>
-                    <option value="discoverable">{{ $t('acct.visibilityDiscoverable') }}</option>
-                    <option value="indexable">{{ $t('acct.visibilityIndexable') }}</option>
-                </select>
-            </div>
+            <lp-select :value="profile.visibility" :options="visibilityOptions" @change="update('visibility', $event)" />
             <p v-if="visibilityHint" class="profileSettingsHint">{{ visibilityHint }}</p>
         </div>
         <div class="profileSettingsActions">
@@ -262,9 +255,11 @@
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
+import LpSelect from './lp-select.vue';
 
 export default {
     name: 'ProfileSettings',
+    components: { LpSelect },
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],
@@ -293,6 +288,14 @@ export default {
         },
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.username);
+        },
+        visibilityOptions() {
+            return [
+                { value: 'private', label: this.$t('acct.visibilityPrivate') },
+                { value: 'shareable', label: this.$t('acct.visibilityShareable') },
+                { value: 'discoverable', label: this.$t('acct.visibilityDiscoverable') },
+                { value: 'indexable', label: this.$t('acct.visibilityIndexable') },
+            ];
         },
         visibilityHint() {
             const map = {
