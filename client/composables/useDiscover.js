@@ -2,6 +2,7 @@ import { ref } from 'vue';
 import { fetchJson } from '../utils/utils';
 
 function kgToMg(value) {
+    if (value === '' || value === null || value === undefined) return null;
     const number = Number(value);
     return Number.isFinite(number) && number >= 0 ? Math.round(number * 1000000) : null;
 }

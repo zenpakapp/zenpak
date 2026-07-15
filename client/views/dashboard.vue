@@ -55,6 +55,9 @@
             <div v-if="billingCancelled" class="lpBillingCancelBanner">
                 {{ $t('dash.billingCancelled') }}
             </div>
+            <div v-if="billingManaged" class="lpBillingSuccessBanner">
+                ✓ {{ $t('dash.billingManaged') }}
+            </div>
 <div v-if="isPastDue" class="lpPastDueBanner">
                 <span>⚠ {{ $t('dash.paymentFailed') }} {{ planLabel }} {{ $t('dash.plan') }}.</span>
                 <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">{{ $t('dash.fixPayment') }}</button>
@@ -174,6 +177,7 @@ export default {
             verifyBannerDismissed: !!localStorage.getItem('verifyBannerDismissed'),
             billingSuccess: false,
             billingCancelled: false,
+            billingManaged: false,
         };
     },
     computed: {
@@ -245,6 +249,15 @@ export default {
             this.billingCancelled = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => { this.billingCancelled = false; }, 6000);
+        }
+        if (this.$route && this.$route.query.billing === 'managed') {
+            fetch('/api/billing/me', { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .catch(() => {});
+            this.billingManaged = true;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => { this.billingManaged = false; }, 6000);
         }
     },
     methods: {

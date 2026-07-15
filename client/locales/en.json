@@ -482,6 +482,7 @@
     "thankYouZenPak": "Thank you for supporting ZenPak!",
     "planNowActive": "Your {plan} plan is now active.",
     "billingCancelled": "No worries — you can upgrade whenever you're ready.",
+    "billingManaged": "Subscription updated.",
     "paymentFailed": "Your payment failed. Update your payment method to keep your",
     "plan": "plan",
     "fixPayment": "Fix payment",

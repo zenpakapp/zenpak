@@ -59,6 +59,16 @@
     text-transform: none;
 }
 
+.accountDropdownUsernameHandle {
+    color: $color-text-muted;
+    display: block;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-normal;
+    letter-spacing: normal;
+    margin-top: 1px;
+    text-transform: none;
+}
+
 .accountDropdownItem {
     align-items: center;
     border-radius: $radius-sm;
@@ -107,19 +117,18 @@
 
 <template>
     <span class="headerItem hasPopover headerTruncateItem">
-        <PopoverHover id="headerPopover">
+        <PopoverHover id="headerPopover" placement="right">
             <template #target>
                 <span class="accountDropdownTarget" :title="username">
-                    <span class="accountDropdownLead">{{ $t('dash.signedInAs') }}</span>
-                    <strong class="accountDropdownName">{{ username }}</strong>
+                    <strong class="accountDropdownName">{{ navLabel }}</strong>
                     <i class="lpSprite lpExpand accountDropdownCaret" />
                 </span>
             </template>
             <template #content>
                 <div class="accountDropdownMenu">
                     <div class="accountDropdownUser">
-                        {{ $t('dash.signedInAs') }}
-                        <span class="accountDropdownUsername">{{ username }}</span>
+                        <span class="accountDropdownUsername">{{ navLabel }}</span>
+                        <span v-if="displayName" class="accountDropdownUsernameHandle">@{{ username }}</span>
                     </div>
                     <a class="accountDropdownItem" @click="showAccount">{{ $t('dash.accountSettings') }}</a>
                     <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.myProfile') }}</router-link>
@@ -157,6 +166,14 @@ export default {
             const lib = this.$store.state.library;
             const plan = lib && lib.entitlements && lib.entitlements.plan;
             return plan === 'supporter' || plan === 'creator';
+        },
+        displayName() {
+            const lib = this.$store.state.library;
+            const profile = lib && lib.publicProfile;
+            return (this.isTrail && profile && profile.displayName) ? profile.displayName : '';
+        },
+        navLabel() {
+            return this.displayName || this.username;
         },
         themeLabel() {
             return { auto: '⚙ Auto', light: '☀ Light', dark: '☾ Dark' }[this.mode];

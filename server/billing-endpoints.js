@@ -85,7 +85,7 @@ router.post('/portal-session', billingRequired, (req, res) => {
         try {
             const stripe = getStripe();
             const deployUrl = config.get('deployUrl');
-            const returnUrl = `${deployUrl}/?billing=success`;
+            const returnUrl = `${deployUrl}/?billing=managed`;
             const portalConfigId = config.get('stripePortalConfigurationId');
             const { subscriptionId } = req.body || {};
 
