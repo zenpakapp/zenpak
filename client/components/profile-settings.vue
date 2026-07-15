@@ -164,13 +164,7 @@
             </div>
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.defaultCurrency') }}</span>
-                <input
-                    type="text"
-                    class="profileSettingsInput"
-                    maxlength="4"
-                    :value="library.currencySymbol"
-                    @input="updateCurrencySymbol($event.target.value)"
-                >
+                <lp-select :value="library.currencySymbol" :options="currencyOptions" @change="updateCurrencySymbol($event)" />
             </div>
         </div>
 
@@ -266,6 +260,12 @@ export default {
         },
         unitOptions() {
             return this.units.map(u => ({ value: u, label: u }));
+        },
+        currencyOptions() {
+            return [
+                { value: '$', label: '$ — Dollar' },
+                { value: '€', label: '€ — Euro' },
+            ];
         },
         visibilityOptions() {
             return [
