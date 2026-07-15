@@ -419,28 +419,56 @@ router.get('/insights', (req, res) => {
 // GET /api/community/users?q=
 router.get('/users', async (req, res) => {
     const q = String(req.query.q || '').trim().slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    if (!q) return res.json({ users: [] });
+
+    const PROJECT = {
+        _id: 0,
+        username: 1,
+        displayName: { $ifNull: ['$library.publicProfile.displayName', '$username'] },
+        bio: { $ifNull: ['$library.publicProfile.bio', ''] },
+        avatarUrl: { $ifNull: ['$library.publicProfile.avatarUrl', ''] },
+        plan: { $ifNull: ['$library.entitlements.plan', 'free'] },
+    };
 
     try {
         const PAGE_SIZE = 20;
-        const pipeline = [
-            { $match: {
-                username: { $regex: q, $options: 'i' },
-                $or: [
-                    { 'library.profile.visibility': { $exists: false } },
-                    { 'library.profile.visibility': { $in: ['public', 'discoverable'] } },
-                ],
-            }},
-            { $limit: PAGE_SIZE },
-            { $project: {
-                _id: 0,
-                username: 1,
-                displayName: { $ifNull: ['$library.profile.displayName', '$username'] },
-                bio: { $ifNull: ['$library.profile.bio', ''] },
-                avatarUrl: { $ifNull: ['$library.profile.avatarUrl', ''] },
-                plan: { $ifNull: ['$library.entitlements.plan', 'free'] },
-            }},
-        ];
+        let pipeline;
+
+        if (!q) {
+            // Default: discoverable/indexable profiles sorted by most recent public list
+            pipeline = [
+                { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] } } },
+                { $addFields: {
+                    _latestList: {
+                        $max: {
+                            $map: {
+                                input: { $filter: {
+                                    input: { $ifNull: ['$library.lists', []] },
+                                    as: 'l',
+                                    cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
+                                } },
+                                as: 'l',
+                                in: '$$l.dateUpdated',
+                            },
+                        },
+                    },
+                } },
+                { $sort: { _latestList: -1 } },
+                { $limit: PAGE_SIZE },
+                { $project: PROJECT },
+            ];
+        } else {
+            pipeline = [
+                { $match: {
+                    $or: [
+                        { username: { $regex: q, $options: 'i' } },
+                        { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
+                    ],
+                    'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
+                } },
+                { $limit: PAGE_SIZE },
+                { $project: PROJECT },
+            ];
+        }
 
         const users = await db.users.aggregate(pipeline);
         const normalized = users.map(u => ({

@@ -12,7 +12,7 @@
         </div>
         <p v-if="loading" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
         <p v-else-if="error" class="lpCommunityEmpty">{{ error }}</p>
-        <p v-else-if="peopleQuery && results.length === 0" class="lpCommunityEmpty">{{ $t('community.peopleNoUsersFound') }}</p>
+        <p v-else-if="results.length === 0" class="lpCommunityEmpty">{{ $t('community.peopleNoUsersFound') }}</p>
         <template v-else>
             <router-link
                 v-for="user in results"
@@ -46,20 +46,20 @@ export default {
             timeout: null,
         };
     },
+    mounted() {
+        this.search();
+    },
     methods: {
         onInput() {
             clearTimeout(this.timeout);
             this.timeout = setTimeout(() => this.search(), 300);
         },
         async search() {
-            if (!this.peopleQuery.trim()) {
-                this.results = [];
-                return;
-            }
             this.loading = true;
             this.error = null;
             try {
-                const params = new URLSearchParams({ q: this.peopleQuery.trim() });
+                const params = new URLSearchParams();
+                if (this.peopleQuery.trim()) params.set('q', this.peopleQuery.trim());
                 const data = await fetchJson(`/api/community/users?${params}`);
                 this.results = data.users || [];
             } catch {
