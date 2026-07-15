@@ -97,7 +97,7 @@
                 <div v-if="library.optionalFields['price']" id="lpPriceSettings">
                     <hr>
                     <label>
-                        Currency:
+                        {{ $t('list.currency') }} :
                         <input id="currencySymbol" type="text" maxlength="4" :value="library.currencySymbol" @input="updateCurrencySymbol($event)">
                     </label>
                 </div>
@@ -124,23 +124,23 @@ export default {
         optionalFieldsLookup() {
             return [{
                 name: 'images',
-                displayName: 'Item images',
+                displayName: this.$t('list.optFieldImages'),
                 cssClass: 'lpShowImages',
             }, {
                 name: 'price',
-                displayName: 'Item prices',
+                displayName: this.$t('list.optFieldPrices'),
                 cssClass: 'lpShowPrices',
             }, {
                 name: 'worn',
-                displayName: 'Worn items',
+                displayName: this.$t('list.optFieldWorn'),
                 cssClass: 'lpShowWorn',
             }, {
                 name: 'consumable',
-                displayName: 'Consumable items',
+                displayName: this.$t('list.optFieldConsumable'),
                 cssClass: 'lpShowConsumable',
             }, {
                 name: 'listDescription',
-                displayName: 'List descriptions',
+                displayName: this.$t('list.optFieldListDescription'),
                 cssClass: 'lpShowListDescription',
             }].map((optionalField) => ({
                 ...optionalField,
