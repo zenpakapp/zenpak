@@ -76,7 +76,7 @@
         </section>
 
         <section v-if="billing && billing.stripeEnabled" class="accountSection">
-            <h3 class="accountSectionTitle">Subscription</h3>
+            <h3 class="accountSectionTitle">{{ $t('acct.subscription') }}</h3>
 
             <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
                 {{ $t('acct.paymentFailed') }}

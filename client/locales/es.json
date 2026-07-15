@@ -226,6 +226,7 @@
     "upgradeToWayfarer": "Mejorar a Wayfarer",
     "currentPlan": "Plan actual: ",
     "cancels": " — se cancela ",
+    "subscription": "Suscripción",
     "manageSubscription": "Gestionar suscripción",
     "errorCurrentPassword": "Por favor ingresa tu contraseña actual.",
     "errorPasswordsNoMatch": "Tus contraseñas no coinciden.",
