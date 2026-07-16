@@ -101,17 +101,19 @@ export default {
     data() {
         return {
             shareReady: true,
-            seasonOptions: [
-                { value: '3-season', label: '3-Season' },
-                { value: '4-season', label: '4-Season' },
-                { value: 'spring', label: 'Spring' },
-                { value: 'summer', label: 'Summer' },
-                { value: 'fall', label: 'Fall' },
-                { value: 'winter', label: 'Winter' },
-            ],
         };
     },
     computed: {
+        seasonOptions() {
+            return [
+                { value: '3-season', label: this.$t('list.season3') },
+                { value: '4-season', label: this.$t('list.season4') },
+                { value: 'spring', label: this.$t('list.seasonSpring') },
+                { value: 'summer', label: this.$t('list.seasonSummer') },
+                { value: 'fall', label: this.$t('list.seasonFall') },
+                { value: 'winter', label: this.$t('list.seasonWinter') },
+            ];
+        },
         listTypeOptions() {
             return [
                 { value: 'day-hike', label: this.$t('list.typeDay') },
