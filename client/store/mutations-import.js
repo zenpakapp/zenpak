@@ -51,7 +51,7 @@ module.exports = {
                     if (row.brand) item.brand = row.brand;
                     if (row.imageUrl) item.imageUrl = row.imageUrl;
                     item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
-                    item.authorUnit = row.unit;
+                    item.authorUnit = state.library.itemUnit || row.unit;
                     newCount++;
                 }
             } else {
@@ -73,7 +73,7 @@ module.exports = {
                     if (row.brand) item.brand = row.brand;
                     if (row.imageUrl) item.imageUrl = row.imageUrl;
                     item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
-                    item.authorUnit = row.unit;
+                    item.authorUnit = state.library.itemUnit || row.unit;
                     newCount++;
                 }
             }
@@ -94,21 +94,14 @@ module.exports = {
         if (hasWorn) state.library.optionalFields.worn = true;
         if (hasConsumable) state.library.optionalFields.consumable = true;
 
-        const importedUnit = Object.keys(importedUnits).sort((a, b) => importedUnits[b] - importedUnits[a])[0];
-        if (importedUnit) {
-            state.library.itemUnit = importedUnit;
-            if (state.library.totalUnit === previousItemUnit) state.library.totalUnit = importedUnit;
-        }
-
         state.library.defaultListId = list.id;
         state.library.getListById(list.id).calculateTotals();
 
-        if (mergedCount > 0) {
-            state.globalAlerts.push({
-                id: `${Date.now()}-${Math.random()}`,
-                message: `Import complete: ${mergedCount} item${mergedCount > 1 ? 's' : ''} merged with existing gear, ${newCount} new item${newCount !== 1 ? 's' : ''} added.`,
-            });
-        }
+        const unit = state.library.itemUnit;
+        const msg = mergedCount > 0
+            ? `Import complete: ${mergedCount} item${mergedCount > 1 ? 's' : ''} merged, ${newCount} new — displayed in ${unit}.`
+            : `Import complete: ${newCount} item${newCount !== 1 ? 's' : ''} added — displayed in ${unit}.`;
+        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message: msg });
     },
     importPublicList(state, { listName, description, categories }) {
         const list = state.library.newList();
@@ -138,7 +131,7 @@ module.exports = {
                     item.name = ci.name || '';
                     item.description = ci.description || '';
                     item.weight = Number(ci.weight) || 0;
-                    item.authorUnit = ci.authorUnit || state.library.itemUnit || 'g';
+                    item.authorUnit = state.library.itemUnit || ci.authorUnit || 'g';
                     item.price = Number(ci.price) || 0;
                     item.brand = ci.brand || '';
                     item.shop = ci.shop || '';
@@ -159,9 +152,10 @@ module.exports = {
         state.library.defaultListId = list.id;
         list.calculateTotals();
 
+        const unit = state.library.itemUnit || 'g';
         const msg = mergedCount > 0
-            ? `List copied: ${mergedCount} item${mergedCount > 1 ? 's' : ''} matched your gear library, ${newCount} new item${newCount !== 1 ? 's' : ''} added.`
-            : `List copied: ${newCount} new item${newCount !== 1 ? 's' : ''} added to your gear library.`;
+            ? `List copied: ${mergedCount} item${mergedCount > 1 ? 's' : ''} matched your gear library, ${newCount} new item${newCount !== 1 ? 's' : ''} added — displayed in ${unit}.`
+            : `List copied: ${newCount} item${newCount !== 1 ? 's' : ''} added to your gear library — displayed in ${unit}.`;
 
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message: msg });
     },

@@ -148,6 +148,40 @@
         grid-template-columns: 1fr;
     }
 }
+
+.profileSettingsConvertOverlay {
+    background: rgba(0, 0, 0, 0.4);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 200;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.profileSettingsConvertDialog {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-elevated;
+    max-width: 360px;
+    padding: 24px;
+    width: 90%;
+}
+
+.profileSettingsConvertText {
+    color: $color-text;
+    font-size: $fontSize-base;
+    margin: 0 0 20px;
+}
+
+.profileSettingsConvertActions {
+    display: flex;
+    gap: 10px;
+}
 </style>
 
 <template>
@@ -217,6 +251,15 @@
             </button>
             <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
         </div>
+        <div v-if="pendingItemUnit" class="profileSettingsConvertOverlay" @click.self="applyUnitKeep">
+            <div class="profileSettingsConvertDialog">
+                <p class="profileSettingsConvertText">{{ $t('acct.convertUnitsPrompt', { unit: pendingItemUnit }) }}</p>
+                <div class="profileSettingsConvertActions">
+                    <button class="lpButton" @click="applyUnitWithConvert">{{ $t('acct.convertUnitsYes', { unit: pendingItemUnit }) }}</button>
+                    <button class="lpButton lpButtonGhost" @click="applyUnitKeep">{{ $t('acct.convertUnitsNo') }}</button>
+                </div>
+            </div>
+        </div>
     </section>
 </template>
 
@@ -232,6 +275,7 @@ export default {
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],
+            pendingItemUnit: null,
             avatarUploading: false,
             avatarError: null,
             profileSaving: false,
@@ -290,10 +334,23 @@ export default {
             this.$store.commit('updatePublicProfile', { [field]: value });
         },
         updateDefaultUnit(field, value) {
+            if (field === 'itemUnit' && value !== this.library.itemUnit && this.library.items.length > 0) {
+                this.pendingItemUnit = value;
+                return;
+            }
             this.$store.commit('setDefaultUnits', {
                 itemUnit: field === 'itemUnit' ? value : this.library.itemUnit,
                 totalUnit: field === 'totalUnit' ? value : this.library.totalUnit,
             });
+        },
+        applyUnitWithConvert() {
+            this.$store.commit('convertAllItemsToUnit', this.pendingItemUnit);
+            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.library.totalUnit });
+            this.pendingItemUnit = null;
+        },
+        applyUnitKeep() {
+            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.library.totalUnit });
+            this.pendingItemUnit = null;
         },
         updateCurrencySymbol(value) {
             this.$store.commit('updateCurrencySymbol', value);

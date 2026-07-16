@@ -10,6 +10,9 @@ module.exports = {
         if (units.itemUnit) state.library.itemUnit = units.itemUnit;
         if (units.totalUnit) state.library.totalUnit = units.totalUnit;
     },
+    convertAllItemsToUnit(state, unit) {
+        state.library.items.forEach(item => { item.authorUnit = unit; });
+    },
     toggleOptionalField(state, optionalField) {
         state.library.optionalFields[optionalField] = !state.library.optionalFields[optionalField];
         state.library.getListById(state.library.defaultListId).calculateTotals();
