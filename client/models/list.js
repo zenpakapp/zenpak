@@ -17,6 +17,7 @@ const List = function ({ id, library }) {
     this.visibility = VISIBILITY_PRIVATE;
     this.allowSearchIndexing = false;
     this.externalId = '';
+    this.forkedFrom = null;
 
     this.totalWeight = 0;
     this.totalWornWeight = 0;
