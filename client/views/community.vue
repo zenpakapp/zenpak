@@ -79,14 +79,16 @@
             </div>
 
             <div class="lpCommunityFilters">
-                <select v-model="filterSeason" class="lpCommunityFilterSelect" :aria-label="$t('community.ariaFilterSeason')" @change="applyDiscoverFilters">
-                    <option value="">{{ $t('community.filterSeasonAny') }}</option>
-                    <option v-for="season in seasonOptions" :key="season.value" :value="season.value">{{ season.label }}</option>
-                </select>
-                <select v-model="filterType" class="lpCommunityFilterSelect" :aria-label="$t('community.ariaFilterType')" @change="applyDiscoverFilters">
-                    <option value="">{{ $t('community.filterTypeAny') }}</option>
-                    <option v-for="listType in listTypeOptions" :key="listType.value" :value="listType.value">{{ listType.label }}</option>
-                </select>
+                <lp-select
+                    :value="filterSeason"
+                    :options="seasonOptions"
+                    @change="val => { filterSeason = val; applyDiscoverFilters(); }"
+                />
+                <lp-select
+                    :value="filterType"
+                    :options="listTypeOptions"
+                    @change="val => { filterType = val; applyDiscoverFilters(); }"
+                />
                 <input
                     v-model="filterMinWeight"
                     type="number"
@@ -245,10 +247,11 @@ import { fetchJson } from '../utils/utils.js';
 import CommunityModeration from '../components/community-moderation.vue';
 import CommunityPeople from '../components/community-people.vue';
 import reportButton from '../components/report-button.vue';
+import LpSelect from '../components/lp-select.vue';
 
 export default {
     name: 'CommunityView',
-    components: { CommunityModeration, CommunityPeople, reportButton },
+    components: { CommunityModeration, CommunityPeople, reportButton, LpSelect },
     setup() {
         useTheme();
         const {
@@ -305,6 +308,7 @@ export default {
     computed: {
         seasonOptions() {
             return [
+                { value: '', label: this.$t('community.filterSeasonAny') },
                 { value: '3-season', label: this.$t('list.season3') },
                 { value: '4-season', label: this.$t('list.season4') },
                 { value: 'spring', label: this.$t('list.seasonSpring') },
@@ -315,6 +319,7 @@ export default {
         },
         listTypeOptions() {
             return [
+                { value: '', label: this.$t('community.filterTypeAny') },
                 { value: 'day-hike', label: this.$t('list.typeDay') },
                 { value: 'weekend', label: this.$t('list.typeWeekend') },
                 { value: 'thru-hike', label: this.$t('list.typeThru') },
