@@ -157,7 +157,6 @@ export default {
 
 .itemDetailAddBtn {
     white-space: nowrap;
-    width: 100%;
 }
 
 .itemDetailAddDropdown {
