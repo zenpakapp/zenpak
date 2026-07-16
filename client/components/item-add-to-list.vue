@@ -158,6 +158,7 @@ export default {
 .itemDetailAddBtn {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
     width: 100%;
 }
 

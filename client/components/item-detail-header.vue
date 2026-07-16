@@ -154,7 +154,7 @@
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
             <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">+ Add type</button>
         </div>
-        <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? 'Remove from favorites' : 'Add to favorites'" @click="$emit('toggle-star')">
+        <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
         <button class="lpIconButton itemDetailClose" title="Close" @click="$emit('close')">×</button>
