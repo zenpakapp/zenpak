@@ -14,7 +14,7 @@ module.exports = (function () {
     function MgToWeight(value, unit, display) {
         if (typeof display === 'undefined') display = false;
         if (unit == 'g') {
-            return Math.round(100 * value / 1000.0) / 100;
+            return Math.round(value / 1000.0);
         } if (unit == 'kg') {
             return Math.round(100 * value / 1000000.0, 2) / 100;
         } if (unit == 'oz') {

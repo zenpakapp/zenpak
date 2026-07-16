@@ -149,24 +149,6 @@
     }
 }
 
-.profileSettingsConvertPanel {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    grid-column: 1 / -1;
-    padding: 14px 16px;
-}
-
-.profileSettingsConvertText {
-    color: $color-text;
-    font-size: $fontSize-sm;
-    margin: 0 0 12px;
-}
-
-.profileSettingsConvertActions {
-    display: flex;
-    gap: 8px;
-}
 </style>
 
 <template>
@@ -184,13 +166,6 @@
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.defaultCurrency') }}</span>
                 <lp-select :value="library.currencySymbol" :options="currencyOptions" @change="updateCurrencySymbol($event)" />
-            </div>
-            <div v-if="pendingItemUnit" class="profileSettingsConvertPanel">
-                <p class="profileSettingsConvertText">{{ $t('acct.convertUnitsPrompt', { unit: pendingItemUnit }) }}</p>
-                <div class="profileSettingsConvertActions">
-                    <button class="lpButton" @click="applyUnitWithConvert">{{ $t('acct.convertUnitsYes', { unit: pendingItemUnit }) }}</button>
-                    <button class="lpButton lpButtonGhost" @click="applyUnitKeep">{{ $t('acct.convertUnitsNo') }}</button>
-                </div>
             </div>
         </div>
 
@@ -258,7 +233,6 @@ export default {
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],
-            pendingItemUnit: null,
             avatarUploading: false,
             avatarError: null,
             profileSaving: false,
@@ -317,23 +291,10 @@ export default {
             this.$store.commit('updatePublicProfile', { [field]: value });
         },
         updateDefaultUnit(field, value) {
-            if (field === 'itemUnit' && value !== this.library.itemUnit && this.library.items.length > 0) {
-                this.pendingItemUnit = value;
-                return;
-            }
             this.$store.commit('setDefaultUnits', {
                 itemUnit: field === 'itemUnit' ? value : this.library.itemUnit,
-                totalUnit: field === 'totalUnit' ? value : this.library.totalUnit,
+                totalUnit: field === 'itemUnit' ? value : (field === 'totalUnit' ? value : this.library.totalUnit),
             });
-        },
-        applyUnitWithConvert() {
-            this.$store.commit('convertAllItemsToUnit', this.pendingItemUnit);
-            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.pendingItemUnit });
-            this.pendingItemUnit = null;
-        },
-        applyUnitKeep() {
-            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.pendingItemUnit });
-            this.pendingItemUnit = null;
         },
         updateCurrencySymbol(value) {
             this.$store.commit('updateCurrencySymbol', value);

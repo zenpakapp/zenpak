@@ -40,7 +40,7 @@
         </span>
         <span class="lpWeightCell lpNumber">
             <input v-model="displayWeight" v-empty-if-zero type="text" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
-            <unitSelect :unit="item.authorUnit" @change="setUnit" />
+            <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
             <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
@@ -56,16 +56,12 @@
 </template>
 
 <script>
-import unitSelect from './unit-select.vue';
 import { openDialog } from '../services/dialogs';
 
 const weightUtils = require('../utils/weight.js');
 
 export default {
     name: 'Item',
-    components: {
-        unitSelect,
-    },
     props: ['category', 'itemContainer', 'isPackingMode', 'packedItemIds'],
     data() {
         return {
@@ -123,7 +119,7 @@ export default {
             this.setDisplayWeight();
             this.setDisplayPrice();
         },
-        'item.authorUnit'() {
+        'library.itemUnit'() {
             this.setDisplayWeight();
         },
         categoryItem() {
@@ -141,10 +137,6 @@ export default {
         },
         saveCategoryItem() {
             this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: this.categoryItem });
-        },
-        setUnit(unit) {
-            this.item.authorUnit = unit;
-            this.saveItem();
         },
         savePrice() {
             const priceFloat = parseFloat(this.displayPrice, 10);
@@ -172,7 +164,7 @@ export default {
             const weightFloat = parseFloat(this.displayWeight, 10);
 
             if (!isNaN(weightFloat)) {
-                this.item.weight = weightUtils.WeightToMg(weightFloat, this.item.authorUnit);
+                this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
                 this.saveItem();
                 this.weightError = false;
             } else {
@@ -190,7 +182,7 @@ export default {
             }
         },
         setDisplayWeight() {
-            this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
+            this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit);
         },
         openDetail() {
             openDialog('itemDetail', {
@@ -272,8 +264,8 @@ export default {
                 return;
             }
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit) + 1;
-            this.item.weight = weightUtils.WeightToMg(newWeight, this.item.authorUnit);
+            const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) + 1;
+            this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
             this.saveItem();
         },
@@ -284,8 +276,8 @@ export default {
                 return;
             }
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit) - 1;
-            this.item.weight = weightUtils.WeightToMg(newWeight, this.item.authorUnit);
+            const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) - 1;
+            this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
             if (this.item.weight < 0) {
                 this.item.weight = 0;
