@@ -76,6 +76,7 @@ export default {
             priceError: false,
             qtyError: false,
             numStars: 4,
+            skipAuthorUnitWatch: false,
         };
     },
     computed: {
@@ -123,6 +124,9 @@ export default {
             this.setDisplayWeight();
             this.setDisplayPrice();
         },
+        'item.authorUnit'() {
+            if (!this.skipAuthorUnitWatch) this.setDisplayWeight();
+        },
         categoryItem() {
             this.setDisplayQty();
         },
@@ -140,9 +144,11 @@ export default {
             this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: this.categoryItem });
         },
         setUnit(unit) {
+            this.skipAuthorUnitWatch = true;
             this.item.authorUnit = unit;
             this.$store.commit('updateItemUnit', unit);
             this.saveWeight(); // calling saveWeight preserves the text in the weight box instead of converting units.
+            this.$nextTick(() => { this.skipAuthorUnitWatch = false; });
         },
         savePrice() {
             const priceFloat = parseFloat(this.displayPrice, 10);

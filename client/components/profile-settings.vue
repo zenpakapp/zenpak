@@ -149,38 +149,23 @@
     }
 }
 
-.profileSettingsConvertOverlay {
-    background: rgba(0, 0, 0, 0.4);
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 200;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
-
-.profileSettingsConvertDialog {
+.profileSettingsConvertPanel {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-lg;
-    box-shadow: 0 14px 32px rgba(var(--color-shadow-rgb), 0.4);
-    max-width: 360px;
-    padding: 24px;
-    width: 90%;
+    border-radius: $radius-md;
+    grid-column: 1 / -1;
+    padding: 14px 16px;
 }
 
 .profileSettingsConvertText {
     color: $color-text;
-    font-size: $fontSize-base;
-    margin: 0 0 20px;
+    font-size: $fontSize-sm;
+    margin: 0 0 12px;
 }
 
 .profileSettingsConvertActions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 </style>
 
@@ -199,6 +184,13 @@
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.defaultCurrency') }}</span>
                 <lp-select :value="library.currencySymbol" :options="currencyOptions" @change="updateCurrencySymbol($event)" />
+            </div>
+            <div v-if="pendingItemUnit" class="profileSettingsConvertPanel">
+                <p class="profileSettingsConvertText">{{ $t('acct.convertUnitsPrompt', { unit: pendingItemUnit }) }}</p>
+                <div class="profileSettingsConvertActions">
+                    <button class="lpButton" @click="applyUnitWithConvert">{{ $t('acct.convertUnitsYes', { unit: pendingItemUnit }) }}</button>
+                    <button class="lpButton lpButtonGhost" @click="applyUnitKeep">{{ $t('acct.convertUnitsNo') }}</button>
+                </div>
             </div>
         </div>
 
@@ -250,15 +242,6 @@
                 {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
             </button>
             <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
-        </div>
-        <div v-if="pendingItemUnit" class="profileSettingsConvertOverlay" @click.self="applyUnitKeep">
-            <div class="profileSettingsConvertDialog">
-                <p class="profileSettingsConvertText">{{ $t('acct.convertUnitsPrompt', { unit: pendingItemUnit }) }}</p>
-                <div class="profileSettingsConvertActions">
-                    <button class="lpButton" @click="applyUnitWithConvert">{{ $t('acct.convertUnitsYes', { unit: pendingItemUnit }) }}</button>
-                    <button class="lpButton lpButtonGhost" @click="applyUnitKeep">{{ $t('acct.convertUnitsNo') }}</button>
-                </div>
-            </div>
         </div>
     </section>
 </template>
@@ -345,11 +328,11 @@ export default {
         },
         applyUnitWithConvert() {
             this.$store.commit('convertAllItemsToUnit', this.pendingItemUnit);
-            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.library.totalUnit });
+            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.pendingItemUnit });
             this.pendingItemUnit = null;
         },
         applyUnitKeep() {
-            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.library.totalUnit });
+            this.$store.commit('setDefaultUnits', { itemUnit: this.pendingItemUnit, totalUnit: this.pendingItemUnit });
             this.pendingItemUnit = null;
         },
         updateCurrencySymbol(value) {
