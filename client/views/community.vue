@@ -207,7 +207,8 @@
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
                     <div class="lpCommunityEventAvatar">
-                        {{ event.author.charAt(0).toUpperCase() }}
+                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author" />
+                        <span v-else>{{ event.author.charAt(0).toUpperCase() }}</span>
                     </div>
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">

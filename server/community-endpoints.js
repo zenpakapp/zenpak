@@ -198,6 +198,10 @@ router.get('/feed', (req, res) => {
             const authorIds = [...new Set(events.map((e) => e.userId.toString()))];
             const authors = await db.users.findMany({ _id: { $in: authorIds.map((id) => new ObjectId(id)) } });
             const authorMap = Object.fromEntries(authors.map((a) => [a._id.toString(), a.username]));
+            const avatarMap = Object.fromEntries(authors.map((a) => [
+                a._id.toString(),
+                (a.library && a.library.publicProfile && a.library.publicProfile.avatarUrl) || '',
+            ]));
 
             const tierMap = Object.fromEntries(authors.map((a) => {
                 const plan = (a.library && a.library.entitlements && a.library.entitlements.plan) || 'free';
@@ -223,6 +227,7 @@ router.get('/feed', (req, res) => {
                 createdAt: e.createdAt,
                 author: authorMap[e.userId.toString()] || '',
                 authorTier: tierMap[e.userId.toString()] || 'base',
+                avatarUrl: avatarMap[e.userId.toString()] || '',
                 listId: e.listId,
                 listName: listNameMap[e.listId] || '',
                 listDeleted: !listNameMap[e.listId],
