@@ -109,15 +109,17 @@ export default {
                 { value: 'fall', label: 'Fall' },
                 { value: 'winter', label: 'Winter' },
             ],
-            listTypeOptions: [
-                { value: 'day-hike', label: 'Day hike' },
-                { value: 'weekend', label: 'Weekend' },
-                { value: 'thru-hike', label: 'Thru-hike' },
-                { value: 'bikepacking', label: 'Bikepacking' },
-            ],
         };
     },
     computed: {
+        listTypeOptions() {
+            return [
+                { value: 'day-hike', label: this.$t('list.typeDay') },
+                { value: 'weekend', label: this.$t('list.typeWeekend') },
+                { value: 'trek', label: this.$t('list.typeThru') },
+                { value: 'bikepacking', label: this.$t('list.typeBike') },
+            ];
+        },
         visibilityHint() {
             const hints = {
                 private: this.$t('share.hintPrivate'),

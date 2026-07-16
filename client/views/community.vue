@@ -323,7 +323,7 @@ export default {
                 { value: '', label: this.$t('community.filterTypeAny') },
                 { value: 'day-hike', label: this.$t('list.typeDay') },
                 { value: 'weekend', label: this.$t('list.typeWeekend') },
-                { value: 'thru-hike', label: this.$t('list.typeThru') },
+                { value: 'trek', label: this.$t('list.typeThru') },
                 { value: 'bikepacking', label: this.$t('list.typeBike') },
             ];
         },
