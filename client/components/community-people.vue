@@ -20,13 +20,19 @@
                 :to="`/u/${user.username}`"
                 class="lpCommunityCard lpCommunityCardUser"
             >
-                <div class="lpCommunityCardName">
-                    {{ user.displayName || user.username }}
-                    <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                    <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Kin</span>
+                <div class="lpCommunityCardUserAvatar">
+                    <img v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName || user.username" />
+                    <span v-else>{{ (user.displayName || user.username).charAt(0).toUpperCase() }}</span>
                 </div>
-                <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
-                <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
+                <div class="lpCommunityCardUserBody">
+                    <div class="lpCommunityCardName">
+                        {{ user.displayName || user.username }}
+                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
+                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Kin</span>
+                    </div>
+                    <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
+                    <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
+                </div>
             </router-link>
         </template>
     </div>

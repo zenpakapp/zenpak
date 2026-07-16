@@ -288,9 +288,42 @@
 /* ── User cards ── */
 
 .lpCommunityCardUser {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.lpCommunityCardUserAvatar {
+    align-items: center;
+    background: $color-control-muted;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    display: flex;
+    flex-shrink: 0;
+    font-size: $fontSize-md;
+    font-weight: $fontWeight-bold;
+    height: 40px;
+    justify-content: center;
+    overflow: hidden;
+    width: 40px;
+
+    img {
+        border-radius: 50%;
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
+.lpCommunityCardUserBody {
+    flex: 1;
+    min-width: 0;
+
     .lpCommunityCardAuthor {
         color: $color-text-muted;
         font-size: $fontSize-sm;
+        margin-bottom: 0;
         margin-top: 2px;
     }
 }
