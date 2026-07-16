@@ -54,7 +54,7 @@
 <template>
     <ul v-if="alerts && alerts.length" class="lpGlobalAlerts">
         <li v-for="alert in alerts" :key="alert.id || alert.message" class="lpGlobalAlert">
-            <span class="lpGlobalAlertMessage">{{ alert.message }}</span>
+            <span class="lpGlobalAlertMessage">{{ alert.key ? $t(alert.key, alert.params) : alert.message }}</span>
             <button class="lpGlobalAlertDismiss" type="button" aria-label="Dismiss alert" @click="dismiss(alert.id)">
                 ×
             </button>

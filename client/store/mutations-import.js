@@ -98,10 +98,11 @@ module.exports = {
         state.library.getListById(list.id).calculateTotals();
 
         const unit = state.library.itemUnit;
-        const msg = mergedCount > 0
-            ? `Import complete: ${mergedCount} item${mergedCount > 1 ? 's' : ''} merged, ${newCount} new — displayed in ${unit}.`
-            : `Import complete: ${newCount} item${newCount !== 1 ? 's' : ''} added — displayed in ${unit}.`;
-        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message: msg });
+        const alertKey = mergedCount > 0 ? 'import.csvMerged' : 'import.csvAdded';
+        const alertParams = mergedCount > 0
+            ? { merged: mergedCount, added: newCount, unit }
+            : { count: newCount, unit };
+        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
     importPublicList(state, { listName, description, categories }) {
         const list = state.library.newList();
@@ -153,11 +154,11 @@ module.exports = {
         list.calculateTotals();
 
         const unit = state.library.itemUnit || 'g';
-        const msg = mergedCount > 0
-            ? `List copied: ${mergedCount} item${mergedCount > 1 ? 's' : ''} matched your gear library, ${newCount} new item${newCount !== 1 ? 's' : ''} added — displayed in ${unit}.`
-            : `List copied: ${newCount} item${newCount !== 1 ? 's' : ''} added to your gear library — displayed in ${unit}.`;
-
-        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message: msg });
+        const alertKey = mergedCount > 0 ? 'import.listMerged' : 'import.listAdded';
+        const alertParams = mergedCount > 0
+            ? { merged: mergedCount, added: newCount, unit }
+            : { count: newCount, unit };
+        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
     save() {
         // no-op

@@ -744,5 +744,11 @@
     "gearPickerUnnamedItem": "Article sans nom",
     "gearPickerNoResults": "Aucun équipement correspondant trouvé.",
     "gearPickerCreatePrefix": "+ Créer un nouvel article"
+  },
+  "import": {
+    "csvAdded": "Import terminé : {count} articles ajoutés — affichés en {unit}.",
+    "csvMerged": "Import terminé : {merged} fusionnés, {added} nouveaux — affichés en {unit}.",
+    "listAdded": "Liste copiée : {count} articles ajoutés à votre équipement — affichés en {unit}.",
+    "listMerged": "Liste copiée : {merged} correspondants, {added} nouveaux — affichés en {unit}."
   }
 }

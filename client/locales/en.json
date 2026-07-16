@@ -744,5 +744,11 @@
     "addToListBack": "‹ Back",
     "addToListPlaceholderNewList": "List name",
     "addToListPlaceholderNewCategory": "New category"
+  },
+  "import": {
+    "csvAdded": "Import complete: {count} items added — displayed in {unit}.",
+    "csvMerged": "Import complete: {merged} merged, {added} new — displayed in {unit}.",
+    "listAdded": "List copied: {count} items added to your gear library — displayed in {unit}.",
+    "listMerged": "List copied: {merged} matched, {added} new — displayed in {unit}."
   }
 }

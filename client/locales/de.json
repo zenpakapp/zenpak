@@ -744,5 +744,11 @@
     "gearPickerUnnamedItem": "Gegenstand ohne Namen",
     "gearPickerNoResults": "Keine passende Ausrüstung gefunden.",
     "gearPickerCreatePrefix": "+ Neuen Gegenstand erstellen"
+  },
+  "import": {
+    "csvAdded": "Import abgeschlossen: {count} Gegenstände hinzugefügt — angezeigt in {unit}.",
+    "csvMerged": "Import abgeschlossen: {merged} zusammengeführt, {added} neu — angezeigt in {unit}.",
+    "listAdded": "Liste kopiert: {count} Gegenstände zur Ausrüstung hinzugefügt — angezeigt in {unit}.",
+    "listMerged": "Liste kopiert: {merged} übereinstimmend, {added} neu — angezeigt in {unit}."
   }
 }
