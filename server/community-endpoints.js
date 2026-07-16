@@ -367,10 +367,21 @@ router.post('/copy-list/:externalId', (req, res) => {
                     }).filter(Boolean),
                 }));
 
+            const ownerName = (owner.library && owner.library.publicProfile && owner.library.publicProfile.displayName) || owner.username;
+            const forkedFrom = {
+                externalId: sourceList.externalId,
+                ownerId: String(owner._id),
+                ownerUsername: owner.username,
+                ownerName,
+                listName: sourceList.name,
+                copiedAt: new Date().toISOString(),
+            };
+
             return res.json({
                 listName: sourceList.name,
                 description: sourceList.description || '',
                 categories,
+                forkedFrom,
             });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
