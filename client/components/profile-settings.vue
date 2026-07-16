@@ -166,7 +166,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: $shadow-elevated;
+    box-shadow: 0 14px 32px rgba(var(--color-shadow-rgb), 0.4);
     max-width: 360px;
     padding: 24px;
     width: 90%;
