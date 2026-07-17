@@ -104,10 +104,11 @@ module.exports = {
             : { count: newCount, unit };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
-    importPublicList(state, { listName, description, categories }) {
+    importPublicList(state, { listName, description, categories, forkedFrom }) {
         const list = state.library.newList();
         list.name = `Copy of ${listName}`;
         list.description = description || '';
+        list.forkedFrom = forkedFrom || null;
 
         let mergedCount = 0;
         let newCount = 0;
