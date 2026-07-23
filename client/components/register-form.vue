@@ -161,7 +161,8 @@ export default {
                     }
                     this.saving = false;
                     this.$store.commit('pushGlobalAlert', { message: this.$t('auth.welcomeCheckEmail') });
-                    push('/');
+                    const redirect = this.$route.query.redirect;
+                    push(redirect && redirect.startsWith('/') ? redirect : '/');
                 })
                 .catch((err) => {
                     this.saving = false;

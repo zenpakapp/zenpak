@@ -74,7 +74,8 @@ export default {
                     this.$store.commit('loadLibraryData', response.library);
                     this.$store.commit('setSaveType', 'remote');
                     this.$store.commit('setLoggedIn', response.username);
-                    this.$router.push('/');
+                    const redirect = this.$route.query.redirect;
+                    this.$router.push(redirect && redirect.startsWith('/') ? redirect : '/');
                     this.fetching = false;
                 })
                 .catch((err) => {

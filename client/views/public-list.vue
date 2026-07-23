@@ -35,14 +35,14 @@
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
             <div class="lpPublicListActions">
                 <button
-                    v-if="isLoggedIn && !isOwnList"
+                    v-if="isLoggedIn && !isOwnList && isCopyable"
                     class="lpBtn lpCopyListBtn"
                     :disabled="copying"
                     @click="handleCopy"
                 >
                     {{ copyLabel }}
                 </button>
-                <router-link v-else-if="!isLoggedIn" to="/signin" class="lpCopyListSignIn">
+                <router-link v-else-if="!isLoggedIn && isCopyable" :to="`/welcome?redirect=/p/${list.externalId}`" class="lpCopyListSignIn">
                     {{ $t('public.signInToCopy') }}
                 </router-link>
                 <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
@@ -185,6 +185,9 @@ export default {
         },
         isOwnList() {
             return this.$store.state.loggedIn === this.username;
+        },
+        isCopyable() {
+            return this.list?.visibility === 'discoverable' || this.list?.visibility === 'indexable';
         },
         copyLabel() {
             if (this.copying) return this.$t('public.copying');
