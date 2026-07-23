@@ -8,6 +8,9 @@
 }
 
 .lpPublicNav {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
 
     a {
@@ -17,6 +20,12 @@
 
         &:hover { color: $color-text; }
     }
+}
+
+.lpPublicNavLeft {
+    align-items: center;
+    display: flex;
+    gap: 8px;
 }
 
 .lpPublicNavAuthor {

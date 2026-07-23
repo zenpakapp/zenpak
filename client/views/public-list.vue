@@ -23,13 +23,16 @@
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
-                <router-link v-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
-                <span v-else-if="username" class="lpPublicNavAuthor">
-                    <router-link :to="`/u/${username}`">{{ $t('public.backToProfile', { username }) }}</router-link>
-                    <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
-                    <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+                <span class="lpPublicNavLeft">
+                    <router-link v-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
+                    <span v-else-if="username" class="lpPublicNavAuthor">
+                        <router-link :to="`/u/${username}`">{{ $t('public.backToProfile', { username }) }}</router-link>
+                        <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
+                        <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+                    </span>
+                    <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
                 </span>
-                <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
+                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">{{ $t('public.myLists') }}</router-link>
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
