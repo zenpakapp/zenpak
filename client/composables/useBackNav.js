@@ -7,15 +7,17 @@ export function useBackNav() {
     const store = useStore();
 
     const backTo = computed(() => {
+        if (!store.state.loggedIn) return '/welcome';
         if (previousPath.value?.startsWith('/community')) return '/community';
         if (previousPath.value?.startsWith('/p/')) return previousPath.value;
-        return store.state.loggedIn ? '/' : '/welcome';
+        return '/';
     });
 
     const backLabel = computed(() => {
+        if (!store.state.loggedIn) return 'Join ZenPak →';
         if (backTo.value === '/community') return '← Back to Community';
         if (backTo.value.startsWith('/p/')) return '← Back to list';
-        return store.state.loggedIn ? '← Back to ZenPak' : 'Join ZenPak →';
+        return '← Back to ZenPak';
     });
 
     return { backTo, backLabel };
