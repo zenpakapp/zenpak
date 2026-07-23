@@ -23,7 +23,9 @@
             <h2 v-if="error === 'Profile not found.'">{{ $t('public.profileNotFoundTitle') }}</h2>
             <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">{{ $t('public.profileNotFoundSub') }}</p>
             <h2 v-else>{{ $t('public.unableToLoadProfile') }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">{{ $t('public.backToZenPak') }}</router-link>
+            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicErrorBack">
+                {{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}
+            </router-link>
         </div>
         <template v-else-if="profile">
 
