@@ -17,7 +17,9 @@
         <div v-else-if="error" class="lpPublicError">
             <div class="lpPublicErrorIcon">×</div>
             <h2>{{ error }}</h2>
-            <router-link to="/" class="lpPublicErrorBack">{{ $t('public.backToZenPak') }}</router-link>
+            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicErrorBack">
+                {{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}
+            </router-link>
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
@@ -27,7 +29,7 @@
                     <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
                     <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
                 </span>
-                <router-link v-else to="/">{{ $t('public.backToZenPak') }}</router-link>
+                <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
@@ -129,6 +131,9 @@
                 </div>
             </section>
         </template>
+        <footer class="lpPublicMadeWith">
+            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'">Made with ❤️ ZenPak</router-link>
+        </footer>
     </main>
 </template>
 
