@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const { logWithRequest } = require('./log.js');
 
 const moderatorList = config.get('moderators');
+const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
 // one day in many years this can go away.
 eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
@@ -76,16 +77,7 @@ const verifyPassword = function (username, password) {
                             reject({ code: 500, message: 'An error occurred, please try again later.' });
                         }
                         if (!result) {
-                            /* TODO: reinstate this block after DB migration */
-                            /* reject({code: 404, message: "Invalid username and/or password."}); */
-
-                            /* TODO: remove this block after DB migration */
-                            if (sha3password === user.password) {
-                                resolve(user);
-                            } else {
-                                /* TODO: revert this error message by removing refresh text */
-                                reject({ code: 404, message: 'Invalid username and/or password. Please refresh the page before trying again.' });
-                            }
+                            reject({ code: 404, message: 'Invalid username and/or password.' });
                         } else {
                             // Remove extra layer of hashing. Just bcrypt.
                             bcrypt.genSalt(10, (err, salt) => {
@@ -116,7 +108,7 @@ const generateSession = function (req, res, user, callback) {
         const token = buf.toString('hex');
         user.token = token;
         await db.users.updateOne({ _id: user._id }, { $set: { token } });
-        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
+        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
         callback(req, res, user);
     });
 };

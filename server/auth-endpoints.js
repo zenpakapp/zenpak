@@ -13,6 +13,7 @@ const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
 const Library = dataTypes.Library;
+const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
 const router = express.Router();
 
@@ -151,7 +152,7 @@ router.post('/register', authLimiter, (req, res) => {
                         }).catch((e) => logWithRequest(req, e));
 
                         const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
-                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax' });
+                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
                         return res.status(200).json(out);
                     });
                 });
@@ -234,7 +235,7 @@ router.post('/forgotPassword', forgotLimiter, (req, res) => {
     });
 });
 
-router.post('/resetPassword', (req, res) => {
+router.post('/resetPassword', authLimiter, (req, res) => {
     logWithRequest(req);
     const { token, password } = req.body;
 
@@ -358,7 +359,7 @@ router.get('/verify-email', (req, res, next) => {
     });
 });
 
-router.post('/resendVerification', (req, res) => {
+router.post('/resendVerification', forgotLimiter, (req, res) => {
     authenticateUser(req, res, (req, res, user) => {
         if (user.emailVerified) {
             return res.status(200).json({ alreadyVerified: true, message: 'Your email is already verified.' });
