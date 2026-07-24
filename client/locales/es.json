@@ -132,7 +132,11 @@
     "typeDay": "Excursión",
     "typeWeekend": "Fin de semana",
     "typeThru": "Trekking",
-    "typeBike": "Bikepacking"
+    "typeBike": "Bikepacking",
+    "communityHint": "Buscas inspiracion? Descubre listas de la comunidad.",
+    "communityHintCta": "Explorar comunidad →",
+    "guestHint": "Guarda tu lista y descubre la comunidad — es gratis.",
+    "guestHintCta": "Crear cuenta →"
   },
   "share": {
     "share": "Compartir",

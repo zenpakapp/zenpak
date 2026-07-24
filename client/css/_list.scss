@@ -613,3 +613,37 @@ input.lpCategoryName { /* specificity */
 
     &:hover { background: $color-accent-hover; }
 }
+
+.lpCommunityHint {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+
+    span { color: $color-text-muted; flex: 1; }
+}
+
+.lpCommunityHintCta {
+    color: $color-accent;
+    font-weight: $fontWeight-medium;
+    white-space: nowrap;
+
+    &:hover { text-decoration: underline; }
+}
+
+.lpCommunityHintDismiss {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    padding: 0 2px;
+
+    &:hover { color: $color-text; }
+}

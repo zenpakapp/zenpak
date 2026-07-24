@@ -43,6 +43,18 @@
             <button class="lpPackBtn" @click="enterPackingMode">🎒 {{ $t('list.packThis') }}</button>
         </div>
 
+        <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
+            <span>{{ $t('list.guestHint') }}</span>
+            <router-link to="/register" class="lpCommunityHintCta">{{ $t('list.guestHintCta') }}</router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">✕</button>
+        </div>
+
+        <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
+            <span>{{ $t('list.communityHint') }}</span>
+            <router-link to="/community" class="lpCommunityHintCta">{{ $t('list.communityHintCta') }}</router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">✕</button>
+        </div>
+
         <div style="clear: both;" />
 
         <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
@@ -98,6 +110,8 @@ export default {
             categoryDrake: null,
             showCompletionModal: false,
             completionPhrase: '',
+            communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
+            guestHintDismissed: !!localStorage.getItem('lpGuestHintDismissed'),
         };
     },
     computed: {
@@ -115,6 +129,15 @@ export default {
         },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
+        },
+        isSignedIn() {
+            return this.$store.state.loggedIn;
+        },
+        showCommunityHint() {
+            return this.isSignedIn && !this.communityHintDismissed;
+        },
+        showGuestHint() {
+            return this.isLocalSaving && !this.isListNew && !this.guestHintDismissed;
         },
         allItemIds() {
             return this.categories.flatMap(cat =>
@@ -162,6 +185,14 @@ export default {
     methods: {
         newCategory() {
             this.$store.commit('newCategory', this.list);
+        },
+        dismissCommunityHint() {
+            localStorage.setItem('lpCommunityHintDismissed', '1');
+            this.communityHintDismissed = true;
+        },
+        dismissGuestHint() {
+            localStorage.setItem('lpGuestHintDismissed', '1');
+            this.guestHintDismissed = true;
         },
         updateListDescription() {
             this.$store.commit('updateListDescription', this.list);

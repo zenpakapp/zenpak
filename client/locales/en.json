@@ -132,7 +132,11 @@
     "typeDay": "Day hike",
     "typeWeekend": "Weekend",
     "typeThru": "Trek",
-    "typeBike": "Bikepacking"
+    "typeBike": "Bikepacking",
+    "communityHint": "Looking for inspiration? Discover gear lists from the community.",
+    "communityHintCta": "Explore community →",
+    "guestHint": "Save your list and discover the community — it's free.",
+    "guestHintCta": "Create an account →"
   },
   "share": {
     "share": "Share",

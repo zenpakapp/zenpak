@@ -132,7 +132,11 @@
     "typeDay": "Rando journée",
     "typeWeekend": "Week-end",
     "typeThru": "Trek",
-    "typeBike": "Bikepacking"
+    "typeBike": "Bikepacking",
+    "communityHint": "Besoin d'inspiration ? Découvrez les listes de la communauté.",
+    "communityHintCta": "Explorer la communauté →",
+    "guestHint": "Sauvegardez votre liste et découvrez la communauté — c'est gratuit.",
+    "guestHintCta": "Créer un compte →"
   },
   "share": {
     "share": "Partager",
