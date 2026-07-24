@@ -67,6 +67,7 @@ function sanitizeListSummary(list) {
         description: list.description || '',
         visibility: list.visibility,
         allowSearchIndexing: allowsSearchIndexing(list.visibility),
+        copyable: list.copyable || false,
         totalWeight: Number(list.totalWeight) || 0,
         totalWornWeight: Number(list.totalWornWeight) || 0,
         totalConsumableWeight: Number(list.totalConsumableWeight) || 0,

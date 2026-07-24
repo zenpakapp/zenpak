@@ -32,6 +32,7 @@
                 <listSettings />
                 <accountDropdown v-if="isSignedIn" />
                 <span v-else class="headerItem signInRegisterButtons">
+                    <guestSettings />
                     <router-link to="/register" class="lpButton lpSmall">{{ $t('dash.register') }}</router-link>
                     {{ $t('auth.or') }}
                     <router-link to="/signin" class="lpButton lpSmall">{{ $t('dash.signIn') }}</router-link>
@@ -139,6 +140,7 @@ import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
+import guestSettings from '../components/guest-settings.vue';
 
 export default {
     name: 'Dashboard',
@@ -148,6 +150,7 @@ export default {
         share,
         listSettings,
         accountDropdown,
+        guestSettings,
         forgotPassword,
         account,
         accountDelete,

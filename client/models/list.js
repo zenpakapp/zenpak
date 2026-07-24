@@ -18,6 +18,7 @@ const List = function ({ id, library }) {
     this.allowSearchIndexing = false;
     this.externalId = '';
     this.forkedFrom = null;
+    this.copyable = false;
 
     this.totalWeight = 0;
     this.totalWornWeight = 0;

@@ -50,6 +50,12 @@
                 </router-link>
                 <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
                 <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">{{ $t('public.printSaveAsPdf') }}</button>
+                <select class="lpPublicUnitSelect noprint" :value="totalUnit" @change="setDisplayUnit($event.target.value)">
+                    <option value="oz">oz</option>
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                </select>
             </div>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
 
@@ -190,7 +196,10 @@ export default {
             return this.$store.state.loggedIn === this.username;
         },
         isCopyable() {
-            return this.list?.visibility === 'discoverable' || this.list?.visibility === 'indexable';
+            const v = this.list?.visibility;
+            if (v === 'discoverable' || v === 'indexable') return true;
+            if (v === 'shareable') return this.list?.copyable === true;
+            return false;
         },
         copyLabel() {
             if (this.copying) return this.$t('public.copying');
@@ -232,7 +241,7 @@ export default {
                 this.username = payload.username;
                 this.authorTier = payload.authorTier || null;
                 this.list = payload.list;
-                this.totalUnit = payload.totalUnit || 'oz';
+                this.totalUnit = localStorage.getItem('lpGuestUnit') || payload.totalUnit || 'oz';
                 this.currencySymbol = payload.currencySymbol || '$';
                 this.publicFields = payload.publicFields || { price: false, links: false, images: false };
                 this.categories = payload.categories || [];
@@ -249,6 +258,10 @@ export default {
             });
     },
     methods: {
+        setDisplayUnit(unit) {
+            this.totalUnit = unit;
+            localStorage.setItem('lpGuestUnit', unit);
+        },
         printList() {
             window.print();
         },

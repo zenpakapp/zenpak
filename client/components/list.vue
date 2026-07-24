@@ -36,9 +36,6 @@
                 <li>{{ $t('list.getStartedStep2') }}</li>
                 <li v-if="!isLocalSaving">{{ $t('list.getStartedStep3') }}</li>
             </ol>
-            <p v-if="isLocalSaving" class="lpWarning">
-                <strong>{{ $t('list.localSavingNoteLabel') }}</strong> {{ $t('list.localSavingNote') }}
-            </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 

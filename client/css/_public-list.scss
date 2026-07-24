@@ -64,6 +64,19 @@
     margin-bottom: 16px;
 }
 
+.lpPublicUnitSelect {
+    appearance: none;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 5px 10px;
+
+    &:hover { border-color: $color-accent; color: $color-accent; }
+}
+
 .lpPrintBtn {
     background: transparent;
     border: 1px solid $color-border;

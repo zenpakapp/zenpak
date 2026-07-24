@@ -137,6 +137,12 @@ module.exports = {
             list.allowSearchIndexing = args.allowSearchIndexing === true;
         }
     },
+    updateListCopyable(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (list) {
+            list.copyable = args.copyable === true;
+        }
+    },
     updateListPublicFields(state, args) {
         const list = state.library.getListById(args.listId);
         if (list) {

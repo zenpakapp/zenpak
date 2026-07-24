@@ -26,6 +26,14 @@
                         <p class="shareVisibilityHint">{{ visibilityHint }}</p>
                     </div>
 
+                    <div v-if="list.visibility === 'shareable'" class="shareSection">
+                        <label class="shareCheckbox">
+                            <input type="checkbox" :checked="list.copyable" @change="setCopyable($event.target.checked)">
+                            {{ $t('public.allowCopy') }}
+                        </label>
+                        <p class="shareVisibilityHint">{{ $t('public.allowCopyHint') }}</p>
+                    </div>
+
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.communityTags') }}</div>
                         <div class="shareTagGroup" aria-label="Seasons">
@@ -191,6 +199,15 @@ export default {
             });
             return this.saveShareState().catch((err) => {
                 showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
+            });
+        },
+        setCopyable(copyable) {
+            this.$store.commit('updateListCopyable', {
+                listId: this.list.id,
+                copyable,
+            });
+            return this.saveShareState().catch(() => {
+                showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
         toggleDiscoveryTag(field, value, checked) {

@@ -54,7 +54,7 @@
                         <span class="lpTotalValue" :title="list.totalQty + ' ' + $t('public.items')">
                             {{ displayWeight(list.totalWeight, displayUnit) }}
                         </span>
-                        <span class="lpTotalUnit"><unitSelect :unit="displayUnit" @change="setTotalUnit" /></span>
+                        <span class="lpTotalUnit">{{ displayUnit }}</span>
                     </span>
                 </li>
                 <li v-if="list.totalConsumableWeight" data-weight-type="consumable" class="lpRow lpFooter lpBreakdown lpConsumableWeight">
@@ -101,7 +101,6 @@
 
 <script>
 import colorPicker from './colorpicker.vue';
-import unitSelect from './unit-select.vue';
 import { markRaw } from 'vue';
 import { renderListChart } from '../services/list-chart';
 import { useUtils } from '../composables/useUtils.js';
@@ -113,7 +112,6 @@ export default {
     name: 'ListSummary',
     components: {
         colorPicker,
-        unitSelect,
     },
     props: ['list'],
     data() {
@@ -134,22 +132,7 @@ export default {
             });
         },
         displayUnit() {
-            if (this.library.totalUnit !== 'oz') {
-                return this.library.totalUnit;
-            }
-
-            const units = {};
-            this.categories.forEach((category) => {
-                category.categoryItems.forEach((categoryItem) => {
-                    const item = this.library.getItemById(categoryItem.itemId);
-                    if (item && item.authorUnit) {
-                        units[item.authorUnit] = true;
-                    }
-                });
-            });
-
-            const unitList = Object.keys(units);
-            return unitList.length === 1 ? unitList[0] : this.library.totalUnit;
+            return this.library.totalUnit;
         },
     },
     watch: {
@@ -189,9 +172,6 @@ export default {
             } else {
                 this.hoveredCategoryId = null;
             }
-        },
-        setTotalUnit(unit) {
-            this.$store.commit('setTotalUnit', unit);
         },
         updateColor(category, color) {
             category.color = colorUtils.hexToRgb(color);

@@ -308,7 +308,9 @@ router.post('/copy-list/:externalId', (req, res) => {
             }
 
             const sourceList = (owner.library.lists || []).find(l => l.externalId === externalId);
-            if (!sourceList || (sourceList.visibility !== 'discoverable' && sourceList.visibility !== 'indexable')) {
+            const isAlwaysCopyable = sourceList?.visibility === 'discoverable' || sourceList?.visibility === 'indexable';
+            const isOptInCopyable = sourceList?.visibility === 'shareable' && sourceList?.copyable === true;
+            if (!sourceList || (!isAlwaysCopyable && !isOptInCopyable)) {
                 return res.status(404).json({ message: 'List not found' });
             }
 
