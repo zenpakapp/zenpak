@@ -12,552 +12,96 @@
   },
   "currencySymbol": "$",
   "items": [
-    {
-      "id": 1,
-      "name": "Tent (2P)",
-      "description": "3-season backpacking tent",
-      "weight": 51.2,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 2,
-      "name": "Tent footprint",
-      "description": "Polycryo ground cloth",
-      "weight": 2.8,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 3,
-      "name": "Sleeping bag",
-      "description": "30\u00b0F down sleeping bag",
-      "weight": 28.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 4,
-      "name": "Sleeping pad",
-      "description": "Foam or inflatable pad",
-      "weight": 14.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 5,
-      "name": "Rain jacket",
-      "description": "Hardshell, waterproof",
-      "weight": 12.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 6,
-      "name": "Fleece / mid-layer",
-      "description": "Insulating mid-layer",
-      "weight": 10.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 7,
-      "name": "Base layer top",
-      "description": "Merino wool or synthetic",
-      "weight": 6.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 8,
-      "name": "Base layer bottom",
-      "description": "Lightweight leggings",
-      "weight": 5.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 9,
-      "name": "Hiking pants",
-      "description": "Convertible or softshell",
-      "weight": 10.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 10,
-      "name": "Hiking shirt",
-      "description": "Wicking trail shirt",
-      "weight": 5.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 11,
-      "name": "Hiking socks (x3)",
-      "description": "Wool blend trail socks",
-      "weight": 4.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 12,
-      "name": "Underwear (x2)",
-      "description": "Synthetic or wool",
-      "weight": 3.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 13,
-      "name": "Trail runners",
-      "description": "Low-cut hiking shoes",
-      "weight": 24.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 14,
-      "name": "Gaiters",
-      "description": "Trail gaiters",
-      "weight": 2.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 15,
-      "name": "Hat / sun hat",
-      "description": "Brimmed sun protection",
-      "weight": 2.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 16,
-      "name": "Gloves",
-      "description": "Lightweight trail gloves",
-      "weight": 2.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 17,
-      "name": "Water filter",
-      "description": "Squeeze or gravity filter",
-      "weight": 3.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 18,
-      "name": "Water bottles (x2)",
-      "description": "1L soft flasks",
-      "weight": 3.2,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 19,
-      "name": "Stove",
-      "description": "Canister or alcohol stove",
-      "weight": 2.8,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 20,
-      "name": "Fuel canister",
-      "description": "100g canister (3 days)",
-      "weight": 7.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 21,
-      "name": "Pot / cup",
-      "description": "750ml titanium pot",
-      "weight": 3.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 22,
-      "name": "Spork",
-      "description": "Titanium utensil",
-      "weight": 0.6,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 23,
-      "name": "Lunch / snacks (daily)",
-      "description": "Per day \u2014 bars, nuts, etc",
-      "weight": 16.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 24,
-      "name": "Dinner (x3)",
-      "description": "Freeze-dried or dehy",
-      "weight": 14.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 25,
-      "name": "Breakfast (x2)",
-      "description": "Instant oats or gruel",
-      "weight": 8.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 26,
-      "name": "Backpack (50-60L)",
-      "description": "Frameless or framed pack",
-      "weight": 40.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 27,
-      "name": "Trekking poles",
-      "description": "Carbon or aluminum",
-      "weight": 16.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 28,
-      "name": "Headlamp",
-      "description": "100+ lumen, spare battery",
-      "weight": 2.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 29,
-      "name": "First aid kit",
-      "description": "Blister, meds, tape",
-      "weight": 3.5,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    },
-    {
-      "id": 30,
-      "name": "Navigation (map/phone)",
-      "description": "Offline topo maps",
-      "weight": 4.0,
-      "authorUnit": "oz",
-      "price": 0,
-      "image": "",
-      "url": ""
-    }
+    { "id": 1,  "name": "Copper Spur HV UL2",          "description": "3-season freestanding 2P tent",   "weight": 42.2, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 2,  "name": "Polycryo ground cloth",        "description": "Cut to fit, ultralight",          "weight": 1.4,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 3,  "name": "EE Revelation 20F quilt",      "description": "850-fill down, differential cut", "weight": 21.1, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 4,  "name": "NeoAir XLite sleeping pad",    "description": "Inflatable, R-value 4.5",         "weight": 12.0, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 5,  "name": "Torrentshell 3L jacket",       "description": "H2No waterproof rain jacket",    "weight": 11.7, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 6,  "name": "R1 Regulator fleece hoody",    "description": "Grid fleece mid-layer",          "weight": 9.7,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 7,  "name": "Merino 150 base layer top",    "description": "Smartwool, 18.5 micron",         "weight": 5.1,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 8,  "name": "Merino 150 base layer pants",  "description": "Smartwool, 18.5 micron",         "weight": 4.9,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 9,  "name": "Ferrosi hiking pants",         "description": "Outdoor Research, softshell",    "weight": 9.2,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 10, "name": "Capilene Cool Trail shirt",    "description": "Patagonia, recycled poly",       "weight": 4.6,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 11, "name": "Darn Tough Hiker Crew (x3)",   "description": "Merino wool, lifetime warranty",  "weight": 4.5,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 12, "name": "ExOfficio Give-N-Go (x2)",     "description": "Quick-dry synthetic",            "weight": 2.8,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 13, "name": "Altra Lone Peak 7",            "description": "Zero drop, 25mm stack height",   "weight": 22.4, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 14, "name": "Dirty Girl Gaiters",           "description": "Trail gaiters, lycra",           "weight": 1.4,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 15, "name": "OR Sun Runner cap",            "description": "UPF 50+, vented sun hat",        "weight": 2.0,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 16, "name": "BD Lightweight Screentap gloves","description": "Black Diamond liner gloves",   "weight": 1.6,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 17, "name": "Sawyer Squeeze filter",        "description": "0.1 micron, inline-compatible",  "weight": 3.0,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 18, "name": "CNOC Vecto 2L (x2)",           "description": "Soft flask, wide-mouth fill",    "weight": 2.4,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 19, "name": "BRS-3000T canister stove",     "description": "Titanium, 25g, ultra compact",   "weight": 1.0,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 20, "name": "MSR IsoPro 110g canister",     "description": "Isobutane/propane blend",        "weight": 7.6,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 21, "name": "Snow Peak Trek 700 pot",       "description": "Titanium, 700ml, foldable handles","weight": 4.9, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 22, "name": "Toaks titanium long spork",    "description": "19g, long handle",               "weight": 0.6,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 23, "name": "Trail snacks (per day)",       "description": "Bars, nuts, jerky (~450kcal/oz)", "weight": 16.0, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 24, "name": "Mountain House Pro-Pak (x3)",  "description": "Freeze-dried, just-add-water",   "weight": 13.0, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 25, "name": "Backpacker's Pantry oats (x2)","description": "Instant oats + coffee",          "weight": 7.2,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 26, "name": "Osprey Exos 58",               "description": "Ultralight 58L, hipbelt pockets","weight": 40.2, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 27, "name": "BD Trail Ergo Cork poles",     "description": "Black Diamond 4-section cork",   "weight": 17.6, "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 28, "name": "Black Diamond Spot 400",       "description": "400 lm, waterproof IPX8",        "weight": 3.3,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 29, "name": "Adventure Medical Mountain kit","description": "Blister, meds, splint, tape",    "weight": 3.5,  "authorUnit": "oz", "price": 0, "image": "", "url": "" },
+    { "id": 30, "name": "Phone + offline maps",         "description": "CalTopo or Gaia GPS downloaded", "weight": 6.1,  "authorUnit": "oz", "price": 0, "image": "", "url": "" }
   ],
   "categories": [
     {
-      "id": 101,
-      "name": "Shelter",
+      "id": 101, "name": "Shelter",
       "categoryItems": [
-        {
-          "itemId": 1,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 2,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        }
+        { "itemId": 1, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 2, "qty": 1, "worn": false, "consumable": false, "star": false }
       ]
     },
     {
-      "id": 102,
-      "name": "Sleep System",
+      "id": 102, "name": "Sleep System",
       "categoryItems": [
-        {
-          "itemId": 3,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 4,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        }
+        { "itemId": 3, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 4, "qty": 1, "worn": false, "consumable": false, "star": false }
       ]
     },
     {
-      "id": 103,
-      "name": "Clothing",
+      "id": 103, "name": "Clothing",
       "categoryItems": [
-        {
-          "itemId": 5,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 6,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 7,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 8,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 9,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 10,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 11,
-          "qty": 3,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 12,
-          "qty": 2,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 13,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 14,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 15,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 16,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        }
+        { "itemId": 5,  "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 6,  "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 7,  "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 8,  "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 9,  "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 10, "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 11, "qty": 3, "worn": false, "consumable": false, "star": false },
+        { "itemId": 12, "qty": 2, "worn": false, "consumable": false, "star": false },
+        { "itemId": 13, "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 14, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 15, "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 16, "qty": 1, "worn": true,  "consumable": false, "star": false }
       ]
     },
     {
-      "id": 104,
-      "name": "Water",
+      "id": 104, "name": "Water",
       "categoryItems": [
-        {
-          "itemId": 17,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 18,
-          "qty": 2,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        }
+        { "itemId": 17, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 18, "qty": 2, "worn": false, "consumable": false, "star": false }
       ]
     },
     {
-      "id": 105,
-      "name": "Food & Cook",
+      "id": 105, "name": "Food & Cook",
       "categoryItems": [
-        {
-          "itemId": 19,
-          "qty": 1,
-          "worn": false,
-          "consumable": true,
-          "star": false
-        },
-        {
-          "itemId": 20,
-          "qty": 1,
-          "worn": false,
-          "consumable": true,
-          "star": false
-        },
-        {
-          "itemId": 21,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 22,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 23,
-          "qty": 3,
-          "worn": false,
-          "consumable": true,
-          "star": false
-        },
-        {
-          "itemId": 24,
-          "qty": 3,
-          "worn": false,
-          "consumable": true,
-          "star": false
-        },
-        {
-          "itemId": 25,
-          "qty": 2,
-          "worn": false,
-          "consumable": true,
-          "star": false
-        }
+        { "itemId": 19, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 20, "qty": 1, "worn": false, "consumable": true,  "star": false },
+        { "itemId": 21, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 22, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 23, "qty": 3, "worn": false, "consumable": true,  "star": false },
+        { "itemId": 24, "qty": 3, "worn": false, "consumable": true,  "star": false },
+        { "itemId": 25, "qty": 2, "worn": false, "consumable": true,  "star": false }
       ]
     },
     {
-      "id": 106,
-      "name": "Pack & Essentials",
+      "id": 106, "name": "Pack & Essentials",
       "categoryItems": [
-        {
-          "itemId": 26,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 27,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 28,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 29,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 30,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        }
+        { "itemId": 26, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 27, "qty": 1, "worn": true,  "consumable": false, "star": false },
+        { "itemId": 28, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 29, "qty": 1, "worn": false, "consumable": false, "star": false },
+        { "itemId": 30, "qty": 1, "worn": true,  "consumable": false, "star": false }
       ]
     }
   ],
@@ -565,14 +109,7 @@
     {
       "id": 31,
       "name": "3-Day Backpacking",
-      "categoryIds": [
-        101,
-        102,
-        103,
-        104,
-        105,
-        106
-      ]
+      "categoryIds": [101, 102, 103, 104, 105, 106]
     }
   ]
 }
