@@ -36,6 +36,10 @@
                 <li>{{ $t('list.getStartedStep2') }}</li>
                 <li v-if="!isLocalSaving">{{ $t('list.getStartedStep3') }}</li>
             </ol>
+            <p class="lpGetStartedCommunity">
+                {{ $t('list.communityHint') }}
+                <router-link to="/community" class="lpHref">{{ $t('list.communityHintCta') }}</router-link>
+            </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
@@ -134,7 +138,7 @@ export default {
             return this.$store.state.loggedIn;
         },
         showCommunityHint() {
-            return this.isSignedIn && !this.communityHintDismissed;
+            return this.isSignedIn && !this.isListNew && !this.communityHintDismissed;
         },
         showGuestHint() {
             return this.isLocalSaving && !this.isListNew && !this.guestHintDismissed;
