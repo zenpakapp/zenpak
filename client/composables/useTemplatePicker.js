@@ -1,6 +1,7 @@
 import backpackingData from '../data/templates/3-day-backpacking.json';
 import ultralightData from '../data/templates/weekend-ultralight.json';
-import carCampingData from '../data/templates/winter-car-camping.json';
+import thruHikeData from '../data/templates/thru-hike-pct.json';
+import fourSeasonData from '../data/templates/4-season-backpacking.json';
 
 export const templates = [
     {
@@ -16,9 +17,15 @@ export const templates = [
         data: ultralightData,
     },
     {
-        id: 'winter-car-camping',
-        name: 'Winter Car Camping',
-        description: '28 items for cold-weather car camping — 4-season tent, insulated sleep system',
-        data: carCampingData,
+        id: 'thru-hike-pct',
+        name: 'PCT Thru-Hike',
+        description: '29 items, ultralight long-distance setup — Zpacks, EE, Hyperlite, inReach',
+        data: thruHikeData,
+    },
+    {
+        id: '4-season-backpacking',
+        name: '4-Season Backpacking',
+        description: '30 items for winter/alpine — MSR Access, WM 0°F bag, microspikes, hardshell',
+        data: fourSeasonData,
     },
 ];
