@@ -30,6 +30,11 @@ let billingEventsSaveError = null;
 db.billingEvents = {
     save: async (doc) => {
         if (billingEventsSaveError) throw billingEventsSaveError;
+        // Simulate Mongo's unique index on stripeEventId, which is what the real
+        // webhook handler relies on for idempotency (catches err.code === 11000).
+        if (doc.stripeEventId && billingEventsSaved.some(d => d.stripeEventId === doc.stripeEventId)) {
+            throw Object.assign(new Error('E11000 duplicate key error'), { code: 11000 });
+        }
         billingEventsSaved.push(doc);
         return doc;
     },
@@ -112,6 +117,92 @@ async function run() {
 
     const wrongSigResult = await postWebhook(body, 'v1=deadbeef,t=1700000000');
     assert('invalid signature rejected (400)', wrongSigResult.status === 400);
+
+    console.log('\n--- checkout.session.completed ---');
+
+    const checkoutEvt = signEvent('whsec_test_secret_123', {
+        id: 'evt_checkout_1',
+        type: 'checkout.session.completed',
+        data: {
+            object: {
+                metadata: { username: 'alice' },
+                customer: 'cus_alice_new',
+                consent: { terms_of_service: 'accepted' },
+            },
+        },
+    });
+    await postWebhook(checkoutEvt.body, checkoutEvt.signature);
+    assert('checkout.session.completed stores customerId', checkoutUser.billing.customerId === 'cus_alice_new');
+    assert('checkout.session.completed sets provider=stripe', checkoutUser.billing.provider === 'stripe');
+    assert('checkout.session.completed records TOS acceptance date', typeof checkoutUser.billing.termsVersionAccepted === 'string');
+
+    console.log('\n--- customer.subscription.created (Kin) ---');
+
+    subscriptionsById['sub_kin_1'] = {
+        id: 'sub_kin_1',
+        status: 'active',
+        cancel_at_period_end: false,
+        current_period_end: 1900000000,
+        items: { data: [{ price: { id: 'price_trail_annual' } }] },
+    };
+    const kinSubEvt = signEvent('whsec_test_secret_123', {
+        id: 'evt_sub_kin_1',
+        type: 'customer.subscription.created',
+        data: { object: { id: 'sub_kin_1', customer: 'cus_kin_test' } },
+    });
+    await postWebhook(kinSubEvt.body, kinSubEvt.signature);
+    assert('Kin subscription sets billing.plan=supporter', kinUser.billing.plan === 'supporter');
+    assert('Kin subscription sets entitlements.plan=supporter', kinUser.library.entitlements.plan === 'supporter');
+    assert('Kin subscription status=active', kinUser.billing.status === 'active');
+
+    console.log('\n--- customer.subscription.created (Wayfarer) ---');
+
+    subscriptionsById['sub_wayfarer_1'] = {
+        id: 'sub_wayfarer_1',
+        status: 'active',
+        cancel_at_period_end: false,
+        current_period_end: 1900000000,
+        items: { data: [{ price: { id: 'price_guide_monthly' } }] },
+    };
+    const wayfarerSubEvt = signEvent('whsec_test_secret_123', {
+        id: 'evt_sub_wayfarer_1',
+        type: 'customer.subscription.created',
+        data: { object: { id: 'sub_wayfarer_1', customer: 'cus_wayfarer_test' } },
+    });
+    await postWebhook(wayfarerSubEvt.body, wayfarerSubEvt.signature);
+    assert('Wayfarer subscription sets billing.plan=creator', wayfarerUser.billing.plan === 'creator');
+    assert('Wayfarer subscription sets entitlements.plan=creator', wayfarerUser.library.entitlements.plan === 'creator');
+
+    console.log('\n--- customer.subscription.deleted (cancellation) ---');
+
+    const cancelEvt = signEvent('whsec_test_secret_123', {
+        id: 'evt_cancel_1',
+        type: 'customer.subscription.deleted',
+        data: { object: { id: 'sub_kin_1', customer: 'cus_kin_test' } },
+    });
+    await postWebhook(cancelEvt.body, cancelEvt.signature);
+    assert('cancellation downgrades billing.plan to free', kinUser.billing.plan === 'free');
+    assert('cancellation downgrades entitlements.plan to free', kinUser.library.entitlements.plan === 'free');
+    assert('cancellation sets status=canceled', kinUser.billing.status === 'canceled');
+
+    console.log('\n--- invoice.payment_failed ---');
+
+    const failEvt = signEvent('whsec_test_secret_123', {
+        id: 'evt_fail_1',
+        type: 'invoice.payment_failed',
+        data: { object: { customer: 'cus_wayfarer_test' } },
+    });
+    await postWebhook(failEvt.body, failEvt.signature);
+    assert('payment failure sets status=past_due', wayfarerUser.billing.status === 'past_due');
+    assert('payment failure does NOT downgrade plan (grace period)', wayfarerUser.billing.plan === 'creator');
+
+    console.log('\n--- Idempotency ---');
+
+    const replayCountBefore = savedUsers.filter(u => u.username === 'kin-user').length;
+    const replayResult = await postWebhook(cancelEvt.body, cancelEvt.signature); // same event.id as before: evt_cancel_1
+    assert('replayed event returns duplicate:true', replayResult.data.duplicate === true);
+    const replayCountAfter = savedUsers.filter(u => u.username === 'kin-user').length;
+    assert('replayed event does not re-process (no extra save)', replayCountAfter === replayCountBefore);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
