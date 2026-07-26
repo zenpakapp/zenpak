@@ -48,8 +48,9 @@
                 @blur="tagInputFocused = false"
             />
         </div>
-        <ul class="library" ref="library">
-            <li v-for="item in filteredItems" :key="item.id" class="lpLibraryItem" :data-item-id="item.id" @dblclick="openDetail(item)">
+        <ul class="library" ref="library" @scroll.passive="handleScroll">
+            <li v-if="virtualWindow.top" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.top}px` }" aria-hidden="true" />
+            <li v-for="item in virtualWindow.items" :key="item.id" class="lpLibraryItem" :data-item-id="item.id" @dblclick="openDetail(item)">
                 <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
                 <span v-if="!item.url" class="lpName">{{ item.name }}</span>
                 <span class="lpWeight">
@@ -63,6 +64,7 @@
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">⋯</button>
                 <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
             </li>
+            <li v-if="virtualWindow.bottom" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.bottom}px` }" aria-hidden="true" />
         </ul>
     </section>
 </template>
@@ -73,6 +75,7 @@ import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
+import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
 
 const { displayWeight, displayPrice } = useUtils();
 
@@ -80,6 +83,8 @@ const GEAR_CATEGORIES = [
     'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
     'Navigation', 'Safety', 'Hygiene', 'Electronics', 'Essentials', 'Other',
 ];
+const LIBRARY_ROW_HEIGHT = 52;
+const LIBRARY_OVERSCAN = 6;
 
 export default {
     name: 'LibraryItem',
@@ -103,6 +108,10 @@ export default {
             tagInputFocused: false,
             itemDragId: false,
             drake: null,
+            scrollTop: 0,
+            viewportHeight: 600,
+            resizeObserver: null,
+            scrollFrame: null,
         };
     },
     computed: {
@@ -114,45 +123,20 @@ export default {
         },
         filteredItems() {
             if (!this.library || !this.library.items) return [];
-            let i;
-            let item;
-            let filteredItems = [];
-            if (!this.searchText) {
-                filteredItems = this.library.items.map(item => ({ ...item }));
-            } else {
-                const lowerCaseSearchText = this.searchText.toLowerCase();
-
-                for (i = 0; i < this.library.items.length; i++) {
-                    item = this.library.items[i];
-                    if (item.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 || item.description.toLowerCase().indexOf(lowerCaseSearchText) > -1) {
-                        filteredItems.push({ ...item });
-                    }
-                }
-            }
-
-            if (this.filterCategory) {
-                filteredItems = filteredItems.filter(item =>
-                    (item.category || '').toLowerCase() === this.filterCategory.toLowerCase()
-                );
-            }
-            if (this.filterTags.length) {
-                filteredItems = filteredItems.filter(item =>
-                    this.filterTags.every(tag =>
-                        (item.tags || []).map(t => t.toLowerCase()).includes(tag.toLowerCase())
-                    )
-                );
-            }
-
-            const currentListItems = this.library.getItemsInCurrentList();
-
-            for (i = 0; i < filteredItems.length; i++) {
-                item = filteredItems[i];
-                if (currentListItems.indexOf(item.id) > -1) {
-                    item.inCurrentList = true;
-                }
-            }
-
-            return filteredItems;
+            return filterLibraryItems(this.library.items, {
+                searchText: this.searchText,
+                category: this.filterCategory,
+                tags: this.filterTags,
+            }, this.library.getItemsInCurrentList());
+        },
+        virtualWindow() {
+            return calculateVirtualWindow({
+                items: this.filteredItems,
+                rowHeight: LIBRARY_ROW_HEIGHT,
+                viewportHeight: this.viewportHeight,
+                scrollTop: this.scrollTop,
+                overscan: LIBRARY_OVERSCAN,
+            });
         },
         list() {
             if (!this.library || typeof this.library.getListById !== 'function') return null;
@@ -170,15 +154,24 @@ export default {
             });
         },
         filteredItems() {
+            this.scrollTop = 0;
+            if (this.$refs.library) this.$refs.library.scrollTop = 0;
             this.$nextTick(() => {
                 this.handleItemDrag();
             });
         },
     },
     mounted() {
+        this.measureViewport();
+        if (typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.measureViewport());
+            this.resizeObserver.observe(this.$refs.library);
+        }
         this.handleItemDrag();
     },
     beforeUnmount() {
+        if (this.resizeObserver) this.resizeObserver.disconnect();
+        if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
         if (this.drake) {
             this.drake.destroy();
             this.drake = null;
@@ -187,6 +180,19 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
+        measureViewport() {
+            if (this.$refs.library) {
+                this.viewportHeight = this.$refs.library.clientHeight;
+            }
+        },
+        handleScroll(event) {
+            if (this.scrollFrame) return;
+            const nextScrollTop = event.currentTarget.scrollTop;
+            this.scrollFrame = requestAnimationFrame(() => {
+                this.scrollTop = nextScrollTop;
+                this.scrollFrame = null;
+            });
+        },
         openDetail(item, startEditing = false) {
             openDialog('itemDetail', { item, categoryItem: null, category: null, startEditing });
         },

@@ -11,7 +11,7 @@
         </div>
     </div>
     <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
-        <sidebar @open-gear-room="$store.commit('setGearRoomOpen', true)" />
+        <sidebar v-if="sidebarReady" @open-gear-room="$store.commit('setGearRoomOpen', true)" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
             <div id="header" class="clearfix">
@@ -181,6 +181,8 @@ export default {
     data() {
         return {
             isLoaded: false,
+            sidebarReady: false,
+            sidebarFrame: null,
             showGuideUpgrade: false,
             verifyResendSent: false,
             verifyResendError: null,
@@ -247,6 +249,10 @@ export default {
                 }
 
                 this.isLoaded = true;
+                this.sidebarFrame = requestAnimationFrame(() => {
+                    this.sidebarReady = true;
+                    this.sidebarFrame = null;
+                });
             },
         },
         emailVerified(val) {
@@ -283,6 +289,9 @@ export default {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => { this.billingManaged = false; }, 6000);
         }
+    },
+    beforeUnmount() {
+        if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
     },
     methods: {
         toggleSidebar() {
