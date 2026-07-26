@@ -26,77 +26,6 @@
     }
 }
 
-@media (max-width: 768px) {
-    .lpItem,
-    .lpItemsHeader,
-    .lpItemsFooter {
-        .lpPriceCell {
-            display: none;
-        }
-    }
-
-    .lpItem {
-        .lpDescription {
-            display: none;
-        }
-
-        .lpActionsCell {
-            flex-basis: 112px;
-
-            .lpWorn,
-            .lpConsumable,
-            .lpCamera,
-            .lpLink,
-            .lpTag,
-            .lpStar,
-            .lpEdit {
-                visibility: visible;
-            }
-        }
-
-        .lpRemove,
-        .lpHandle,
-        .lpArrows {
-            visibility: visible;
-        }
-    }
-
-    .lpCategory {
-        margin-bottom: 12px;
-    }
-}
-
-@media (max-width: 480px) {
-    .lpItem,
-    .lpItemsHeader,
-    .lpItemsFooter {
-        padding: 0 8px;
-
-        .lpWeightCell {
-            flex: 0 0 80px;
-        }
-
-        .lpQtyCell {
-            flex: 0 0 44px;
-        }
-    }
-
-    input.lpCategoryName {
-        flex-basis: auto;
-        min-width: 0;
-    }
-
-    .lpItem {
-        .lpActionsCell {
-            flex-basis: 88px;
-        }
-
-        .lpNameCell {
-            flex-basis: 80px;
-        }
-    }
-}
-
 @media (hover: none), (pointer: coarse) {
     .lpItem {
         .lpActionsCell i,
@@ -692,4 +621,122 @@ input.lpCategoryName { /* specificity */
     padding: 0 2px;
 
     &:hover { color: $color-text; }
+}
+
+@media (max-width: 768px) {
+    .lpItem,
+    .lpItemsHeader,
+    .lpItemsFooter {
+        .lpPriceCell {
+            display: none;
+        }
+    }
+
+    .lpItem {
+        .lpDescription {
+            display: none;
+        }
+
+        .lpActionsCell {
+            flex-basis: 112px;
+
+            .lpWorn,
+            .lpConsumable,
+            .lpCamera,
+            .lpLink,
+            .lpTag,
+            .lpStar,
+            .lpEdit {
+                visibility: visible;
+            }
+        }
+
+        .lpRemove,
+        .lpHandle,
+        .lpArrows {
+            visibility: visible;
+        }
+    }
+
+    .lpCategory {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lpItem,
+    .lpItemsHeader,
+    .lpItemsFooter {
+        padding: 0 8px;
+
+        .lpWeightCell {
+            flex: 0 0 80px;
+        }
+
+        .lpQtyCell {
+            flex: 0 0 44px;
+        }
+    }
+
+    input.lpCategoryName {
+        flex-basis: auto;
+        min-width: 0;
+    }
+
+    .lpItem {
+        .lpActionsCell {
+            flex-basis: 88px;
+        }
+
+        .lpNameCell {
+            flex-basis: 80px;
+        }
+    }
+}
+
+@media (max-width: 500px) {
+    .lpItem {
+        column-gap: 4px;
+        display: grid;
+        grid-template-areas:
+            "handle image name qty remove"
+            "handle image actions weight remove";
+        grid-template-columns: 12px auto minmax(0, 1fr) auto 20px;
+        padding: 6px 8px;
+        row-gap: 4px;
+
+        .lpHandleCell {
+            grid-area: handle;
+            padding-right: 0;
+        }
+
+        .lpImageCell {
+            grid-area: image;
+        }
+
+        .lpNameCell {
+            grid-area: name;
+        }
+
+        .lpActionsCell {
+            grid-area: actions;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .lpWeightCell {
+            grid-area: weight;
+            justify-self: end;
+            white-space: nowrap;
+        }
+
+        .lpQtyCell {
+            grid-area: qty;
+            justify-self: end;
+        }
+
+        .lpRemoveCell {
+            grid-area: remove;
+        }
+    }
 }

@@ -7,7 +7,7 @@ test.use({
     hasTouch: true,
 });
 
-for (const width of [320, 375, 768]) {
+for (const width of [320, 375, 500, 768]) {
     test(`keeps the list editor usable at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 812 });
         const library = createEditorLibrary(12, 4);
@@ -25,6 +25,10 @@ for (const width of [320, 375, 768]) {
             const category = document.querySelector('.lpCategory').getBoundingClientRect();
             const item = document.querySelector('.lpItem').getBoundingClientRect();
             const edit = document.querySelector('.lpItem .lpEdit');
+            const name = document.querySelector('.lpItem .lpNameCell').getBoundingClientRect();
+            const actions = document.querySelector('.lpItem .lpActionsCell').getBoundingClientRect();
+            const weight = document.querySelector('.lpItem .lpWeightCell').getBoundingClientRect();
+            const qty = document.querySelector('.lpItem .lpQtyCell').getBoundingClientRect();
             const overflowingElements = [...document.querySelectorAll('body *')]
             .map((element) => {
                 const rect = element.getBoundingClientRect();
@@ -61,6 +65,14 @@ for (const width of [320, 375, 768]) {
                 itemLeft: Math.round(item.left),
                 itemRight: Math.round(item.right),
                 editVisibility: getComputedStyle(edit).visibility,
+                nameBottom: Math.round(name.bottom),
+                actionsTop: Math.round(actions.top),
+                actionsCenter: Math.round(actions.top + actions.height / 2),
+                actionsRight: Math.round(actions.right),
+                weightLeft: Math.round(weight.left),
+                weightCenter: Math.round(weight.top + weight.height / 2),
+                qtyCenter: Math.round(qty.top + qty.height / 2),
+                nameCenter: Math.round(name.top + name.height / 2),
                 overflowingElements,
                 scrollingElements,
             };
@@ -77,6 +89,13 @@ for (const width of [320, 375, 768]) {
         expect(layout.itemRight).toBeLessThanOrEqual(layout.viewportWidth);
         expect(layout.editVisibility, JSON.stringify(layout)).toBe('visible');
         await expect(page.locator('.lpItem .lpRemove').first()).toBeVisible();
+
+        if (width <= 500) {
+            expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.nameBottom);
+            expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);
+            expect(Math.abs(layout.actionsCenter - layout.weightCenter)).toBeLessThanOrEqual(1);
+            expect(Math.abs(layout.nameCenter - layout.qtyCenter)).toBeLessThanOrEqual(1);
+        }
 
         await page.locator('#hamburger').click();
         await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
