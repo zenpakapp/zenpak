@@ -58,5 +58,9 @@ assert('clamps negative scroll', negativeScrollWindow.start === 0 && negativeScr
 const endWindow = calculateVirtualWindow({ items, scrollTop: 4900, viewportHeight: 300, rowHeight: 50, overscan: 2 });
 assert('clamps the end of the list', endWindow.start === 96 && endWindow.end === 100 && endWindow.items.length === 4);
 
+const beyondEndWindow = calculateVirtualWindow({ items, scrollTop: 10000, viewportHeight: 300, rowHeight: 50, overscan: 2 });
+assert('clamps start when scrolling beyond the final row', beyondEndWindow.start === 100 && beyondEndWindow.start <= beyondEndWindow.end);
+assert('preserves height when scrolling beyond the final row', beyondEndWindow.top + beyondEndWindow.bottom + beyondEndWindow.items.length * 50 === 5000);
+
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

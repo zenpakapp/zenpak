@@ -28,7 +28,7 @@ function calculateVirtualWindow(options = {}) {
     const overscan = Math.max(0, Number(options.overscan) || 0);
     const visibleStart = Math.floor(scrollTop / rowHeight);
     const visibleCount = Math.ceil(viewportHeight / rowHeight);
-    const start = Math.max(0, visibleStart - overscan);
+    const start = Math.min(items.length, Math.max(0, visibleStart - overscan));
     const end = Math.min(items.length, visibleStart + visibleCount + overscan);
     return {
         start,
