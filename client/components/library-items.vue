@@ -48,9 +48,23 @@
                 @blur="tagInputFocused = false"
             />
         </div>
-        <ul class="library" ref="library" @scroll.passive="handleScroll">
+        <ul
+            ref="library"
+            class="library"
+            tabindex="0"
+            :aria-label="$t('library.itemsTitle')"
+            @scroll.passive="handleScroll"
+        >
             <li v-if="virtualWindow.top" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.top}px` }" aria-hidden="true" />
-            <li v-for="item in virtualWindow.items" :key="item.id" class="lpLibraryItem" :data-item-id="item.id" @dblclick="openDetail(item)">
+            <li
+                v-for="(item, index) in virtualWindow.items"
+                :key="item.id"
+                class="lpLibraryItem"
+                :data-item-id="item.id"
+                :aria-setsize="filteredItems.length"
+                :aria-posinset="virtualWindow.start + index + 1"
+                @dblclick="openDetail(item)"
+            >
                 <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
                 <span v-if="!item.url" class="lpName">{{ item.name }}</span>
                 <span class="lpWeight">
