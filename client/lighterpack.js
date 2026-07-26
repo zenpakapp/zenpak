@@ -53,18 +53,6 @@ registerAppEventHandlers({
     },
 });
 
-store.dispatch('init')
-    .then(() => {
-        initLighterPack();
-    })
-    .catch((error) => {
-        if (!store.state.library && !isPublicPath(window.location.pathname) && !isUnknownRoute(window.location.pathname)) {
-            router.push('/welcome');
-        }
-        showGlobalAlert(error);
-        initLighterPack();
-    });
-
 var initLighterPack = function () {
     const app = createApp({
         render() {
@@ -81,3 +69,12 @@ var initLighterPack = function () {
         window.LighterPack = app.mount('#lp');
     });
 };
+
+initLighterPack();
+
+store.dispatch('init').catch((error) => {
+    if (!store.state.library && !isPublicPath(window.location.pathname) && !isUnknownRoute(window.location.pathname)) {
+        router.push('/welcome');
+    }
+    showGlobalAlert(error);
+});

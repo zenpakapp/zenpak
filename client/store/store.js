@@ -24,6 +24,7 @@ const createInitialState = () => ({
     gearRoomOpen: false,
     billing: null,
     stripeConfigured: null,
+    initializationStatus: 'loading',
 });
 
 const store = createStore({
@@ -44,15 +45,23 @@ const store = createStore({
                 .then(r => r.ok ? r.json() : null)
                 .then(data => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
                 .catch(() => {});
-            return context.dispatch('loadRemote').catch((error) => {
-                if (error && (error.statusCode === 401 || error.statusCode === 404)) {
-                    if (hasLocalLibrary()) return context.dispatch('loadLocal');
-                    context.commit('setLoggedIn', false);
-                    context.commit('clearLibraryData');
-                    return Promise.resolve();
-                }
-                return Promise.reject(error);
-            });
+            return context.dispatch('loadRemote')
+                .catch((error) => {
+                    if (error && (error.statusCode === 401 || error.statusCode === 404)) {
+                        if (hasLocalLibrary()) return context.dispatch('loadLocal');
+                        context.commit('setLoggedIn', false);
+                        context.commit('clearLibraryData');
+                        return Promise.resolve();
+                    }
+                    return Promise.reject(error);
+                })
+                .then(() => {
+                    context.commit('setInitializationStatus', 'ready');
+                })
+                .catch((error) => {
+                    context.commit('setInitializationStatus', 'error');
+                    return Promise.reject(error);
+                });
         },
         loadLocal(context) {
             const libraryData = getLocalLibrary();

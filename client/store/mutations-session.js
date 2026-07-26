@@ -42,4 +42,5 @@ module.exports = {
     setGearRoomOpen(state, open) { state.gearRoomOpen = open; },
     setBilling(state, billing) { state.billing = billing; },
     setStripeConfigured(state, val) { state.stripeConfigured = val; },
+    setInitializationStatus(state, status) { state.initializationStatus = status; },
 };
