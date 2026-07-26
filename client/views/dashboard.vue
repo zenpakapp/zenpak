@@ -264,6 +264,10 @@ export default {
                     return;
                 }
 
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    this.$store.commit('setSidebarOpen', false);
+                }
+
                 this.isLoaded = true;
                 this.sidebarFrame = requestAnimationFrame(() => {
                     this.sidebarReady = true;

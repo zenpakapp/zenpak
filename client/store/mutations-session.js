@@ -39,6 +39,7 @@ module.exports = {
     },
     clearLibraryData(state) { state.library = false; },
     toggleSidebar(state) { state.library.showSidebar = !state.library.showSidebar; },
+    setSidebarOpen(state, open) { state.library.showSidebar = open; },
     setGearRoomOpen(state, open) { state.gearRoomOpen = open; },
     setBilling(state, billing) { state.billing = billing; },
     setStripeConfigured(state, val) { state.stripeConfigured = val; },
