@@ -274,6 +274,10 @@
 }
 
 @media (max-width: 768px) {
+    #main {
+        overflow-x: clip;
+    }
+
     #sidebar {
         transform: translateX(-100%);
         transition: transform $transitionDurationSlow ease-in-out;
@@ -286,6 +290,64 @@
 
     #main .lpList {
         margin-left: 0 !important;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #header {
+        gap: 0;
+        margin-left: -12px;
+        padding: 0 10px 0 8px;
+        width: calc(100% + 24px);
+    }
+
+    #lpListName {
+        flex-basis: 120px;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .headerCommunityItem,
+    .headerMenuLabel,
+    .accountDropdownLead,
+    .accountDropdownName {
+        display: none;
+    }
+
+    .headerItem .lpTarget {
+        justify-content: center;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .headerTruncateItem {
+        flex: 0 0 30px;
+    }
+
+    .headerItem .lpPopover .lpContent {
+        box-sizing: border-box;
+        left: 12px;
+        max-height: calc(100vh - 84px);
+        max-width: none;
+        min-width: 0;
+        overflow-y: auto;
+        position: fixed;
+        right: 12px;
+        top: 60px;
+        transform: translateY(6px);
+        width: auto !important;
+    }
+
+    .headerItem .lpPopover.lpPopoverShown .lpContent {
+        transform: translateY(0);
+    }
+
+    .headerItem .lpPopover .lpContent::before {
+        display: none;
+    }
+
+    .headerItem .lpPopoverRight {
+        right: 5px;
     }
 }
 

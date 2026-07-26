@@ -45,7 +45,7 @@
                 <span v-if="isSignedIn" class="headerItem headerIconItem">
                     <notifications />
                 </span>
-                <span v-if="isSignedIn" class="headerItem">
+                <span v-if="isSignedIn" class="headerItem headerCommunityItem">
                     <router-link to="/community" class="lpTarget">{{ $t('dash.community') }}</router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">

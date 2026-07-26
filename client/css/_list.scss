@@ -19,7 +19,10 @@
 
         .lpHasSidebar & {
             margin-left: 0;
+            max-width: 100%;
         }
+
+        width: 100%;
     }
 }
 
@@ -38,7 +41,23 @@
         }
 
         .lpActionsCell {
-            flex-basis: 80px;
+            flex-basis: 112px;
+
+            .lpWorn,
+            .lpConsumable,
+            .lpCamera,
+            .lpLink,
+            .lpTag,
+            .lpStar,
+            .lpEdit {
+                visibility: visible;
+            }
+        }
+
+        .lpRemove,
+        .lpHandle,
+        .lpArrows {
+            visibility: visible;
         }
     }
 
@@ -59,6 +78,33 @@
 
         .lpQtyCell {
             flex: 0 0 44px;
+        }
+    }
+
+    input.lpCategoryName {
+        flex-basis: auto;
+        min-width: 0;
+    }
+
+    .lpItem {
+        .lpActionsCell {
+            flex-basis: 88px;
+        }
+
+        .lpNameCell {
+            flex-basis: 80px;
+        }
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .lpItem {
+        .lpActionsCell i,
+        .lpEdit,
+        .lpRemove,
+        .lpHandle,
+        .lpArrows {
+            visibility: visible;
         }
     }
 }

@@ -42,11 +42,7 @@
 
 #csv,
 #image {
-    height: 1px;
-    left: -999px;
-    overflow: hidden;
-    position: absolute;
-    width: 1px;
+    display: none;
 }
 
 .lpHref.close {
