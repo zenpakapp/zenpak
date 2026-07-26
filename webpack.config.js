@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const VueI18nPlugin = require('@intlify/unplugin-vue-i18n/webpack');
 
 const vueFeatureFlags = {
     __VUE_OPTIONS_API__: JSON.stringify(true),
@@ -48,6 +49,11 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.json$/,
+                exclude: path.resolve(__dirname, './client/locales'),
+                type: 'json',
+            },
+            {
                 test: /\.vue$/,
                 loader: 'vue-loader',
             },
@@ -75,13 +81,23 @@ module.exports = {
             },
         ],
     },
-    resolve: {},
+    resolve: {
+        alias: {
+            'vue-i18n': 'vue-i18n/dist/vue-i18n.runtime.esm-bundler.js',
+        },
+    },
     performance: {
         hints: false,
     },
     devtool: false,
     plugins: [
         new VueLoaderPlugin(),
+        VueI18nPlugin({
+            include: [path.resolve(__dirname, './client/locales/**')],
+            compositionOnly: false,
+            jitCompilation: false,
+            strictMessage: false,
+        }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
         }),

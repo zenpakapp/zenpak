@@ -346,7 +346,7 @@
       "interested": "Ich bin interessiert",
       "cancel": "Abbrechen",
       "yourEmail": "Deine E-Mail",
-      "yourEmailPlaceholder": "du@example.com",
+      "yourEmailPlaceholder": "du{'@'}example.com",
       "whichPlan": "Welcher Plan?",
       "message": "Nachricht (optional)",
       "messagePlaceholder": "Erzähl uns, wie du ZenPak nutzt",
