@@ -80,6 +80,10 @@ $sidebarPadding: 20px;
     }
 }
 
+.lpSidebarClose {
+    display: none;
+}
+
 @media (max-width: 768px) {
     #sidebar {
         box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
@@ -110,6 +114,26 @@ $sidebarPadding: 20px;
             display: block;
         }
     }
+
+    .lpSidebarClose {
+        align-items: center;
+        background: transparent;
+        border: 0;
+        color: $color-text-muted;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 28px;
+        height: 44px;
+        justify-content: center;
+        margin-left: auto;
+        padding: 0;
+        width: 44px;
+
+        &:hover,
+        &:focus-visible {
+            color: $color-text;
+        }
+    }
 }
 
 .lpGearSection {
@@ -134,7 +158,6 @@ $sidebarPadding: 20px;
     white-space: nowrap;
 }
 
-
 .lpThemeToggle {
     background: transparent;
     border: none;
@@ -158,7 +181,10 @@ $sidebarPadding: 20px;
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
         <div id="scrollable">
-            <h1>{{ $t('dash.zenPakSidebar') }}</h1>
+            <h1>
+                {{ $t('dash.zenPakSidebar') }}
+                <button class="lpSidebarClose" type="button" :aria-label="$t('list.close')" @click="closeSidebar">&times;</button>
+            </h1>
 
             <libraryLists />
             <section class="lpGearSection">

@@ -18,6 +18,9 @@ for (const width of [320, 375, 768]) {
         await mockSuccessfulEditorInitialization(page, library);
         await page.goto(testRoot);
         await expect(page.locator('#main')).toBeVisible();
+        await expect(page.locator('.lpSidebarClose')).toBeVisible();
+        await page.locator('.lpSidebarClose').click();
+        await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
 
         const layout = await page.evaluate(() => {
             const list = document.querySelector('.lpList').getBoundingClientRect();
