@@ -74,7 +74,7 @@
 .lpEditorLoadingListTitle,
 .lpEditorLoadingRow span {
     animation: lpEditorLoadingSweep 1.4s ease-in-out infinite;
-    background: linear-gradient(90deg, color-mix(in srgb, $color-text 8%, transparent) 20%, color-mix(in srgb, $color-text 15%, transparent) 45%, color-mix(in srgb, $color-text 8%, transparent) 70%);
+    background: linear-gradient(90deg, color-mix(in sRGB, $color-text 8%, transparent) 20%, color-mix(in sRGB, $color-text 15%, transparent) 45%, color-mix(in sRGB, $color-text 8%, transparent) 70%);
     background-size: 240% 100%;
     border-radius: $radius-sm;
     display: block;
