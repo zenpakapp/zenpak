@@ -4,10 +4,26 @@
 
 <template>
     <div v-if="isInitializing" class="lpEditorLoading" role="status" aria-live="polite">
-        <div class="lpEditorLoadingSidebar" />
-        <div class="lpEditorLoadingMain">
-            <span class="lpEditorLoadingSpinner" />
-            <span>{{ $t('dash.loadingEditor') }}</span>
+        <span class="lpEditorLoadingText">{{ $t('dash.loadingEditor') }}</span>
+        <div class="lpEditorLoadingSidebar" aria-hidden="true">
+            <span class="lpEditorLoadingBrand" />
+            <span v-for="index in 6" :key="`loading-nav-${index}`" class="lpEditorLoadingNav" />
+        </div>
+        <div class="lpEditorLoadingContent" aria-hidden="true">
+            <div class="lpEditorLoadingToolbar">
+                <span class="lpEditorLoadingTitle" />
+                <span class="lpEditorLoadingAction" />
+            </div>
+            <div class="lpEditorLoadingList">
+                <span class="lpEditorLoadingListTitle" />
+                <div class="lpEditorLoadingRows">
+                    <div v-for="index in 5" :key="`loading-row-${index}`" class="lpEditorLoadingRow">
+                        <span />
+                        <span />
+                        <span />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">

@@ -2,42 +2,154 @@
 
 .lpEditorLoading {
     background: $color-surface;
-    display: flex;
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
     min-height: 100vh;
+    overflow: hidden;
+}
+
+.lpEditorLoadingText {
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+}
+
+.lpEditorLoadingSidebar,
+.lpEditorLoadingContent,
+.lpEditorLoadingToolbar,
+.lpEditorLoadingList,
+.lpEditorLoadingRow {
+    box-sizing: border-box;
 }
 
 .lpEditorLoadingSidebar {
     background: color-mix(in srgb, $color-surface 92%, $color-text);
     border-right: 1px solid $color-border;
-    flex: 0 0 260px;
-}
-
-.lpEditorLoadingMain {
-    align-items: center;
-    color: $color-text-muted;
     display: flex;
-    flex: 1;
-    font-size: $fontSize-md;
-    gap: 12px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 20px;
 }
 
-.lpEditorLoadingSpinner {
-    animation: lpEditorLoadingSpin 0.8s linear infinite;
-    border: 2px solid $color-border;
-    border-radius: 50%;
-    border-top-color: $color-accent;
+.lpEditorLoadingContent {
+    min-width: 0;
+}
+
+.lpEditorLoadingToolbar {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    justify-content: space-between;
+    min-height: 60px;
+    padding: 0 24px;
+}
+
+.lpEditorLoadingList {
+    margin: 32px auto;
+    max-width: 920px;
+    padding: 0 24px;
+}
+
+.lpEditorLoadingRows {
+    border-top: 1px solid $color-border;
+    margin-top: 20px;
+}
+
+.lpEditorLoadingRow {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(120px, 2fr) minmax(80px, 1fr) 64px;
+    min-height: 58px;
+}
+
+.lpEditorLoadingBrand,
+.lpEditorLoadingNav,
+.lpEditorLoadingTitle,
+.lpEditorLoadingAction,
+.lpEditorLoadingListTitle,
+.lpEditorLoadingRow span {
+    animation: lpEditorLoadingSweep 1.4s ease-in-out infinite;
+    background: linear-gradient(90deg, color-mix(in srgb, $color-text 8%, transparent) 20%, color-mix(in srgb, $color-text 15%, transparent) 45%, color-mix(in srgb, $color-text 8%, transparent) 70%);
+    background-size: 240% 100%;
+    border-radius: $radius-sm;
+    display: block;
+    height: 10px;
+}
+
+.lpEditorLoadingBrand {
     height: 18px;
-    width: 18px;
+    width: 132px;
 }
 
-@keyframes lpEditorLoadingSpin {
-    to { transform: rotate(360deg); }
+.lpEditorLoadingNav {
+    width: 76%;
+}
+
+.lpEditorLoadingTitle {
+    height: 14px;
+    width: min(280px, 42%);
+}
+
+.lpEditorLoadingAction {
+    width: 96px;
+}
+
+.lpEditorLoadingListTitle {
+    height: 14px;
+    width: 180px;
+}
+
+.lpEditorLoadingRow span:nth-child(1) {
+    width: 72%;
+}
+
+.lpEditorLoadingRow span:nth-child(2) {
+    width: 58%;
+}
+
+.lpEditorLoadingRow span:nth-child(3) {
+    justify-self: end;
+    width: 40px;
+}
+
+@keyframes lpEditorLoadingSweep {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lpEditorLoadingBrand,
+    .lpEditorLoadingNav,
+    .lpEditorLoadingTitle,
+    .lpEditorLoadingAction,
+    .lpEditorLoadingListTitle,
+    .lpEditorLoadingRow span {
+        animation: none;
+    }
 }
 
 @media (max-width: 768px) {
+    .lpEditorLoading {
+        grid-template-columns: 1fr;
+    }
+
     .lpEditorLoadingSidebar {
-        flex-basis: 0;
+        display: none;
+    }
+
+    .lpEditorLoadingList {
+        margin-top: 20px;
+        padding: 0 16px;
+    }
+
+    .lpEditorLoadingRow {
+        gap: 12px;
+        grid-template-columns: minmax(100px, 2fr) minmax(64px, 1fr) 44px;
     }
 }
 

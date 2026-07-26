@@ -17,6 +17,9 @@ test('shows the editor loading shell while session data loads', async ({ page })
     try {
         await page.waitForLoadState('domcontentloaded');
         await expect(page.locator('.lpEditorLoading')).toBeVisible();
+        await expect(page.locator('.lpEditorLoadingSidebar')).toBeVisible();
+        await expect(page.locator('.lpEditorLoadingToolbar')).toBeVisible();
+        await expect(page.locator('.lpEditorLoadingRow')).toHaveCount(5);
     } finally {
         releaseSignin();
         await navigation;
