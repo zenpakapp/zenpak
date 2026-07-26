@@ -199,6 +199,7 @@ export default {
             isLoaded: false,
             sidebarReady: false,
             sidebarFrame: null,
+            sidebarMediaQuery: null,
             showGuideUpgrade: false,
             verifyResendSent: false,
             verifyResendError: null,
@@ -283,6 +284,9 @@ export default {
         },
     },
     created() {
+        this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
+        this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
+
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
         }
@@ -312,8 +316,16 @@ export default {
     },
     beforeUnmount() {
         if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
+        if (this.sidebarMediaQuery) {
+            this.sidebarMediaQuery.removeEventListener('change', this.handleSidebarBreakpoint);
+        }
     },
     methods: {
+        handleSidebarBreakpoint(event) {
+            if (event.matches && this.library && this.library.showSidebar) {
+                this.$store.commit('setSidebarOpen', false);
+            }
+        },
         toggleSidebar() {
             this.$store.commit('toggleSidebar');
         },

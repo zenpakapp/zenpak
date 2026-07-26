@@ -7,6 +7,20 @@ test.use({
     hasTouch: true,
 });
 
+test('closes the sidebar when the editor crosses into the mobile layout', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
+    await page.setViewportSize({ width: 500, height: 812 });
+    await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
+    await expect(page.locator('#hamburger')).toBeVisible();
+
+    await page.locator('#hamburger').click();
+    await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
+});
+
 for (const width of [320, 375, 500, 768]) {
     test(`keeps the list editor usable at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 812 });
