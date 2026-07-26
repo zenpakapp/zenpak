@@ -43,6 +43,7 @@ for (const width of [320, 375, 500, 768]) {
             const actions = document.querySelector('.lpItem .lpActionsCell').getBoundingClientRect();
             const weight = document.querySelector('.lpItem .lpWeightCell').getBoundingClientRect();
             const qty = document.querySelector('.lpItem .lpQtyCell').getBoundingClientRect();
+            const chart = document.querySelector('.lpChart').getBoundingClientRect();
             const overflowingElements = [...document.querySelectorAll('body *')]
             .map((element) => {
                 const rect = element.getBoundingClientRect();
@@ -87,6 +88,8 @@ for (const width of [320, 375, 500, 768]) {
                 weightCenter: Math.round(weight.top + weight.height / 2),
                 qtyCenter: Math.round(qty.top + qty.height / 2),
                 nameCenter: Math.round(name.top + name.height / 2),
+                chartWidth: Math.round(chart.width),
+                chartHeight: Math.round(chart.height),
                 overflowingElements,
                 scrollingElements,
             };
@@ -109,6 +112,7 @@ for (const width of [320, 375, 500, 768]) {
             expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);
             expect(Math.abs(layout.actionsCenter - layout.weightCenter)).toBeLessThanOrEqual(1);
             expect(Math.abs(layout.nameCenter - layout.qtyCenter)).toBeLessThanOrEqual(1);
+            expect(Math.abs(layout.chartWidth - layout.chartHeight)).toBeLessThanOrEqual(1);
         }
 
         await page.locator('#hamburger').click();

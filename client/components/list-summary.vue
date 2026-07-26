@@ -7,6 +7,14 @@
         cursor: pointer;
     }
 }
+
+@media (max-width: 720px) {
+    .lpChart {
+        aspect-ratio: 1;
+        height: auto !important;
+        max-width: 100%;
+    }
+}
 </style>
 
 <template>
