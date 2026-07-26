@@ -1,5 +1,10 @@
 const weightUtils = require('../utils/weight.js');
 
+function normalizeQuantity(value) {
+    const quantity = parseFloat(value);
+    return Number.isNaN(quantity) ? 1 : quantity;
+}
+
 module.exports = {
     importCSV(state, importData) {
         const list = state.library.newList({});
@@ -39,7 +44,7 @@ module.exports = {
                 if (item) {
                     if (row.category && !item.category) item.category = row.category;
                     if (row.brand && !item.brand) item.brand = row.brand;
-                    category.addItem({ itemId: item.id, _isNew: false, qty: parseFloat(row.qty) || 1 });
+                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
                     mergedCount++;
                 } else {
                     item = state.library.newItem({ category, _isNew: false });
@@ -61,7 +66,7 @@ module.exports = {
                     : null;
                 if (existing) {
                     item = existing;
-                    category.addItem({ itemId: item.id, _isNew: false, qty: parseFloat(row.qty) || 1 });
+                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
                     mergedCount++;
                 } else {
                     item = state.library.newItem({ category, _isNew: false });
@@ -80,7 +85,7 @@ module.exports = {
 
             categoryItem = category.getCategoryItemById(item.id);
             if (categoryItem) {
-                categoryItem.qty = parseFloat(row.qty) || 1;
+                categoryItem.qty = normalizeQuantity(row.qty);
                 categoryItem.worn = row.worn;
                 categoryItem.consumable = row.consumable;
             }
@@ -126,7 +131,7 @@ module.exports = {
                 let item;
                 if (existing) {
                     item = existing;
-                    category.addItem({ itemId: item.id, _isNew: false, qty: ci.qty || 1 });
+                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(ci.qty) });
                     mergedCount++;
                 } else {
                     item = state.library.newItem({ category, _isNew: false });
@@ -146,7 +151,7 @@ module.exports = {
 
                 const categoryItem = category.getCategoryItemById(item.id);
                 if (categoryItem) {
-                    categoryItem.qty = ci.qty || 1;
+                    categoryItem.qty = normalizeQuantity(ci.qty);
                     categoryItem.worn = ci.worn || 0;
                     categoryItem.consumable = ci.consumable === true;
                     categoryItem.star = ci.star || 0;
