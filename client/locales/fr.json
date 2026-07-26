@@ -498,6 +498,7 @@
     "guide": "Wayfarer",
     "register": "S'inscrire",
     "signIn": "Se connecter",
+    "loadingEditor": "Chargement de votre éditeur…",
     "verificationEmailSent": "E-mail de vérification envoyé ! Consultez votre boîte de réception.",
     "verifyEmailPrompt": "Vérifiez votre e-mail pour partager des listes publiquement.",
     "resendEmail": "Renvoyer l'e-mail",

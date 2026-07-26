@@ -1,5 +1,46 @@
 @import "globals";
 
+.lpEditorLoading {
+    background: $color-surface;
+    display: flex;
+    min-height: 100vh;
+}
+
+.lpEditorLoadingSidebar {
+    background: color-mix(in srgb, $color-surface 92%, $color-text);
+    border-right: 1px solid $color-border;
+    flex: 0 0 260px;
+}
+
+.lpEditorLoadingMain {
+    align-items: center;
+    color: $color-text-muted;
+    display: flex;
+    flex: 1;
+    font-size: $fontSize-md;
+    gap: 12px;
+    justify-content: center;
+}
+
+.lpEditorLoadingSpinner {
+    animation: lpEditorLoadingSpin 0.8s linear infinite;
+    border: 2px solid $color-border;
+    border-radius: 50%;
+    border-top-color: $color-accent;
+    height: 18px;
+    width: 18px;
+}
+
+@keyframes lpEditorLoadingSpin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .lpEditorLoadingSidebar {
+        flex-basis: 0;
+    }
+}
+
 #header {
     align-items: center;
     background: $color-surface;

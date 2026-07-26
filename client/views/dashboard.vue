@@ -3,7 +3,14 @@
 </style>
 
 <template>
-    <div v-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
+    <div v-if="isInitializing" class="lpEditorLoading" role="status" aria-live="polite">
+        <div class="lpEditorLoadingSidebar" />
+        <div class="lpEditorLoadingMain">
+            <span class="lpEditorLoadingSpinner" />
+            <span>{{ $t('dash.loadingEditor') }}</span>
+        </div>
+    </div>
+    <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
         <sidebar @open-gear-room="$store.commit('setGearRoomOpen', true)" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
@@ -197,6 +204,12 @@ export default {
         isSignedIn() {
             return this.$store.state.loggedIn;
         },
+        initializationStatus() {
+            return this.$store.state.initializationStatus;
+        },
+        isInitializing() {
+            return this.initializationStatus === 'loading';
+        },
         isGuide() {
             const lib = this.$store.state.library;
             return lib && lib.entitlements && lib.entitlements.plan === 'creator';
@@ -223,6 +236,19 @@ export default {
         },
     },
     watch: {
+        initializationStatus: {
+            immediate: true,
+            handler(status) {
+                if (status !== 'ready') return;
+
+                if (!this.library) {
+                    push('/welcome');
+                    return;
+                }
+
+                this.isLoaded = true;
+            },
+        },
         emailVerified(val) {
             if (val === true) {
                 localStorage.removeItem('verifyBannerDismissed');
@@ -231,11 +257,6 @@ export default {
         },
     },
     created() {
-        if (!this.$store.state.library) {
-            push('/welcome');
-        } else {
-            this.isLoaded = true;
-        }
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
         }
