@@ -40,6 +40,11 @@ async function completeStripeCheckout(page: Page, email: string) {
 
   await page.getByTestId("hosted-payment-submit-button").click();
 
+  // Stripe's success_url is built server-side from config/local.json's deployUrl
+  // (hardcoded to http://localhost:8080), which is independent of Playwright's
+  // webServer port (3101). This test passes only because a separate app instance
+  // is already listening on 8080; in a clean CI environment without it, this wait
+  // would timeout rather than fail fast.
   await page.waitForURL(/billing=success/, { timeout: 20000 });
   expect(page.url()).toContain("billing=success");
 }
