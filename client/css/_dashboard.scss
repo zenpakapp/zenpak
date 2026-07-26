@@ -26,7 +26,7 @@
 }
 
 .lpEditorLoadingSidebar {
-    background: color-mix(in srgb, $color-surface 92%, $color-text);
+    background: color-mix(in sRGB, $color-surface 92%, $color-text);
     border-right: 1px solid $color-border;
     display: flex;
     flex-direction: column;
@@ -171,8 +171,8 @@
 
 .lpVerifyBanner {
     align-items: center;
-    background: color-mix(in srgb, $color-accent 10%, transparent);
-    border: 1px solid color-mix(in srgb, $color-accent 30%, transparent);
+    background: color-mix(in sRGB, $color-accent 10%, transparent);
+    border: 1px solid color-mix(in sRGB, $color-accent 30%, transparent);
     border-radius: $radius-sm;
     color: $color-text;
     display: flex;
@@ -217,29 +217,31 @@
 .lpBillingSuccessBanner {
     background: #d1fae5;
     border: 1px solid #34d399;
-    color: #065f46;
-    padding: 12px 16px;
     border-radius: 6px;
+    color: #065f46;
     margin-bottom: 16px;
+    padding: 12px 16px;
 }
+
 .lpBillingCancelBanner {
     background: #fef3c7;
     border: 1px solid #fbbf24;
-    color: #92400e;
-    padding: 12px 16px;
     border-radius: 6px;
+    color: #92400e;
     margin-bottom: 16px;
+    padding: 12px 16px;
 }
+
 .lpPastDueBanner {
+    align-items: center;
     background: #fff3cd;
     border: 1px solid #ffc107;
-    color: #856404;
-    padding: 12px 16px;
     border-radius: 6px;
-    margin-bottom: 16px;
+    color: #856404;
     display: flex;
-    align-items: center;
     gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
 }
 
 #hamburger {
@@ -316,14 +318,18 @@
 }
 
 .headerItem {
-    flex: 0 0 auto;
     color: $color-text-muted;
+    flex: 0 0 auto;
     height: auto;
     padding: 0;
     position: relative;
     transition: color $transitionDurationFast ease;
 
     .lpPopover {
+        align-items: center;
+        display: flex;
+        position: relative;
+
         &:hover .lpTarget {
             color: $color-accent;
         }
@@ -372,9 +378,9 @@
     }
 
     &.signInRegisterButtons {
+        gap: 8px;
         height: auto;
         padding: 0 16px;
-        gap: 8px;
     }
 }
 
@@ -405,12 +411,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.headerItem .lpPopover {
-    align-items: center;
-    display: flex;
-    position: relative;
 }
 
 .headerItem .lpPopover::after {
