@@ -32,7 +32,10 @@ router.post('/scrapeGear', async (req, res) => {
         const data = await scrapeGear(url);
         return res.json(data);
     } catch (err) {
-        return res.status(502).json({ error: err.message || 'fetch failed' });
+        if (err && err.code === 'UNSAFE_URL') {
+            return res.status(400).json({ error: 'url not allowed' });
+        }
+        return res.status(502).json({ error: 'fetch failed' });
     }
 });
 

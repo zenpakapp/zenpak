@@ -8,6 +8,11 @@ const express = require('express');
 const morgan = require('morgan');
 
 const { logger } = require('./server/log.js');
+const {
+    REQUEST_BODY_LIMIT,
+    securityHeaders,
+    errorHandler,
+} = require('./server/security.js');
 
 function getRuntimeNumber(name, fallback) {
     const value = process.env[name];
@@ -35,6 +40,8 @@ morgan.token('requestid', function getUsername (req) {
 
 const app = express();
 app.enable('trust proxy');
+app.disable('x-powered-by');
+app.use(securityHeaders({ environment: getRuntimeEnvironment() }));
 
 app.use(function (req, res, next) {
     req.uuid = crypto.randomUUID();
@@ -67,10 +74,10 @@ const webhookHandler = require('./server/webhook-handler.js');
 // Webhook MUST be before express.json() — needs raw body for signature verification
 app.use('/', webhookHandler);
 
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: REQUEST_BODY_LIMIT }));
 app.use(express.urlencoded({
     extended: true,
-    limit: '50mb',
+    limit: REQUEST_BODY_LIMIT,
 }));
 
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
@@ -96,6 +103,7 @@ const billingEndpoints = require('./server/billing-endpoints.js');
 app.use('/api/billing', billingEndpoints);
 
 app.use('/', views);
+app.use(errorHandler);
 
 logger.info("Starting up Lighterpack...");
 
