@@ -14,8 +14,11 @@ test('shows the editor loading shell while session data loads', async ({ page })
     });
 
     const navigation = page.goto(testRoot);
-
-    await expect(page.locator('.lpEditorLoading')).toBeVisible();
-    releaseSignin();
-    await navigation;
+    try {
+        await page.waitForLoadState('domcontentloaded');
+        await expect(page.locator('.lpEditorLoading')).toBeVisible();
+    } finally {
+        releaseSignin();
+        await navigation;
+    }
 });

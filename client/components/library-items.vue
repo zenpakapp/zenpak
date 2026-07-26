@@ -148,14 +148,24 @@ export default {
         },
     },
     watch: {
+        searchText() {
+            this.resetVirtualScroll();
+        },
+        filterCategory() {
+            this.resetVirtualScroll();
+        },
+        filterTags: {
+            deep: true,
+            handler() {
+                this.resetVirtualScroll();
+            },
+        },
         categories() {
             this.$nextTick(() => {
                 this.handleItemDrag();
             });
         },
         filteredItems() {
-            this.scrollTop = 0;
-            if (this.$refs.library) this.$refs.library.scrollTop = 0;
             this.$nextTick(() => {
                 this.handleItemDrag();
             });
@@ -185,11 +195,15 @@ export default {
                 this.viewportHeight = this.$refs.library.clientHeight;
             }
         },
+        resetVirtualScroll() {
+            this.scrollTop = 0;
+            if (this.$refs.library) this.$refs.library.scrollTop = 0;
+        },
         handleScroll(event) {
             if (this.scrollFrame) return;
-            const nextScrollTop = event.currentTarget.scrollTop;
+            const scrollElement = event.currentTarget;
             this.scrollFrame = requestAnimationFrame(() => {
-                this.scrollTop = nextScrollTop;
+                this.scrollTop = scrollElement.scrollTop;
                 this.scrollFrame = null;
             });
         },
