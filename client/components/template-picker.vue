@@ -106,7 +106,7 @@
                         <button class="lpButton" @click="onSelect(template)">{{ $t('library.templatePickerSelectButton') }}</button>
                     </div>
                 </div>
-                <a class="lpHref lpTemplatePickerBlank" @click="onDismiss">{{ $t('library.templatePickerBlankLink') }}</a>
+                <a class="lpHref lpTemplatePickerBlank" role="button" tabindex="0" @click="onDismiss" @keydown.enter="onDismiss" @keydown.space.prevent="onDismiss">{{ $t('library.templatePickerBlankLink') }}</a>
             </div>
         </div>
     </teleport>

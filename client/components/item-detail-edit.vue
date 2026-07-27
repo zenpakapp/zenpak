@@ -126,7 +126,7 @@
         </form>
 
         <div class="itemDetailEditFooter">
-            <a class="lpHref close" @click="$emit('close')">{{ $t('item.editButtonCancel') }}</a>
+            <a class="lpHref close" role="button" tabindex="0" @click="$emit('close')" @keydown.enter="$emit('close')" @keydown.space.prevent="$emit('close')">{{ $t('item.editButtonCancel') }}</a>
             <button class="lpButton" @click="saveEdit">{{ $t('item.editButtonSave') }}</button>
         </div>
     </div>

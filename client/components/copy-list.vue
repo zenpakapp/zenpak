@@ -25,7 +25,7 @@
                 <b>Note:</b> {{ $t('misc.copyingWarning') }}
             </p>
             <div class="lpModalActions">
-                <a class="lpButton close" @click="shown = false">{{ $t('misc.cancel') }}</a>
+                <a class="lpButton close" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('misc.cancel') }}</a>
                 <a id="copyConfirm" class="lpButton" @click="copyList">{{ $t('misc.copyList') }}</a>
             </div>
         </div>

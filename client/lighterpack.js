@@ -7,6 +7,7 @@ import { registerAppEventHandlers } from './services/app-events';
 import { setRouter, redirect } from './services/navigation';
 import { showGlobalAlert } from './services/user-feedback';
 import { registerFocusDirectives } from './utils/focus';
+import { initGlobalShortcuts } from './services/shortcuts';
 import store from './store/store';
 import { i18n } from './i18n';
 
@@ -64,6 +65,7 @@ var initLighterPack = function () {
     app.use(store);
     app.use(i18n);
     registerFocusDirectives(app);
+    initGlobalShortcuts();
 
     router.isReady().then(() => {
         window.LighterPack = app.mount('#lp');

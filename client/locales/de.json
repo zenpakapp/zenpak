@@ -580,7 +580,7 @@
     "compareTags": "Tags",
     "compareWeight": "Gewicht",
     "comparePrice": "Preis",
-    "compareUsedInLists": "Verwendet in Listen",
+    "compareUsedInLists": "Verwendet in…",
     "compareTitle": "{itemLabel} vergleichen",
     "compareItemCountOne": "{count} Gegenstand",
     "compareItemCountOther": "{count} Gegenstände",
@@ -770,5 +770,10 @@
     "csvMerged": "Import abgeschlossen: {merged} zusammengeführt, {added} neu — angezeigt in {unit}.",
     "listAdded": "Liste kopiert: {count} Gegenstände zur Ausrüstung hinzugefügt — angezeigt in {unit}.",
     "listMerged": "Liste kopiert: {merged} übereinstimmend, {added} neu — angezeigt in {unit}."
+  },
+  "shortcuts": {
+    "title": "Tastaturkürzel",
+    "showHelp": "Tastaturkürzel anzeigen",
+    "newItem": "Neuen Artikel hinzufügen"
   }
 }

@@ -580,7 +580,7 @@
     "compareTags": "Tags",
     "compareWeight": "Weight",
     "comparePrice": "Price",
-    "compareUsedInLists": "Used in lists",
+    "compareUsedInLists": "Used in…",
     "compareTitle": "Compare {itemLabel}",
     "compareItemCountOne": "{count} item",
     "compareItemCountOther": "{count} items",
@@ -770,5 +770,10 @@
     "csvMerged": "Import complete: {merged} merged, {added} new — displayed in {unit}.",
     "listAdded": "List copied: {count} items added to your gear library — displayed in {unit}.",
     "listMerged": "List copied: {merged} matched, {added} new — displayed in {unit}."
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "showHelp": "Show keyboard shortcuts",
+    "newItem": "Add new item"
   }
 }

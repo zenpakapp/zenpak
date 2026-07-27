@@ -89,11 +89,11 @@
         </div>
 
         <div class="itemDetailFooter">
-            <a v-if="category" class="lpButton lpButtonGhost itemDetailRemove" @click="removeFromList">
+            <a v-if="category" class="lpButton lpButtonGhost itemDetailRemove" role="button" tabindex="0" @click="removeFromList" @keydown.enter="removeFromList" @keydown.space.prevent="removeFromList">
                 {{ $t('item.viewButtonRemoveFromList') }}
             </a>
             <item-add-to-list v-else :item="item" @added="$emit('close')" />
-            <a class="lpButton lpButtonGhost itemDetailDelete" @click="deleteGear">
+            <a class="lpButton lpButtonGhost itemDetailDelete" role="button" tabindex="0" @click="deleteGear" @keydown.enter="deleteGear" @keydown.space.prevent="deleteGear">
                 {{ $t('item.viewButtonDelete') }}
             </a>
             <button class="lpButton lpButtonGhost itemDetailDuplicate" @click="$emit('duplicate')">

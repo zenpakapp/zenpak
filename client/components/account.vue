@@ -45,8 +45,8 @@
                         <spinner v-if="saving" />
                     </button>
                     <div class="accountActionsRight">
-                        <a class="accountCancelLink" @click="shown = false">{{ $t('acct.cancel') }}</a>
-                        <a class="accountDangerLink" @click="showDeleteAccount">{{ $t('acct.deleteAccount') }}</a>
+                        <a class="accountCancelLink" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('acct.cancel') }}</a>
+                        <a class="accountDangerLink" role="button" tabindex="0" @click="showDeleteAccount" @keydown.enter="showDeleteAccount" @keydown.space.prevent="showDeleteAccount">{{ $t('acct.deleteAccount') }}</a>
                     </div>
                 </div>
             </form>
@@ -68,7 +68,7 @@
                     <p class="accountRestoreConfirmText">{{ $t('acct.restoreWarning') }}</p>
                     <div class="accountRestoreConfirmActions">
                         <button class="lpButton lpButtonDanger" @click="confirmRestore">{{ $t('acct.yesRestore') }}</button>
-                        <a class="accountCancelLink" @click="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
+                        <a class="accountCancelLink" role="button" tabindex="0" @click="restoreConfirm = false; restoreFile = null" @keydown.enter="restoreConfirm = false; restoreFile = null" @keydown.space.prevent="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
                     </div>
                 </div>
                 <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />

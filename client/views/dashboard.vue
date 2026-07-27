@@ -128,6 +128,7 @@
         <itemDetail />
         <gearPicker />
         <help />
+        <shortcuts-help />
         <account />
         <accountDelete />
         <speedbump />
@@ -164,6 +165,7 @@ import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
 import guestSettings from '../components/guest-settings.vue';
+import shortcutsHelp from '../components/shortcuts-help.vue';
 
 export default {
     name: 'Dashboard',
@@ -193,6 +195,7 @@ export default {
         profileInsights,
         upgradePrompt,
         notifications,
+        shortcutsHelp,
     },
     data() {
         return {

@@ -23,7 +23,7 @@
 
             <div class="lpButtons">
                 <input type="submit" :value="$t('acct.permanentlyDelete')" :class="{'lpButton': true, 'lpButtonDisabled': !isConfirmationComplete}">
-                <a class="lpHref" @click="shown = false">{{ $t('acct.cancel') }}</a>
+                <a class="lpHref" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('acct.cancel') }}</a>
             </div>
         </form>
     </modal>
