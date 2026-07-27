@@ -166,6 +166,7 @@ import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
 import guestSettings from '../components/guest-settings.vue';
 import shortcutsHelp from '../components/shortcuts-help.vue';
+import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 
 export default {
     name: 'Dashboard',
@@ -289,6 +290,7 @@ export default {
     created() {
         this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
+        registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
 
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
@@ -318,6 +320,7 @@ export default {
         }
     },
     beforeUnmount() {
+        unregisterShortcut('s');
         if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
         if (this.sidebarMediaQuery) {
             this.sidebarMediaQuery.removeEventListener('change', this.handleSidebarBreakpoint);

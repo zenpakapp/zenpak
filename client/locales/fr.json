@@ -774,6 +774,7 @@
   "shortcuts": {
     "title": "Raccourcis clavier",
     "showHelp": "Afficher les raccourcis",
-    "newItem": "Ajouter un article"
+    "newItem": "Ajouter un article",
+    "toggleSidebar": "Afficher/masquer la barre latérale"
   }
 }

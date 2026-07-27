@@ -774,6 +774,7 @@
   "shortcuts": {
     "title": "Tastaturkürzel",
     "showHelp": "Tastaturkürzel anzeigen",
-    "newItem": "Neuen Artikel hinzufügen"
+    "newItem": "Neuen Artikel hinzufügen",
+    "toggleSidebar": "Seitenleiste umschalten"
   }
 }

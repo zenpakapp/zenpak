@@ -774,6 +774,7 @@
   "shortcuts": {
     "title": "Atajos de teclado",
     "showHelp": "Mostrar atajos de teclado",
-    "newItem": "Agregar nuevo artículo"
+    "newItem": "Agregar nuevo artículo",
+    "toggleSidebar": "Alternar barra lateral"
   }
 }

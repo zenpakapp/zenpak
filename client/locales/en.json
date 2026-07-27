@@ -774,6 +774,7 @@
   "shortcuts": {
     "title": "Keyboard shortcuts",
     "showHelp": "Show keyboard shortcuts",
-    "newItem": "Add new item"
+    "newItem": "Add new item",
+    "toggleSidebar": "Toggle sidebar"
   }
 }
