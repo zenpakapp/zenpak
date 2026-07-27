@@ -23,7 +23,7 @@ test('closes the sidebar when the editor crosses into the mobile layout', async 
     await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
 });
 
-for (const width of [320, 375, 500, 768]) {
+for (const width of [320, 375, 500, 640, 768]) {
     test(`keeps the list editor usable at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 812 });
         const library = createEditorLibrary(12, 4);
@@ -87,7 +87,9 @@ for (const width of [320, 375, 500, 768]) {
                 actionsCenter: Math.round(actions.top + actions.height / 2),
                 actionsRight: Math.round(actions.right),
                 weightLeft: Math.round(weight.left),
+                weightRight: Math.round(weight.right),
                 weightCenter: Math.round(weight.top + weight.height / 2),
+                qtyLeft: Math.round(qty.left),
                 qtyCenter: Math.round(qty.top + qty.height / 2),
                 nameCenter: Math.round(name.top + name.height / 2),
                 chartWidth: Math.round(chart.width),
@@ -109,6 +111,11 @@ for (const width of [320, 375, 500, 768]) {
         expect(layout.editVisibility, JSON.stringify(layout)).toBe('visible');
         expect(Math.abs(layout.chartWidth - layout.chartHeight)).toBeLessThanOrEqual(1);
         await expect(page.locator('.lpItem .lpRemove').first()).toBeVisible();
+
+        if (width === 640) {
+            expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);
+            expect(layout.weightRight).toBeLessThanOrEqual(layout.qtyLeft);
+        }
 
         if (width <= 500) {
             expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.nameBottom);

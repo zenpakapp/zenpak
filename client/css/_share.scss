@@ -188,7 +188,7 @@
         max-width: 100%;
     }
 
-    .lpItems {
+    .lpShare .lpItems {
         position: relative;
 
         .lpWeightCell {
@@ -216,25 +216,11 @@
         }
     }
 
-    .lpItem {
+    .lpShare .lpItem {
         align-items: baseline;
         flex-flow: row wrap;
         justify-content: flex-end;
         padding: 3px 0;
-
-        .lpShowImages &.lpItemHasImage {
-            min-height: 90px;
-            padding-left: 100px;
-            position: relative;
-
-            .lpImageCell {
-                height: 90px;
-                left: 0;
-                position: absolute;
-                top: 0;
-                width: 90px;
-            }
-        }
 
         .lpImageCell {
             flex-basis: 0;
@@ -284,6 +270,20 @@
             i:not(.lpActive) {
                 display: none;
             }
+        }
+    }
+
+    .lpShare .lpShowImages .lpItem.lpItemHasImage {
+        min-height: 90px;
+        padding-left: 100px;
+        position: relative;
+
+        .lpImageCell {
+            height: 90px;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 90px;
         }
     }
 
