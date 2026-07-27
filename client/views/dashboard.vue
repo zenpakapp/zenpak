@@ -322,8 +322,10 @@ export default {
     },
     methods: {
         handleSidebarBreakpoint(event) {
-            if (event.matches && this.library && this.library.showSidebar) {
+            if (event.matches) {
                 this.$store.commit('setSidebarOpen', false);
+            } else {
+                this.$store.commit('setSidebarOpen', true);
             }
         },
         toggleSidebar() {
