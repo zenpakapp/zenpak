@@ -2,7 +2,7 @@
 const { ObjectId } = require('mongodb');
 const db = require('./db.js');
 
-async function createNotification({ userId, type, actorUsername, listName }) {
+async function createNotification({ userId, type, actorUsername, actorTier, listName }) {
     try {
         const user = await db.users.findOne({ _id: new ObjectId(userId) });
         if (!user) return;
@@ -13,6 +13,7 @@ async function createNotification({ userId, type, actorUsername, listName }) {
             userId: new ObjectId(userId),
             type,
             actorUsername,
+            actorTier: actorTier || null,
             listName: listName || null,
             read: false,
             createdAt: new Date(),

@@ -210,9 +210,15 @@ export default {
                 // silent
             }
         },
+        tierLabel(tier) {
+            if (tier === 'creator') return ' ✦ Wayfarer';
+            if (tier === 'supporter') return ' · Kin';
+            return '';
+        },
         formatText(n) {
-            if (n.type === 'follow') return `${n.actorUsername} started following you`;
-            if (n.type === 'copy') return `${n.actorUsername} copied your list "${n.listName}"`;
+            const actor = n.actorUsername + this.tierLabel(n.actorTier);
+            if (n.type === 'follow') return `${actor} started following you`;
+            if (n.type === 'copy') return `${actor} copied your list "${n.listName}"`;
             return '';
         },
         async updatePref(type, value) {

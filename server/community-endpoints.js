@@ -109,6 +109,7 @@ router.post('/follow/:username', (req, res) => {
                 userId: target._id,
                 type: 'follow',
                 actorUsername: user.username,
+                actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
             });
 
             return res.json({ following: true, mode });
@@ -339,6 +340,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                     userId: owner._id,
                     type: 'copy',
                     actorUsername: user.username,
+                    actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
                     listName: sourceList.name,
                 });
             }
