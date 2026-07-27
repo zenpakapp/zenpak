@@ -7,6 +7,96 @@ test.use({
     hasTouch: true,
 });
 
+test('adds an item with details and discards the draft on cancel', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    const rows = page.locator('.lpItem[data-item-id]');
+    await expect(rows).toHaveCount(4);
+    await page.locator('.lpAddItemWithDetails').click();
+    await expect(page.locator('#itemDetailDialog')).toBeVisible();
+    await expect(page.locator('#itemDetailDialog .itemDetailField').filter({ hasText: 'Name' }).locator('input')).toBeFocused();
+    await expect(rows).toHaveCount(5);
+
+    await page.locator('#itemDetailDialog .itemDetailEditFooter .close').click();
+    await expect(page.locator('#itemDetailDialog')).toBeHidden();
+    await expect(rows).toHaveCount(4);
+});
+
+test('saves an item created with the detailed editor', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await page.locator('.lpAddItemWithDetails').click();
+    const dialog = page.locator('#itemDetailDialog');
+    await dialog.locator('.itemDetailField').filter({ hasText: 'Name' }).locator('input').fill('Detailed stove');
+    await dialog.locator('.itemDetailField').filter({ hasText: 'Weight' }).locator('input').fill('320');
+    await dialog.locator('.itemDetailEditFooter .lpButton').click();
+
+    await expect(page.locator('.lpItem .lpName').last()).toHaveValue('Detailed stove');
+    await expect(page.locator('.lpItem .lpWeight').last()).toHaveValue('320');
+    await dialog.locator('.itemDetailClose').click();
+    await expect(page.locator('.lpItem[data-item-id]')).toHaveCount(5);
+});
+
+test('opens the detailed editor with the inline name on Control+Enter', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await page.locator('.lpAddItem').click();
+    const input = page.locator('.lpAddItemInput');
+    await expect(input).toHaveAttribute('aria-keyshortcuts', 'Meta+Enter Control+Enter');
+    await input.fill('Shortcut stove');
+    await input.press('Control+Enter');
+
+    const dialog = page.locator('#itemDetailDialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator('.itemDetailField').filter({ hasText: 'Name' }).locator('input')).toHaveValue('Shortcut stove');
+    await expect(dialog.locator('.itemDetailField').filter({ hasText: 'Description' }).locator('textarea')).toBeFocused();
+    await expect(page.locator('.lpAddItemInput')).toBeHidden();
+    await expect(page.locator('.lpSuggestions')).toBeHidden();
+});
+
+test('keeps quick add and existing-item cancellation unchanged', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await page.locator('.lpAddItem').click();
+    await page.locator('.lpAddItemInput').fill('Quick stove');
+    await page.locator('.lpAddItemInput').press('Enter');
+    await expect(page.locator('.lpItem .lpName').last()).toHaveValue('Quick stove');
+    await expect(page.locator('#itemDetailDialog')).toBeHidden();
+
+    const rows = page.locator('.lpItem[data-item-id]');
+    await expect(rows).toHaveCount(5);
+    await rows.first().locator('.lpEdit').click();
+    await expect(page.locator('#itemDetailDialog')).toBeVisible();
+    await page.locator('#itemDetailDialog .itemDetailEditFooter .close').click();
+    await expect(page.locator('#itemDetailDialog')).toBeHidden();
+    await expect(rows).toHaveCount(5);
+    await expect(rows.first().locator('.lpName')).toHaveValue('Fixture item 001');
+});
+
+test('keeps existing-item suggestions on the quick-add path', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await page.locator('.lpAddItem').click();
+    await page.locator('.lpAddItemInput').fill('Fixture item 005');
+    const suggestion = page.locator('.lpSuggestion').filter({ hasText: 'Fixture item 005' });
+    await expect(suggestion).toBeVisible();
+    await suggestion.click();
+
+    await expect(page.locator('.lpItem[data-item-id]')).toHaveCount(5);
+    await expect(page.locator('.lpItem .lpName').last()).toHaveValue('Fixture item 005');
+    await expect(page.locator('#itemDetailDialog')).toBeHidden();
+});
+
 test('closes the sidebar when the editor crosses into the mobile layout', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 812 });
     await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
@@ -151,6 +241,8 @@ for (const width of [320, 375, 500, 640, 768]) {
         expect(layout.editVisibility, JSON.stringify(layout)).toBe('visible');
         expect(Math.abs(layout.chartWidth - layout.chartHeight)).toBeLessThanOrEqual(1);
         await expect(page.locator('.lpItem .lpRemove').first()).toBeVisible();
+        await expect(page.locator('.lpAddItem')).toBeVisible();
+        await expect(page.locator('.lpAddItemWithDetails')).toBeVisible();
 
         if (width === 640) {
             expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);

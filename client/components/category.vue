@@ -33,6 +33,31 @@
     position: relative;
 }
 
+.lpAddItemActions {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 20px;
+
+    .lpAddItem {
+        margin-left: 0;
+    }
+}
+
+.lpAddItemWithDetails {
+    align-items: center;
+    display: inline-flex;
+    font-size: $fontSize-xs;
+    min-height: 24px;
+    opacity: 0.72;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+    }
+}
+
 .lpSuggestions {
     background: $color-surface;
     border: 1px solid $color-border;
@@ -92,13 +117,19 @@
                         type="text"
                         class="lpSilent lpAddItemInput"
                         :placeholder="$t('misc.itemNamePlaceholder')"
+                        aria-keyshortcuts="Meta+Enter Control+Enter"
                         @input="onNewItemInput"
-                        @keydown.enter.prevent="createInlineItem('description')"
+                        @keydown.enter.exact.prevent="createInlineItem('description')"
+                        @keydown.meta.enter.prevent="createAndOpenEditor"
+                        @keydown.ctrl.enter.prevent="createAndOpenEditor"
                         @keydown.tab.exact.prevent="createInlineItem('description')"
                         @keydown.escape="dismissSuggestions"
                         @blur="dismissSuggestions"
                     />
-                    <a v-else class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
+                    <span v-else class="lpAddItemActions">
+                        <a class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
+                        <a class="lpAdd lpAddItemWithDetails" @click="createAndOpenEditor">{{ $t('misc.addItemWithDetails') }}</a>
+                    </span>
                     <ul v-if="showSuggestions" class="lpSuggestions">
                         <li
                             v-for="item in suggestions"
@@ -130,6 +161,7 @@
 
 <script>
 import item from './item.vue';
+import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { useUtils } from '../composables/useUtils.js';
 import { suggestItems } from '../composables/useGearMatcher.js';
@@ -205,6 +237,33 @@ export default {
                 if (field) {
                     field.focus();
                 }
+            });
+        },
+        createAndOpenEditor() {
+            const name = this.newItemName.trim();
+
+            this.$store.commit('newItem', {
+                category: this.category,
+                _isNew: true,
+                name,
+            });
+
+            const items = this.$store.state.library.items;
+            const newItem = items[items.length - 1];
+            const categoryItem = this.category.getCategoryItemById(newItem.id);
+
+            this.newItemName = '';
+            this.suggestions = [];
+            this.showSuggestions = false;
+            this.showInput = false;
+
+            openDialog('itemDetail', {
+                item: newItem,
+                categoryItem,
+                category: this.category,
+                startEditing: true,
+                discardOnCancel: true,
+                initialFocus: name ? 'description' : 'name',
             });
         },
         onNewItemInput(evt) {

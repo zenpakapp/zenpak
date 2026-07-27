@@ -421,6 +421,7 @@
     "categoryName": "Category name",
     "deleteCategory": "Delete category",
     "addItem": "Add new item",
+    "addItemWithDetails": "Add with details",
     "settings": "Settings",
     "notifications": "Notifications",
     "markAllRead": "Mark all read",

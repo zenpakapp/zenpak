@@ -20,12 +20,12 @@
         <form class="itemDetailEditForm" @submit.prevent="saveEdit">
             <div class="itemDetailField">
                 <label>{{ $t('item.editLabelName') }}</label>
-                <input v-model="editName" type="text" :placeholder="$t('item.editPlaceholderName')" autofocus>
+                <input ref="name" v-model="editName" type="text" :placeholder="$t('item.editPlaceholderName')" :autofocus="initialFocus === 'name'">
             </div>
 
             <div class="itemDetailField">
                 <label>{{ $t('item.editLabelDescription') }}</label>
-                <textarea v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')"></textarea>
+                <textarea ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'"></textarea>
             </div>
 
             <div class="itemDetailField">
@@ -153,6 +153,7 @@ export default {
         item: { type: Object, required: true },
         categoryItem: { type: Object, default: null },
         category: { type: Object, default: null },
+        initialFocus: { type: String, default: 'name' },
     },
     emits: ['close', 'saved'],
     data() {
@@ -209,7 +210,14 @@ export default {
         this.editImageUrl = this.item.imageUrl || '';
         this.editTags = [...(this.item.tags || [])];
     },
+    mounted() {
+        this.focusInitialField();
+    },
     methods: {
+        focusInitialField() {
+            const field = this.$refs[this.initialFocus] || this.$refs.name;
+            if (field) field.focus();
+        },
         toggleStar() {
             const starred = !this.localStarred;
             this.$store.commit('updateItem', { ...this.item, starred });

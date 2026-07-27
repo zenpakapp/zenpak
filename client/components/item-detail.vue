@@ -37,6 +37,7 @@
                 :item="item"
                 :category-item="categoryItem"
                 :category="category"
+                :initial-focus="initialFocus"
                 @close="close"
                 @saved="onSaved"
             />
@@ -60,16 +61,27 @@ export default {
             item: null,
             categoryItem: null,
             category: null,
+            discardOnCancel: false,
+            initialFocus: 'name',
         };
     },
     mounted() {
-        registerDialogOpener('itemDetail', ({ item, categoryItem, category, startEditing }) => {
+        registerDialogOpener('itemDetail', ({
+            item,
+            categoryItem,
+            category,
+            startEditing,
+            discardOnCancel,
+            initialFocus,
+        }) => {
             const library = this.$store.state.library;
             const liveCategory = category ? library.getCategoryById(category.id) : null;
             const liveCategoryItem = liveCategory && item ? liveCategory.getCategoryItemById(item.id) : null;
             this.item = { ...item };
             this.categoryItem = liveCategoryItem ? { ...liveCategoryItem } : (categoryItem ? { ...categoryItem } : null);
             this.category = liveCategory || category || null;
+            this.discardOnCancel = !!discardOnCancel;
+            this.initialFocus = initialFocus || 'name';
             this.shown = true;
             this.editing = !!startEditing;
         });
@@ -79,6 +91,11 @@ export default {
     },
     methods: {
         close() {
+            if (this.discardOnCancel && this.item) {
+                const liveItem = this.$store.state.library.getItemById(this.item.id);
+                if (liveItem) this.$store.commit('removeItem', liveItem);
+            }
+            this.discardOnCancel = false;
             this.shown = false;
             this.editing = false;
         },
@@ -86,6 +103,7 @@ export default {
             this.editing = true;
         },
         onSaved({ item, categoryItem }) {
+            this.discardOnCancel = false;
             this.item = { ...item };
             if (categoryItem) this.categoryItem = { ...categoryItem };
             this.editing = false;

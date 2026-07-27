@@ -421,6 +421,7 @@
     "categoryName": "Nombre de categoría",
     "deleteCategory": "Eliminar categoría",
     "addItem": "Añadir nuevo artículo",
+    "addItemWithDetails": "Añadir con detalles",
     "settings": "Configuración",
     "notifications": "Notificaciones",
     "markAllRead": "Marcar todo como leído",
