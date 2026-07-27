@@ -13,6 +13,8 @@ test('closes the sidebar when the editor crosses into the mobile layout', async 
     await page.goto(testRoot);
 
     await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
+    const desktopChart = await page.locator('.lpChart').boundingBox();
+    expect(Math.abs(desktopChart.width - desktopChart.height)).toBeLessThanOrEqual(1);
     await page.setViewportSize({ width: 500, height: 812 });
     await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
     await expect(page.locator('#hamburger')).toBeVisible();
@@ -105,6 +107,7 @@ for (const width of [320, 375, 500, 768]) {
         expect(layout.itemLeft).toBeGreaterThanOrEqual(0);
         expect(layout.itemRight).toBeLessThanOrEqual(layout.viewportWidth);
         expect(layout.editVisibility, JSON.stringify(layout)).toBe('visible');
+        expect(Math.abs(layout.chartWidth - layout.chartHeight)).toBeLessThanOrEqual(1);
         await expect(page.locator('.lpItem .lpRemove').first()).toBeVisible();
 
         if (width <= 500) {
@@ -112,7 +115,6 @@ for (const width of [320, 375, 500, 768]) {
             expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);
             expect(Math.abs(layout.actionsCenter - layout.weightCenter)).toBeLessThanOrEqual(1);
             expect(Math.abs(layout.nameCenter - layout.qtyCenter)).toBeLessThanOrEqual(1);
-            expect(Math.abs(layout.chartWidth - layout.chartHeight)).toBeLessThanOrEqual(1);
         }
 
         await page.locator('#hamburger').click();
