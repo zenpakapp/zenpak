@@ -23,6 +23,19 @@ test('closes the sidebar when the editor crosses into the mobile layout', async 
     await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
 });
 
+test('closes the mobile sidebar when opening the item library', async ({ page }) => {
+    await page.setViewportSize({ width: 500, height: 812 });
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+
+    await page.locator('#hamburger').click();
+    await expect(page.locator('#main')).toHaveClass(/lpHasSidebar/);
+    await page.locator('.lpGearRoomBtn').click();
+
+    await expect(page.locator('.lpGearRoom')).toBeVisible();
+    await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
+});
+
 for (const width of [320, 375, 500, 640, 768]) {
     test(`keeps the list editor usable at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 812 });

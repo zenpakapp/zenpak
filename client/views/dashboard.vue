@@ -27,7 +27,7 @@
         </div>
     </div>
     <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
-        <sidebar v-if="sidebarReady" @open-gear-room="$store.commit('setGearRoomOpen', true)" />
+        <sidebar v-if="sidebarReady" @open-gear-room="openGearRoom" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
             <div id="header" class="clearfix">
@@ -321,6 +321,12 @@ export default {
         }
     },
     methods: {
+        openGearRoom() {
+            this.$store.commit('setGearRoomOpen', true);
+            if (this.sidebarMediaQuery && this.sidebarMediaQuery.matches) {
+                this.$store.commit('setSidebarOpen', false);
+            }
+        },
         handleSidebarBreakpoint(event) {
             if (event.matches) {
                 this._sidebarWasOpen = this.library && this.library.showSidebar;
