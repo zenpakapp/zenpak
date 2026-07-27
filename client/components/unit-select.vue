@@ -146,7 +146,7 @@ export default {
             unbindWindowListeners(this.closeBindings);
         },
         closeOnEscape(evt) {
-            if (evt.keyCode === 27) {
+            if (evt.key === 'Escape') {
                 this.close();
             }
         },

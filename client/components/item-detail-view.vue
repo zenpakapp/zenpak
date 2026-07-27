@@ -5,7 +5,7 @@
 <template>
     <div class="itemDetailView">
         <item-detail-header
-            :name="item.name || 'Unnamed item'"
+            :name="item.name || $t('gearroom.unnamedItem')"
             :brand="item.brand || ''"
             :category="item.category || ''"
             :image-key="item.image || ''"
@@ -82,7 +82,7 @@
                         class="itemDetailUsedInBadge"
                         @click="navigateToList(list)"
                     >
-                        {{ list.name || 'Unnamed list' }}
+                        {{ list.name || $t('gearroom.unnamedList') }}
                     </button>
                 </div>
             </div>

@@ -14,11 +14,15 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchType') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderType')"
-                        @focus="showTypeDropdown = true"
-                        @blur="showTypeDropdown = false"
-                        @keydown.enter="applyCategory">
-                    <ul v-if="showTypeDropdown && filteredTypes.length" class="lpBrandSuggestions">
-                        <li v-for="cat in filteredTypes" :key="cat" @mousedown.prevent="selectType(cat)">{{ cat }}</li>
+                        autocomplete="off"
+                        @focus="openDropdown('type')"
+                        @blur="closeDropdown('type')"
+                        @keydown.down.prevent="moveDropdown('type', 1)"
+                        @keydown.up.prevent="moveDropdown('type', -1)"
+                        @keydown.enter.prevent="confirmDropdown('type')"
+                        @keydown.escape="closeDropdown('type')">
+                    <ul v-if="showTypeDropdown && filteredTypes.length" ref="typeDropdown" class="lpBrandSuggestions" role="listbox">
+                        <li v-for="(cat, index) in filteredTypes" :key="cat" :class="{ active: dropdownActiveIndex.type === index }" role="option" :aria-selected="dropdownActiveIndex.type === index" @mousedown.prevent="selectType(cat)">{{ cat }}</li>
                     </ul>
                 </div>
             </div>
@@ -35,11 +39,15 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchBrand') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderBrand')"
-                        @focus="showBrandDropdown = true"
-                        @blur="showBrandDropdown = false"
-                        @keydown.enter="applyBrand">
-                    <ul v-if="showBrandDropdown && filteredBrands.length" class="lpBrandSuggestions">
-                        <li v-for="brand in filteredBrands" :key="brand" @mousedown.prevent="selectBrand(brand)">{{ brand }}</li>
+                        autocomplete="off"
+                        @focus="openDropdown('brand')"
+                        @blur="closeDropdown('brand')"
+                        @keydown.down.prevent="moveDropdown('brand', 1)"
+                        @keydown.up.prevent="moveDropdown('brand', -1)"
+                        @keydown.enter.prevent="confirmDropdown('brand')"
+                        @keydown.escape="closeDropdown('brand')">
+                    <ul v-if="showBrandDropdown && filteredBrands.length" ref="brandDropdown" class="lpBrandSuggestions" role="listbox">
+                        <li v-for="(brand, index) in filteredBrands" :key="brand" :class="{ active: dropdownActiveIndex.brand === index }" role="option" :aria-selected="dropdownActiveIndex.brand === index" @mousedown.prevent="selectBrand(brand)">{{ brand }}</li>
                     </ul>
                 </div>
             </div>
@@ -56,11 +64,15 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchTag') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderTag')"
-                        @focus="showTagDropdown = true"
-                        @blur="showTagDropdown = false"
-                        @keydown.enter="applyTag">
-                    <ul v-if="showTagDropdown && filteredTags.length" class="lpBrandSuggestions">
-                        <li v-for="tag in filteredTags" :key="tag" @mousedown.prevent="selectTag(tag)">{{ tag }}</li>
+                        autocomplete="off"
+                        @focus="openDropdown('tag')"
+                        @blur="closeDropdown('tag')"
+                        @keydown.down.prevent="moveDropdown('tag', 1)"
+                        @keydown.up.prevent="moveDropdown('tag', -1)"
+                        @keydown.enter.prevent="confirmDropdown('tag')"
+                        @keydown.escape="closeDropdown('tag')">
+                    <ul v-if="showTagDropdown && filteredTags.length" ref="tagDropdown" class="lpBrandSuggestions" role="listbox">
+                        <li v-for="(tag, index) in filteredTags" :key="tag" :class="{ active: dropdownActiveIndex.tag === index }" role="option" :aria-selected="dropdownActiveIndex.tag === index" @mousedown.prevent="selectTag(tag)">{{ tag }}</li>
                     </ul>
                 </div>
             </div>
@@ -98,12 +110,15 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchList') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderList')"
-                        @focus="showListDropdown = true; batchListId = ''"
-                        @blur="showListDropdown = false"
-                        @keydown.enter="filteredLists.length ? selectList(filteredLists[0]) : createAndSelectList()">
-                    <ul v-if="showListDropdown" class="lpBrandSuggestions">
-                        <li v-if="showCreateList" class="lpBrandSuggestionsCreate" @mousedown.prevent="createAndSelectList()">{{ $t('gearroom.createList') }} "{{ batchListName }}"</li>
-                        <li v-for="list in filteredLists" :key="list.id" @mousedown.prevent="selectList(list)">{{ list.name }}</li>
+                        autocomplete="off"
+                        @focus="openListDropdown"
+                        @blur="closeDropdown('list')"
+                        @keydown.down.prevent="moveDropdown('list', 1)"
+                        @keydown.up.prevent="moveDropdown('list', -1)"
+                        @keydown.enter.prevent="confirmDropdown('list')"
+                        @keydown.escape="closeDropdown('list')">
+                    <ul v-if="showListDropdown && listDropdownOptions.length" ref="listDropdown" class="lpBrandSuggestions" role="listbox">
+                        <li v-for="(option, index) in listDropdownOptions" :key="option.key" :class="{ active: dropdownActiveIndex.list === index, lpBrandSuggestionsCreate: option.type === 'create' }" role="option" :aria-selected="dropdownActiveIndex.list === index" @mousedown.prevent="selectListOption(option)">{{ option.label }}</li>
                     </ul>
                 </div>
             </div>
@@ -111,10 +126,16 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchListCat') }}</span>
                 <div class="lpBrandInputWrap">
                     <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderChoose')" readonly
-                        @click="showListCatDropdown = !showListCatDropdown"
-                        @blur="showListCatDropdown = false">
-                    <ul v-if="showListCatDropdown && categoriesForSelectedList.length" class="lpBrandSuggestions">
-                        <li v-for="cat in categoriesForSelectedList" :key="cat.id" @mousedown.prevent="selectListCat(cat)">{{ cat.name || $t('gearroom.unnamed') }}</li>
+                        @click="toggleListCatDropdown"
+                        @focus="openDropdown('listCat')"
+                        @blur="closeDropdown('listCat')"
+                        @keydown.down.prevent="moveDropdown('listCat', 1)"
+                        @keydown.up.prevent="moveDropdown('listCat', -1)"
+                        @keydown.enter.prevent="confirmDropdown('listCat')"
+                        @keydown.space.prevent="toggleListCatDropdown"
+                        @keydown.escape="closeDropdown('listCat')">
+                    <ul v-if="showListCatDropdown && categoriesForSelectedList.length" ref="listCatDropdown" class="lpBrandSuggestions" role="listbox">
+                        <li v-for="(cat, index) in categoriesForSelectedList" :key="cat.id" :class="{ active: dropdownActiveIndex.listCat === index }" role="option" :aria-selected="dropdownActiveIndex.listCat === index" @mousedown.prevent="selectListCat(cat)">{{ cat.name || $t('gearroom.unnamed') }}</li>
                     </ul>
                 </div>
             </div>
@@ -195,6 +216,13 @@ export default {
             showListDropdown: false,
             showListCatDropdown: false,
             batchListName: '',
+            dropdownActiveIndex: {
+                type: -1,
+                brand: -1,
+                tag: -1,
+                list: -1,
+                listCat: -1,
+            },
         };
     },
     computed: {
@@ -230,6 +258,25 @@ export default {
             const q = (this.batchListName || '').trim();
             return q && !this.lists.some(l => l.name.toLowerCase() === q.toLowerCase());
         },
+        listDropdownOptions() {
+            const options = [];
+            if (this.showCreateList) {
+                options.push({
+                    key: '__create__',
+                    type: 'create',
+                    label: `${this.$t('gearroom.createList')} "${this.batchListName}"`,
+                });
+            }
+            this.filteredLists.forEach(list => {
+                options.push({
+                    key: list.id,
+                    type: 'list',
+                    label: list.name,
+                    list,
+                });
+            });
+            return options;
+        },
         selectedListName() {
             const list = this.lists.find(l => l.id === this.batchListId);
             return list ? list.name : '';
@@ -251,6 +298,18 @@ export default {
         selected(val) {
             if (val.length === 0) this.activeBatchPanel = null;
         },
+        batchCategory() {
+            this.dropdownActiveIndex.type = -1;
+        },
+        batchBrand() {
+            this.dropdownActiveIndex.brand = -1;
+        },
+        batchTag() {
+            this.dropdownActiveIndex.tag = -1;
+        },
+        batchListName() {
+            this.dropdownActiveIndex.list = -1;
+        },
     },
     methods: {
         togglePanel(panel) {
@@ -260,6 +319,82 @@ export default {
                 const ref = refMap[panel];
                 if (ref) this.$nextTick(() => { this.$refs[ref] && this.$refs[ref].focus(); });
             }
+        },
+        dropdownOptions(kind) {
+            const options = {
+                type: this.filteredTypes,
+                brand: this.filteredBrands,
+                tag: this.filteredTags,
+                list: this.listDropdownOptions,
+                listCat: this.categoriesForSelectedList,
+            };
+            return options[kind] || [];
+        },
+        setDropdownOpen(kind, open) {
+            const map = {
+                type: 'showTypeDropdown',
+                brand: 'showBrandDropdown',
+                tag: 'showTagDropdown',
+                list: 'showListDropdown',
+                listCat: 'showListCatDropdown',
+            };
+            this[map[kind]] = open;
+            if (!open) this.dropdownActiveIndex[kind] = -1;
+        },
+        openDropdown(kind) {
+            this.setDropdownOpen(kind, true);
+        },
+        openListDropdown() {
+            this.batchListId = '';
+            this.openDropdown('list');
+        },
+        closeDropdown(kind) {
+            this.setDropdownOpen(kind, false);
+        },
+        toggleListCatDropdown() {
+            this.setDropdownOpen('listCat', !this.showListCatDropdown);
+        },
+        moveDropdown(kind, dir) {
+            this.openDropdown(kind);
+            const options = this.dropdownOptions(kind);
+            if (!options.length) return;
+            const max = options.length - 1;
+            const current = this.dropdownActiveIndex[kind];
+            let next = current + dir;
+            if (current === -1) next = dir > 0 ? 0 : max;
+            if (next < 0) next = max;
+            if (next > max) next = 0;
+            this.dropdownActiveIndex[kind] = next;
+            this.$nextTick(() => {
+                const list = this.$refs[`${kind}Dropdown`];
+                const active = list?.querySelector('li.active');
+                if (active) active.scrollIntoView({ block: 'nearest' });
+            });
+        },
+        confirmDropdown(kind) {
+            const index = this.dropdownActiveIndex[kind];
+            const options = this.dropdownOptions(kind);
+            if (index >= 0 && options[index]) {
+                this.selectDropdownOption(kind, options[index]);
+                return;
+            }
+            if (kind === 'type') this.applyCategory();
+            if (kind === 'brand') this.applyBrand();
+            if (kind === 'tag') this.applyTag();
+            if (kind === 'list') {
+                if (this.filteredLists.length) this.selectList(this.filteredLists[0]);
+                else this.createAndSelectList();
+            }
+            if (kind === 'listCat' && this.categoriesForSelectedList.length) {
+                this.selectListCat(this.categoriesForSelectedList[0]);
+            }
+        },
+        selectDropdownOption(kind, option) {
+            if (kind === 'type') this.selectType(option);
+            if (kind === 'brand') this.selectBrand(option);
+            if (kind === 'tag') this.selectTag(option);
+            if (kind === 'list') this.selectListOption(option);
+            if (kind === 'listCat') this.selectListCat(option);
         },
         getItemById(id) {
             return this.allItems.find(i => i.id === id) || {};
@@ -280,15 +415,15 @@ export default {
         },
         selectType(cat) {
             this.batchCategory = cat;
-            this.showTypeDropdown = false;
+            this.closeDropdown('type');
         },
         selectBrand(brand) {
             this.batchBrand = brand;
-            this.showBrandDropdown = false;
+            this.closeDropdown('brand');
         },
         selectTag(tag) {
             this.batchTag = tag;
-            this.showTagDropdown = false;
+            this.closeDropdown('tag');
         },
         applyBrand() {
             this.$emit('batch-brand', this.batchBrand.trim());
@@ -311,15 +446,22 @@ export default {
             this.batchListId = list.id;
             this.batchListName = list.name;
             this.batchCategoryId = '';
-            this.showListDropdown = false;
+            this.closeDropdown('list');
+        },
+        selectListOption(option) {
+            if (option.type === 'create') {
+                this.createAndSelectList();
+                return;
+            }
+            this.selectList(option.list);
         },
         createAndSelectList() {
             this.batchListId = '__new__';
-            this.showListDropdown = false;
+            this.closeDropdown('list');
         },
         selectListCat(cat) {
             this.batchCategoryId = cat.id;
-            this.showListCatDropdown = false;
+            this.closeDropdown('listCat');
         },
         applyAddToList() {
             if (!this.batchListId) return;

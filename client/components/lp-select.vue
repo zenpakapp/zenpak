@@ -146,7 +146,7 @@ export default {
             this.close();
         },
         closeOnEscape(evt) {
-            if (evt.keyCode === 27) this.close();
+            if (evt.key === 'Escape') this.close();
         },
         onKeydown(evt) {
             if (evt.key === 'Enter' || evt.key === ' ') {

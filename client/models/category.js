@@ -106,7 +106,7 @@ Category.prototype.load = function (input) {
 
     assignIn(this, input);
 
-    this.categoryItems.forEach((categoryItem, index) => {
+    this.categoryItems.forEach((categoryItem) => {
         delete categoryItem._isNew;
         if (typeof categoryItem.price !== 'undefined') {
             delete categoryItem.price;
@@ -114,10 +114,8 @@ Category.prototype.load = function (input) {
         if (!categoryItem.star) {
             categoryItem.star = 0;
         }
-        if (!this.library.getItemById(categoryItem.itemId)) {
-            this.categoryItems.splice(index, 1);
-        }
     });
+    this.categoryItems = this.categoryItems.filter((categoryItem) => this.library.getItemById(categoryItem.itemId));
 };
 
 module.exports = { Category };

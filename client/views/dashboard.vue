@@ -32,7 +32,7 @@
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
             <div id="header" class="clearfix">
                 <span class="headerItem">
-                    <a id="hamburger" class="lpTransition" @click="toggleSidebar">
+                    <a id="hamburger" class="lpTransition" role="button" tabindex="0" :aria-label="$t('dash.toggleSidebar')" @click="toggleSidebar" @keydown.enter="toggleSidebar" @keydown.space.prevent="toggleSidebar">
                         <span class="lpHamburgerLine" />
                         <span class="lpHamburgerLine" />
                         <span class="lpHamburgerLine" />
@@ -119,7 +119,6 @@
         </div>
 
         <globalAlerts />
-        <speedbump />
         <copyList />
         <importCSV />
         <itemImage />
@@ -131,6 +130,7 @@
         <help />
         <account />
         <accountDelete />
+        <speedbump />
     </div>
 </template>
 

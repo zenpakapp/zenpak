@@ -499,6 +499,7 @@
     "guide": "Wayfarer",
     "register": "S'inscrire",
     "signIn": "Se connecter",
+    "toggleSidebar": "Afficher ou masquer la barre latérale",
     "loadingEditor": "Chargement de votre éditeur…",
     "verificationEmailSent": "E-mail de vérification envoyé ! Consultez votre boîte de réception.",
     "verifyEmailPrompt": "Vérifiez votre e-mail pour partager des listes publiquement.",
@@ -580,6 +581,11 @@
     "compareWeight": "Poids",
     "comparePrice": "Prix",
     "compareUsedInLists": "Utilisé dans les listes",
+    "compareTitle": "Comparer {itemLabel}",
+    "compareItemCountOne": "{count} article",
+    "compareItemCountOther": "{count} articles",
+    "compareUsedInListCountOne": "{count} liste",
+    "compareUsedInListCountOther": "{count} listes",
     "compareClose": "Fermer",
     "placeholderType": "ex : Abri",
     "placeholderBrand": "ex : Patagonia",
@@ -588,6 +594,8 @@
     "placeholderChoose": "— choisir —",
     "apply": "Appliquer",
     "unnamed": "Sans nom",
+    "unnamedItem": "Article sans nom",
+    "unnamedList": "Liste sans nom",
     "createList": "+ Créer"
   },
   "item": {

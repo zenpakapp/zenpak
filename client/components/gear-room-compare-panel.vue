@@ -171,7 +171,7 @@
 <template>
     <div :class="['lpGearRoomComparePanel', { 'lpGearRoomComparePanel--open': open }]">
         <div class="lpGearRoomCompareHeader">
-            <span class="lpGearRoomCompareTitle">{{ $t('gearroom.batchCompare') }} {{ items.length }} items</span>
+            <span class="lpGearRoomCompareTitle">{{ compareTitle }}</span>
             <button class="lpGearRoomCompareClose" @click="$emit('close')">{{ $t('gearroom.compareClose') }}</button>
         </div>
         <div class="lpGearRoomCompareScroll">
@@ -247,7 +247,7 @@
                     <tr>
                         <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareUsedInLists') }}</td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
-                            {{ item._usedInLists }} list{{ item._usedInLists !== 1 ? 's' : '' }}
+                            {{ usedInListsLabel(item._usedInLists) }}
                         </td>
                     </tr>
                 </tbody>
@@ -279,11 +279,23 @@ export default {
             const weights = this.items.map(i => i.weight || 0).filter(w => w > 0);
             return weights.length ? Math.min(...weights) : null;
         },
+        compareTitle() {
+            return this.$t('gearroom.compareTitle', {
+                count: this.items.length,
+                itemLabel: this.itemCountLabel(this.items.length),
+            });
+        },
     },
     methods: {
         displayWeight,
+        itemCountLabel(count) {
+            return this.$t(count === 1 ? 'gearroom.compareItemCountOne' : 'gearroom.compareItemCountOther', { count });
+        },
+        usedInListsLabel(count) {
+            return this.$t(count === 1 ? 'gearroom.compareUsedInListCountOne' : 'gearroom.compareUsedInListCountOther', { count });
+        },
         itemDisplayName(item) {
-            return [item.brand, item.name].filter(Boolean).join(' ');
+            return [item.brand, item.name].filter(Boolean).join(' ') || this.$t('gearroom.unnamedItem');
         },
         itemThumb(item) {
             if (item.image) return `https://i.imgur.com/${item.image}s.jpg`;

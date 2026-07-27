@@ -48,8 +48,11 @@ module.exports = {
         state.library.updateItem(copy);
     },
     removeItem(state, item) {
-        state.library.removeItem(item.id);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        if (state.library.removeItem(item.id)) {
+            state.library.lists.forEach(list => list.calculateTotals());
+            state.itemVersion += 1;
+            state.categoryItemVersion += 1;
+        }
     },
     removeCategory(state, category) {
         const removed = state.library.removeCategory(category.id);
@@ -191,6 +194,10 @@ module.exports = {
                 if (!removeCI) continue;
                 const keepCI = category.getCategoryItemById(keepId);
                 if (keepCI) {
+                    keepCI.qty = (Number(keepCI.qty) || 0) + (Number(removeCI.qty) || 0);
+                    keepCI.worn = keepCI.worn || removeCI.worn;
+                    keepCI.consumable = keepCI.consumable || removeCI.consumable;
+                    keepCI.star = Math.max(Number(keepCI.star) || 0, Number(removeCI.star) || 0);
                     category.removeItem(removeId);
                 } else {
                     removeCI.itemId = keepId;
@@ -202,7 +209,8 @@ module.exports = {
             state.library.items.splice(state.library.items.indexOf(removeItem), 1);
             delete state.library.idMap[removeId];
         }
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        state.library.lists.forEach(list => list.calculateTotals());
+        state.itemVersion += 1;
     },
     updateItemLink(state, args) {
         const item = state.library.getItemById(args.item.id);

@@ -499,6 +499,7 @@
     "guide": "Wayfarer",
     "register": "Registrarse",
     "signIn": "Iniciar sesión",
+    "toggleSidebar": "Mostrar u ocultar la barra lateral",
     "loadingEditor": "Cargando tu editor…",
     "verificationEmailSent": "¡Correo de verificación enviado! Revisa tu bandeja de entrada.",
     "verifyEmailPrompt": "Verifica tu correo para compartir listas públicamente.",
@@ -580,6 +581,11 @@
     "compareWeight": "Peso",
     "comparePrice": "Precio",
     "compareUsedInLists": "Usado en listas",
+    "compareTitle": "Comparar {itemLabel}",
+    "compareItemCountOne": "{count} artículo",
+    "compareItemCountOther": "{count} artículos",
+    "compareUsedInListCountOne": "{count} lista",
+    "compareUsedInListCountOther": "{count} listas",
     "compareClose": "Cerrar",
     "placeholderType": "ej: Shelter",
     "placeholderBrand": "ej: Patagonia",
@@ -588,6 +594,8 @@
     "placeholderChoose": "— elegir —",
     "apply": "Aplicar",
     "unnamed": "Sin nombre",
+    "unnamedItem": "Artículo sin nombre",
+    "unnamedList": "Lista sin nombre",
     "createList": "+ Crear"
   },
   "item": {

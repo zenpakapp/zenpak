@@ -5,6 +5,20 @@ function normalizeQuantity(value) {
     return Number.isNaN(quantity) ? 1 : quantity;
 }
 
+function createImportedItem(library, category, row) {
+    const item = library.newItem({ category, _isNew: false });
+    item.name = row.name;
+    item.description = row.description;
+    item.url = row.url;
+    item.price = row.price;
+    if (row.category) item.category = row.category;
+    if (row.brand) item.brand = row.brand;
+    if (row.imageUrl) item.imageUrl = row.imageUrl;
+    item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
+    item.authorUnit = library.itemUnit || row.unit;
+    return item;
+}
+
 module.exports = {
     importCSV(state, importData) {
         const list = state.library.newList({});
@@ -39,7 +53,7 @@ module.exports = {
 
             const decision = row._match ? row._match.decision : 'new';
 
-            if (decision === 'merge' && row._match.item) {
+            if (decision === 'merge' && row._match && row._match.item) {
                 item = state.library.getItemById(row._match.item.id);
                 if (item) {
                     if (row.category && !item.category) item.category = row.category;
@@ -47,18 +61,12 @@ module.exports = {
                     category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
                     mergedCount++;
                 } else {
-                    item = state.library.newItem({ category, _isNew: false });
-                    item.name = row.name;
-                    item.description = row.description;
-                    item.url = row.url;
-                    item.price = row.price;
-                    if (row.category) item.category = row.category;
-                    if (row.brand) item.brand = row.brand;
-                    if (row.imageUrl) item.imageUrl = row.imageUrl;
-                    item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
-                    item.authorUnit = state.library.itemUnit || row.unit;
+                    item = createImportedItem(state.library, category, row);
                     newCount++;
                 }
+            } else if (row._match) {
+                item = createImportedItem(state.library, category, row);
+                newCount++;
             } else {
                 const rowNameLower = (row.name || '').toLowerCase().trim();
                 const existing = rowNameLower
@@ -69,16 +77,7 @@ module.exports = {
                     category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
                     mergedCount++;
                 } else {
-                    item = state.library.newItem({ category, _isNew: false });
-                    item.name = row.name;
-                    item.description = row.description;
-                    item.url = row.url;
-                    item.price = row.price;
-                    if (row.category) item.category = row.category;
-                    if (row.brand) item.brand = row.brand;
-                    if (row.imageUrl) item.imageUrl = row.imageUrl;
-                    item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
-                    item.authorUnit = state.library.itemUnit || row.unit;
+                    item = createImportedItem(state.library, category, row);
                     newCount++;
                 }
             }

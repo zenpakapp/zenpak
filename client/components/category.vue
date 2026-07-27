@@ -98,7 +98,7 @@
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
                 <span class="lpWeightCell">{{ $t('public.weight') }}</span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
-                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" :title="$t('misc.deleteCategory')" @click="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
+                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" role="button" tabindex="0" :title="$t('misc.deleteCategory')" @click="removeCategory(category)" @keydown.enter="removeCategory(category)" @keydown.space.prevent="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
             </li>
             <item
                 v-for="itemContainer in itemContainers"
@@ -189,7 +189,9 @@ export default {
         itemContainers() {
             void this.$store.state.itemVersion;
             void this.$store.state.categoryItemVersion;
-            return this.category.categoryItems.map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }));
+            return this.category.categoryItems
+                .map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }))
+                .filter(itemContainer => itemContainer.item);
         },
         displayUnit() {
             if (this.library.totalUnit !== 'oz') {

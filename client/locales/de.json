@@ -499,6 +499,7 @@
     "guide": "Wayfarer",
     "register": "Registrieren",
     "signIn": "Anmelden",
+    "toggleSidebar": "Seitenleiste ein-/ausblenden",
     "loadingEditor": "Dein Editor wird geladen…",
     "verificationEmailSent": "Verifizierungs-E-Mail gesendet! Überprüfe deinen Posteingang.",
     "verifyEmailPrompt": "Verifiziere deine E-Mail, um Listen öffentlich zu teilen.",
@@ -580,6 +581,11 @@
     "compareWeight": "Gewicht",
     "comparePrice": "Preis",
     "compareUsedInLists": "Verwendet in Listen",
+    "compareTitle": "{itemLabel} vergleichen",
+    "compareItemCountOne": "{count} Gegenstand",
+    "compareItemCountOther": "{count} Gegenstände",
+    "compareUsedInListCountOne": "{count} Liste",
+    "compareUsedInListCountOther": "{count} Listen",
     "compareClose": "Schließen",
     "placeholderType": "z.B.: Shelter",
     "placeholderBrand": "z.B.: Patagonia",
@@ -588,6 +594,8 @@
     "placeholderChoose": "— wählen —",
     "apply": "Anwenden",
     "unnamed": "Unbenannt",
+    "unnamedItem": "Unbenannter Gegenstand",
+    "unnamedList": "Unbenannte Liste",
     "createList": "+ Erstellen"
   },
   "item": {

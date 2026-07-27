@@ -5,7 +5,7 @@
 <template>
     <div>
         <item-detail-header
-            :name="editName || 'Unnamed item'"
+            :name="editName || $t('gearroom.unnamedItem')"
             :brand="editBrand || ''"
             :category="editCategory || ''"
             :image-key="item.image || ''"

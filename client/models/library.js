@@ -87,10 +87,16 @@ Library.prototype.updateItem = function (item) {
 
 Library.prototype.removeItem = function (id) {
     const item = this.getItemById(id);
-    for (const i in this.lists) {
-        const category = this.findCategoryWithItemById(id, this.lists[i].id);
-        if (category) {
-            category.removeItem(id);
+    if (!item) {
+        return false;
+    }
+
+    for (const list of this.lists) {
+        for (const categoryId of list.categoryIds) {
+            const category = this.getCategoryById(categoryId);
+            if (category) {
+                category.removeItem(id);
+            }
         }
     }
 

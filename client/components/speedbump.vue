@@ -1,6 +1,16 @@
 <style lang="scss">
+@import "../css/_globals";
+
 .speedbumpBody {
     max-width: 44ch;
+}
+
+#speedbump.lpModal {
+    z-index: $aboveDialog;
+}
+
+.lpModalContainer:has(#speedbump) .lpModalOverlay {
+    z-index: $aboveDialog - 1;
 }
 </style>
 
@@ -62,10 +72,14 @@ export default {
             this.shown = true;
         },
         confirmSpeedbump() {
-            if (this.callback && typeof this.callback === 'function') {
-                this.callback(true);
-            }
+            const callback = this.callback;
+            this.callback = null;
             this.shown = false;
+            this.$nextTick(() => {
+                if (callback && typeof callback === 'function') {
+                    callback(true);
+                }
+            });
         },
     },
 };

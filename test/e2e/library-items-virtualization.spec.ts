@@ -62,10 +62,24 @@ test('preserves a later virtual window while visible-row edit and removal remain
 
     await page.getByText('Delete', { exact: true }).click();
     await expect(page.locator('#speedbump')).toBeVisible();
+    await expect.poll(() => page.evaluate(() => {
+        const speedbump = document.querySelector('#speedbump');
+        const itemDetail = document.querySelector('#itemDetailDialog');
+        if (!speedbump || !itemDetail) return false;
+        return Number(getComputedStyle(speedbump).zIndex) > Number(getComputedStyle(itemDetail).zIndex);
+    })).toBe(true);
+    await expect.poll(() => page.evaluate(() => {
+        const speedbump = document.querySelector('#speedbump');
+        if (!speedbump) return false;
+        const rect = speedbump.getBoundingClientRect();
+        const topElement = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return Boolean(topElement && speedbump.contains(topElement));
+    })).toBe(true);
     const confirmDelete = page.getByRole('button', { name: 'Yes', exact: true });
     await expect(confirmDelete).toBeFocused();
     await page.keyboard.press('Enter');
 
+    await expect(page.locator('#speedbump')).toBeHidden();
     await expect(renderedRows.filter({ hasText: 'Fixture item 201 edited' })).toHaveCount(0);
     await expect.poll(() => library.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
     await expect.poll(async () => Number(await renderedRows.first().getAttribute('aria-posinset'))).toBeGreaterThan(1);

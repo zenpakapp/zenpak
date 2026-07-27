@@ -11,7 +11,7 @@
                     :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
                     @click="selectedListId = list.id"
                 >
-                    {{ list.name || 'Unnamed list' }} ›
+                    {{ list.name || $t('gearroom.unnamedList') }} ›
                 </li>
                 <li class="itemDetailAddCreate">
                     <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">{{ $t('item.addToListNewList') }}</div>

@@ -149,7 +149,7 @@
             <zenpak-gear-icon />
         </div>
         <div class="itemDetailHeaderInfo">
-            <div class="itemDetailName">{{ name || 'Unnamed item' }}</div>
+            <div class="itemDetailName">{{ name || $t('gearroom.unnamedItem') }}</div>
             <div v-if="brand" class="itemDetailBrand">{{ brand }}</div>
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
             <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">+ Add type</button>

@@ -130,11 +130,11 @@
                         <span class="accountDropdownUsername">{{ navLabel }}</span>
                         <span v-if="displayName" class="accountDropdownUsernameHandle">@{{ username }}</span>
                     </div>
-                    <a class="accountDropdownItem" @click="showAccount">{{ $t('dash.accountSettings') }}</a>
+                    <a class="accountDropdownItem" role="button" tabindex="0" @click="showAccount" @keydown.enter="showAccount" @keydown.space.prevent="showAccount">{{ $t('dash.accountSettings') }}</a>
                     <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.myProfile') }}</router-link>
-                    <a class="accountDropdownItem" @click="showHelp">{{ $t('dash.help') }}</a>
+                    <a class="accountDropdownItem" role="button" tabindex="0" @click="showHelp" @keydown.enter="showHelp" @keydown.space.prevent="showHelp">{{ $t('dash.help') }}</a>
                     <hr class="accountDropdownDivider">
-                    <a class="accountDropdownItem accountDropdownDanger" @click="signout">{{ $t('dash.signOut') }}</a>
+                    <a class="accountDropdownItem accountDropdownDanger" role="button" tabindex="0" @click="signout" @keydown.enter="signout" @keydown.space.prevent="signout">{{ $t('dash.signOut') }}</a>
                 </div>
             </template>
         </PopoverHover>
