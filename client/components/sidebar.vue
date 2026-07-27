@@ -84,14 +84,15 @@ $sidebarPadding: 20px;
     #sidebar {
         box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
         margin-left: 0;
-        opacity: 1;
+        opacity: 0;
         padding-left: $sidebarPadding;
         transform: translateX(-100%);
-        transition: transform $transitionDurationSlow ease-in-out;
+        transition: opacity $transitionDurationSlow ease-in-out, transform $transitionDurationSlow ease-in-out;
         width: $sidebarWidth + $sidebarPadding * 2;
         z-index: $dialog;
 
         .lpHasSidebar & {
+            opacity: 1;
             transform: translateX(0);
         }
     }

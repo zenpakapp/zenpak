@@ -36,6 +36,33 @@ test('closes the mobile sidebar when opening the item library', async ({ page })
     await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
 });
 
+test('keeps a closed sidebar offscreen while entering the mobile layout', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 812 });
+    const library = createEditorLibrary(12, 4);
+    library.showSidebar = false;
+    await mockSuccessfulEditorInitialization(page, library);
+    await page.goto(testRoot);
+
+    await expect(page.locator('#main')).not.toHaveClass(/lpHasSidebar/);
+    await expect(page.locator('#sidebar')).toBeAttached();
+    await page.setViewportSize({ width: 500, height: 812 });
+
+    const sidebarFrames = await page.evaluate(async () => {
+        const frames = [];
+        for (let frame = 0; frame < 20; frame += 1) {
+            await new Promise(requestAnimationFrame);
+            const sidebar = document.querySelector('#sidebar');
+            frames.push({
+                opacity: parseFloat(getComputedStyle(sidebar).opacity),
+                right: sidebar.getBoundingClientRect().right,
+            });
+        }
+        return frames;
+    });
+
+    expect(sidebarFrames.some(({ opacity, right }) => opacity > 0.01 && right > 0)).toBe(false);
+});
+
 for (const width of [320, 375, 500, 640, 768]) {
     test(`keeps the list editor usable at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 812 });
