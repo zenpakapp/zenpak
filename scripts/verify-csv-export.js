@@ -22,8 +22,9 @@ const row = [
     1,
     925,
     'gram',
+    'Zpacks',
 ].map(escapeCsvField).join(',');
 
-assertEqual(row, '"Tente, ultra légère",Shelter,"He said ""light""",1,925,gram', 'joined row');
+assertEqual(row, '"Tente, ultra légère",Shelter,"He said ""light""",1,925,gram,Zpacks', 'joined row');
 
 console.log('csv export escaping: ok');

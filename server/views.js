@@ -136,10 +136,6 @@ router.get('/pricing', (req, res) => {
     res.send(pricingTemplate || '<h1>Plans</h1><p>Loading...</p>');
 });
 
-router.get('*', (req, res) => {
-    res.status(404).send(index);
-});
-
 router.get('/r/:id', (req, res) => {
     const id = req.params.id;
 
@@ -348,11 +344,12 @@ router.get('/csv/:id', (req, res) => {
         const fullUnits = {
             oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
         };
+        const itemUnit = library.itemUnit || 'oz';
         let out = '';
         if (list.description && list.description.trim()) {
             out += `# List description: ${list.description.replace(/\r?\n/g, ' ')}\n`;
         }
-        out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,image_url\n';
+        out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,brand,image_url\n';
 
         for (var i in list.categoryIds) {
             const category = library.getCategoryById(list.categoryIds[i]);
@@ -367,12 +364,14 @@ router.get('/csv/:id', (req, res) => {
                         itemRow.push(category.name);
                         itemRow.push(item.description);
                         itemRow.push(`${categoryItem.qty}`);
-                        itemRow.push(`${weightUtils.MgToWeight(item.weight, item.authorUnit)}`);
-                        itemRow.push(fullUnits[item.authorUnit]);
+                        const exportUnit = itemUnit || item.authorUnit;
+                        itemRow.push(`${weightUtils.MgToWeight(item.weight, exportUnit)}`);
+                        itemRow.push(fullUnits[exportUnit]);
                         itemRow.push(item.url);
                         itemRow.push(`${item.price}`);
                         itemRow.push(categoryItem.worn ? 'Worn' : '');
                         itemRow.push(categoryItem.consumable ? 'Consumable' : '');
+                        itemRow.push(item.brand || '');
                         const imageUrl = item.image
                             ? `https://i.imgur.com/${item.image}.jpg`
                             : (item.imageUrl || '');
@@ -393,6 +392,10 @@ router.get('/csv/:id', (req, res) => {
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
         res.send('﻿' + out);
     });
+});
+
+router.get('*', (req, res) => {
+    res.status(404).send(index);
 });
 
 function init() {
@@ -475,7 +478,7 @@ const renderItem = function (item, args) {
     if (args.classes) classes = args.classes;
     if (item.deleteIfEmpty) classes += ' deleteIfEmpty';
 
-    let unit = item.authorUnit;
+    let unit = args.itemUnit || item.authorUnit;
     if (args.unit) unit = args.unit;
 
     const displayWeight = weightUtils.MgToWeight(item.weight, unit);

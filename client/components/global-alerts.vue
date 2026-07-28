@@ -54,7 +54,7 @@
 <template>
     <ul v-if="alerts && alerts.length" class="lpGlobalAlerts">
         <li v-for="alert in alerts" :key="alert.id || alert.message" class="lpGlobalAlert">
-            <span class="lpGlobalAlertMessage">{{ alert.key ? $t(alert.key, alert.params) : alert.message }}</span>
+            <span class="lpGlobalAlertMessage">{{ displayMessage(alert) }}</span>
             <button class="lpGlobalAlertDismiss" type="button" aria-label="Dismiss alert" @click="dismiss(alert.id)">
                 ×
             </button>
@@ -72,6 +72,29 @@ export default {
         },
     },
     methods: {
+        displayMessage(alert) {
+            if (alert.key) return this.$t(alert.key, alert.params);
+
+            const message = alert.message && alert.message.message
+                ? alert.message.message
+                : alert.message;
+
+            const serverMessageKeys = {
+                'Too many attempts. Try again in 15 minutes.': 'misc.alertTooManyAttempts',
+                'Too many requests. Try again in 1 hour.': 'misc.alertTooManyRequests',
+                'Please log in.': 'misc.alertPleaseLogIn',
+                'Please log in again.': 'misc.alertPleaseLogInAgain',
+                'Invalid username and/or password.': 'misc.alertInvalidCredentials',
+                'An error occurred, please try again later.': 'misc.alertTryAgainLater',
+                'An error occurred while loading your data.': 'misc.alertLoadingData',
+                'An error occurred while attempting to save your data.': 'misc.alertSavingData',
+                'An error occurred while saving your data. Please refresh your browser and try again.': 'misc.alertRefreshAndTryAgain',
+                'An error occurred while saving your data. Please refresh your browser and login again.': 'misc.alertRefreshAndLoginAgain',
+                'Your list is out of date - please refresh your browser.': 'misc.alertListOutOfDate',
+            };
+
+            return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : message;
+        },
         dismiss(alertId) {
             this.$store.commit('removeGlobalAlert', alertId);
         },

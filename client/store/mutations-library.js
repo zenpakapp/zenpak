@@ -153,6 +153,7 @@ module.exports = {
             if (typeof args.price !== 'undefined') list.publicFields.price = args.price;
             if (typeof args.links !== 'undefined') list.publicFields.links = args.links;
             if (typeof args.images !== 'undefined') list.publicFields.images = args.images;
+            if (typeof args.downloadable !== 'undefined') list.publicFields.downloadable = args.downloadable;
         }
     },
     updateItemCreatorLink(state, args) {

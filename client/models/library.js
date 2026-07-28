@@ -300,6 +300,7 @@ Library.prototype.load = function (serializedLibrary) {
         this.upgrade02to03(serializedLibrary);
     }
 
+    this.idMap = {};
     this.items = [];
 
     assignIn(this.optionalFields, serializedLibrary.optionalFields);

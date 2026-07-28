@@ -50,6 +50,9 @@
                 </router-link>
                 <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
                 <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">{{ $t('public.printSaveAsPdf') }}</button>
+                <a v-if="canDownloadCsv" class="lpPublicCsvLink noprint" :href="csvUrl" target="_blank" rel="noopener noreferrer">
+                    {{ $t('share.exportToCsv') }}
+                </a>
                 <select class="lpPublicUnitSelect noprint" :value="totalUnit" @change="setDisplayUnit($event.target.value)">
                     <option value="oz">oz</option>
                     <option value="g">g</option>
@@ -133,7 +136,7 @@
                             </div>
                         </div>
                         <span v-if="publicFields.price" class="lpPublicListItemPrice">{{ item.price ? `${currencySymbol}${formatPrice(item.price)}` : '' }}</span>
-                        <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ totalUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>
+                        <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ itemUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>
                         <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" class="lpPublicListItemLink" @click="trackItemClick(item)">{{ $t('public.getItArrow') }}</a>
                         <span v-else />
                     </div>
@@ -174,8 +177,9 @@ export default {
             username: null,
             list: null,
             totalUnit: 'oz',
+            itemUnit: 'oz',
             currencySymbol: '$',
-            publicFields: { price: false, links: false, images: false },
+            publicFields: { price: false, links: false, images: false, downloadable: false },
             categories: [],
             affiliateDisclosure: null,
             creatorCodes: [],
@@ -201,10 +205,16 @@ export default {
             if (v === 'shareable') return this.list?.copyable === true;
             return false;
         },
+        canDownloadCsv() {
+            return this.isOwnList || this.publicFields.downloadable === true;
+        },
         copyLabel() {
             if (this.copying) return this.$t('public.copying');
             if (this.copySuccess) return this.$t('public.copied');
             return this.$t('public.copyList');
+        },
+        csvUrl() {
+            return this.list && this.list.externalId ? `/csv/${this.list.externalId}` : '';
         },
         chartCategories() {
             return this.categories.map((cat, i) => {
@@ -242,8 +252,9 @@ export default {
                 this.authorTier = payload.authorTier || null;
                 this.list = payload.list;
                 this.totalUnit = localStorage.getItem('lpGuestUnit') || payload.totalUnit || 'oz';
+                this.itemUnit = payload.itemUnit || 'oz';
                 this.currencySymbol = payload.currencySymbol || '$';
-                this.publicFields = payload.publicFields || { price: false, links: false, images: false };
+                this.publicFields = payload.publicFields || { price: false, links: false, images: false, downloadable: false };
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
                 this.creatorCodes = payload.creatorCodes || [];
@@ -269,7 +280,7 @@ export default {
             return weightUtils.MgToWeight(value || 0, this.totalUnit);
         },
         displayItemWeight(item) {
-            return this.displayWeight((item.weight || 0) * (item.qty || 1));
+            return weightUtils.MgToWeight((item.weight || 0) * (item.qty || 1), this.itemUnit);
         },
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';

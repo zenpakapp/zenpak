@@ -147,11 +147,11 @@
             </div>
             <div class="lpNotifPrefs">
                 <label class="lpNotifPrefRow">
-                    <span>Follows</span>
+                    <span>{{ $t('misc.notificationFollows') }}</span>
                     <input type="checkbox" :checked="prefs.follow" @change="updatePref('follow', $event.target.checked)" />
                 </label>
                 <label class="lpNotifPrefRow">
-                    <span>Copies</span>
+                    <span>{{ $t('misc.notificationCopies') }}</span>
                     <input type="checkbox" :checked="prefs.copy" @change="updatePref('copy', $event.target.checked)" />
                 </label>
             </div>
@@ -217,8 +217,8 @@ export default {
         },
         formatText(n) {
             const actor = n.actorUsername + this.tierLabel(n.actorTier);
-            if (n.type === 'follow') return `${actor} started following you`;
-            if (n.type === 'copy') return `${actor} copied your list "${n.listName}"`;
+            if (n.type === 'follow') return this.$t('misc.notificationStartedFollowing', { actor });
+            if (n.type === 'copy') return this.$t('misc.notificationCopiedList', { actor, listName: n.listName });
             return '';
         },
         async updatePref(type, value) {
@@ -236,11 +236,11 @@ export default {
         timeAgo(date) {
             const diff = Date.now() - new Date(date).getTime();
             const m = Math.floor(diff / 60000);
-            if (m < 1) return 'just now';
-            if (m < 60) return `${m}m ago`;
+            if (m < 1) return this.$t('misc.timeJustNow');
+            if (m < 60) return this.$t('misc.timeMinutesAgo', { count: m });
             const h = Math.floor(m / 60);
-            if (h < 24) return `${h}h ago`;
-            return `${Math.floor(h / 24)}d ago`;
+            if (h < 24) return this.$t('misc.timeHoursAgo', { count: h });
+            return this.$t('misc.timeDaysAgo', { count: Math.floor(h / 24) });
         },
     },
 };

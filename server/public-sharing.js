@@ -272,6 +272,7 @@ function buildPublicList(user, externalId) {
             price: !!(list.publicFields && list.publicFields.price),
             links: !!(list.publicFields && list.publicFields.links),
             images: !!(list.publicFields && list.publicFields.images),
+            downloadable: !!(list.publicFields && list.publicFields.downloadable),
         },
         categories,
         hasAffiliateLinks,

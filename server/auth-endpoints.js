@@ -17,9 +17,17 @@ const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
 const router = express.Router();
 
+function isSessionRestoreSignin(req) {
+    return req.method === 'POST'
+        && req.path === '/signin'
+        && !(req.body && req.body.username)
+        && !(req.body && req.body.password);
+}
+
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
+    skip: isSessionRestoreSignin,
     standardHeaders: true,
     legacyHeaders: false,
     message: { errors: [{ message: 'Too many attempts. Try again in 15 minutes.' }] },
