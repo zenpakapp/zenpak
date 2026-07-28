@@ -26,16 +26,13 @@
                     </p>
                     <div class="lpWelcomeStats">
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">{{ $t('welcome.statFree') }}</span>
-                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statFreeLabel') }}</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.benefit1') }}</span>
                         </div>
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">{{ $t('welcome.statOpenSource') }}</span>
-                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statBuiltOn') }}</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.benefit2') }}</span>
                         </div>
                         <div class="lpWelcomeStat">
-                            <span class="lpWelcomeStatNum">{{ $t('welcome.statNoAds') }}</span>
-                            <span class="lpWelcomeStatLabel">{{ $t('welcome.statEver') }}</span>
+                            <span class="lpWelcomeStatNum">{{ $t('welcome.benefit3') }}</span>
                         </div>
                     </div>
                 </div>
