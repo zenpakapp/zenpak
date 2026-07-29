@@ -85,7 +85,6 @@
 
 <script>
 import category from './category.vue';
-import listSummary from './list-summary.vue';
 import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
@@ -94,6 +93,8 @@ import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 import phrasesEn from '../data/packing-phrases.en.js';
 import phrasesFr from '../data/packing-phrases.fr.js';
 import weightUtils from '../utils/weight.js';
+
+const listSummary = () => import(/* webpackChunkName: "dashboard-list-summary" */ './list-summary.vue');
 
 export default {
     name: 'List',
