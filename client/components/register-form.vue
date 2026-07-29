@@ -27,7 +27,6 @@
 <script>
 import errors from './errors.vue';
 import spinner from './spinner.vue';
-import templatePicker from './template-picker.vue';
 import { push } from '../services/navigation';
 import { getLocalLibrary, hasLocalLibrary, moveLocalLibraryToRegistered } from '../services/browser-storage';
 import { fetchJson } from '../utils/utils';
@@ -35,6 +34,7 @@ import { fetchJson } from '../utils/utils';
 const dataTypes = require('../dataTypes.js');
 
 const Library = dataTypes.Library;
+const templatePicker = () => import(/* webpackChunkName: "template-picker" */ './template-picker.vue');
 
 export default {
     name: 'RegisterForm',

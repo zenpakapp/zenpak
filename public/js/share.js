@@ -1,5 +1,15 @@
-const { Chart, DoughnutController, ArcElement, Tooltip } = require('chart.js');
-Chart.register(DoughnutController, ArcElement, Tooltip);
+let chartModulePromise = null;
+
+function loadChart() {
+    if (!chartModulePromise) {
+        chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
+            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+                Chart.register(DoughnutController, ArcElement, Tooltip);
+                return Chart;
+            });
+    }
+    return chartModulePromise;
+}
 
 listReport = function () {
     const $list = $('.lpList');
@@ -10,7 +20,7 @@ listReport = function () {
     let chart = null;
     let chartCategories = [];
 
-    function init() {
+    async function init() {
         initEventHandlers();
 
         if (typeof chartData !== 'undefined') {
@@ -19,6 +29,7 @@ listReport = function () {
 
             const canvas = $chartContainer.get(0);
             if (canvas && chartCategories.length) {
+                const Chart = await loadChart();
                 const defaultColors = [{ r: 27, g: 119, b: 211 }, { r: 206, g: 24, b: 54 }, { r: 242, g: 208, b: 0 }, { r: 122, g: 179, b: 23 }, { r: 130, g: 33, b: 198 }, { r: 232, g: 110, b: 28 }];
                 chart = new Chart(canvas, {
                     type: 'doughnut',

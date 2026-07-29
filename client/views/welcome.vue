@@ -141,11 +141,12 @@ import blackoutFooter from '../components/blackout-footer.vue';
 import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
 import SigninForm from '../components/signin-form.vue';
-import templatePicker from '../components/template-picker.vue';
 import WelcomeOauthOverlay from '../components/welcome-oauth-overlay.vue';
 import WelcomeProof from '../components/welcome-proof.vue';
 import ZenpakBrandAsset from '../components/zenpak-brand-asset.vue';
 import { push } from '../services/navigation';
+
+const templatePicker = () => import(/* webpackChunkName: "template-picker" */ '../components/template-picker.vue');
 
 export default {
     name: 'Welcome',
