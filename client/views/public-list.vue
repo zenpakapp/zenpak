@@ -195,7 +195,6 @@ import { fetchJson } from '../utils/utils';
 import { useTheme } from '../composables/useTheme';
 import { useRouter } from 'vue-router';
 import { useBackNav } from '../composables/useBackNav';
-import { useCopyList } from '../composables/useCopyList';
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
 
@@ -218,8 +217,7 @@ export default {
         useTheme();
         const router = useRouter();
         const { backTo, backLabel } = useBackNav();
-        const { copying, error: copyError, copyList } = useCopyList(router);
-        return { copying, copyError, copyList, backTo, backLabel };
+        return { router, backTo, backLabel };
     },
     data() {
         return {
@@ -239,6 +237,8 @@ export default {
             authorTier: null,
             forkedFrom: null,
             chart: null,
+            copying: false,
+            copyError: null,
             copySuccess: false,
             hoveredCategoryIdx: null,
         };
@@ -443,10 +443,35 @@ export default {
         },
         trackItemClick(item) { this.track('gearClick', item.id); },
         async handleCopy() {
-            await this.copyList(this.$route.params.externalId);
-            if (!this.copyError) {
+            this.copying = true;
+            this.copyError = null;
+            try {
+                if (!this.$store.state.library && this.$store.state.loggedIn) {
+                    await this.$store.dispatch('loadRemote');
+                }
+                const data = await fetchJson(`/api/community/copy-list/${this.$route.params.externalId}`, { method: 'POST' });
+                this.$store.commit('importPublicList', data);
+                this.router.push('/');
                 this.copySuccess = true;
                 setTimeout(() => { this.copySuccess = false; }, 2000);
+            } catch (err) {
+                if (err && err.status === 403 && err.message === 'Cannot copy your own list') {
+                    this.copyError = 'public.copyOwnList';
+                } else if (err && err.status === 404) {
+                    this.copyError = 'public.copyListUnavailable';
+                } else if (err && err.status === 429) {
+                    this.copyError = {
+                        key: 'public.copyRateLimited',
+                        params: {
+                            limit: err.limit || 5,
+                            minutes: err.retryAfterMinutes || 60,
+                        },
+                    };
+                } else {
+                    this.copyError = 'public.copyListFailed';
+                }
+            } finally {
+                this.copying = false;
             }
         },
         formatCopyError(error) {

@@ -256,11 +256,11 @@ import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
-import reportButton from '../components/report-button.vue';
 import LpSelect from '../components/lp-select.vue';
 
 const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
 const CommunityPeople = defineAsyncComponent(() => import(/* webpackChunkName: "community-people" */ '../components/community-people.vue'));
+const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "community-report" */ '../components/report-button.vue'));
 
 export default {
     name: 'CommunityView',
