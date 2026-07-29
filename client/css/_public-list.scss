@@ -158,14 +158,46 @@
     gap: 16px;
 }
 
-.lpPublicListCategory h2 {
+.lpPublicListCategoryHeader {
+    align-items: baseline;
     border-bottom: 1px solid $color-border;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
     margin: 0 0 8px;
     padding-bottom: 6px;
+}
+
+.lpPublicListCategory h2 {
+    align-items: center;
+    display: flex;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 8px;
+    letter-spacing: 0.05em;
+    margin: 0;
     text-transform: uppercase;
+}
+
+.lpPublicListCategorySwatch {
+    border-radius: 2px;
+    display: inline-block;
+    flex-shrink: 0;
+    height: 12px;
+    width: 12px;
+}
+
+.lpPublicListCategoryTotals {
+    align-items: baseline;
+    color: $color-text-muted;
+    display: grid;
+    flex-shrink: 0;
+    font-size: 12px;
+    gap: 12px;
+    grid-auto-columns: minmax(36px, auto);
+    grid-auto-flow: column;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .lpPublicListItem {
@@ -180,6 +212,10 @@
 
     &.lpPublicListItemWithPrice {
         grid-template-columns: 36px 1fr auto auto auto;
+    }
+
+    &.lpPublicListItemOptional {
+        opacity: 0.68;
     }
 }
 
@@ -202,6 +238,18 @@
     font-size: 13px;
     font-weight: 600;
     margin: 0 0 2px;
+}
+
+.lpPublicListItemBadge {
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+    padding: 1px 5px;
+    text-transform: uppercase;
 }
 
 .lpPublicListItemMeta {

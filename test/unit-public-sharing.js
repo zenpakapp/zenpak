@@ -1,6 +1,6 @@
 'use strict';
 
-const { resolvePublicItemLink } = require('../server/public-sharing.js');
+const { buildPublicList, resolvePublicItemLink } = require('../server/public-sharing.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {
@@ -86,6 +86,40 @@ assert('javascript: item.url blocked', r14.url === '');
 // 15. ftp: protocol blocked
 const r15 = resolvePublicItemLink({ url: 'ftp://files.example.com/gear.zip', affiliateUrl: '', brand: '', shop: '', promoCode: '', promoLabel: '' }, null);
 assert('ftp: item.url blocked', r15.url === '');
+
+const hiddenPricePayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator: {},
+        items: [{ id: 1, name: 'Pack', price: 250, weight: 1000, authorUnit: 'g' }],
+        categories: [{
+            id: 2,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 1, qty: 1 }],
+        }],
+        lists: [{
+            id: 3,
+            externalId: 'abc123',
+            name: 'Trail',
+            visibility: 'shareable',
+            publicFields: { price: false },
+            categoryIds: [2],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'abc123');
+
+assert('hidden prices zero list total', hiddenPricePayload.list.totalPrice === 0);
+assert('hidden prices zero category subtotal', hiddenPricePayload.categories[0].subtotalPrice === 0);
+assert('hidden prices zero item price', hiddenPricePayload.categories[0].items[0].price === 0);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

@@ -58,7 +58,8 @@ function sanitizeProfile(profile) {
     };
 }
 
-function sanitizeListSummary(list) {
+function sanitizeListSummary(list, options = {}) {
+    const includePrice = options.includePrice !== false;
     return {
         id: list.id,
         externalId: list.externalId || '',
@@ -73,8 +74,8 @@ function sanitizeListSummary(list) {
         totalConsumableWeight: Number(list.totalConsumableWeight) || 0,
         totalBaseWeight: Number(list.totalBaseWeight) || 0,
         totalPackWeight: Number(list.totalPackWeight) || 0,
-        totalPrice: Number(list.totalPrice) || 0,
-        totalConsumablePrice: Number(list.totalConsumablePrice) || 0,
+        totalPrice: includePrice ? Number(list.totalPrice) || 0 : 0,
+        totalConsumablePrice: includePrice ? Number(list.totalConsumablePrice) || 0 : 0,
         totalQty: Number(list.totalQty) || 0,
         seasons: Array.isArray(list.seasons) ? list.seasons.slice() : [],
         listTypes: Array.isArray(list.listTypes) ? list.listTypes.slice() : [],
@@ -144,12 +145,13 @@ function resolvePublicItemLink(item, creator) {
     };
 }
 
-function sanitizeCategoryItem(library, categoryItem, creator) {
+function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
     const item = findById(library.items, categoryItem.itemId);
     if (!item) {
         return null;
     }
     const publicLink = resolvePublicItemLink(item, creator);
+    const includePrice = options.includePrice !== false;
 
     return Object.assign({
         id: item.id,
@@ -157,7 +159,7 @@ function sanitizeCategoryItem(library, categoryItem, creator) {
         description: item.description || '',
         weight: Number(item.weight) || 0,
         authorUnit: item.authorUnit || library.itemUnit || '',
-        price: Number(item.price) || 0,
+        price: includePrice ? Number(item.price) || 0 : 0,
         image: item.image || '',
         imageUrl: item.imageUrl || '',
         shop: item.shop || '',
@@ -174,7 +176,8 @@ function sanitizeCategoryItem(library, categoryItem, creator) {
     });
 }
 
-function buildPublicCategories(library, list, creator) {
+function buildPublicCategories(library, list, creator, options = {}) {
+    const includePrice = options.includePrice !== false;
     return (list.categoryIds || []).map((categoryId) => {
         const category = findById(library.categories, categoryId);
         if (!category) {
@@ -182,7 +185,7 @@ function buildPublicCategories(library, list, creator) {
         }
 
         const items = (category.categoryItems || [])
-            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator))
+            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator, { includePrice }))
             .filter(Boolean);
 
         return {
@@ -191,8 +194,8 @@ function buildPublicCategories(library, list, creator) {
             subtotalWeight: Number(category.subtotalWeight) || 0,
             subtotalWornWeight: Number(category.subtotalWornWeight) || 0,
             subtotalConsumableWeight: Number(category.subtotalConsumableWeight) || 0,
-            subtotalPrice: Number(category.subtotalPrice) || 0,
-            subtotalConsumablePrice: Number(category.subtotalConsumablePrice) || 0,
+            subtotalPrice: includePrice ? Number(category.subtotalPrice) || 0 : 0,
+            subtotalConsumablePrice: includePrice ? Number(category.subtotalConsumablePrice) || 0 : 0,
             subtotalQty: Number(category.subtotalQty) || 0,
             items,
         };
@@ -242,7 +245,8 @@ function buildPublicList(user, externalId) {
     }
 
     const creator = library.creator || {};
-    const categories = buildPublicCategories(library, list, creator);
+    const includePrice = !!(list.publicFields && list.publicFields.price);
+    const categories = buildPublicCategories(library, list, creator, { includePrice });
     const hasAffiliateLinks = categories.some(category => category.items.some(item => item.hasAffiliateLink));
 
     const seenCodes = new Set();
@@ -264,7 +268,7 @@ function buildPublicList(user, externalId) {
     const payload = {
         username: user.username || '',
         authorTier: (library.entitlements && library.entitlements.plan) || null,
-        list: sanitizeListSummary(list),
+        list: sanitizeListSummary(list, { includePrice }),
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
         currencySymbol: library.currencySymbol || '$',

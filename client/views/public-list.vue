@@ -69,7 +69,7 @@
                     <thead>
                         <tr>
                             <th>{{ $t('public.category') }}</th>
-                            <th>{{ $t('public.price') }}</th>
+                            <th v-if="publicFields.price">{{ $t('public.price') }}</th>
                             <th>{{ $t('public.weight') }}</th>
                         </tr>
                     </thead>
@@ -79,24 +79,24 @@
                                 <span class="lpPublicChartSwatch" :style="{ background: cat.color }" />
                                 {{ cat.name }}
                             </td>
-                            <td>{{ currencySymbol }}{{ formatPrice(cat.subtotalPrice) }}</td>
+                            <td v-if="publicFields.price">{{ currencySymbol }}{{ formatPrice(cat.subtotalPrice) }}</td>
                             <td><strong>{{ displayWeight(cat.subtotalWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td>{{ $t('public.total') }}</td>
-                            <td>{{ currencySymbol }}{{ formatPrice(list.totalPrice) }}</td>
+                            <td v-if="publicFields.price">{{ currencySymbol }}{{ formatPrice(list.totalPrice) }}</td>
                             <td><strong>{{ displayWeight(list.totalWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr v-if="list.totalWornWeight">
                             <td>{{ $t('public.worn') }}</td>
-                            <td></td>
+                            <td v-if="publicFields.price"></td>
                             <td><strong>{{ displayWeight(list.totalWornWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr>
                             <td>{{ $t('public.baseWeight') }}</td>
-                            <td></td>
+                            <td v-if="publicFields.price"></td>
                             <td><strong>{{ displayWeight(list.totalBaseWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                     </tfoot>
@@ -118,18 +118,27 @@
 
             <!-- Items par catégorie -->
             <section class="lpPublicListCategories">
-                <div v-for="category in categories" :key="category.id || category.name" class="lpPublicListCategory">
-                    <h2>{{ category.name }}</h2>
+                <div v-for="category in categoriesWithColors" :key="category.id || category.name" class="lpPublicListCategory">
+                    <div class="lpPublicListCategoryHeader">
+                        <h2>
+                            <span class="lpPublicListCategorySwatch" :style="{ background: category.color }" />
+                            {{ category.name }}
+                        </h2>
+                        <div class="lpPublicListCategoryTotals">
+                            <span v-if="publicFields.price">{{ currencySymbol }}{{ formatPrice(category.subtotalPrice) }}</span>
+                            <span><strong>{{ displayWeight(category.subtotalWeight) }}</strong> {{ totalUnit }}</span>
+                        </div>
+                    </div>
                     <div
                         v-for="item in category.items"
                         :key="item.id || item.name"
                         class="lpPublicListItem"
-                        :class="{ 'lpPublicListItemWithPrice': publicFields.price }"
+                        :class="{ 'lpPublicListItemWithPrice': publicFields.price, 'lpPublicListItemOptional': isOptionalItem(item) }"
                     >
                         <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name" />
                         <div v-else class="lpPublicListItemImagePlaceholder" />
                         <div class="lpPublicListItemBody">
-                            <div><span class="lpPublicListItemName">{{ item.name }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span></div>
+                            <div><span class="lpPublicListItemName">{{ item.name }}</span><span v-if="isOptionalItem(item)" class="lpPublicListItemBadge">{{ $t('public.option') }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span></div>
                             <div v-if="item.promoCode" class="lpPublicListItemPromo">
                                 <span v-if="item.promoLabel" class="lpPublicListItemPromoLabel">{{ item.promoLabel }}</span>
                                 <span class="lpPublicListItemPromoCode">{{ item.promoCode }}</span>
@@ -217,10 +226,13 @@ export default {
             return this.list && this.list.externalId ? `/csv/${this.list.externalId}` : '';
         },
         chartCategories() {
-            return this.categories.map((cat, i) => {
-                const color = colorUtils.rgbToString(colorUtils.getColor(i));
-                return { ...cat, color };
-            }).filter((cat) => cat.subtotalWeight > 0);
+            return this.categoriesWithColors.filter((cat) => cat.subtotalWeight > 0);
+        },
+        categoriesWithColors() {
+            return this.categories.map((cat, i) => ({
+                ...cat,
+                color: colorUtils.rgbToString(colorUtils.getColor(i)),
+            }));
         },
     },
     mounted() {
@@ -280,7 +292,12 @@ export default {
             return weightUtils.MgToWeight(value || 0, this.totalUnit);
         },
         displayItemWeight(item) {
-            return weightUtils.MgToWeight((item.weight || 0) * (item.qty || 1), this.itemUnit);
+            const qty = Number(item.qty);
+            const multiplier = qty === 0 ? 1 : (qty || 1);
+            return weightUtils.MgToWeight((item.weight || 0) * multiplier, this.itemUnit);
+        },
+        isOptionalItem(item) {
+            return Number(item.qty) === 0;
         },
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
