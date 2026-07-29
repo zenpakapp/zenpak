@@ -4,6 +4,10 @@ const crypto = require('crypto');
 
 const { logWithRequest } = require('./log.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
+const {
+    incrementPublicListStat,
+    rememberPublicListViewer,
+} = require('./public-list-projections.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -106,49 +110,24 @@ router.post('/api/public/insight', (req, res) => {
             return res.status(200).json({ message: 'ok' });
         }
 
-        if (!user.library.insights) {
-            user.library.insights = {};
-        }
-
-        const insights = user.library.insights;
-        if (typeof insights.profileViews !== 'number') insights.profileViews = 0;
-        if (!insights.listViews || typeof insights.listViews !== 'object') insights.listViews = {};
-        if (!insights.listViewers || typeof insights.listViewers !== 'object') insights.listViewers = {};
-        if (!insights.listCopies || typeof insights.listCopies !== 'object') insights.listCopies = {};
-        if (!insights.gearClicks || typeof insights.gearClicks !== 'object') insights.gearClicks = {};
-        if (!insights.promoClicks || typeof insights.promoClicks !== 'object') insights.promoClicks = {};
-
         let shouldSave = true;
         if (type === 'listView') {
             const viewerKey = await resolveViewerKey(req);
-            const viewers = Array.isArray(insights.listViewers[externalId]) ? insights.listViewers[externalId] : [];
-            if (viewers.includes(viewerKey)) {
+            const isNewViewer = await rememberPublicListViewer(externalId, viewerKey);
+            if (!isNewViewer) {
                 shouldSave = false;
             } else {
-                viewers.push(viewerKey);
-                if (viewers.length > 500) viewers.splice(0, viewers.length - 500);
-                insights.listViewers[externalId] = viewers;
-                insights.listViews[externalId] = (insights.listViews[externalId] || 0) + 1;
+                await incrementPublicListStat(externalId, 'viewCount');
             }
         } else if (type === 'listCopy') {
-            insights.listCopies[externalId] = (insights.listCopies[externalId] || 0) + 1;
+            await incrementPublicListStat(externalId, 'copyCount');
         } else if (type === 'gearClick' && itemId) {
-            insights.gearClicks[itemId] = (insights.gearClicks[itemId] || 0) + 1;
+            await incrementPublicListStat(externalId, `gearClicks.${itemId}`);
         } else if (type === 'promoClick' && itemId) {
-            insights.promoClicks[itemId] = (insights.promoClicks[itemId] || 0) + 1;
+            await incrementPublicListStat(externalId, `promoClicks.${itemId}`);
         }
 
-        if (!shouldSave) {
-            return res.json({ message: 'ok' });
-        }
-
-        db.users.save(user, (saveErr) => {
-            if (saveErr) {
-                logWithRequest(req, { message: 'Public insight save error', externalId, error: saveErr.message });
-                return res.status(500).json({ message: 'An error occurred' });
-            }
-            return res.json({ message: 'ok' });
-        });
+        return res.json({ message: 'ok' });
     });
 });
 

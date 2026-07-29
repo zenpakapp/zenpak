@@ -4,6 +4,7 @@ const { ObjectId } = require('mongodb');
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const VALID_REASONS = ['spam', 'inappropriate', 'fake', 'other'];
 
@@ -110,6 +111,7 @@ router.post('/feature/:externalId', (req, res) => {
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.featured = !list.featured;
             await db.users.save(owner);
+            syncUserPublicLists(owner).catch(() => {});
             return res.json({ ok: true, featured: list.featured });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -128,6 +130,7 @@ router.post('/unpublish/:externalId', (req, res) => {
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.visibility = 'private';
             await db.users.save(owner);
+            syncUserPublicLists(owner).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

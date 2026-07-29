@@ -4,6 +4,7 @@ const express = require('express');
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
 const { detectVisibilityChanges } = require('./save-library-feed.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
@@ -109,6 +110,9 @@ function saveLibrary(req, res, user) {
 
         const newLists = (library && library.lists) || [];
         detectVisibilityChanges(user._id, oldLists, newLists).catch(() => {});
+        syncUserPublicLists(user).catch((err) => {
+            logWithRequest(req, { message: 'public list projection sync failed', username: user.username, error: err.message });
+        });
 
         return res.status(200).json({ message: 'success', syncToken: user.syncToken });
     });
@@ -160,6 +164,9 @@ router.post('/api/restore', (req, res) => {
         }
         try {
             await db.users.updateOne({ _id: user._id }, { $set: { library } });
+            syncUserPublicLists({ ...user, library }).catch((err) => {
+                logWithRequest(req, { message: 'public list projection sync failed after restore', username: user.username, error: err.message });
+            });
             return res.json({ ok: true });
         } catch (err) {
             logWithRequest(req, 'restore error', err);

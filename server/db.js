@@ -105,8 +105,8 @@ function collection(name) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.aggregate(pipeline).toArray());
         },
-        updateOne(filter, update) {
-            return getCollection(name).then(col => col.updateOne(filter, update));
+        updateOne(filter, update, options) {
+            return getCollection(name).then(col => col.updateOne(filter, update, options));
         },
         updateMany(filter, update) {
             return getCollection(name).then(col => col.updateMany(filter, update));
@@ -146,6 +146,9 @@ module.exports = {
     follows: collection('follows'),
     feedEvents: collection('feed_events'),
     notifications: collection('notifications'),
+    publicLists: collection('public_lists'),
+    publicListStats: collection('public_list_stats'),
+    publicListViewers: collection('public_list_viewers'),
     reports: collection('reports'),
     billingEvents: collection('billing_events'),
     async ensureIndexes() {
@@ -167,6 +170,26 @@ module.exports = {
         const notifications = _db.collection('notifications');
         await notifications.createIndex({ userId: 1, createdAt: -1 });
         await notifications.createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 });
+
+        const publicLists = _db.collection('public_lists');
+        try {
+            await publicLists.dropIndex('seasons_1_listTypes_1');
+        } catch (err) {
+            if (err.codeName !== 'IndexNotFound') throw err;
+        }
+        await publicLists.createIndex({ externalId: 1 }, { unique: true });
+        await publicLists.createIndex({ visibility: 1, updatedAt: -1 });
+        await publicLists.createIndex({ visibility: 1, viewCount: -1, updatedAt: -1 });
+        await publicLists.createIndex({ ownerId: 1 });
+        await publicLists.createIndex({ seasons: 1 });
+        await publicLists.createIndex({ listTypes: 1 });
+
+        const publicListStats = _db.collection('public_list_stats');
+        await publicListStats.createIndex({ externalId: 1 }, { unique: true });
+
+        const publicListViewers = _db.collection('public_list_viewers');
+        await publicListViewers.createIndex({ externalId: 1, viewerKey: 1 }, { unique: true });
+        await publicListViewers.createIndex({ externalId: 1, createdAt: -1 });
 
         const reports = _db.collection('reports');
         await reports.createIndex({ reporterId: 1, targetType: 1, targetId: 1 }, { unique: true });

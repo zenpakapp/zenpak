@@ -19,10 +19,12 @@ const guideUser = {
 };
 
 const followDocs = [{ _id: new ObjectId() }, { _id: new ObjectId() }];
+const statDocs = [{ externalId: 'abc', viewCount: 130, copyCount: 9 }];
 
 const dbStub = {
     users: { findOne() { return Promise.resolve(guideUser); } },
     follows: { findMany() { return Promise.resolve(followDocs); } },
+    publicListStats: { findMany() { return Promise.resolve(statDocs); } },
 };
 require.cache[require.resolve('../server/db.js')] = {
     exports: dbStub, id: require.resolve('../server/db.js'),
@@ -68,12 +70,12 @@ async function run() {
 
     assert('returns totals', responseData && typeof responseData.totals === 'object');
     assert('totals.followers = 2', responseData.totals.followers === 2);
-    assert('totals.views = 120 (public only)', responseData.totals.views === 120);
-    assert('totals.copies = 8', responseData.totals.copies === 8);
+    assert('totals.views = 130 (public stats)', responseData.totals.views === 130);
+    assert('totals.copies = 9', responseData.totals.copies === 9);
     assert('lists array has 1 entry (public only)', responseData.lists && responseData.lists.length === 1);
     assert('list externalId is abc', responseData.lists[0].externalId === 'abc');
-    assert('list viewCount = 120', responseData.lists[0].viewCount === 120);
-    assert('list copyCount = 8', responseData.lists[0].copyCount === 8);
+    assert('list viewCount = 130', responseData.lists[0].viewCount === 130);
+    assert('list copyCount = 9', responseData.lists[0].copyCount === 9);
 
     // Test: non-guide user gets 403
     const baseUser = { _id: new ObjectId(), username: 'bob', library: { entitlements: { plan: 'free' }, lists: [] } };

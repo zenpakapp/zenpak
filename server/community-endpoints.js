@@ -8,6 +8,13 @@ const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
 const { createNotification } = require('./notifications.js');
+const {
+    incrementPublicListStat,
+    normalizeTagArray,
+    projectionToDiscoverItem,
+    publicDisplayName,
+    syncUserPublicLists,
+} = require('./public-list-projections.js');
 
 // In-memory rate limiter: max 5 copies/hour per userId or IP
 const COPY_RATE_LIMIT = 5;
@@ -31,14 +38,6 @@ function checkCopyRateLimit(key) {
     return { limited: false, remaining: COPY_RATE_LIMIT - timestamps.length };
 }
 
-function normalizeTagArray(value) {
-    if (!Array.isArray(value)) return [];
-    return value
-        .map(tag => String(tag || '').trim().toLowerCase())
-        .filter(Boolean)
-        .slice(0, 12);
-}
-
 function normalizeTier(plan) {
     if (plan === 'creator') return 'guide';
     if (plan === 'supporter') return 'trail';
@@ -56,14 +55,8 @@ function normalizeCopiedQuantity(value) {
     return Number.isFinite(quantity) ? quantity : 1;
 }
 
-function publicDisplayName(user) {
-    const profile = user && user.library && user.library.publicProfile;
-    const displayName = profile && typeof profile.displayName === 'string' ? profile.displayName.trim() : '';
-    return displayName || (user && user.username) || '';
-}
-
-function listMatchesFilters(list, filters) {
-    if (filters.q && !String(list.name || '').toLowerCase().includes(filters.q)) return false;
+function projectionMatchesFilters(list, filters) {
+    if (filters.q && !String(`${list.name || ''} ${list.description || ''} ${list.ownerDisplayName || ''}`).toLowerCase().includes(filters.q)) return false;
     const totalBaseWeight = Number(list.totalBaseWeight) || 0;
     if (filters.minWeight !== null && totalBaseWeight < filters.minWeight) return false;
     if (filters.maxWeight !== null && totalBaseWeight > filters.maxWeight) return false;
@@ -72,38 +65,6 @@ function listMatchesFilters(list, filters) {
     if (filters.season && !seasons.includes(filters.season)) return false;
     if (filters.type && !listTypes.includes(filters.type)) return false;
     return true;
-}
-
-function buildDiscoverItem(user, list) {
-    const insights = (user.library && user.library.insights) || {};
-    const listViews = insights.listViews || {};
-    const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-    const profile = (user.library && user.library.publicProfile) || {};
-    const forkedFrom = list.forkedFrom || null;
-    const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-
-    return {
-        externalId: list.externalId,
-        name: list.name || '',
-        description: list.description || '',
-        totalBaseWeight: Number(list.totalBaseWeight) || 0,
-        totalQty: Number(list.totalQty) || 0,
-        author: user.username || '',
-        authorDisplayName: profile.displayName || user.username || '',
-        authorTier: normalizeTier(plan),
-        sourceOwnerName: forkedFrom && forkedFrom.ownerUsername !== user.username
-            ? (forkedFrom.ownerName || forkedFrom.ownerUsername || '')
-            : '',
-        sourceOwnerUsername: forkedFrom && forkedFrom.ownerUsername !== user.username
-            ? (forkedFrom.ownerUsername || '')
-            : '',
-        copyCount: Number(list.copyCount) || 0,
-        viewCount: Number(listViews[list.externalId] || list.viewCount) || 0,
-        seasons: normalizeTagArray(list.seasons),
-        listTypes: normalizeTagArray(list.listTypes),
-        updatedAt: updatedAt.toISOString(),
-        featured: Boolean(list.featured),
-    };
 }
 
 // POST /api/community/follow/:username
@@ -283,33 +244,19 @@ router.get('/discover', async (req, res) => {
 
     try {
         const PAGE_SIZE = Math.min(parseNumberParam(req.query.limit) || 20, 20);
-        const allUsers = await db.users.findMany({});
-        const items = [];
-
-        for (const user of allUsers) {
-            const lists = (user.library && user.library.lists) || [];
-            for (const list of lists) {
-                if (!list.externalId) continue;
-                if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
-                if (!listMatchesFilters(list, filters)) continue;
-
-                const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-                if (sort === 'recent' && cursor && updatedAt >= new Date(cursor)) continue;
-
-                items.push(buildDiscoverItem(user, list));
-            }
+        const query = { visibility: { $in: ['discoverable', 'indexable'] } };
+        if (sort === 'recent' && cursor) {
+            query.updatedAt = { $lt: new Date(cursor) };
         }
 
-        if (sort === 'popular') {
-            items.sort((a, b) => {
-                if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
-                return new Date(b.updatedAt) - new Date(a.updatedAt);
-            });
-        } else {
-            items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        }
+        let projections = await db.publicLists.findSorted(
+            query,
+            sort === 'popular' ? { viewCount: -1, updatedAt: -1 } : { updatedAt: -1 },
+            200
+        );
+        projections = projections.filter(list => projectionMatchesFilters(list, filters));
 
-        const page = items.slice(0, PAGE_SIZE);
+        const page = projections.slice(0, PAGE_SIZE).map(projectionToDiscoverItem);
         const nextCursor = sort === 'recent' && page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
@@ -367,6 +314,8 @@ router.post('/copy-list/:externalId', (req, res) => {
                 sourceList.copiedBy.push(userId);
                 sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
                 await db.users.save(owner);
+                await incrementPublicListStat(sourceList.externalId, 'copyCount');
+                syncUserPublicLists(owner).catch(() => {});
 
                 await createNotification({
                     userId: owner._id,
@@ -439,20 +388,22 @@ router.get('/insights', (req, res) => {
         }
 
         try {
-            const insights = (user.library && user.library.insights) || {};
-            const listViews = insights.listViews || {};
-            const listCopies = insights.listCopies || {};
-
             const publicLists = ((user.library && user.library.lists) || []).filter(
                 l => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable')
             );
 
-            const listsData = publicLists.map(l => ({
-                externalId: l.externalId,
-                name: l.name || '',
-                viewCount: listViews[l.externalId] || 0,
-                copyCount: listCopies[l.externalId] || 0,
-            }));
+            const statsDocs = await db.publicListStats.findMany({ externalId: { $in: publicLists.map(l => l.externalId) } });
+            const statsByExternalId = Object.fromEntries(statsDocs.map(s => [s.externalId, s]));
+
+            const listsData = publicLists.map((l) => {
+                const stats = statsByExternalId[l.externalId] || {};
+                return {
+                    externalId: l.externalId,
+                    name: l.name || '',
+                    viewCount: stats.viewCount || 0,
+                    copyCount: stats.copyCount || 0,
+                };
+            });
 
             const totalViews = listsData.reduce((sum, l) => sum + l.viewCount, 0);
             const totalCopies = listsData.reduce((sum, l) => sum + l.copyCount, 0);

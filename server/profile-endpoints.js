@@ -6,6 +6,7 @@ const config = require('config');
 
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -91,6 +92,7 @@ router.put('/api/profile', (req, res) => {
 
         try {
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -105,6 +107,7 @@ router.delete('/api/profile/avatar', (req, res) => {
             if (!user.library.publicProfile) user.library.publicProfile = {};
             user.library.publicProfile.avatarUrl = '';
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -130,6 +133,7 @@ router.post('/api/profile/avatar', (req, res) => {
                 if (!user.library.publicProfile) user.library.publicProfile = {};
                 user.library.publicProfile.avatarUrl = data.secure_url;
                 await db.users.save(user);
+                syncUserPublicLists(user).catch(() => {});
 
                 return res.json({ avatarUrl: data.secure_url });
             } catch (e) {

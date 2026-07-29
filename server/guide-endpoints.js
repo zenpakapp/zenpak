@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 
@@ -57,6 +58,7 @@ router.put('/profile', (req, res) => {
 
         try {
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -87,6 +89,7 @@ router.put('/affiliate-rules', (req, res) => {
 
         try {
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -185,6 +188,7 @@ router.put('/items', (req, res) => {
 
         try {
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

@@ -2,6 +2,7 @@
 
 const config = require('config');
 const db = require('./db.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const LEGAL_ENTITY_VERSION = 'ae-fxbenard-v1';
 
@@ -108,6 +109,7 @@ async function syncUserBilling(user, subscription, status) {
     }
 
     await db.users.save(user);
+    syncUserPublicLists(user).catch(() => {});
 }
 
 async function syncKofiBilling(user, { amount, donationDate }) {
@@ -137,6 +139,7 @@ async function syncKofiBilling(user, { amount, donationDate }) {
     user.library.entitlements.plan = 'supporter';
 
     await db.users.save(user);
+    syncUserPublicLists(user).catch(() => {});
 }
 
 module.exports = {
