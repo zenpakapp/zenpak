@@ -164,7 +164,6 @@ import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
-import guestSettings from '../components/guest-settings.vue';
 import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
 import { openDialog } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
@@ -174,6 +173,7 @@ const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-ge
 const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
 const profileInsights = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue'));
 const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue'));
+const guestSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-guest-settings" */ '../components/guest-settings.vue'));
 
 const lazyDialogs = {
     account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
