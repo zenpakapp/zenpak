@@ -438,6 +438,7 @@
     "settings": "Paramètres",
     "notifications": "Notifications",
     "markAllRead": "Tout marquer comme lu",
+    "clearNotifications": "Effacer",
     "noNotifications": "Aucune notification pour l'instant.",
     "notificationStartedFollowing": "{actor} vous suit maintenant",
     "notificationCopiedList": "{actor} a copié votre liste « {listName} »",

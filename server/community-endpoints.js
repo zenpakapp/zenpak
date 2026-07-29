@@ -56,6 +56,12 @@ function normalizeCopiedQuantity(value) {
     return Number.isFinite(quantity) ? quantity : 1;
 }
 
+function publicDisplayName(user) {
+    const profile = user && user.library && user.library.publicProfile;
+    const displayName = profile && typeof profile.displayName === 'string' ? profile.displayName.trim() : '';
+    return displayName || (user && user.username) || '';
+}
+
 function listMatchesFilters(list, filters) {
     if (filters.q && !String(list.name || '').toLowerCase().includes(filters.q)) return false;
     const totalBaseWeight = Number(list.totalBaseWeight) || 0;
@@ -127,6 +133,7 @@ router.post('/follow/:username', (req, res) => {
                 userId: target._id,
                 type: 'follow',
                 actorUsername: user.username,
+                actorDisplayName: publicDisplayName(user),
                 actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
             });
 
@@ -365,6 +372,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                     userId: owner._id,
                     type: 'copy',
                     actorUsername: user.username,
+                    actorDisplayName: publicDisplayName(user),
                     actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
                     listName: sourceList.name,
                 });

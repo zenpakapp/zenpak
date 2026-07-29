@@ -14,6 +14,7 @@ const notifA = {
     userId: currentUser._id,
     type: 'follow',
     actorUsername: 'bob',
+    actorDisplayName: 'Bob Trail',
     read: false,
     createdAt: new Date('2026-06-10T10:00:00Z'),
 };
@@ -41,6 +42,7 @@ const oldNotifs = Array.from({ length: 51 }, (_, i) => ({
 // --- stubs ---
 let notificationsStore = [notifA, notifB];
 let updateManyCalledWith = null;
+let deleteManyCalledWith = null;
 
 const dbStub = {
     notifications: {
@@ -53,6 +55,10 @@ const dbStub = {
         updateMany(filter, update) {
             updateManyCalledWith = { filter, update };
             return Promise.resolve({ modifiedCount: 1 });
+        },
+        deleteMany(filter) {
+            deleteManyCalledWith = filter;
+            return Promise.resolve({ deletedCount: 1 });
         },
     },
 };
@@ -96,7 +102,10 @@ async function run() {
     const readAllRoute = router.stack.find(l => l.route && l.route.path === '/read-all' && l.route.methods.post);
     assert('POST /read-all route exists', Boolean(readAllRoute));
 
-    if (!getRoute || !readAllRoute) {
+    const clearRoute = router.stack.find(l => l.route && l.route.path === '/' && l.route.methods.delete);
+    assert('DELETE / route exists', Boolean(clearRoute));
+
+    if (!getRoute || !readAllRoute || !clearRoute) {
         console.error('Skipping functional tests — routes missing');
         return;
     }
@@ -160,6 +169,21 @@ async function run() {
         assert('POST /read-all filter includes userId', updateManyCalledWith && updateManyCalledWith.filter.userId !== undefined);
         assert('POST /read-all filter targets read: false', updateManyCalledWith && updateManyCalledWith.filter.read === false);
         assert('POST /read-all sets read: true', updateManyCalledWith && updateManyCalledWith.update.$set && updateManyCalledWith.update.$set.read === true);
+    }
+
+    // --- DELETE / : deletes all notifications for current user ---
+    {
+        deleteManyCalledWith = null;
+        const req = { body: {} };
+        const { statusCode, data } = await new Promise(resolve => {
+            const res = makeRes(resolve);
+            clearRoute.route.stack[0].handle(req, res, () => {});
+        });
+
+        assert('DELETE / returns 200', statusCode === 200);
+        assert('DELETE / returns { ok: true }', data && data.ok === true);
+        assert('DELETE / calls deleteMany', deleteManyCalledWith !== null);
+        assert('DELETE / filter includes userId', deleteManyCalledWith && deleteManyCalledWith.userId !== undefined);
     }
 
     // --- summary ---

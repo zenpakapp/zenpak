@@ -438,6 +438,7 @@
     "settings": "Einstellungen",
     "notifications": "Benachrichtigungen",
     "markAllRead": "Alle als gelesen markieren",
+    "clearNotifications": "Löschen",
     "noNotifications": "Noch keine Benachrichtigungen.",
     "notificationStartedFollowing": "{actor} folgt dir jetzt",
     "notificationCopiedList": "{actor} hat deine Liste „{listName}“ kopiert",

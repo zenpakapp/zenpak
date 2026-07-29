@@ -438,6 +438,7 @@
     "settings": "Configuración",
     "notifications": "Notificaciones",
     "markAllRead": "Marcar todo como leído",
+    "clearNotifications": "Borrar",
     "noNotifications": "Sin notificaciones aún.",
     "notificationStartedFollowing": "{actor} empezó a seguirte",
     "notificationCopiedList": "{actor} copió tu lista \"{listName}\"",

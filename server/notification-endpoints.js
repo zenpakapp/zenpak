@@ -38,6 +38,18 @@ router.post('/read-all', (req, res) => {
     });
 });
 
+// DELETE /api/notifications — supprime toutes les notifications du user connecté
+router.delete('/', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        try {
+            await db.notifications.deleteMany({ userId: new ObjectId(user._id) });
+            return res.json({ ok: true });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
 // PATCH /api/notifications/prefs
 router.patch('/prefs', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {

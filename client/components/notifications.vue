@@ -57,7 +57,7 @@
     border-bottom: 1px solid $color-border;
     display: flex;
     justify-content: space-between;
-    padding: 10px 14px;
+    padding: 14px 14px 10px;
 
     span {
         color: $color-text;
@@ -74,6 +74,12 @@
 
         &:hover { color: $color-accent; }
     }
+}
+
+.lpNotifHeaderActions {
+    align-items: center;
+    display: flex;
+    gap: 12px;
 }
 
 .lpNotifItem {
@@ -133,7 +139,10 @@
         <div v-if="open" class="lpNotifDropdown" @click.stop>
             <div class="lpNotifHeader">
                 <span>{{ $t('misc.notifications') }}</span>
-                <button v-if="unreadCount > 0" @click="markAllRead">{{ $t('misc.markAllRead') }}</button>
+                <div class="lpNotifHeaderActions">
+                    <button v-if="unreadCount > 0" @click="markAllRead">{{ $t('misc.markAllRead') }}</button>
+                    <button v-if="notifications.length > 0" @click="clearNotifications">{{ $t('misc.clearNotifications') }}</button>
+                </div>
             </div>
             <p v-if="notifications.length === 0" class="lpNotifEmpty">{{ $t('misc.noNotifications') }}</p>
             <div
@@ -177,10 +186,14 @@ export default {
         this.load();
         this.pollInterval = setInterval(() => this.load(), 60000);
         document.addEventListener('click', this.onOutsideClick);
+        document.addEventListener('visibilitychange', this.onVisibilityChange);
+        window.addEventListener('focus', this.load);
     },
     beforeUnmount() {
         clearInterval(this.pollInterval);
         document.removeEventListener('click', this.onOutsideClick);
+        document.removeEventListener('visibilitychange', this.onVisibilityChange);
+        window.removeEventListener('focus', this.load);
     },
     methods: {
         async load() {
@@ -195,11 +208,15 @@ export default {
         },
         toggle() {
             this.open = !this.open;
+            if (this.open) this.load();
         },
         onOutsideClick(e) {
             if (!this.$el.contains(e.target)) {
                 this.open = false;
             }
+        },
+        onVisibilityChange() {
+            if (!document.hidden) this.load();
         },
         async markAllRead() {
             try {
@@ -210,16 +227,24 @@ export default {
                 // silent
             }
         },
-        tierLabel(tier) {
-            if (tier === 'creator') return ' ✦ Wayfarer';
-            if (tier === 'supporter') return ' · Kin';
-            return '';
+        async clearNotifications() {
+            try {
+                await fetchJson('/api/notifications', { method: 'DELETE' });
+                this.notifications = [];
+                this.unreadCount = 0;
+            } catch {
+                // silent
+            }
         },
         formatText(n) {
-            const actor = n.actorUsername + this.tierLabel(n.actorTier);
+            const actor = this.actorName(n);
             if (n.type === 'follow') return this.$t('misc.notificationStartedFollowing', { actor });
             if (n.type === 'copy') return this.$t('misc.notificationCopiedList', { actor, listName: n.listName });
             return '';
+        },
+        actorName(n) {
+            const raw = n.actorDisplayName || n.actorUsername || '';
+            return String(raw).replace(/\s*[✦·]\s*(Wayfarer|Kin)\s*$/i, '').trim();
         },
         async updatePref(type, value) {
             try {
