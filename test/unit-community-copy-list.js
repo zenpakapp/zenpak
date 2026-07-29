@@ -26,7 +26,16 @@ const ownerUser = {
             ],
         }],
         items: [
-            { id: 'item-zero', name: 'Platypus - 2L', weight: 36, authorUnit: 'g' },
+            {
+                id: 'item-zero',
+                name: 'Platypus - 2L',
+                weight: 36,
+                authorUnit: 'g',
+                url: 'https://example.com/platypus',
+                affiliateUrl: 'https://example.com/platypus?ref=alice',
+                promoCode: 'ALICE10',
+                promoLabel: '10% off',
+            },
             { id: 'item-two', name: 'Water bottle pair', weight: 76, authorUnit: 'g' },
             { id: 'item-half', name: 'Half fuel can', weight: 110, authorUnit: 'g' },
         ],
@@ -107,6 +116,10 @@ async function run() {
     assert('copy payload preserves zero quantity', responseData.categories[0].categoryItems[0].qty === 0);
     assert('copy payload preserves quantity above one', responseData.categories[0].categoryItems[1].qty === 2);
     assert('copy payload preserves decimal quantity', responseData.categories[0].categoryItems[2].qty === 0.5);
+    assert('copy payload preserves product URL', responseData.categories[0].categoryItems[0].url === 'https://example.com/platypus');
+    assert('copy payload preserves affiliate URL', responseData.categories[0].categoryItems[0].affiliateUrl === 'https://example.com/platypus?ref=alice');
+    assert('copy payload preserves promo code', responseData.categories[0].categoryItems[0].promoCode === 'ALICE10');
+    assert('copy payload preserves promo label', responseData.categories[0].categoryItems[0].promoLabel === '10% off');
 
     // Test: cannot copy own list
     savedUsers.length = 0;

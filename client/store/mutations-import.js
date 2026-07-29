@@ -161,6 +161,10 @@ module.exports = {
                     item.price = Number(ci.price) || 0;
                     item.brand = ci.brand || '';
                     item.shop = ci.shop || '';
+                    item.url = ci.url || '';
+                    item.affiliateUrl = ci.affiliateUrl || '';
+                    item.promoCode = ci.promoCode || '';
+                    item.promoLabel = ci.promoLabel || '';
                     item.imageUrl = ci.imageUrl || '';
                     newCount++;
                 }

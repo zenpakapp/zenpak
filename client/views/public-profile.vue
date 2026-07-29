@@ -14,7 +14,15 @@
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
 
         <nav v-if="!error" class="lpPublicNav">
-            <router-link :to="backTo">{{ $t(backLabelKey) }}</router-link>
+            <span class="lpPublicProfileNavLeft">
+                <router-link :to="backTo">{{ $t(backLabelKey) }}</router-link>
+            </span>
+            <span class="lpPublicProfileNavRight">
+                <router-link v-if="backTo !== '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
+                <router-link v-if="showAppLink" :to="$store.state.loggedIn ? '/' : '/welcome'">
+                    {{ $store.state.loggedIn ? $t('public.openApp') : $t('public.joinZenPak') }}
+                </router-link>
+            </span>
         </nav>
 
         <p v-if="isLoading">{{ $t('public.loading') }}</p>
@@ -174,6 +182,10 @@ export default {
         },
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.$route.params.username);
+        },
+        showAppLink() {
+            const appPath = this.$store.state.loggedIn ? '/' : '/welcome';
+            return this.backTo !== appPath;
         },
     },
     created() {

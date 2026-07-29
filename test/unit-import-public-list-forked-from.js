@@ -66,6 +66,10 @@ function run() {
                 description: '',
                 weight: 925000,
                 authorUnit: 'g',
+                url: 'https://example.com/tent',
+                affiliateUrl: 'https://example.com/tent?ref=alice',
+                promoCode: 'ALICE10',
+                promoLabel: '10% off',
                 qty: 1,
             }],
         }],
@@ -73,6 +77,10 @@ function run() {
     const copiedItem = unitState.library.items.find(item => item.name === 'Tent');
     assert('public copy keeps source weight as mg', copiedItem && copiedItem.weight === 925000);
     assert('public copy uses recipient library item unit', copiedItem && copiedItem.authorUnit === 'kg');
+    assert('public copy preserves product URL', copiedItem && copiedItem.url === 'https://example.com/tent');
+    assert('public copy preserves affiliate URL', copiedItem && copiedItem.affiliateUrl === 'https://example.com/tent?ref=alice');
+    assert('public copy preserves promo code', copiedItem && copiedItem.promoCode === 'ALICE10');
+    assert('public copy preserves promo label', copiedItem && copiedItem.promoLabel === '10% off');
     assert('source currency copied into fork metadata fallback', unitState.library.lists[unitState.library.lists.length - 1].forkedFrom.sourceCurrencySymbol === '€');
 
     const variantState = { library: new Library(), globalAlerts: [] };
