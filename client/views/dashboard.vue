@@ -172,7 +172,7 @@ import { clearSpeedbumpLoader, setSpeedbumpLoader } from '../services/speedbump'
 const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
 const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
 const profileInsights = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue'));
-const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue'));
+const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue'));
 const guestSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-guest-settings" */ '../components/guest-settings.vue'));
 
 const lazyDialogs = {
