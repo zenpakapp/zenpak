@@ -1,7 +1,7 @@
 <template>
     <div class="lpGuide">
         <div class="lpGuideNav">
-            <router-link :to="backTo" class="lpGuideBack">{{ backLabel }}</router-link>
+            <router-link :to="backTo" class="lpGuideBack">{{ $t(backLabelKey) }}</router-link>
             <router-link v-if="username" :to="`/u/${username}`" class="lpGuideViewProfile">{{ $t('guide.viewProfile') }}</router-link>
         </div>
         <h1 class="lpGuideTitle">{{ $t('guide.title') }}</h1>
@@ -110,7 +110,7 @@ export default {
     setup() {
         const guide = useGuide();
         const nav = useBackNav();
-        return { ...guide, backTo: nav.backTo, backLabel: nav.backLabel };
+        return { ...guide, backTo: nav.backTo, backLabelKey: nav.backLabelKey };
     },
     computed: {
         isGuide() {

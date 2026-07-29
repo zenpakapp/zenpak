@@ -1,7 +1,6 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
-import { i18n } from '../i18n';
 import { usePreviousRoute } from './usePreviousRoute';
 
 export function useBackNav() {
@@ -17,12 +16,12 @@ export function useBackNav() {
         return '/';
     });
 
-    const backLabel = computed(() => {
-        if (!store.state.loggedIn) return i18n.global.t('public.joinZenPak');
-        if (backTo.value === '/community') return i18n.global.t('public.backToCommunity');
-        if (backTo.value.startsWith('/p/')) return i18n.global.t('public.backToList');
-        return i18n.global.t('public.backToZenPak');
+    const backLabelKey = computed(() => {
+        if (!store.state.loggedIn) return 'public.joinZenPak';
+        if (backTo.value === '/community') return 'public.backToCommunity';
+        if (backTo.value.startsWith('/p/')) return 'public.backToList';
+        return 'public.backToZenPak';
     });
 
-    return { backTo, backLabel };
+    return { backTo, backLabelKey };
 }

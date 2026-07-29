@@ -14,7 +14,7 @@
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
 
         <nav v-if="!error" class="lpPublicNav">
-            <router-link :to="backTo">{{ backLabel }}</router-link>
+            <router-link :to="backTo">{{ $t(backLabelKey) }}</router-link>
         </nav>
 
         <p v-if="isLoading">{{ $t('public.loading') }}</p>
@@ -34,7 +34,6 @@
                 <div class="lpPublicHeroInner">
                     <div class="lpPublicAvatar">
                         <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName" />
-                        <upgrade-prompt v-else-if="isOwnProfile && !isTrail" tier="trail" feature="profileCustomization" mode="inline" />
                         <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                     </div>
                     <div class="lpPublicHeroMeta">
@@ -43,15 +42,13 @@
                             <span v-if="isCreator" class="lpPublicBadge">Wayfarer</span>
                             <span v-else-if="isSupporter" class="lpPublicBadge">Kin</span>
                         </div>
-                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !profile.bio" tier="trail" feature="profileCustomization" mode="inline" />
-                        <p v-else-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
+                        <p v-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
                         <div class="lpPublicStats">
                             <span><strong>{{ lists.length }}</strong> {{ $t('public.statLists') }}</span>
                             <span><strong>{{ followerCount }}</strong> {{ $t('public.statFollowers') }}</span>
                             <span><strong>{{ followingCount }}</strong> {{ $t('public.statFollowing') }}</span>
                         </div>
-                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !safeLinks.length" tier="trail" feature="profileCustomization" mode="inline" />
-                        <ul v-else-if="safeLinks.length" class="lpPublicLinks">
+                        <ul v-if="safeLinks.length" class="lpPublicLinks">
                             <li v-for="link in safeLinks" :key="link.url">
                                 <a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label || link.url }}</a>
                             </li>
@@ -109,24 +106,19 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
-
-const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue'));
 
 export default {
     name: 'PublicProfile',
-    components: { upgradePrompt },
     setup() {
         useTheme();
         const route = useRoute();
-        const { backTo, backLabel } = useBackNav();
+        const { backTo, backLabelKey } = useBackNav();
         const username = route.params.username;
         const {
             following,
@@ -135,13 +127,14 @@ export default {
             follow: followUser,
             unfollow: unfollowUser,
         } = useFollow(username);
-        return { following, mode, followLoading, followUser, unfollowUser, backTo, backLabel };
+        return { following, mode, followLoading, followUser, unfollowUser, backTo, backLabelKey };
     },
     data() {
         return {
             isLoading: true,
             error: null,
             profile: null,
+            profileUsername: '',
             entitlements: null,
             lists: [],
             affiliateDisclosure: null,
@@ -182,16 +175,13 @@ export default {
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.$route.params.username);
         },
-        isTrail() {
-            const lib = this.$store.state.library;
-            return lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
-        },
     },
     created() {
         const username = this.$route.params.username;
         fetchJson(`/api/public/profile/${username}`)
             .then((payload) => {
                 this.profile = payload.profile;
+                this.profileUsername = payload.username || username;
                 this.entitlements = payload.entitlements;
                 this.lists = payload.lists || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
@@ -241,8 +231,9 @@ export default {
             return kg >= 1 ? `${kg.toFixed(1)} kg` : `${grams} g`;
         },
         listTo(externalId) {
+            const profileUsername = this.profileUsername || this.$route.params.username;
             return this.$route.query.from === 'community'
-                ? { path: `/p/${externalId}`, query: { from: 'community', profile: this.$route.params.username } }
+                ? { path: `/p/${externalId}`, query: { from: 'community', profile: profileUsername } }
                 : `/p/${externalId}`;
         },
         async toggleFollow() {

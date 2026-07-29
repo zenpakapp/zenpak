@@ -34,7 +34,7 @@
             <nav class="lpPublicNav">
                 <span class="lpPublicNavLeft">
                     <span v-if="sourceProfile" class="lpPublicNavAuthor">
-                        <router-link :to="profileTo(sourceProfile)">{{ $t('public.backToProfile', { username: sourceProfile }) }}</router-link>
+                        <router-link :to="profileTo(username)">{{ $t('public.backToProfile', { username: authorName }) }}</router-link>
                     </span>
                     <router-link v-else-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
                     <span v-else-if="username" class="lpPublicNavAuthor">

@@ -121,8 +121,12 @@ function proxyDevDistAsset(req, res, next) {
         }
 
         res.status(proxyRes.statusCode);
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         Object.entries(proxyRes.headers).forEach(([name, value]) => {
-            if (value && name.toLowerCase() !== 'content-security-policy') {
+            const lowerName = name.toLowerCase();
+            if (value && lowerName !== 'content-security-policy' && lowerName !== 'cache-control') {
                 res.setHeader(name, value);
             }
         });

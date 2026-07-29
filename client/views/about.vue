@@ -126,7 +126,7 @@
 <script>
 import { defineAsyncComponent } from 'vue';
 
-const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue'));
+const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "about-upgrade" */ '../components/upgrade-prompt.vue'));
 
 export default {
     name: 'AboutView',

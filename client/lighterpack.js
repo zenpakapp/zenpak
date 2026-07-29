@@ -25,6 +25,23 @@ const router = createRouter({
 
 setRouter(router);
 
+router.onError((error, to) => {
+    recoverRouteChunkError(error, to && to.fullPath);
+});
+
+function recoverRouteChunkError(error, targetPath) {
+    const message = error && (error.message || String(error));
+    const isLazyChunkError = /Cannot find module|Loading chunk|ChunkLoadError|dynamically imported module/i.test(message);
+    if (!isLazyChunkError || typeof window === 'undefined') return;
+
+    const retryPath = targetPath || `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const retryKey = `zp-route-retry:${retryPath}`;
+    if (sessionStorage.getItem(retryKey)) return;
+
+    sessionStorage.setItem(retryKey, '1');
+    window.location.assign(retryPath);
+}
+
 function isPrivatePath(pathname) {
     return !isPublicPath(pathname) && !isUnknownRoute(pathname);
 }
@@ -84,9 +101,16 @@ var initLighterPack = function () {
     initGlobalShortcuts();
 
     router.isReady()
+        .catch((error) => {
+            recoverRouteChunkError(error);
+            throw error;
+        })
         .then(() => initLocale())
         .then(() => {
             window.LighterPack = app.mount('#lp');
+        })
+        .catch((error) => {
+            showGlobalAlert(error);
         });
 };
 
