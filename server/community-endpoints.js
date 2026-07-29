@@ -67,6 +67,8 @@ function buildDiscoverItem(user, list) {
     const insights = (user.library && user.library.insights) || {};
     const listViews = insights.listViews || {};
     const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
+    const profile = (user.library && user.library.publicProfile) || {};
+    const forkedFrom = list.forkedFrom || null;
     const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
 
     return {
@@ -76,7 +78,14 @@ function buildDiscoverItem(user, list) {
         totalBaseWeight: Number(list.totalBaseWeight) || 0,
         totalQty: Number(list.totalQty) || 0,
         author: user.username || '',
+        authorDisplayName: profile.displayName || user.username || '',
         authorTier: normalizeTier(plan),
+        sourceOwnerName: forkedFrom && forkedFrom.ownerUsername !== user.username
+            ? (forkedFrom.ownerName || forkedFrom.ownerUsername || '')
+            : '',
+        sourceOwnerUsername: forkedFrom && forkedFrom.ownerUsername !== user.username
+            ? (forkedFrom.ownerUsername || '')
+            : '',
         copyCount: Number(list.copyCount) || 0,
         viewCount: Number(listViews[list.externalId] || list.viewCount) || 0,
         seasons: normalizeTagArray(list.seasons),
@@ -395,6 +404,8 @@ router.post('/copy-list/:externalId', (req, res) => {
             return res.json({
                 listName: sourceList.name,
                 description: sourceList.description || '',
+                seasons: normalizeTagArray(sourceList.seasons),
+                listTypes: normalizeTagArray(sourceList.listTypes),
                 categories,
                 forkedFrom,
             });

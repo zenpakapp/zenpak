@@ -121,11 +121,15 @@ module.exports = {
             : { count: newCount, unit };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
-    importPublicList(state, { listName, description, categories, forkedFrom }) {
+    importPublicList(state, { listName, description, categories, forkedFrom, seasons, listTypes }) {
         const list = state.library.newList();
-        list.name = `Copy of ${listName}`;
+        const sourceUsername = forkedFrom && forkedFrom.ownerUsername;
+        const isExternalFork = sourceUsername && sourceUsername !== state.loggedIn;
+        list.name = isExternalFork ? listName : `Copy of ${listName}`;
         list.description = description || '';
         list.forkedFrom = forkedFrom || null;
+        list.seasons = Array.isArray(seasons) ? seasons.slice() : [];
+        list.listTypes = Array.isArray(listTypes) ? listTypes.slice() : [];
 
         let mergedCount = 0;
         let newCount = 0;

@@ -20,23 +20,31 @@ function run() {
         copiedAt: '2026-07-16T21:00:00.000Z',
     };
 
-    const state = { library: new Library(), globalAlerts: [] };
+    const state = { library: new Library(), globalAlerts: [], loggedIn: 'bob' };
     mutations.importPublicList(state, {
         listName: 'GR34 Summer',
         description: 'A great trail.',
+        seasons: ['3-season', 'summer'],
+        listTypes: ['trek', 'weekend'],
         categories: [],
         forkedFrom,
     });
     const newList = state.library.lists[state.library.lists.length - 1];
     assert('new list created', Boolean(newList));
-    assert('new list is named "Copy of ..."', newList.name === 'Copy of GR34 Summer');
+    assert('external fork uses source list name', newList.name === 'GR34 Summer');
     assert('forkedFrom assigned on new list', JSON.stringify(newList.forkedFrom) === JSON.stringify(forkedFrom));
+    assert('community seasons copied', JSON.stringify(newList.seasons) === JSON.stringify(['3-season', 'summer']));
+    assert('community list types copied', JSON.stringify(newList.listTypes) === JSON.stringify(['trek', 'weekend']));
+    assert('copied list stays private by default', newList.visibility === 'private');
+    assert('copied list does not inherit copy permission', newList.copyable === false);
+    assert('copied list does not inherit public fields', typeof newList.publicFields === 'undefined');
 
     // Defensive: payload without forkedFrom (e.g. stale client/server mismatch) must not crash.
-    const state2 = { library: new Library(), globalAlerts: [] };
+    const state2 = { library: new Library(), globalAlerts: [], loggedIn: 'bob' };
     mutations.importPublicList(state2, { listName: 'No Fork', description: '', categories: [] });
     const newList2 = state2.library.lists[state2.library.lists.length - 1];
     assert('forkedFrom defaults to null when payload omits it', newList2.forkedFrom === null);
+    assert('copy without fork metadata keeps copy prefix', newList2.name === 'Copy of No Fork');
 
     const unitState = { library: new Library(), globalAlerts: [] };
     unitState.library.itemUnit = 'kg';

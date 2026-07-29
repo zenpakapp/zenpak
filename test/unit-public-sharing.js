@@ -109,6 +109,12 @@ const hiddenPricePayload = buildPublicList({
             name: 'Trail',
             visibility: 'shareable',
             publicFields: { price: false },
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
             categoryIds: [2],
             totalPrice: 250,
             totalConsumablePrice: 10,
@@ -120,6 +126,7 @@ const hiddenPricePayload = buildPublicList({
 assert('hidden prices zero list total', hiddenPricePayload.list.totalPrice === 0);
 assert('hidden prices zero category subtotal', hiddenPricePayload.categories[0].subtotalPrice === 0);
 assert('hidden prices zero item price', hiddenPricePayload.categories[0].items[0].price === 0);
+assert('public payload exposes fork source', hiddenPricePayload.forkedFrom && hiddenPricePayload.forkedFrom.externalId === 'source123');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

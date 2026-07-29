@@ -78,7 +78,7 @@
                 <router-link
                     v-for="list in lists"
                     :key="list.externalId"
-                    :to="`/p/${list.externalId}`"
+                    :to="listTo(list.externalId)"
                     class="lpPublicListCard"
                 >
                     <div class="lpPublicListName">{{ list.name }}</div>
@@ -237,6 +237,11 @@ export default {
             if (!grams) return '';
             const kg = grams / 1000;
             return kg >= 1 ? `${kg.toFixed(1)} kg` : `${grams} g`;
+        },
+        listTo(externalId) {
+            return this.$route.query.from === 'community'
+                ? { path: `/p/${externalId}`, query: { from: 'community', profile: this.$route.params.username } }
+                : `/p/${externalId}`;
         },
         async toggleFollow() {
             if (!this.isLoggedIn) return;

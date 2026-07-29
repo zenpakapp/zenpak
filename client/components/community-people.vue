@@ -22,7 +22,7 @@
             >
                 <div class="lpCommunityCardUserAvatar">
                     <img v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName || user.username" />
-                    <span v-else>{{ (user.displayName || user.username).charAt(0).toUpperCase() }}</span>
+                    <span v-else :style="{ background: avatarBgColor(user), color: '#fff' }">{{ avatarLetter(user) }}</span>
                 </div>
                 <div class="lpCommunityCardUserBody">
                     <div class="lpCommunityCardName">
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import { fetchJson } from '../utils/utils.js';
 
 export default {
@@ -59,6 +60,12 @@ export default {
         onInput() {
             clearTimeout(this.timeout);
             this.timeout = setTimeout(() => this.search(), 300);
+        },
+        avatarBgColor(user) {
+            return avatarColor(user && user.username);
+        },
+        avatarLetter(user) {
+            return avatarInitial(user && user.displayName, user && user.username);
         },
         async search() {
             this.loading = true;

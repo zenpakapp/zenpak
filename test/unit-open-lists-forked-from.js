@@ -12,6 +12,8 @@ const ownerUser = {
             externalId: 'gr34-summer',
             name: 'GR34 Summer',
             visibility: 'discoverable',
+            seasons: ['3-season', 'summer'],
+            listTypes: ['trek'],
             categoryIds: [],
         }],
         categories: [],
@@ -113,6 +115,8 @@ async function run() {
     assert('forkedFrom.ownerName uses publicProfile.displayName when set', f1.ownerName === 'FX Bénard');
     assert('forkedFrom.listName matches source list name', f1.listName === 'GR34 Summer');
     assert('forkedFrom.copiedAt is a valid ISO date', !Number.isNaN(Date.parse(f1.copiedAt)));
+    assert('copy payload includes source seasons', JSON.stringify(response1.seasons) === JSON.stringify(['3-season', 'summer']));
+    assert('copy payload includes source list types', JSON.stringify(response1.listTypes) === JSON.stringify(['trek']));
 
     const response2 = await callCopy('weekend-budget');
     const f2 = response2.forkedFrom || {};

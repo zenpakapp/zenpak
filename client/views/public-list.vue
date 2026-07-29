@@ -14,28 +14,60 @@
         <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex" />
 
         <p v-if="isLoading">{{ $t('public.loading') }}</p>
-        <div v-else-if="error" class="lpPublicError">
-            <div class="lpPublicErrorIcon">×</div>
-            <h2>{{ error }}</h2>
-            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicErrorBack">
-                {{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}
+        <div v-else-if="error" class="lpPublicUnavailable">
+            <section class="lpPublicUnavailableCard">
+                <div class="lpPublicUnavailableIcon">×</div>
+                <h1>{{ unavailableTitle }}</h1>
+                <p>{{ unavailableMessage }}</p>
+                <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicUnavailablePrimary">
+                    {{ $store.state.loggedIn ? $t('public.openApp') : $t('public.joinZenPak') }}
+                </router-link>
+                <router-link to="/community" class="lpPublicUnavailableSecondary">
+                    {{ $t('public.backToCommunity') }}
+                </router-link>
+            </section>
+            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicUnavailableBrand">
+                Made with ♥ ZenPak
             </router-link>
         </div>
         <template v-else-if="list">
             <nav class="lpPublicNav">
                 <span class="lpPublicNavLeft">
-                    <router-link v-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
+                    <span v-if="sourceProfile" class="lpPublicNavAuthor">
+                        <router-link :to="profileTo(sourceProfile)">{{ $t('public.backToProfile', { username: sourceProfile }) }}</router-link>
+                    </span>
+                    <router-link v-else-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
                     <span v-else-if="username" class="lpPublicNavAuthor">
-                        <router-link :to="`/u/${username}`">{{ $t('public.backToProfile', { username }) }}</router-link>
+                        <router-link :to="profileTo(username)">{{ $t('public.backToProfile', { username: authorName }) }}</router-link>
                         <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
                         <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
                     </span>
                     <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
                 </span>
-                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">{{ $t('public.myLists') }}</router-link>
+                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">{{ $t('public.openApp') }}</router-link>
             </nav>
 
             <h1 class="lpPublicListTitle">{{ list.name }}</h1>
+            <p v-if="username" class="lpPublicListAuthor">
+                {{ $t('public.byAuthor') }}
+                <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">{{ authorName }}</router-link>
+                <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
+                <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+            </p>
+            <p v-if="forkSource" class="lpPublicForkSource">
+                {{ $t('dash.source') }}
+                <router-link v-if="forkSource.externalId" class="lpPublicForkSourceLink" :to="listTo(forkSource.externalId)">
+                    {{ forkSource.listName }}
+                </router-link>
+                <span v-else>{{ forkSource.listName }}</span>
+                <span v-if="forkSource.ownerName" class="lpPublicForkSourceOwner">
+                    ·
+                    <router-link v-if="forkSource.ownerUsername" class="lpPublicForkSourceLink" :to="profileTo(forkSource.ownerUsername)">
+                        {{ forkSource.ownerName }}
+                    </router-link>
+                    <span v-else>{{ forkSource.ownerName }}</span>
+                </span>
+            </p>
             <div class="lpPublicListActions">
                 <button
                     v-if="isLoggedIn && !isOwnList && isCopyable"
@@ -193,7 +225,9 @@ export default {
         return {
             isLoading: true,
             error: null,
+            errorType: null,
             username: null,
+            authorDisplayName: '',
             list: null,
             totalUnit: 'oz',
             itemUnit: 'oz',
@@ -203,6 +237,7 @@ export default {
             affiliateDisclosure: null,
             creatorCodes: [],
             authorTier: null,
+            forkedFrom: null,
             chart: null,
             copySuccess: false,
             hoveredCategoryIdx: null,
@@ -214,6 +249,13 @@ export default {
         },
         isLoggedIn() {
             return Boolean(this.$store.state.loggedIn);
+        },
+        authorName() {
+            return this.authorDisplayName || this.username;
+        },
+        sourceProfile() {
+            const profile = this.$route.query.profile;
+            return typeof profile === 'string' && profile ? profile : null;
         },
         isOwnList() {
             return this.$store.state.loggedIn === this.username;
@@ -232,8 +274,24 @@ export default {
             if (this.copySuccess) return this.$t('public.copied');
             return this.$t('public.copyList');
         },
+        unavailableTitle() {
+            return this.errorType === 'not-found'
+                ? this.$t('public.listUnavailableTitle')
+                : this.$t('public.unableToLoadTitle');
+        },
+        unavailableMessage() {
+            return this.errorType === 'not-found'
+                ? this.$t('public.listUnavailableMessage')
+                : this.$t('public.unableToLoadMessage');
+        },
         csvUrl() {
             return this.list && this.list.externalId ? `/csv/${this.list.externalId}` : '';
+        },
+        forkSource() {
+            const forkedFrom = this.forkedFrom;
+            if (!forkedFrom || !forkedFrom.listName) return null;
+            if (forkedFrom.ownerUsername && forkedFrom.ownerUsername === this.username) return null;
+            return forkedFrom;
         },
         chartCategories() {
             return this.categoriesWithColors.filter((cat) => cat.subtotalWeight > 0);
@@ -271,6 +329,7 @@ export default {
         fetchJson(`/api/public/list/${this.$route.params.externalId}`)
             .then((payload) => {
                 this.username = payload.username;
+                this.authorDisplayName = payload.authorDisplayName || payload.username || '';
                 this.authorTier = payload.authorTier || null;
                 this.list = payload.list;
                 this.totalUnit = localStorage.getItem('lpGuestUnit') || payload.totalUnit || 'oz';
@@ -280,11 +339,13 @@ export default {
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
                 this.creatorCodes = payload.creatorCodes || [];
+                this.forkedFrom = payload.forkedFrom || null;
                 this.updateDocumentMeta();
                 this.track('listView');
             })
             .catch((err) => {
-                this.error = err && err.status === 404 ? this.$t('public.listNotFound') : this.$t('public.unableToLoad');
+                this.errorType = err && err.status === 404 ? 'not-found' : 'load-error';
+                this.error = true;
             })
             .finally(() => {
                 this.isLoading = false;
@@ -294,6 +355,17 @@ export default {
         setDisplayUnit(unit) {
             this.totalUnit = unit;
             localStorage.setItem('lpGuestUnit', unit);
+        },
+        routeWithSource(path) {
+            return this.$route.query.from === 'community'
+                ? { path, query: { from: 'community' } }
+                : path;
+        },
+        listTo(externalId) {
+            return this.routeWithSource(`/p/${externalId}`);
+        },
+        profileTo(username) {
+            return this.routeWithSource(`/u/${username}`);
         },
         printList() {
             window.print();

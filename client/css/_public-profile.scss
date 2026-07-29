@@ -61,6 +61,15 @@
         object-fit: cover;
         width: 100%;
     }
+
+    span {
+        align-items: center;
+        border-radius: inherit;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        width: 100%;
+    }
 }
 
 .lpPublicHeroMeta {

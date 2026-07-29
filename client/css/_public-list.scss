@@ -7,6 +7,97 @@
     padding: 32px 20px;
 }
 
+.lpPublicUnavailable {
+    align-items: center;
+    background:
+        linear-gradient(135deg, rgba(19, 57, 37, 0.9), rgba(45, 122, 79, 0.72)),
+        url("/images/lp_bg2.jpg") 50% 30% / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: -32px calc(50% - 50vw) 0;
+    min-height: 100dvh;
+    padding: 32px 20px;
+}
+
+.lpPublicUnavailableCard {
+    background: $color-surface-elevated;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-modal;
+    max-width: 430px;
+    padding: 38px 34px;
+    text-align: center;
+    width: min(100%, 430px);
+
+    h1 {
+        font-size: 22px;
+        font-weight: $fontWeight-bold;
+        letter-spacing: 0;
+        line-height: 1.2;
+        margin: 0 0 18px;
+    }
+
+    p {
+        color: $color-text-muted;
+        font-size: 15px;
+        line-height: 1.5;
+        margin: 0 0 22px;
+    }
+}
+
+.lpPublicUnavailableIcon {
+    color: $color-danger;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.lpPublicUnavailablePrimary,
+.lpPublicUnavailableSecondary {
+    align-items: center;
+    border-radius: $radius-md;
+    display: flex;
+    font-size: 15px;
+    font-weight: $fontWeight-bold;
+    justify-content: center;
+    min-height: 48px;
+    text-decoration: none;
+}
+
+.lpPublicUnavailablePrimary {
+    background: $color-accent;
+    box-shadow: 0 0 0 5px rgba(var(--color-accent-rgb), 0.12);
+    color: #fff;
+    margin-bottom: 18px;
+
+    &:hover {
+        background: $color-accent-hover;
+        color: #fff;
+    }
+}
+
+.lpPublicUnavailableSecondary {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    color: $color-text;
+
+    &:hover {
+        border-color: $color-accent;
+        color: $color-accent;
+    }
+}
+
+.lpPublicUnavailableBrand {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
+    margin-top: 20px;
+    text-decoration: none;
+
+    &:hover { color: #fff; }
+}
+
 .lpPublicNav {
     align-items: center;
     display: flex;
@@ -48,6 +139,46 @@
     font-size: 28px;
     font-weight: 700;
     margin: 0 0 4px;
+}
+
+.lpPublicListAuthor {
+    align-items: center;
+    color: $color-text-muted;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 13px;
+    gap: 6px;
+    line-height: 1.35;
+    margin: 0 0 8px;
+}
+
+.lpPublicListAuthorLink {
+    color: inherit;
+    font-weight: $fontWeight-medium;
+    text-decoration: none;
+
+    &:hover {
+        color: $color-link;
+        text-decoration: underline;
+    }
+}
+
+.lpPublicForkSource {
+    color: $color-text-muted;
+    font-size: 13px;
+    line-height: 1.35;
+    margin: 0 0 14px;
+}
+
+.lpPublicForkSourceLink {
+    color: inherit;
+    font-weight: $fontWeight-medium;
+    text-decoration: none;
+
+    &:hover {
+        color: $color-link;
+        text-decoration: underline;
+    }
 }
 
 .lpPublicListSummary {

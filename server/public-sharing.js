@@ -267,8 +267,10 @@ function buildPublicList(user, externalId) {
 
     const payload = {
         username: user.username || '',
+        authorDisplayName: (library.publicProfile && library.publicProfile.displayName) || user.username || '',
         authorTier: (library.entitlements && library.entitlements.plan) || null,
         list: sanitizeListSummary(list, { includePrice }),
+        forkedFrom: list.forkedFrom || null,
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
         currencySymbol: library.currencySymbol || '$',

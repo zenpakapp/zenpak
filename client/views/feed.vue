@@ -146,10 +146,10 @@ export default {
     },
     methods: {
         eventLabel(type) {
-            if (type === 'list.published') return 'published a new list';
-            if (type === 'list.made-public') return 'made a list public';
-            if (type === 'list.updated') return 'updated a list';
-            return 'updated their gear';
+            if (type === 'list.published') return this.$t('community.eventPublished');
+            if (type === 'list.made-public') return this.$t('community.eventMadePublic');
+            if (type === 'list.updated') return this.$t('community.eventUpdated');
+            return this.$t('community.eventGearUpdated');
         },
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();

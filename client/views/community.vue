@@ -5,7 +5,7 @@
 <template>
     <main class="lpCommunity">
         <nav class="lpCommunityNav">
-            <router-link to="/">← Back to ZenPak</router-link>
+            <router-link to="/">{{ $t('public.backToZenPak') }}</router-link>
         </nav>
 
         <div class="lpCommunityHeader">
@@ -127,13 +127,16 @@
                                 :key="'f-' + list.externalId"
                                 class="lpCommunityCard lpCommunityCardFeatured"
                                 style="cursor:pointer"
-                                @click="$router.push(`/p/${list.externalId}`)"
+                                @click="$router.push(communityListTo(list))"
                             >
                                 <div class="lpCommunityCardName">{{ list.name }}</div>
                                 <div class="lpCommunityCardAuthor">
-                                    by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
+                                    {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
                                     <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
                                     <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                </div>
+                                <div v-if="listSourceName(list)" class="lpCommunityCardSource">
+                                    {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
                                 </div>
                                 <div class="lpCommunityCardMeta">
                                     <span class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -151,13 +154,16 @@
                             :key="list.externalId"
                             class="lpCommunityCard"
                             style="cursor:pointer"
-                            @click="$router.push(`/p/${list.externalId}`)"
+                            @click="$router.push(communityListTo(list))"
                         >
                             <div class="lpCommunityCardName">{{ list.name }}</div>
                             <div class="lpCommunityCardAuthor">
-                                by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
+                                {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
                                 <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
                                 <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                            </div>
+                            <div v-if="listSourceName(list)" class="lpCommunityCardSource">
+                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
                             </div>
                             <div class="lpCommunityCardMeta">
                                 <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -180,15 +186,19 @@
                     <aside class="lpCommunityPopular" :aria-label="$t('community.ariaPopularPacks')">
                         <div class="lpCommunityPopularTitle">{{ $t('community.popularPacksTitle') }}</div>
                         <p v-if="popularLoading" class="lpCommunityPopularEmpty">{{ $t('community.loading') }}</p>
-                        <router-link
+                        <div
                             v-for="list in popularLists"
                             :key="'popular-' + list.externalId"
-                            :to="`/p/${list.externalId}`"
                             class="lpCommunityPopularItem"
+                            @click="$router.push(communityListTo(list))"
                         >
                             <span class="lpCommunityPopularName">{{ list.name }}</span>
+                            <router-link class="lpCommunityPopularAuthor" :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
+                            <span v-if="listSourceName(list)" class="lpCommunityPopularSource">
+                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
+                            </span>
                             <span class="lpCommunityPopularMeta">{{ list.viewCount }} views · {{ formatWeight(list.totalBaseWeight) }} base</span>
-                        </router-link>
+                        </div>
                     </aside>
                 </div>
             </template>
@@ -212,7 +222,7 @@
                     </div>
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
-                            <router-link :to="`/u/${event.author}`">{{ event.author }}</router-link>
+                            <router-link :to="communityProfileTo(event.author)">{{ event.author }}</router-link>
                             <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
                             <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
                             <span> {{ eventLabel(event.type) }}</span>
@@ -381,10 +391,23 @@ export default {
             this.setDiscoverSort(value);
         },
         eventLabel(type) {
-            if (type === 'list.published') return 'published a new list';
-            if (type === 'list.made-public') return 'made a list public';
-            if (type === 'list.updated') return 'updated a list';
-            return 'updated their gear';
+            if (type === 'list.published') return this.$t('community.eventPublished');
+            if (type === 'list.made-public') return this.$t('community.eventMadePublic');
+            if (type === 'list.updated') return this.$t('community.eventUpdated');
+            return this.$t('community.eventGearUpdated');
+        },
+        communityListTo(list) {
+            return { path: `/p/${list.externalId}`, query: { from: 'community' } };
+        },
+        communityProfileTo(username) {
+            return { path: `/u/${username}`, query: { from: 'community' } };
+        },
+        listAuthorName(list) {
+            return list.authorDisplayName || list.author;
+        },
+        listSourceName(list) {
+            if (!list.sourceOwnerUsername || list.sourceOwnerUsername === list.author) return '';
+            return list.sourceOwnerName || list.sourceOwnerUsername;
         },
         formatWeight(mg) {
             if (!mg) return '';
