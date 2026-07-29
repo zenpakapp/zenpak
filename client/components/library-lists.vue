@@ -180,16 +180,20 @@ export default {
         importLP() {
             openDialog('importLP');
         },
-        handleListReorder() {
+        async handleListReorder() {
             if (this.drake) {
                 this.drake.destroy();
             }
 
-            const drake = createDragDrop([this.$refs.lists], {
+            const drake = await createDragDrop([this.$refs.lists], {
                 moves($el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpHandle');
                 },
             });
+            if (!this.$el) {
+                drake.destroy();
+                return;
+            }
             drake.on('drag', ($el, $target, $source, $sibling) => {
                 this.dragStartIndex = getElementIndex($el);
             });

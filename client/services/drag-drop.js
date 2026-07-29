@@ -1,6 +1,15 @@
-const dragula = require('dragula');
+let dragulaPromise = null;
 
-export function createDragDrop(containers, options) {
+async function loadDragula() {
+    if (!dragulaPromise) {
+        dragulaPromise = import(/* webpackChunkName: "vendor-dragula" */ 'dragula')
+            .then(module => module.default || module);
+    }
+    return dragulaPromise;
+}
+
+export async function createDragDrop(containers, options) {
+    const dragula = await loadDragula();
     return dragula(containers.filter(Boolean), options);
 }
 

@@ -230,12 +230,12 @@ export default {
             const phrases = lang.startsWith('fr') ? phrasesFr : phrasesEn;
             return phrases[Math.floor(Math.random() * phrases.length)];
         },
-        handleItemReorder() {
+        async handleItemReorder() {
             if (this.itemDrake) {
                 this.itemDrake.destroy();
             }
             const categoryItems = queryContainers(this.$el, '.lpItems');
-            const drake = createDragDrop(categoryItems, {
+            const drake = await createDragDrop(categoryItems, {
                 moves($el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpItemHandle');
                 },
@@ -246,6 +246,10 @@ export default {
                     return true;
                 },
             });
+            if (!this.$el) {
+                drake.destroy();
+                return;
+            }
             drake.on('drag', ($el, $target, $source, $sibling) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
@@ -262,16 +266,20 @@ export default {
             });
             this.itemDrake = drake;
         },
-        handleCategoryReorder() {
+        async handleCategoryReorder() {
             if (this.categoryDrake) {
                 this.categoryDrake.destroy();
             }
 
-            const drake = createDragDrop([this.$refs.categories.$el], {
+            const drake = await createDragDrop([this.$refs.categories.$el], {
                 moves(el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpCategoryHandle');
                 },
             });
+            if (!this.$el) {
+                drake.destroy();
+                return;
+            }
             drake.on('drag', ($el, $target, $source, $sibling) => {
                 this.categoryDragStartIndex = getElementIndex($el);
             });

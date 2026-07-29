@@ -254,7 +254,7 @@ export default {
             const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null });
         },
-        handleItemDrag() {
+        async handleItemDrag() {
             if (this.drake) {
                 this.drake.destroy();
             }
@@ -262,7 +262,7 @@ export default {
             const self = this;
             const editorRoot = this.$root && this.$root.$el ? this.$root.$el : this.$el;
             const categoryItems = queryContainers(editorRoot, '.lpItems');
-            const drake = createDragDrop([this.$refs.library].concat(categoryItems), {
+            const drake = await createDragDrop([this.$refs.library].concat(categoryItems), {
                 copy: true,
                 moves($el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpLibraryItemHandle');
@@ -274,6 +274,10 @@ export default {
                     return true;
                 },
             });
+            if (!this.$el) {
+                drake.destroy();
+                return;
+            }
             drake.on('drag', ($el, $target, $source, $sibling) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
