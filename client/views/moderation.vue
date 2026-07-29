@@ -164,17 +164,23 @@ export default {
         async banUser(report) {
             const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
             if (!username || !confirm(`Ban user "${username}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
                 await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed to ban user.'); }
+            } catch {
+                this.error = 'Failed to ban user.';
+            }
         },
         async unpublishList(report) {
             if (!confirm(`Unpublish list "${report.targetId}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
                 await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed to unpublish list.'); }
+            } catch {
+                this.error = 'Failed to unpublish list.';
+            }
         },
         formatDate(d) {
             return new Date(d).toLocaleDateString();

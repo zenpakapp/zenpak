@@ -243,6 +243,7 @@
         </div>
 
         <!-- Moderation tab -->
+        <p v-if="moderationError" class="lpCommunityEmpty">{{ moderationError }}</p>
         <community-moderation
             v-if="activeTab === 'moderation' && isModerator"
             @feature-list="featureList"
@@ -316,6 +317,7 @@ export default {
             filterMinWeight: '',
             filterMaxWeight: '',
             isModerator: false,
+            moderationError: null,
         };
     },
     computed: {
@@ -438,11 +440,14 @@ export default {
             return new Date(dateStr).toLocaleDateString();
         },
         async featureList(externalId) {
+            this.moderationError = null;
             try {
                 const data = await fetchJson(`/api/reports/feature/${externalId}`, { method: 'POST' });
                 const list = this.discoverLists.find(l => l.externalId === externalId);
                 if (list) list.featured = data.featured;
-            } catch { alert('Failed.'); }
+            } catch {
+                this.moderationError = 'Unable to update featured list.';
+            }
         },
         async fetchModeratorFlag() {
             try {
