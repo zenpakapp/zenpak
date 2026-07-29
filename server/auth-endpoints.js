@@ -384,8 +384,6 @@ router.post('/resendVerification', forgotLimiter, (req, res) => {
 
         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
         user.emailVerifyToken = emailVerifyToken;
-        user.verifyEmailSentAt = Date.now();
-        db.users.save(user);
 
         const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
         const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
@@ -415,9 +413,19 @@ router.post('/resendVerification', forgotLimiter, (req, res) => {
             subject: 'Verify your ZenPak email',
             text: textBody,
             html: htmlBody,
-        }).catch((e) => logWithRequest(req, e));
-
-        return res.status(200).json({ message: 'Verification email sent.' });
+        }).then(() => {
+            user.verifyEmailSentAt = Date.now();
+            db.users.save(user, (saveErr) => {
+                if (saveErr) {
+                    logWithRequest(req, saveErr);
+                    return res.status(500).json({ message: 'An error occurred, please try again later.' });
+                }
+                return res.status(200).json({ message: 'Verification email sent.' });
+            });
+        }).catch((e) => {
+            logWithRequest(req, e);
+            return res.status(500).json({ message: 'Verification email could not be sent. Please try again later.' });
+        });
     });
 });
 

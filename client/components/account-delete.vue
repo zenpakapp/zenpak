@@ -34,6 +34,7 @@ import errors from './errors.vue';
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
+import { redirect } from '../services/navigation';
 
 export default {
     name: 'Account',
@@ -90,7 +91,7 @@ export default {
                 .then((response) => {
                     this.deleting = false;
                     this.$store.commit('signout');
-                    this.$router.push('/welcome');
+                    redirect('/welcome');
                 })
                 .catch((err) => {
                     this.errors = err;

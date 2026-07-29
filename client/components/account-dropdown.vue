@@ -144,6 +144,7 @@
 <script>
 import PopoverHover from './popover-hover.vue';
 import { openDialog } from '../services/dialogs';
+import { redirect } from '../services/navigation';
 import { useTheme } from '../composables/useTheme.js';
 
 export default {
@@ -188,7 +189,7 @@ export default {
         },
         signout() {
             this.$store.commit('signout');
-            this.$router.push('/welcome');
+            redirect('/welcome');
         },
     },
 };

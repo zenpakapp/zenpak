@@ -187,7 +187,8 @@ export default {
                 listId: this.list.id,
                 [field]: value,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
@@ -206,7 +207,8 @@ export default {
                 listId: this.list.id,
                 copyable,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
@@ -223,7 +225,8 @@ export default {
                 seasons,
                 listTypes,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingTags'));
             });
         },
@@ -265,7 +268,8 @@ export default {
                     this.shareReady = true;
                     this.selectShareUrl();
                 })
-                .catch(() => {
+                .catch((err) => {
+                    if (err && err.message) return;
                     showGlobalAlert(this.$t('share.errorSavingSettingsDetail'));
                 });
         },

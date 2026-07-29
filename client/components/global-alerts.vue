@@ -49,12 +49,28 @@
 
     &:hover { opacity: 1; }
 }
+
+.lpGlobalAlertAction {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    color: inherit;
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 12px;
+    padding: 4px 10px;
+
+    &:hover { opacity: 0.75; }
+}
 </style>
 
 <template>
     <ul v-if="alerts && alerts.length" class="lpGlobalAlerts">
         <li v-for="alert in alerts" :key="alert.id || alert.message" class="lpGlobalAlert">
             <span class="lpGlobalAlertMessage">{{ displayMessage(alert) }}</span>
+            <button v-if="isVerifyEmailAlert(alert)" class="lpGlobalAlertAction" type="button" @click="resendVerification(alert)">
+                {{ resendLabel(alert) }}
+            </button>
             <button class="lpGlobalAlertDismiss" type="button" aria-label="Dismiss alert" @click="dismiss(alert.id)">
                 ×
             </button>
@@ -63,6 +79,7 @@
 </template>
 
 <script>
+import { fetchJson } from '../utils/utils';
 
 export default {
     name: 'GlobalAlerts',
@@ -91,9 +108,31 @@ export default {
                 'An error occurred while saving your data. Please refresh your browser and try again.': 'misc.alertRefreshAndTryAgain',
                 'An error occurred while saving your data. Please refresh your browser and login again.': 'misc.alertRefreshAndLoginAgain',
                 'Your list is out of date - please refresh your browser.': 'misc.alertListOutOfDate',
+                'Please verify your email before making lists public.': 'misc.alertVerifyEmailBeforePublic',
+                'Please wait 5 minutes before requesting another verification email.': 'misc.alertVerifyEmailCooldown',
+                'Verification email could not be sent. Please try again later.': 'misc.alertVerificationEmailFailed',
             };
 
             return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : message;
+        },
+        messageText(alert) {
+            return alert.message && alert.message.message
+                ? alert.message.message
+                : alert.message;
+        },
+        isVerifyEmailAlert(alert) {
+            return this.messageText(alert) === 'Please verify your email before making lists public.';
+        },
+        resendLabel(alert) {
+            if (alert.resendSent) return this.$t('dash.verificationEmailSent');
+            return this.$t('dash.resendEmail');
+        },
+        resendVerification(alert) {
+            fetchJson('/resendVerification', { method: 'POST', credentials: 'same-origin' })
+                .then(() => { alert.resendSent = true; })
+                .catch((err) => {
+                    alert.message = (err && err.message) || this.$t('misc.alertTryAgainLater');
+                });
         },
         resolveParams(params) {
             const resolved = { ...(params || {}) };

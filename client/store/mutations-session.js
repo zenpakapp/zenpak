@@ -2,11 +2,30 @@ const { clearCookie } = require('../services/browser-storage');
 const dataTypes = require('../dataTypes.js');
 const Library = dataTypes.Library;
 
+function alertKey(alert) {
+    if (!alert) return '';
+    if (alert.key) return `key:${alert.key}:${JSON.stringify(alert.params || {})}`;
+    const message = alert.message && alert.message.message ? alert.message.message : alert.message;
+    return message ? `message:${message}` : '';
+}
+
+function pushGlobalAlert(state, alert) {
+    const key = alertKey(alert);
+    if (!key) return;
+
+    const existingIndex = state.globalAlerts.findIndex(existing => alertKey(existing) === key);
+    const nextAlert = {
+        id: existingIndex >= 0 ? state.globalAlerts[existingIndex].id : `${Date.now()}-${Math.random()}`,
+        ...(typeof alert === 'string' ? { message: alert } : alert),
+    };
+
+    if (existingIndex >= 0) state.globalAlerts.splice(existingIndex, 1, nextAlert);
+    else state.globalAlerts.push(nextAlert);
+}
+
 module.exports = {
     pushGlobalAlert(state, alert) {
-        const message = alert && alert.message ? alert.message : alert;
-        if (!message) return;
-        state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, message });
+        pushGlobalAlert(state, alert);
     },
     removeGlobalAlert(state, alertId) {
         state.globalAlerts = state.globalAlerts.filter((alert) => alert.id !== alertId);
@@ -29,8 +48,7 @@ module.exports = {
             libraryData = JSON.parse(libraryData);
             library.load(libraryData);
         } catch (err) {
-            state.globalAlerts.push({
-                id: `${Date.now()}-${Math.random()}`,
+            pushGlobalAlert(state, {
                 message: 'An error occurred while loading your data.',
             });
         }
