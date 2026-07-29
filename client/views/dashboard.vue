@@ -150,7 +150,6 @@
             v-for="dialog in loadedDialogs"
             :key="dialog.name"
         />
-        <shortcuts-help />
         <speedbump />
     </div>
 </template>
@@ -170,8 +169,8 @@ import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
 import guestSettings from '../components/guest-settings.vue';
-import shortcutsHelp from '../components/shortcuts-help.vue';
 import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
+import { openDialog } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 
 const gearRoom = () => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue');
@@ -191,6 +190,7 @@ const lazyDialogs = {
     itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
     itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
     itemViewImage: { component: 'itemViewImage', loader: () => import(/* webpackChunkName: "dialog-item-view-image" */ '../components/item-view-image.vue') },
+    shortcutsHelp: { component: 'shortcutsHelp', loader: () => import(/* webpackChunkName: "dialog-shortcuts-help" */ '../components/shortcuts-help.vue') },
 };
 
 export default {
@@ -210,7 +210,6 @@ export default {
         profileInsights,
         upgradePrompt,
         notifications,
-        shortcutsHelp,
     },
     data() {
         return {
@@ -326,6 +325,9 @@ export default {
         this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
         registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
+        registerShortcut('?', this.$t('shortcuts.showHelp'), () => {
+            openDialog('shortcutsHelp');
+        });
 
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
@@ -360,6 +362,7 @@ export default {
         });
         this.dialogLoaders = [];
         unregisterShortcut('s');
+        unregisterShortcut('?');
         if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
         if (this.sidebarMediaQuery) {
             this.sidebarMediaQuery.removeEventListener('change', this.handleSidebarBreakpoint);

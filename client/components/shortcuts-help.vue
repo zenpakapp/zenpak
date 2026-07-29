@@ -16,7 +16,8 @@
 
 <script>
 import modal from './modal.vue';
-import { registerShortcut, unregisterShortcut, getRegistry } from '../services/shortcuts';
+import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
+import { getRegistry } from '../services/shortcuts';
 
 export default {
     name: 'ShortcutsHelp',
@@ -30,10 +31,12 @@ export default {
         },
     },
     mounted() {
-        registerShortcut('?', this.$t('shortcuts.showHelp'), () => { this.shown = true; });
+        registerDialogOpener('shortcutsHelp', () => {
+            this.shown = true;
+        });
     },
     beforeUnmount() {
-        unregisterShortcut('?');
+        unregisterDialogOpener('shortcutsHelp');
     },
     methods: {
         open() { this.shown = true; },
