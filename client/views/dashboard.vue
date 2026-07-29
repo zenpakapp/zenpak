@@ -6,21 +6,30 @@
     <div v-if="isInitializing" class="lpEditorLoading" role="status" aria-live="polite">
         <span class="lpEditorLoadingText">{{ $t('dash.loadingEditor') }}</span>
         <div class="lpEditorLoadingSidebar" aria-hidden="true">
-            <span class="lpEditorLoadingBrand" />
-            <span v-for="index in 6" :key="`loading-nav-${index}`" class="lpEditorLoadingNav" />
+            <span class="lpEditorLoadingBone lpEditorLoadingBrand" />
+            <span v-for="index in 6" :key="`loading-nav-${index}`" class="lpEditorLoadingBone lpEditorLoadingNav" />
         </div>
         <div class="lpEditorLoadingContent" aria-hidden="true">
             <div class="lpEditorLoadingToolbar">
-                <span class="lpEditorLoadingTitle" />
-                <span class="lpEditorLoadingAction" />
+                <span class="lpEditorLoadingBone lpEditorLoadingTitle" />
+                <span class="lpEditorLoadingBone lpEditorLoadingTitleMeta" />
+                <span class="lpEditorLoadingBone lpEditorLoadingAction" />
             </div>
-            <div class="lpEditorLoadingList">
-                <span class="lpEditorLoadingListTitle" />
-                <div class="lpEditorLoadingRows">
-                    <div v-for="index in 5" :key="`loading-row-${index}`" class="lpEditorLoadingRow">
-                        <span />
-                        <span />
-                        <span />
+            <div class="lpEditorLoadingWorkspace">
+                <div class="lpEditorLoadingSummary">
+                    <span class="lpEditorLoadingBone lpEditorLoadingChart" />
+                    <div class="lpEditorLoadingTotals">
+                        <span v-for="index in 6" :key="`loading-total-${index}`" class="lpEditorLoadingBone" />
+                    </div>
+                </div>
+                <div class="lpEditorLoadingList">
+                    <span class="lpEditorLoadingBone lpEditorLoadingListTitle" />
+                    <div class="lpEditorLoadingRows">
+                        <div v-for="index in 7" :key="`loading-row-${index}`" class="lpEditorLoadingRow">
+                            <span class="lpEditorLoadingBone" />
+                            <span class="lpEditorLoadingBone" />
+                            <span class="lpEditorLoadingBone" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,7 +47,23 @@
                         <span class="lpHamburgerLine" />
                     </a>
                 </span>
-                <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                <span class="lpListTitleBlock headerItem">
+                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" value="New List" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                    <span v-if="forkSource" class="lpForkSource">
+                        {{ $t('dash.source') }}
+                        <router-link v-if="forkSource.externalId" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
+                            {{ forkSource.listName }}
+                        </router-link>
+                        <span v-else>{{ forkSource.listName }}</span>
+                        <span v-if="forkSource.ownerName" class="lpForkSourceOwner">
+                            ·
+                            <router-link v-if="forkSource.ownerUsername" class="lpForkSourceLink" :to="`/u/${forkSource.ownerUsername}`">
+                                {{ forkSource.ownerName }}
+                            </router-link>
+                            <span v-else>{{ forkSource.ownerName }}</span>
+                        </span>
+                    </span>
+                </span>
                 <span class="headerItem headerIconItem">
                     <themeToggle />
                 </span>
@@ -120,17 +145,12 @@
 
         <globalAlerts />
         <copyList />
-        <importCSV />
-        <itemImage />
-        <itemViewImage />
-        <itemLink />
-        <itemMeta />
-        <itemDetail />
-        <gearPicker />
-        <help />
+        <component
+            :is="dialog.component"
+            v-for="dialog in loadedDialogs"
+            :key="dialog.name"
+        />
         <shortcuts-help />
-        <account />
-        <accountDelete />
         <speedbump />
     </div>
 </template>
@@ -142,18 +162,7 @@ import sidebar from '../components/sidebar.vue';
 import share from '../components/share.vue';
 import listSettings from '../components/list-settings.vue';
 import accountDropdown from '../components/account-dropdown.vue';
-import account from '../components/account.vue';
-import accountDelete from '../components/account-delete.vue';
-import help from '../components/help.vue';
 import list from '../components/list.vue';
-
-import itemImage from '../components/item-image.vue';
-import itemViewImage from '../components/item-view-image.vue';
-import itemLink from '../components/item-link.vue';
-import itemMeta from '../components/item-meta.vue';
-import itemDetail from '../components/item-detail.vue';
-import gearPicker from '../components/gear-picker.vue';
-import importCSV from '../components/import-csv.vue';
 import copyList from '../components/copy-list.vue';
 import speedbump from '../components/speedbump.vue';
 import gearRoom from '../components/gear-room.vue';
@@ -165,7 +174,23 @@ import themeToggle from '../components/theme-toggle.vue';
 import notifications from '../components/notifications.vue';
 import guestSettings from '../components/guest-settings.vue';
 import shortcutsHelp from '../components/shortcuts-help.vue';
+import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
+
+const lazyDialogs = {
+    account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
+    deleteAccount: { component: 'accountDelete', loader: () => import(/* webpackChunkName: "dialog-account-delete" */ '../components/account-delete.vue') },
+    gearPicker: { component: 'gearPicker', loader: () => import(/* webpackChunkName: "dialog-gear-picker" */ '../components/gear-picker.vue') },
+    help: { component: 'help', loader: () => import(/* webpackChunkName: "dialog-help" */ '../components/help.vue') },
+    importCSV: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    importLP: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    importText: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    itemDetail: { component: 'itemDetail', loader: () => import(/* webpackChunkName: "dialog-item-detail" */ '../components/item-detail.vue') },
+    itemImage: { component: 'itemImage', loader: () => import(/* webpackChunkName: "dialog-item-image" */ '../components/item-image.vue') },
+    itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
+    itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
+    itemViewImage: { component: 'itemViewImage', loader: () => import(/* webpackChunkName: "dialog-item-view-image" */ '../components/item-view-image.vue') },
+};
 
 export default {
     name: 'Dashboard',
@@ -176,18 +201,8 @@ export default {
         listSettings,
         accountDropdown,
         guestSettings,
-        account,
-        accountDelete,
-        help,
         list,
-        itemLink,
-        itemMeta,
-        itemDetail,
-        gearPicker,
         copyList,
-        importCSV,
-        itemImage,
-        itemViewImage,
         speedbump,
         globalAlerts,
         gearRoom,
@@ -210,6 +225,8 @@ export default {
             billingCancelled: false,
             billingManaged: false,
             loadingPrivateLibrary: false,
+            loadedDialogs: [],
+            dialogLoaders: [],
         };
     },
     computed: {
@@ -222,6 +239,12 @@ export default {
         list() {
             if (!this.library || typeof this.library.getListById !== 'function') return null;
             return this.library.getListById(this.library.defaultListId);
+        },
+        forkSource() {
+            const forkedFrom = this.list && this.list.forkedFrom;
+            if (!forkedFrom || !forkedFrom.listName) return null;
+            if (forkedFrom.ownerUsername && forkedFrom.ownerUsername === this.$store.state.loggedIn) return null;
+            return forkedFrom;
         },
         isSignedIn() {
             return this.$store.state.loggedIn;
@@ -294,6 +317,11 @@ export default {
         },
     },
     created() {
+        Object.entries(lazyDialogs).forEach(([name, dialog]) => {
+            const loader = () => this.loadDialog(dialog.component, dialog.loader);
+            this.dialogLoaders.push({ name, loader });
+            registerDialogLoader(name, loader);
+        });
         this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
         registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
@@ -326,6 +354,10 @@ export default {
         }
     },
     beforeUnmount() {
+        this.dialogLoaders.forEach(({ name, loader }) => {
+            unregisterDialogLoader(name, loader);
+        });
+        this.dialogLoaders = [];
         unregisterShortcut('s');
         if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
         if (this.sidebarMediaQuery) {
@@ -350,6 +382,12 @@ export default {
             if (this.sidebarMediaQuery && this.sidebarMediaQuery.matches) {
                 this.$store.commit('setSidebarOpen', false);
             }
+        },
+        async loadDialog(componentName, loader) {
+            if (this.loadedDialogs.some(dialog => dialog.name === componentName)) return;
+            const module = await loader();
+            this.loadedDialogs.push({ name: componentName, component: module.default || module });
+            await this.$nextTick();
         },
         handleSidebarBreakpoint(event) {
             if (event.matches) {
@@ -379,7 +417,16 @@ export default {
             this.verifyResendError = null;
             fetchJson('/resendVerification', { method: 'POST', credentials: 'same-origin' })
                 .then(() => { this.verifyResendSent = true; })
-                .catch((err) => { this.verifyResendError = (err && err.message) || 'An error occurred.'; });
+                .catch((err) => { this.verifyResendError = this.translateServerError((err && err.message) || 'An error occurred, please try again later.'); });
+        },
+        translateServerError(message) {
+            const serverMessageKeys = {
+                'Too many requests. Try again in 1 hour.': 'misc.alertTooManyRequests',
+                'Please wait 5 minutes before requesting another verification email.': 'misc.alertVerifyEmailCooldown',
+                'Verification email could not be sent. Please try again later.': 'misc.alertVerificationEmailFailed',
+                'An error occurred, please try again later.': 'misc.alertTryAgainLater',
+            };
+            return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : message;
         },
         async openPortal() {
             try {

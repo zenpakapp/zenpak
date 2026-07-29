@@ -91,7 +91,9 @@ function serveCurrentDistAsset(entryName, extension) {
 
         try {
             const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-            const assetName = (manifest.files?.[entryName] || []).find(name => name.endsWith(extension));
+            const assetFiles = manifest.files?.[entryName] || [];
+            const assetName = assetFiles.find(name => name.startsWith(`${entryName}.`) && name.endsWith(extension))
+                || assetFiles.find(name => name.endsWith(extension));
             if (!assetName) return next();
             return res.sendFile(path.join(__dirname, 'public/dist', assetName));
         } catch (err) {

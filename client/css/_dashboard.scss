@@ -47,15 +47,33 @@
     padding: 0 24px;
 }
 
-.lpEditorLoadingList {
-    margin: 32px auto;
+.lpEditorLoadingWorkspace {
+    margin: 28px auto;
     max-width: 920px;
     padding: 0 24px;
 }
 
+.lpEditorLoadingSummary {
+    align-items: center;
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    margin-bottom: 30px;
+}
+
+.lpEditorLoadingTotals {
+    border-top: 1px solid $color-border;
+    display: grid;
+}
+
+.lpEditorLoadingTotals span {
+    border-bottom: 1px solid $color-border;
+    height: 32px;
+}
+
 .lpEditorLoadingRows {
     border-top: 1px solid $color-border;
-    margin-top: 20px;
+    margin-top: 12px;
 }
 
 .lpEditorLoadingRow {
@@ -67,12 +85,7 @@
     min-height: 58px;
 }
 
-.lpEditorLoadingBrand,
-.lpEditorLoadingNav,
-.lpEditorLoadingTitle,
-.lpEditorLoadingAction,
-.lpEditorLoadingListTitle,
-.lpEditorLoadingRow span {
+.lpEditorLoadingBone {
     animation: lpEditorLoadingSweep 1.4s ease-in-out infinite;
     background: linear-gradient(90deg, color-mix(in sRGB, $color-text 8%, transparent) 20%, color-mix(in sRGB, $color-text 15%, transparent) 45%, color-mix(in sRGB, $color-text 8%, transparent) 70%);
     background-size: 240% 100%;
@@ -95,8 +108,21 @@
     width: min(280px, 42%);
 }
 
+.lpEditorLoadingTitleMeta {
+    height: 10px;
+    margin-left: 14px;
+    margin-right: auto;
+    width: 150px;
+}
+
 .lpEditorLoadingAction {
     width: 96px;
+}
+
+.lpEditorLoadingChart {
+    border-radius: 50%;
+    height: 220px;
+    width: 220px;
 }
 
 .lpEditorLoadingListTitle {
@@ -123,12 +149,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .lpEditorLoadingBrand,
-    .lpEditorLoadingNav,
-    .lpEditorLoadingTitle,
-    .lpEditorLoadingAction,
-    .lpEditorLoadingListTitle,
-    .lpEditorLoadingRow span {
+    .lpEditorLoadingBone {
         animation: none;
     }
 }
@@ -142,9 +163,19 @@
         display: none;
     }
 
-    .lpEditorLoadingList {
+    .lpEditorLoadingWorkspace {
         margin-top: 20px;
         padding: 0 16px;
+    }
+
+    .lpEditorLoadingSummary {
+        gap: 18px;
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .lpEditorLoadingChart {
+        height: 120px;
+        width: 120px;
     }
 
     .lpEditorLoadingRow {
@@ -301,10 +332,19 @@
         width: calc(100% + 24px);
     }
 
-    #lpListName {
+    .lpListTitleBlock {
         flex-basis: 120px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #lpListName {
         padding-left: 6px;
         padding-right: 6px;
+    }
+
+    .lpForkSource {
+        display: none;
     }
 
     .headerCommunityItem,
@@ -359,12 +399,44 @@
     font-weight: $fontWeight-bold;
     letter-spacing: -0.01em;
     min-width: 0;
-    padding: 10px 14px;
+    padding: 7px 14px;
     width: 100%;
 
     &::placeholder {
         color: $color-text-muted;
         font-weight: $fontWeight-normal;
+    }
+}
+
+.lpListTitleBlock {
+    align-self: stretch;
+    display: flex;
+    flex: 1 1 240px;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    min-width: 0;
+}
+
+.lpForkSource {
+    color: $color-text-muted;
+    display: block;
+    font-size: $fontSize-xs;
+    line-height: 1.2;
+    margin: 0 14px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lpForkSourceLink {
+    color: inherit;
+    font-weight: $fontWeight-medium;
+    text-decoration: none;
+
+    &:hover {
+        color: $color-link;
+        text-decoration: underline;
     }
 }
 
@@ -430,7 +502,7 @@
         transform: none;
     }
 
-    &#lpListName {
+    &.lpListTitleBlock {
         flex: 1 1 240px;
         min-width: 0;
     }
@@ -446,7 +518,7 @@
     }
 }
 
-.headerItem:not(#lpListName) {
+.headerItem:not(.lpListTitleBlock) {
     align-items: center;
     display: flex;
     min-height: 60px;
@@ -515,7 +587,7 @@
 
     #lpListName {
         font-size: 15px;
-        padding: 10px 8px;
+        padding: 7px 8px;
     }
 
     .headerItem .lpTarget {

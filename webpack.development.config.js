@@ -61,16 +61,8 @@ module.exports = {
         port: devServerPort,
         allowedHosts: 'all',
         historyApiFallback: true,
-        hot: true,
-        client: {
-            logging: 'info',
-            overlay: true,
-            webSocketURL: {
-                hostname: devServerHost,
-                port: devServerPort,
-                protocol: 'ws',
-            },
-        },
+        hot: false,
+        client: false,
         devMiddleware: {
             publicPath: '/dist/',
             stats: {

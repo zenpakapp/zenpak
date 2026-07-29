@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const VueI18nPlugin = require('@intlify/unplugin-vue-i18n/webpack');
 
@@ -15,9 +16,24 @@ class AssetJsonPlugin {
         compiler.hooks.done.tap(
             'AssetJsonPlugin',
             (stats) => {
+                const statsData = stats.toJson({
+                    assets: true,
+                    assetsByChunkName: true,
+                    entrypoints: true,
+                });
+                const entrypointFiles = {};
+                Object.entries(statsData.entrypoints || {}).forEach(([name, entrypoint]) => {
+                    entrypointFiles[name] = (entrypoint.assets || [])
+                        .map(asset => (typeof asset === 'string' ? asset : asset.name))
+                        .filter(Boolean);
+                });
+
                 const assetData = {
-                    version: stats.toJson().chunks[0].hash,
-                    files: stats.toJson().assetsByChunkName,
+                    version: statsData.hash,
+                    files: {
+                        ...statsData.assetsByChunkName,
+                        ...entrypointFiles,
+                    },
                 };
 
                 require('fs').writeFileSync(
@@ -90,6 +106,16 @@ module.exports = {
     },
     performance: {
         hints: false,
+    },
+    optimization: {
+        runtimeChunk: 'single',
+        splitChunks: {
+            chunks: 'all',
+        },
+        minimizer: [
+            '...',
+            new CssMinimizerPlugin(),
+        ],
     },
     devtool: false,
     plugins: [
