@@ -51,6 +51,11 @@ function parseNumberParam(value) {
     return Number.isFinite(number) && number >= 0 ? number : null;
 }
 
+function normalizeCopiedQuantity(value) {
+    const quantity = Number(value);
+    return Number.isFinite(quantity) ? quantity : 1;
+}
+
 function listMatchesFilters(list, filters) {
     if (filters.q && !String(list.name || '').toLowerCase().includes(filters.q)) return false;
     const totalBaseWeight = Number(list.totalBaseWeight) || 0;
@@ -383,7 +388,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                             brand: item.brand || '',
                             shop: item.shop || '',
                             imageUrl: item.imageUrl || '',
-                            qty: Number(ci.qty) || 1,
+                            qty: normalizeCopiedQuantity(ci.qty),
                             worn: ci.worn || 0,
                             consumable: ci.consumable === true,
                             star: ci.star || 0,

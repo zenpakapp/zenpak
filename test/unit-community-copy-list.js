@@ -12,8 +12,23 @@ const ownerUser = {
             externalId: 'abc123',
             name: 'PCT Section J',
             visibility: 'discoverable',
+            categoryIds: ['cat-hydration'],
             categories: [],
         }],
+        categories: [{
+            id: 'cat-hydration',
+            name: 'Hydration',
+            categoryItems: [
+                { itemId: 'item-zero', qty: 0 },
+                { itemId: 'item-two', qty: 2 },
+                { itemId: 'item-half', qty: 0.5 },
+            ],
+        }],
+        items: [
+            { id: 'item-zero', name: 'Platypus - 2L', weight: 36, authorUnit: 'g' },
+            { id: 'item-two', name: 'Water bottle pair', weight: 76, authorUnit: 'g' },
+            { id: 'item-half', name: 'Half fuel can', weight: 110, authorUnit: 'g' },
+        ],
     },
 };
 
@@ -84,12 +99,12 @@ async function run() {
         copyRoute.route.stack[0].handle(req, res);
     });
 
-    assert('returns listId', responseData && typeof responseData.listId !== 'undefined');
-    assert('saves user', savedUsers.length > 0);
-
-    const savedCopy = (savedUsers[0].library.lists || []).find(l => l.name === 'Copy of PCT Section J');
-    assert('copy has correct name', Boolean(savedCopy));
-    assert('copy has new id', savedCopy && String(savedCopy.id) !== String(ownerUser.library.lists[0].id));
+    assert('returns source list name', responseData && responseData.listName === 'PCT Section J');
+    assert('saves source owner for copy count', savedUsers.some(u => u.username === 'alice'));
+    assert('returns categories payload', responseData.categories && responseData.categories.length === 1);
+    assert('copy payload preserves zero quantity', responseData.categories[0].categoryItems[0].qty === 0);
+    assert('copy payload preserves quantity above one', responseData.categories[0].categoryItems[1].qty === 2);
+    assert('copy payload preserves decimal quantity', responseData.categories[0].categoryItems[2].qty === 0.5);
 
     // Test: cannot copy own list
     savedUsers.length = 0;
