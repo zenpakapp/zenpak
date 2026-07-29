@@ -9,7 +9,7 @@ import { showGlobalAlert } from './services/user-feedback';
 import { registerFocusDirectives } from './utils/focus';
 import { initGlobalShortcuts } from './services/shortcuts';
 import store from './store/store';
-import { i18n } from './i18n';
+import { i18n, initLocale } from './i18n';
 
 if (typeof window !== 'undefined') {
     window.history.scrollRestoration = 'manual';
@@ -83,9 +83,11 @@ var initLighterPack = function () {
     registerFocusDirectives(app);
     initGlobalShortcuts();
 
-    router.isReady().then(() => {
-        window.LighterPack = app.mount('#lp');
-    });
+    router.isReady()
+        .then(() => initLocale())
+        .then(() => {
+            window.LighterPack = app.mount('#lp');
+        });
 };
 
 initLighterPack();

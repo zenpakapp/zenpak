@@ -242,8 +242,8 @@ export default {
             this.selectedLocale = val;
             this.changeLocale();
         },
-        changeLocale() {
-            setLocale(this.selectedLocale);
+        async changeLocale() {
+            await setLocale(this.selectedLocale);
         },
         async downloadBackup() {
             this.backupLoading = true;
