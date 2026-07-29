@@ -114,9 +114,10 @@ import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
-import upgradePrompt from '../components/upgrade-prompt.vue';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
+
+const upgradePrompt = () => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue');
 
 export default {
     name: 'PublicProfile',

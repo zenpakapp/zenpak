@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import upgradePrompt from '../components/upgrade-prompt.vue';
+const upgradePrompt = () => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue');
 
 export default {
     name: 'AboutView',
