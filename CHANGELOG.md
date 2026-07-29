@@ -6,6 +6,26 @@ All notable changes to ZenPak are documented here.
 
 ## [Unreleased] — 2026-07-07
 
+### Database & performance
+- **Public list projections** — Discover/Community now reads denormalized `public_lists` instead of scanning every user library
+- **Public stats collections** — views, copies, gear clicks, promo clicks and unique viewers moved to dedicated public stats/viewer collections
+- **Backfill script** — `npm run backfill:public-lists` rebuilds public projections and migrates legacy public stats
+- **MongoDB indexes** — added dedicated indexes for public list discovery, stats and viewer dedupe; avoided invalid compound indexes on parallel arrays
+
+### Public lists & sharing
+- **Fork attribution** — copied lists keep lightweight source metadata for private and public display
+- **Copy privacy** — copied lists stay private by default and do not inherit public sharing options
+- **Copy fidelity** — copied lists preserve quantities, including `0`, and adapt item/list units to the destination user
+- **Public CSV** — public CSV download respects sharing settings and exports a fuller item payload including brands
+- **Hidden prices** — public charts/totals respect the “show prices” sharing option
+- **Unavailable list page** — inaccessible public lists use the same compact error template as email verification
+
+### App & UX
+- **Public navigation** — profile/list/community links now avoid dead-end loops and expose clearer “open app” navigation
+- **Notifications** — notification panel auto-refreshes, uses profile display names with username fallback, and supports deletion
+- **Dialogs** — critical item details dialog restored to a stable direct mount after lazy-loading regressions
+- **Preload states** — dashboard/community/library loading states now keep app-like spacing instead of unstyled content
+
 ### Community
 - **Discover tab** — public lists browsable without account, paginated with cursor
 - **People tab** — search users by username with visibility filter

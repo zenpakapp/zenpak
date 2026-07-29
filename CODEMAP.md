@@ -3,7 +3,7 @@
 > Architecture index. Update when structure changes. Not a substitute for reading code.
 
 **Stack:** Node.js + Express · Vue 3 (Options API + Vuex) · MongoDB · Webpack 5 · SCSS · Playwright  
-**Last mapped:** 2026-07-22
+**Last mapped:** 2026-07-29
 
 ---
 
@@ -17,6 +17,13 @@ Library
             └─ Category
                  └─ categoryItems[]  ← { itemId, qty, worn, consumable, star }
   └─ idMap            ← Map<id, item|list|category> for O(1) lookup
+```
+
+```
+Public community projections
+  └─ public_lists          ← denormalized public list cards/search data
+  └─ public_list_stats     ← view/copy/click counters per public list
+  └─ public_list_viewers   ← viewer dedupe keys for unique public views
 ```
 
 **Weight:** stored internally as **milligrams** (integer). Display via `WeightToMg` / `MgToWeight` in `client/utils/weight.js`.  
@@ -98,6 +105,7 @@ Library
 | `server/auth-endpoints.js` | `/register` · `/signin` · `/forgotPassword` · `/resetPassword` · `/verify-email` |
 | `server/library-endpoints.js` | `POST /saveLibrary` (syncToken, server-fields protection) · backup/restore · LP importer |
 | `server/community-endpoints.js` | Discover · follow · feed · copy-list (rate-limited) |
+| `server/public-list-projections.js` | Builds/syncs `public_lists`, converts projections to Discover items, updates public stats/viewers |
 | `server/public-sharing.js` | `buildPublicList()` · `buildPublicProfile()` — sanitize before public API |
 | `server/billing.js` | Stripe: `getOrCreateCustomer()` · `syncUserBilling()` · plan/price mapping |
 | `server/billing-endpoints.js` | `/api/billing/*` — checkout-session · portal-session · config · me · cancel |
@@ -105,6 +113,12 @@ Library
 | `server/db.js` | MongoDB wrapper — `collection()` factory, named collections, `ensureIndexes()` |
 | `server/save-library-feed.js` | `detectVisibilityChanges()` — emits feed events on list publish/update |
 | `server/gear-scraper.js` | `scrapeGear(url)` — fetches og-tags / structured data for item auto-fill |
+
+### Scripts
+
+| File | Role |
+|------|------|
+| `scripts/backfill-public-lists.js` | Rebuilds `public_lists`, migrates legacy public stats/viewers, removes stale projections |
 
 ### i18n
 
@@ -158,6 +172,12 @@ Auto-save plugin (store.js)
 
 **Server-side field protection** — `saveLibrary` restores `entitlements`, `creatorFields`, `insights` from server before writing. Never trust client for plan data.
 
+**Public list projections** — Community Discover reads from `public_lists` instead of scanning every user library. Writes still happen through the user `Library`; after saves/profile/tier/moderation changes, `syncUserPublicLists(user)` refreshes the denormalized projection.
+
+**Public stats** — list views/copies/gear clicks/promo clicks live in `public_list_stats`; unique viewers are tracked in `public_list_viewers`. Legacy `library.insights` is no longer a runtime fallback.
+
+**Mongo array indexes** — avoid compound indexes across multiple array fields. `seasons` and `listTypes` use separate indexes because MongoDB cannot index parallel arrays in one compound index.
+
 **syncToken** — optimistic concurrency. Server rejects save if token mismatch (concurrent edit). Client shows conflict UI.
 
 **`forkedFrom`** — list field tracking Open Lists lineage. Set on `importPublicList` mutation. Persisted server-side on saveLibrary (no whitelist risk — list objects stored as-is).
@@ -182,6 +202,8 @@ test/
 ```
 
 Run: `npm run test:e2e` · critical only: `npm run test:e2e:critical`
+
+Migration/backfill: `npm run backfill:public-lists`
 
 ---
 
