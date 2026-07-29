@@ -165,9 +165,6 @@ import accountDropdown from '../components/account-dropdown.vue';
 import list from '../components/list.vue';
 import copyList from '../components/copy-list.vue';
 import speedbump from '../components/speedbump.vue';
-import gearRoom from '../components/gear-room.vue';
-import profileInsights from '../components/profile-insights.vue';
-import upgradePrompt from '../components/upgrade-prompt.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
@@ -176,6 +173,10 @@ import guestSettings from '../components/guest-settings.vue';
 import shortcutsHelp from '../components/shortcuts-help.vue';
 import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
+
+const gearRoom = () => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue');
+const profileInsights = () => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue');
+const upgradePrompt = () => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue');
 
 const lazyDialogs = {
     account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
