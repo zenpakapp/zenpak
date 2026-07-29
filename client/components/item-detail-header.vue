@@ -157,7 +157,7 @@
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
-        <button class="lpIconButton itemDetailClose" title="Close" @click="$emit('close')">×</button>
+        <button class="lpIconButton itemDetailClose" :title="$t('misc.close')" @click="$emit('close')">×</button>
     </div>
 </template>
 

@@ -179,6 +179,10 @@
     "copyList": "Liste kopieren",
     "copying": "Wird kopiert…",
     "copied": "Kopiert!",
+    "copyOwnList": "Sie können Ihre eigene Liste nicht kopieren.",
+    "copyListUnavailable": "Diese Liste ist nicht mehr verfügbar.",
+    "copyRateLimited": "Kopierlimit erreicht: {limit} neue Kopien pro Stunde. Bitte in etwa {minutes} Min. erneut versuchen.",
+    "copyListFailed": "Diese Liste konnte nicht kopiert werden. Bitte erneut versuchen.",
     "loading": "Lädt...",
     "publicLists": "Öffentliche Listen",
     "noPublicLists": "Noch keine öffentlichen Listen.",
@@ -418,6 +422,7 @@
     "no": "Nein",
     "categoryName": "Kategoriename",
     "deleteCategory": "Kategorie löschen",
+    "reorderCategory": "Diese Kategorie neu anordnen",
     "addItem": "Neuen Gegenstand hinzufügen",
     "addItemWithDetails": "Mit Details hinzufügen",
     "settings": "Einstellungen",
@@ -616,6 +621,17 @@
     "createList": "+ Erstellen"
   },
   "item": {
+    "reorderItemTitle": "Diesen Gegenstand neu anordnen",
+    "namePlaceholder": "Name",
+    "descriptionPlaceholder": "Beschreibung",
+    "imageTitle": "Foto hochladen oder ein Foto aus dem Web verwenden",
+    "linkTitle": "Link hinzufügen",
+    "metaTitle": "Marke, Typ und Tags bearbeiten",
+    "wornTitle": "Als getragen markieren",
+    "consumableTitle": "Als Verbrauch markieren",
+    "ratingTitle": "Diesen Gegenstand bewerten",
+    "editTitle": "Details bearbeiten",
+    "removeTitle": "Entfernen",
     "editLabelName": "Name",
     "editLabelDescription": "Beschreibung",
     "editLabelBrand": "Marke",
@@ -785,8 +801,14 @@
   "import": {
     "csvAdded": "Import abgeschlossen: {count} Gegenstände hinzugefügt — angezeigt in {unit}.",
     "csvMerged": "Import abgeschlossen: {merged} zusammengeführt, {added} neu — angezeigt in {unit}.",
-    "listAdded": "Liste kopiert: {count} Gegenstände zur Ausrüstung hinzugefügt — angezeigt in {unit}.",
-    "listMerged": "Liste kopiert: {merged} übereinstimmend, {added} neu — angezeigt in {unit}."
+    "itemAddedOne": "Gegenstand hinzugefügt",
+    "itemAddedOther": "Gegenstände hinzugefügt",
+    "matchedOne": "Treffer",
+    "matchedOther": "Treffer",
+    "newOne": "neu",
+    "newOther": "neu",
+    "listAdded": "Liste kopiert: {count} {countLabel} zur Ausrüstung — angezeigt in {unit}.",
+    "listMerged": "Liste kopiert: {mergedCount} {mergedLabel}, {addedCount} {addedLabel} — angezeigt in {unit}."
   },
   "shortcuts": {
     "title": "Tastaturkürzel",

@@ -63,6 +63,27 @@ const store = createStore({
                     return Promise.reject(error);
                 });
         },
+        initPublic(context) {
+            fetch('/api/billing/config')
+                .then(r => r.ok ? r.json() : null)
+                .then(data => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
+                .catch(() => {});
+            return fetchJson('/api/auth/me', { credentials: 'same-origin' })
+                .then((response) => {
+                    context.commit('setLoggedIn', response.username || false);
+                    context.commit('setEmailVerified', response.emailVerified ?? null);
+                    context.commit('setInitializationStatus', 'ready');
+                })
+                .catch((error) => {
+                    if (error && (error.statusCode === 401 || error.statusCode === 404)) {
+                        context.commit('setLoggedIn', false);
+                        context.commit('setInitializationStatus', 'ready');
+                        return Promise.resolve();
+                    }
+                    context.commit('setInitializationStatus', 'error');
+                    return Promise.reject(error);
+                });
+        },
         loadLocal(context) {
             const libraryData = getLocalLibrary();
             context.commit('loadLibraryData', libraryData);

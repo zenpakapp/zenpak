@@ -68,8 +68,8 @@
                 <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
                 <span v-if="!item.url" class="lpName">{{ item.name }}</span>
                 <span class="lpWeight">
-                    {{ displayWeight(item.weight, item.authorUnit) }}
-                    {{ item.authorUnit }}
+                    {{ displayWeight(item.weight, itemUnit) }}
+                    {{ itemUnit }}
                 </span>
                 <span class="lpDescription">
                     {{ item.description }}
@@ -131,6 +131,9 @@ export default {
     computed: {
         library() {
             return this.$store.state.library;
+        },
+        itemUnit() {
+            return (this.library && this.library.itemUnit) || 'g';
         },
         gearCategories() {
             return GEAR_CATEGORIES;

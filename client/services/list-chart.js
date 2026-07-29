@@ -1,7 +1,17 @@
-import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 const colorUtils = require('../utils/color.js');
 
-Chart.register(DoughnutController, ArcElement, Tooltip);
+let chartModulePromise = null;
+
+async function loadChart() {
+    if (!chartModulePromise) {
+        chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
+            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+                Chart.register(DoughnutController, ArcElement, Tooltip);
+                return Chart;
+            });
+    }
+    return chartModulePromise;
+}
 
 function extractCategories(processedData) {
     return Object.values(processedData.points);
@@ -19,9 +29,10 @@ function buildDataset(categories) {
     };
 }
 
-export function renderListChart({ chart, canvas, processedData, hoverCallback }) {
+export async function renderListChart({ chart, canvas, processedData, hoverCallback }) {
     if (!canvas || !processedData) return chart;
 
+    const Chart = await loadChart();
     const categories = extractCategories(processedData);
 
     if (chart) {

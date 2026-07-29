@@ -5,7 +5,9 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const config = require('config');
 const express = require('express');
+const fs = require('fs');
 const morgan = require('morgan');
+const path = require('path');
 
 const { logger } = require('./server/log.js');
 const {
@@ -81,6 +83,27 @@ app.use(express.urlencoded({
     extended: true,
     limit: REQUEST_BODY_LIMIT,
 }));
+
+function serveCurrentDistAsset(entryName, extension) {
+    return (req, res, next) => {
+        const manifestPath = path.join(__dirname, 'public/dist/assets.json');
+        if (!fs.existsSync(manifestPath)) return next();
+
+        try {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            const assetName = (manifest.files?.[entryName] || []).find(name => name.endsWith(extension));
+            if (!assetName) return next();
+            return res.sendFile(path.join(__dirname, 'public/dist', assetName));
+        } catch (err) {
+            return next(err);
+        }
+    };
+}
+
+app.get('/dist/app.js', serveCurrentDistAsset('app', '.js'));
+app.get('/dist/app.css', serveCurrentDistAsset('app', '.css'));
+app.get('/dist/share.js', serveCurrentDistAsset('share', '.js'));
+app.get('/dist/share.css', serveCurrentDistAsset('share', '.css'));
 
 app.use('/dist', express.static(`${__dirname}/public/dist/`, {
     immutable: runtimeEnvironment === 'production',

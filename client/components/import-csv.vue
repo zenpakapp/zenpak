@@ -58,7 +58,7 @@
                     <div class="importReviewCol">
                         <p class="importReviewLabel">{{ $t('library.importReviewLabelExisting') }}</p>
                         <p class="importReviewName">{{ row._match.item.name }}</p>
-                        <p class="importReviewMeta">{{ displayWeight(row._match.item.weight, row._match.item.authorUnit) }} {{ row._match.item.authorUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span></p>
+                        <p class="importReviewMeta">{{ displayWeight(row._match.item.weight, itemUnit) }} {{ itemUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span></p>
                     </div>
                     <div class="importReviewActions">
                         <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">{{ $t('library.importReviewMergeButton') }}</button>
@@ -179,6 +179,9 @@ export default {
     computed: {
         library() {
             return this.$store.state.library;
+        },
+        itemUnit() {
+            return (this.library && this.library.itemUnit) || 'g';
         },
         importItemCount() {
             return this.importData.data ? this.importData.data.length : 0;

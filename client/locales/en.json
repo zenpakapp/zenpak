@@ -179,6 +179,10 @@
     "copyList": "Copy list",
     "copying": "Copying…",
     "copied": "Copied!",
+    "copyOwnList": "You cannot copy your own list.",
+    "copyListUnavailable": "This list is no longer available.",
+    "copyRateLimited": "Copy limit reached: {limit} new copies per hour. Try again in about {minutes} min.",
+    "copyListFailed": "Unable to copy this list. Please try again.",
     "loading": "Loading...",
     "publicLists": "Public lists",
     "noPublicLists": "No public lists yet.",
@@ -418,6 +422,7 @@
     "no": "No",
     "categoryName": "Category name",
     "deleteCategory": "Delete category",
+    "reorderCategory": "Reorder this category",
     "addItem": "Add new item",
     "addItemWithDetails": "Add with details",
     "settings": "Settings",
@@ -697,6 +702,17 @@
     "gearPickerCreatePrefix": "+ Create new item"
   },
   "item": {
+    "reorderItemTitle": "Reorder this item",
+    "namePlaceholder": "Name",
+    "descriptionPlaceholder": "Description",
+    "imageTitle": "Upload a photo or use a photo from the web",
+    "linkTitle": "Add a link",
+    "metaTitle": "Edit brand, type and tags",
+    "wornTitle": "Mark as worn",
+    "consumableTitle": "Mark as consumable",
+    "ratingTitle": "Rate this item",
+    "editTitle": "Edit details",
+    "removeTitle": "Remove",
     "editLabelName": "Name",
     "editLabelDescription": "Description",
     "editLabelBrand": "Brand",
@@ -785,8 +801,14 @@
   "import": {
     "csvAdded": "Import complete: {count} items added — displayed in {unit}.",
     "csvMerged": "Import complete: {merged} merged, {added} new — displayed in {unit}.",
-    "listAdded": "List copied: {count} items added to your gear library — displayed in {unit}.",
-    "listMerged": "List copied: {merged} matched, {added} new — displayed in {unit}."
+    "itemAddedOne": "item added",
+    "itemAddedOther": "items added",
+    "matchedOne": "match",
+    "matchedOther": "matches",
+    "newOne": "new",
+    "newOther": "new",
+    "listAdded": "List copied: {count} {countLabel} to your gear library — displayed in {unit}.",
+    "listMerged": "List copied: {mergedCount} {mergedLabel}, {addedCount} {addedLabel} — displayed in {unit}."
   },
   "shortcuts": {
     "title": "Keyboard shortcuts",

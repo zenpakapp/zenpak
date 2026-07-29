@@ -142,7 +142,7 @@
                 >
                     <span class="gearPickerItemName">{{ gearItem.name || $t('library.gearPickerUnnamedItem') }}</span>
                     <span v-if="gearItem.brand" class="gearPickerItemBrand">{{ gearItem.brand }}</span>
-                    <span class="gearPickerItemWeight">{{ formatWeight(gearItem.weight, gearItem.authorUnit) }}</span>
+                    <span class="gearPickerItemWeight">{{ formatWeight(gearItem.weight) }}</span>
                 </li>
                 <li v-if="filteredItems.length === 0" class="gearPickerEmpty">
                     {{ $t('library.gearPickerNoResults') }}
@@ -202,7 +202,8 @@ export default {
         unregisterDialogOpener('gearPicker');
     },
     methods: {
-        formatWeight(weight, unit) {
+        formatWeight(weight) {
+            const unit = (this.library && this.library.itemUnit) || 'g';
             return `${displayWeight(weight, unit)} ${unit}`;
         },
         isAlreadyInCategory(gearItem) {

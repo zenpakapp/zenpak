@@ -48,7 +48,7 @@
                 <router-link v-else-if="!isLoggedIn && isCopyable" :to="`/welcome?redirect=/p/${list.externalId}`" class="lpCopyListSignIn">
                     {{ $t('public.signInToCopy') }}
                 </router-link>
-                <p v-if="copyError" class="lpCopyListError">{{ copyError }}</p>
+                <p v-if="copyError" class="lpCopyListError">{{ formatCopyError(copyError) }}</p>
                 <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">{{ $t('public.printSaveAsPdf') }}</button>
                 <a v-if="canDownloadCsv" class="lpPublicCsvLink noprint" :href="csvUrl" target="_blank" rel="noopener noreferrer">
                     {{ $t('share.exportToCsv') }}
@@ -159,7 +159,6 @@
 </template>
 
 <script>
-import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 import { fetchJson } from '../utils/utils';
 import { useTheme } from '../composables/useTheme';
 import { useRouter } from 'vue-router';
@@ -168,7 +167,18 @@ import { useCopyList } from '../composables/useCopyList';
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
 
-Chart.register(DoughnutController, ArcElement, Tooltip);
+let chartModulePromise = null;
+
+async function loadChart() {
+    if (!chartModulePromise) {
+        chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
+            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+                Chart.register(DoughnutController, ArcElement, Tooltip);
+                return Chart;
+            });
+    }
+    return chartModulePromise;
+}
 
 export default {
     name: 'PublicList',
@@ -306,12 +316,13 @@ export default {
             const style = getComputedStyle(document.documentElement);
             return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
         },
-        renderChart() {
+        async renderChart() {
             const canvas = this.$refs.chartCanvas;
             const categories = this.chartCategories;
             if (!canvas || !categories.length) return;
             const total = categories.reduce((sum, cat) => sum + cat.subtotalWeight, 0);
             if (!total) return;
+            const Chart = await loadChart();
 
             if (this.chart) {
                 this.chart.destroy();
@@ -365,6 +376,11 @@ export default {
                 this.copySuccess = true;
                 setTimeout(() => { this.copySuccess = false; }, 2000);
             }
+        },
+        formatCopyError(error) {
+            if (!error) return '';
+            if (typeof error === 'string') return this.$t(error);
+            return this.$t(error.key, error.params || {});
         },
         updateDocumentMeta() {
             if (!this.list) return;

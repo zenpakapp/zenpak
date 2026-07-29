@@ -179,6 +179,10 @@
     "copyList": "Copiar lista",
     "copying": "Copiando…",
     "copied": "¡Copiado!",
+    "copyOwnList": "No puedes copiar tu propia lista.",
+    "copyListUnavailable": "Esta lista ya no está disponible.",
+    "copyRateLimited": "Límite alcanzado: {limit} nuevas copias por hora. Inténtalo de nuevo en unos {minutes} min.",
+    "copyListFailed": "No se puede copiar esta lista. Inténtalo de nuevo.",
     "loading": "Cargando...",
     "publicLists": "Listas públicas",
     "noPublicLists": "Sin listas públicas aún.",
@@ -418,6 +422,7 @@
     "no": "No",
     "categoryName": "Nombre de categoría",
     "deleteCategory": "Eliminar categoría",
+    "reorderCategory": "Reordenar esta categoría",
     "addItem": "Añadir nuevo artículo",
     "addItemWithDetails": "Añadir con detalles",
     "settings": "Configuración",
@@ -616,6 +621,17 @@
     "createList": "+ Crear"
   },
   "item": {
+    "reorderItemTitle": "Reordenar este artículo",
+    "namePlaceholder": "Nombre",
+    "descriptionPlaceholder": "Descripción",
+    "imageTitle": "Subir una foto o usar una foto de la web",
+    "linkTitle": "Añadir enlace",
+    "metaTitle": "Editar marca, tipo y etiquetas",
+    "wornTitle": "Marcar como llevado",
+    "consumableTitle": "Marcar como consumible",
+    "ratingTitle": "Valorar este artículo",
+    "editTitle": "Editar detalles",
+    "removeTitle": "Eliminar",
     "editLabelName": "Nombre",
     "editLabelDescription": "Descripción",
     "editLabelBrand": "Marca",
@@ -785,8 +801,14 @@
   "import": {
     "csvAdded": "Importación completa: {count} artículos añadidos — mostrados en {unit}.",
     "csvMerged": "Importación completa: {merged} fusionados, {added} nuevos — mostrados en {unit}.",
-    "listAdded": "Lista copiada: {count} artículos añadidos a tu equipo — mostrados en {unit}.",
-    "listMerged": "Lista copiada: {merged} coincidentes, {added} nuevos — mostrados en {unit}."
+    "itemAddedOne": "artículo añadido",
+    "itemAddedOther": "artículos añadidos",
+    "matchedOne": "coincidente",
+    "matchedOther": "coincidentes",
+    "newOne": "nuevo",
+    "newOther": "nuevos",
+    "listAdded": "Lista copiada: {count} {countLabel} a tu equipo — mostrado en {unit}.",
+    "listMerged": "Lista copiada: {mergedCount} {mergedLabel}, {addedCount} {addedLabel} — mostrados en {unit}."
   },
   "shortcuts": {
     "title": "Atajos de teclado",

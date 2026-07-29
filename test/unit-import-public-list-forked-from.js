@@ -38,6 +38,54 @@ function run() {
     const newList2 = state2.library.lists[state2.library.lists.length - 1];
     assert('forkedFrom defaults to null when payload omits it', newList2.forkedFrom === null);
 
+    const unitState = { library: new Library(), globalAlerts: [] };
+    unitState.library.itemUnit = 'kg';
+    mutations.importPublicList(unitState, {
+        listName: 'Metric source',
+        description: '',
+        categories: [{
+            name: 'Shelter',
+            categoryItems: [{
+                name: 'Tent',
+                description: '',
+                weight: 925000,
+                authorUnit: 'g',
+                qty: 1,
+            }],
+        }],
+    });
+    const copiedItem = unitState.library.items.find(item => item.name === 'Tent');
+    assert('public copy keeps source weight as mg', copiedItem && copiedItem.weight === 925000);
+    assert('public copy uses recipient library item unit', copiedItem && copiedItem.authorUnit === 'kg');
+
+    const variantState = { library: new Library(), globalAlerts: [] };
+    mutations.importPublicList(variantState, {
+        listName: 'Clothing variants',
+        description: '',
+        categories: [{
+            name: 'Clothing',
+            categoryItems: [
+                {
+                    name: 'T-shirt Merino Fresh',
+                    description: 'T-shirt manches longues mérinos khaki',
+                    brand: 'Simond',
+                    weight: 184000,
+                    qty: 1,
+                },
+                {
+                    name: 'T-shirt Merino Fresh',
+                    description: 'T-shirt manches courtes mérinos bleu',
+                    brand: 'Simond',
+                    weight: 148000,
+                    qty: 1,
+                },
+            ],
+        }],
+    });
+    const copiedVariants = variantState.library.items.filter(item => item.name === 'T-shirt Merino Fresh');
+    assert('public copy keeps same-name variants separate', copiedVariants.length === 2);
+    assert('public copy preserves second variant description', copiedVariants.some(item => item.description === 'T-shirt manches courtes mérinos bleu'));
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }

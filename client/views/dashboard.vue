@@ -142,7 +142,6 @@ import sidebar from '../components/sidebar.vue';
 import share from '../components/share.vue';
 import listSettings from '../components/list-settings.vue';
 import accountDropdown from '../components/account-dropdown.vue';
-import forgotPassword from './forgot-password.vue';
 import account from '../components/account.vue';
 import accountDelete from '../components/account-delete.vue';
 import help from '../components/help.vue';
@@ -177,7 +176,6 @@ export default {
         listSettings,
         accountDropdown,
         guestSettings,
-        forgotPassword,
         account,
         accountDelete,
         help,
@@ -211,6 +209,7 @@ export default {
             billingSuccess: false,
             billingCancelled: false,
             billingManaged: false,
+            loadingPrivateLibrary: false,
         };
     },
     computed: {
@@ -265,19 +264,26 @@ export default {
                 if (status !== 'ready') return;
 
                 if (!this.library) {
+                    if (this.isSignedIn && !this.loadingPrivateLibrary) {
+                        this.loadingPrivateLibrary = true;
+                        this.$store.dispatch('init')
+                            .then(() => {
+                                if (this.library) this.prepareDashboard();
+                                else push('/welcome');
+                            })
+                            .catch(() => {
+                                push('/welcome');
+                            })
+                            .finally(() => {
+                                this.loadingPrivateLibrary = false;
+                            });
+                        return;
+                    }
                     push('/welcome');
                     return;
                 }
 
-                if (window.matchMedia('(max-width: 768px)').matches) {
-                    this.$store.commit('setSidebarOpen', false);
-                }
-
-                this.isLoaded = true;
-                this.sidebarFrame = requestAnimationFrame(() => {
-                    this.sidebarReady = true;
-                    this.sidebarFrame = null;
-                });
+                this.prepareDashboard();
             },
         },
         emailVerified(val) {
@@ -327,6 +333,18 @@ export default {
         }
     },
     methods: {
+        prepareDashboard() {
+            if (this.isLoaded) return;
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                this.$store.commit('setSidebarOpen', false);
+            }
+
+            this.isLoaded = true;
+            this.sidebarFrame = requestAnimationFrame(() => {
+                this.sidebarReady = true;
+                this.sidebarFrame = null;
+            });
+        },
         openGearRoom() {
             this.$store.commit('setGearRoomOpen', true);
             if (this.sidebarMediaQuery && this.sidebarMediaQuery.matches) {

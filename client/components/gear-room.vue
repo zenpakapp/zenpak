@@ -120,7 +120,7 @@
                                 <td class="lpGRCategoryCol" @click="openItemDetail(item)">
                                     <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
                                 </td>
-                                <td class="lpGRWeightCol" @click="openItemDetail(item)">{{ displayWeight(item.weight, item.authorUnit) }} {{ item.authorUnit }}</td>
+                                <td class="lpGRWeightCol" @click="openItemDetail(item)">{{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}</td>
                                 <td v-if="showPrice" class="lpGRPriceCol" @click="openItemDetail(item)">{{ item.price > 0 ? '€' + item.price : '–' }}</td>
                             </tr>
                         </tbody>
@@ -195,6 +195,9 @@ export default {
                     return { ...item, _usedInLists: this.itemUsedInLists(id) };
                 })
                 .filter(Boolean);
+        },
+        itemUnit() {
+            return (this.library && this.library.itemUnit) || 'g';
         },
     },
     methods: {

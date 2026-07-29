@@ -350,7 +350,11 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
 
 router.get('/api/auth/me', (req, res) => {
     authenticateUser(req, res, (req, res, user) => {
-        return res.json({ isModerator: isModerator(user.username) });
+        return res.json({
+            username: user.username,
+            emailVerified: !!user.emailVerified,
+            isModerator: isModerator(user.username),
+        });
     });
 });
 

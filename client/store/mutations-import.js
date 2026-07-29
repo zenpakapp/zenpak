@@ -5,6 +5,19 @@ function normalizeQuantity(value) {
     return Number.isNaN(quantity) ? 1 : quantity;
 }
 
+function normalizeText(value) {
+    return (value || '').toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
+function copiedItemSignature(item) {
+    return [
+        normalizeText(item.name),
+        normalizeText(item.description),
+        normalizeText(item.brand),
+        Math.round(Number(item.weight) || 0),
+    ].join('|');
+}
+
 function createImportedItem(library, category, row) {
     const item = library.newItem({ category, _isNew: false });
     item.name = row.name;
@@ -122,9 +135,9 @@ module.exports = {
             category.name = catDef.name;
 
             for (const ci of (catDef.categoryItems || [])) {
-                const nameLower = (ci.name || '').toLowerCase().trim();
-                const existing = nameLower
-                    ? state.library.items.find(i => (i.name || '').toLowerCase().trim() === nameLower)
+                const signature = copiedItemSignature(ci);
+                const existing = normalizeText(ci.name)
+                    ? state.library.items.find(i => copiedItemSignature(i) === signature)
                     : null;
 
                 let item;
@@ -136,10 +149,8 @@ module.exports = {
                     item = state.library.newItem({ category, _isNew: false });
                     item.name = ci.name || '';
                     item.description = ci.description || '';
-                    const sourceUnit = ci.authorUnit || 'g';
                     const targetUnit = state.library.itemUnit || 'g';
-                    const weightMg = weightUtils.WeightToMg(Number(ci.weight) || 0, sourceUnit);
-                    item.weight = weightUtils.MgToWeight(weightMg, targetUnit) || 0;
+                    item.weight = Number(ci.weight) || 0;
                     item.authorUnit = targetUnit;
                     item.price = Number(ci.price) || 0;
                     item.brand = ci.brand || '';
@@ -164,8 +175,18 @@ module.exports = {
         const unit = state.library.itemUnit || 'g';
         const alertKey = mergedCount > 0 ? 'import.listMerged' : 'import.listAdded';
         const alertParams = mergedCount > 0
-            ? { merged: mergedCount, added: newCount, unit }
-            : { count: newCount, unit };
+            ? {
+                mergedCount,
+                addedCount: newCount,
+                mergedLabelKey: mergedCount === 1 ? 'import.matchedOne' : 'import.matchedOther',
+                addedLabelKey: newCount <= 1 ? 'import.newOne' : 'import.newOther',
+                unit,
+            }
+            : {
+                count: newCount,
+                countLabelKey: newCount === 1 ? 'import.itemAddedOne' : 'import.itemAddedOther',
+                unit,
+            };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
     save() {

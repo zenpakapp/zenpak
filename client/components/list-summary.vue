@@ -158,12 +158,12 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
-        updateChart(type) {
+        async updateChart(type) {
             if (!this.library || typeof this.library.renderChart !== 'function') return;
             const chartData = this.library.renderChart(type);
 
             if (chartData) {
-                this.chart = markRaw(renderListChart({
+                this.chart = markRaw(await renderListChart({
                     chart: this.chart,
                     canvas: this.$refs.chartCanvas,
                     processedData: chartData,

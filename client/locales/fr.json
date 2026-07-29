@@ -179,6 +179,10 @@
     "copyList": "Copier la liste",
     "copying": "Copie en cours…",
     "copied": "Copié !",
+    "copyOwnList": "Vous ne pouvez pas copier votre propre liste.",
+    "copyListUnavailable": "Cette liste n'est plus disponible.",
+    "copyRateLimited": "Limite atteinte : {limit} nouvelles copies par heure. Réessayez dans environ {minutes} min.",
+    "copyListFailed": "Impossible de copier cette liste. Réessayez.",
     "loading": "Chargement...",
     "publicLists": "Listes publiques",
     "noPublicLists": "Aucune liste publique pour l'instant.",
@@ -418,6 +422,7 @@
     "no": "Non",
     "categoryName": "Nom de la catégorie",
     "deleteCategory": "Supprimer la catégorie",
+    "reorderCategory": "Réordonner cette catégorie",
     "addItem": "Ajouter un article",
     "addItemWithDetails": "Ajouter avec détails",
     "settings": "Paramètres",
@@ -616,6 +621,17 @@
     "createList": "+ Créer"
   },
   "item": {
+    "reorderItemTitle": "Réordonner cet article",
+    "namePlaceholder": "Nom",
+    "descriptionPlaceholder": "Description",
+    "imageTitle": "Ajouter une photo ou utiliser une photo du web",
+    "linkTitle": "Ajouter un lien",
+    "metaTitle": "Modifier la marque, le type et les tags",
+    "wornTitle": "Marquer comme porté",
+    "consumableTitle": "Marquer comme consommable",
+    "ratingTitle": "Noter cet article",
+    "editTitle": "Modifier les détails",
+    "removeTitle": "Supprimer",
     "editLabelName": "Nom",
     "editLabelDescription": "Description",
     "editLabelBrand": "Marque",
@@ -785,8 +801,14 @@
   "import": {
     "csvAdded": "Import terminé : {count} articles ajoutés — affichés en {unit}.",
     "csvMerged": "Import terminé : {merged} fusionnés, {added} nouveaux — affichés en {unit}.",
-    "listAdded": "Liste copiée : {count} articles ajoutés à votre équipement — affichés en {unit}.",
-    "listMerged": "Liste copiée : {merged} correspondants, {added} nouveaux — affichés en {unit}."
+    "itemAddedOne": "article ajouté",
+    "itemAddedOther": "articles ajoutés",
+    "matchedOne": "correspondant",
+    "matchedOther": "correspondants",
+    "newOne": "nouveau",
+    "newOther": "nouveaux",
+    "listAdded": "Liste copiée : {count} {countLabel} à votre équipement — affichés en {unit}.",
+    "listMerged": "Liste copiée : {mergedCount} {mergedLabel}, {addedCount} {addedLabel} — affichés en {unit}."
   },
   "shortcuts": {
     "title": "Raccourcis clavier",

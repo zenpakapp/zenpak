@@ -73,7 +73,7 @@ export default {
     },
     methods: {
         displayMessage(alert) {
-            if (alert.key) return this.$t(alert.key, alert.params);
+            if (alert.key) return this.$t(alert.key, this.resolveParams(alert.params));
 
             const message = alert.message && alert.message.message
                 ? alert.message.message
@@ -94,6 +94,15 @@ export default {
             };
 
             return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : message;
+        },
+        resolveParams(params) {
+            const resolved = { ...(params || {}) };
+            Object.keys(resolved).forEach((key) => {
+                if (key.endsWith('Key')) {
+                    resolved[key.slice(0, -3)] = this.$t(resolved[key]);
+                }
+            });
+            return resolved;
         },
         dismiss(alertId) {
             this.$store.commit('removeGlobalAlert', alertId);

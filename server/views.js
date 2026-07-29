@@ -82,8 +82,9 @@ const shareScriptsLinks = [];
 let appScriptsHtml = '';
 let appStylesHtml = '';
 
-if (getRuntimeEnvironment() === 'production') {
-    assetData = JSON.parse(fs.readFileSync(path.join(__dirname, '../public/dist/assets.json'), 'utf8'));
+const assetManifestPath = path.join(__dirname, '../public/dist/assets.json');
+if (getRuntimeEnvironment() === 'production' || fs.existsSync(assetManifestPath)) {
+    assetData = JSON.parse(fs.readFileSync(assetManifestPath, 'utf8'));
     const appAssetFiles = assetData.files.app;
 
     appAssetFiles.forEach((assetName) => {

@@ -12,14 +12,14 @@
                 :checked="isPacked"
                 @change="onPackCheckbox"
             />
-            <div v-else class="lpItemHandle lpHandle" title="Reorder this item" />
+            <div v-else class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" placeholder="Name" @input="saveItem">
-            <input v-model="item.description" type="text" class="lpDescription lpSilent" placeholder="Description" @input="saveItem">
+            <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @input="saveItem">
+            <input v-model="item.description" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @input="saveItem">
             <span v-if="item.brand || item.category" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
                 <span v-if="item.brand && item.category" class="lpItemMetaSep">·</span>
@@ -27,13 +27,13 @@
             </span>
         </span>
         <span v-if="!isPackingMode" class="lpActionsCell">
-            <i class="lpSprite lpCamera" title="Upload a photo or use a photo from the web" @click="updateItemImage" />
-            <i class="lpSprite lpLink" :class="{lpActive: item.url}" title="Add a link for this item" @click="updateItemLink" />
-            <i class="lpSprite lpTag" :class="{lpActive: item.brand}" title="Edit brand, type and tags" @click="updateItemMeta" />
-            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
-            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
-            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Rate this item" @click="cycleStar" />
-            <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
+            <i class="lpSprite lpCamera" :title="$t('item.imageTitle')" @click="updateItemImage" />
+            <i class="lpSprite lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" @click="updateItemLink" />
+            <i class="lpSprite lpTag" :class="{lpActive: item.brand}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
+            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" @click="toggleWorn" />
+            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" @click="toggleConsumable" />
+            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" @click="cycleStar" />
+            <i class="lpSprite lpEdit" :title="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
             <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
@@ -50,7 +50,7 @@
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" :title="$t('item.removeTitle')" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
         </span>
     </li>
 </template>

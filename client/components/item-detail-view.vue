@@ -21,7 +21,7 @@
         <div class="itemDetailStats">
             <div class="itemDetailStat">
                 <div class="itemDetailStatLabel">{{ $t('item.viewLabelWeight') }}</div>
-                <div class="itemDetailStatValue">{{ displayWeight }} {{ item.authorUnit }}</div>
+                <div class="itemDetailStatValue">{{ displayWeight }} {{ itemUnit }}</div>
             </div>
             <div class="itemDetailStat">
                 <div class="itemDetailStatLabel">{{ $t('item.viewLabelPrice') }}</div>
@@ -145,7 +145,11 @@ export default {
         },
         displayWeight() {
             if (!this.item) return 0;
-            return weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
+            return weightUtils.MgToWeight(this.item.weight, this.itemUnit);
+        },
+        itemUnit() {
+            const library = this.$store.state.library;
+            return (library && library.itemUnit) || 'g';
         },
         itemUsedInLists() {
             const library = this.$store.state.library;

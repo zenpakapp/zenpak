@@ -5,7 +5,7 @@
 <template>
     <span v-if="isSignedIn" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="share" @shown="focusShare">
-            <template #target><span title="Share"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">{{ $t('share.share') }}</span></span></template>
+            <template #target><span :title="$t('share.share')"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">{{ $t('share.share') }}</span></span></template>
             <template #content>
                 <div class="sharePopover">
                     <div class="shareSection">

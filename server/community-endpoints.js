@@ -14,17 +14,21 @@ const COPY_RATE_LIMIT = 5;
 const COPY_RATE_WINDOW_MS = 60 * 60 * 1000;
 const copyRateMap = new Map();
 
-function isCopyRateLimited(key) {
+function checkCopyRateLimit(key) {
     const now = Date.now();
     const windowStart = now - COPY_RATE_WINDOW_MS;
     const timestamps = (copyRateMap.get(key) || []).filter(t => t > windowStart);
     if (timestamps.length >= COPY_RATE_LIMIT) {
         copyRateMap.set(key, timestamps);
-        return true;
+        const retryAfterMs = COPY_RATE_WINDOW_MS - (now - timestamps[0]);
+        return {
+            limited: true,
+            retryAfterMinutes: Math.max(1, Math.ceil(retryAfterMs / 60000)),
+        };
     }
     timestamps.push(now);
     copyRateMap.set(key, timestamps);
-    return false;
+    return { limited: false, remaining: COPY_RATE_LIMIT - timestamps.length };
 }
 
 function normalizeTagArray(value) {
@@ -323,15 +327,22 @@ router.post('/copy-list/:externalId', (req, res) => {
                 return res.status(403).json({ message: 'Account suspended' });
             }
 
-            const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
-            if (isCopyRateLimited(rateLimitKey)) {
-                return res.status(429).json({ message: 'Too many copies, try again later' });
-            }
-
             // Increment copyCount once per user (dedup via copiedBy array)
             const userId = String(user._id);
             if (!Array.isArray(sourceList.copiedBy)) sourceList.copiedBy = [];
-            if (!sourceList.copiedBy.includes(userId)) {
+            const alreadyCopied = sourceList.copiedBy.includes(userId);
+            if (!alreadyCopied) {
+                const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
+                const rateLimit = checkCopyRateLimit(rateLimitKey);
+                if (rateLimit.limited) {
+                    res.set('Retry-After', String(rateLimit.retryAfterMinutes * 60));
+                    return res.status(429).json({
+                        message: 'Copy limit reached',
+                        retryAfterMinutes: rateLimit.retryAfterMinutes,
+                        limit: COPY_RATE_LIMIT,
+                    });
+                }
+
                 sourceList.copiedBy.push(userId);
                 sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
                 await db.users.save(owner);

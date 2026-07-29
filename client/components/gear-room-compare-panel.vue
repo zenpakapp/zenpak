@@ -235,7 +235,7 @@
                             :key="item.id"
                             :class="['lpGearRoomCompareValueCell', { 'lpGearRoomCompareLowest': compareMinWeight !== null && item.weight === compareMinWeight }]"
                         >
-                            {{ displayWeight(item.weight, item.authorUnit) }} {{ item.authorUnit }}
+                            {{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}
                         </td>
                     </tr>
                     <tr>
@@ -284,6 +284,10 @@ export default {
                 count: this.items.length,
                 itemLabel: this.itemCountLabel(this.items.length),
             });
+        },
+        itemUnit() {
+            const library = this.$store.state.library;
+            return (library && library.itemUnit) || 'g';
         },
     },
     methods: {

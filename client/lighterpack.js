@@ -25,8 +25,24 @@ const router = createRouter({
 
 setRouter(router);
 
-router.beforeEach((to, from) => {
+function isPrivatePath(pathname) {
+    return !isPublicPath(pathname) && !isUnknownRoute(pathname);
+}
+
+router.beforeEach(async (to, from) => {
     setPreviousRoute(from.path);
+
+    if (isPrivatePath(to.path) && store.state.loggedIn && !store.state.library) {
+        try {
+            await store.dispatch('init');
+        } catch (error) {
+            showGlobalAlert(error);
+            return '/welcome';
+        }
+        if (!store.state.library) return '/welcome';
+    }
+
+    return true;
 });
 
 const PUBLIC_PATHS = ['/welcome', '/forgot-password', '/reset-password', '/verify-email', '/community', '/guide', '/about'];
@@ -74,8 +90,12 @@ var initLighterPack = function () {
 
 initLighterPack();
 
-store.dispatch('init').catch((error) => {
-    if (!store.state.library && !isPublicPath(window.location.pathname) && !isUnknownRoute(window.location.pathname)) {
+const initAction = isPublicPath(window.location.pathname) || isUnknownRoute(window.location.pathname)
+    ? 'initPublic'
+    : 'init';
+
+store.dispatch(initAction).catch((error) => {
+    if (!store.state.library && isPrivatePath(window.location.pathname)) {
         router.push('/welcome');
     }
     showGlobalAlert(error);

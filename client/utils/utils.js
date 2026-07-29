@@ -11,6 +11,8 @@ class lpError extends Error {
         this.errors = null;
         this.id = null;
         this.metadata = null;
+        this.limit = response.limit || null;
+        this.retryAfterMinutes = response.retryAfterMinutes || null;
 
         if (response.message) {
             this.message = response.message;

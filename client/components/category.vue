@@ -92,7 +92,7 @@
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
             <li class="lpHeader lpItemsHeader">
                 <span class="lpHandleCell">
-                    <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" title="Reorder this category" />
+                    <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" />
                 </span>
                 <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
@@ -139,7 +139,7 @@
                         >
                             <span class="lpSuggestionName">{{ item.name }}</span>
                             <span v-if="item.brand" class="lpSuggestionBrand">{{ item.brand }}</span>
-                            <span class="lpSuggestionWeight">{{ displayWeight(item.weight, item.authorUnit) }} {{ item.authorUnit }}</span>
+                            <span class="lpSuggestionWeight">{{ displayWeight(item.weight, library.itemUnit) }} {{ library.itemUnit }}</span>
                         </li>
                     </ul>
                 </span>
