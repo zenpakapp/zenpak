@@ -1,5 +1,4 @@
 import { createStore } from 'vuex';
-import debounce from 'lodash/debounce';
 import { notifyGlobalAlert, notifyUnauthorized } from '../services/app-events';
 import { getLocalLibrary, hasLocalLibrary, setLocalLibrary } from '../services/browser-storage';
 import { fetchJson } from '../utils/utils';
@@ -9,6 +8,39 @@ const libraryMutations = require('./mutations-library');
 const importMutations = require('./mutations-import');
 
 const saveInterval = 10000;
+
+function debounce(fn, wait, options = {}) {
+    let timeout = null;
+    let maxTimeout = null;
+    let lastArgs = null;
+    let lastContext = null;
+
+    const clearTimers = () => {
+        clearTimeout(timeout);
+        clearTimeout(maxTimeout);
+        timeout = null;
+        maxTimeout = null;
+    };
+
+    return function debounced(...args) {
+        lastArgs = args;
+        lastContext = this;
+
+        const invoke = () => {
+            const currentArgs = lastArgs;
+            const currentContext = lastContext;
+            clearTimers();
+            fn.apply(currentContext, currentArgs);
+        };
+
+        clearTimeout(timeout);
+        timeout = setTimeout(invoke, wait);
+
+        if (options.maxWait && !maxTimeout) {
+            maxTimeout = setTimeout(invoke, options.maxWait);
+        }
+    };
+}
 
 const createInitialState = () => ({
     library: false,

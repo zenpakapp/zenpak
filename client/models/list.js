@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const colorUtils = require('../utils/color.js');
 const weightUtils = require('../utils/weight.js');

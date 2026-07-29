@@ -1,5 +1,3 @@
-import assignIn from 'lodash/assignIn';
-
 class lpError extends Error {
     constructor(response, statusCode = null) {
         super();
@@ -33,7 +31,7 @@ export function fetchJson(url, options) {
     };
 
     if (options) {
-        assignIn(fetchOptions, options);
+        Object.assign(fetchOptions, options);
     }
 
     if (!fetchOptions.headers['Content-Type']) {

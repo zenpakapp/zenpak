@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const { PLAN_FREE, getPlanFeatures } = require('../services/entitlements.js');
 const { VISIBILITY_PRIVATE, normalizeVisibility } = require('../services/public-visibility.js');

@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const Category = function ({ library, id, _isNew }) {
     this.library = library;
