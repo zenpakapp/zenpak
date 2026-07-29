@@ -59,7 +59,7 @@ export default {
                 return;
             }
 
-            this.fetching = true; // ho ho
+            this.fetching = true;
 
             return fetchJson('/signin/', {
                 method: 'POST',

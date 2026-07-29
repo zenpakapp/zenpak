@@ -110,7 +110,6 @@ export default {
     },
     data() {
         return {
-            onboardingCompleted: false,
             itemDrake: null,
             categoryDrake: null,
             showCompletionModal: false,

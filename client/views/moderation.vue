@@ -10,6 +10,7 @@
             <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')" />
             <button>{{ $t('community.moderationSearchButton') }}</button>
         </form>
+        <p v-if="error" class="lp-moderation-error">{{ error }}</p>
         <ul v-if="resultsLoaded" class="lp-moderation-search-results">
             <li v-for="result in searchResults" @click="setUser(result)" :key="result.username">
                 {{result.username}}
@@ -70,36 +71,32 @@
 </template>
 
 <script>
-import { push } from '../services/navigation';
 import { fetchJson } from '../utils/utils';
 
 export default {
     name: 'Admin',
-    components: {
-    },
     data() {
         return {
-            searchQuery: "",
+            searchQuery: '',
             searchResults: null,
             userToInspect: null,
             editableLibrary: null,
             newPassword: null,
             reports: [],
+            error: null,
         };
     },
     computed: {
         resultsLoaded() {
             return !!this.searchResults;
-        }
+        },
     },
     created() {
-        if (false) {
-            push('/welcome');
-        }
         this.loadReports();
     },
     methods: {
         searchUsers() {
+            this.error = null;
             fetchJson(`/moderation/search?q=${this.searchQuery}`, {
                 method: 'GET',
                 credentials: 'same-origin',
@@ -107,8 +104,8 @@ export default {
             .then((response) => {
                 this.searchResults = response.results;
             })
-            .catch((err) => {
-                console.log(err);
+            .catch(() => {
+                this.error = 'Unable to search users.';
             });
         },
         setUser(user) {
@@ -117,35 +114,34 @@ export default {
             this.newPassword = null;
         },
         clearSession(user) {
+            this.error = null;
             fetchJson(`/moderation/clear-session`, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
-            .then((response) => {
-                console.log("clear session success");
-            })
-            .catch((err) => {
-                console.log(err);
+            .catch(() => {
+                this.error = 'Unable to clear session.';
             });
         },
         resetPassword(user) {
+            this.error = null;
             fetchJson(`/moderation/reset-password`, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
             .then((response) => {
                 this.newPassword = response.newPassword;
             })
-            .catch((err) => {
-                console.log(err);
+            .catch(() => {
+                this.error = 'Unable to reset password.';
             });
         },
         async loadReports() {

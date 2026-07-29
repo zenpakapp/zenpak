@@ -216,8 +216,8 @@ export default {
     setup() {
         useTheme();
         const router = useRouter();
-        const { backTo, backLabel } = useBackNav();
-        return { router, backTo, backLabel };
+        const { backTo } = useBackNav();
+        return { router, backTo };
     },
     data() {
         return {

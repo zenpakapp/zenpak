@@ -91,7 +91,7 @@ import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
 
-const { displayWeight, displayPrice } = useUtils();
+const { displayWeight } = useUtils();
 
 const GEAR_CATEGORIES = [
     'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
@@ -206,7 +206,6 @@ export default {
     },
     methods: {
         displayWeight,
-        displayPrice,
         measureViewport() {
             if (this.$refs.library) {
                 this.viewportHeight = this.$refs.library.clientHeight;
