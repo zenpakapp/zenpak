@@ -143,11 +143,11 @@ import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
 import SigninForm from '../components/signin-form.vue';
 import WelcomeOauthOverlay from '../components/welcome-oauth-overlay.vue';
-import WelcomeProof from '../components/welcome-proof.vue';
 import ZenpakBrandAsset from '../components/zenpak-brand-asset.vue';
 import { push } from '../services/navigation';
 
 const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ '../components/template-picker.vue'));
+const WelcomeProof = defineAsyncComponent(() => import(/* webpackChunkName: "welcome-proof" */ '../components/welcome-proof.vue'));
 
 export default {
     name: 'Welcome',

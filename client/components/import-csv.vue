@@ -132,10 +132,18 @@ import { showGlobalAlert } from '../services/user-feedback';
 import { findBestMatch } from '../composables/useGearMatcher.js';
 import { useUtils } from '../composables/useUtils.js';
 
-const csvImportUtils = require('../utils/csv-import.js');
-const textImportUtils = require('../utils/text-import.js');
 const weightUtils = require('../utils/weight.js');
 const { displayWeight } = useUtils();
+
+async function loadCsvImportUtils() {
+    const mod = await import(/* webpackChunkName: "dialog-import-csv-parser" */ '../utils/csv-import.js');
+    return mod.default || mod;
+}
+
+async function loadTextImportUtils() {
+    const mod = await import(/* webpackChunkName: "dialog-import-text-parser" */ '../utils/text-import.js');
+    return mod.default || mod;
+}
 
 function computeDedup(importData, libraryItems) {
     let mergeCount = 0;
@@ -252,7 +260,8 @@ export default {
 
             reader.readAsText(file);
         },
-        validateImport(input, name) {
+        async validateImport(input, name) {
+            const csvImportUtils = await loadCsvImportUtils();
             this.importData = csvImportUtils.parseImportCsv(input, name);
             this.importData = computeDedup(this.importData, this.library.items);
 
@@ -273,13 +282,14 @@ export default {
             this.textName = '';
             this.textError = '';
         },
-        importFromText() {
+        async importFromText() {
             this.textError = '';
             const text = this.textInput.trim();
             if (!text) {
                 this.textError = this.$t('library.textImportErrorEmpty');
                 return;
             }
+            const textImportUtils = await loadTextImportUtils();
             const items = textImportUtils.parseTextList(text);
             if (!items.length) {
                 this.textError = this.$t('library.textImportErrorNoItems');

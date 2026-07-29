@@ -107,12 +107,13 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import ItemDetailHeader from './item-detail-header.vue';
-import ItemAddToList from './item-add-to-list.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { openDialog } from '../services/dialogs';
 
 const weightUtils = require('../utils/weight.js');
+const ItemAddToList = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-add-to-list" */ './item-add-to-list.vue'));
 
 export default {
     name: 'ItemDetailView',

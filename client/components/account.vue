@@ -157,17 +157,18 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import errors from './errors.vue';
 import modal from './modal.vue';
 import spinner from './spinner.vue';
-import profileSettings from './profile-settings.vue';
-import creatorLinks from './creator-links.vue';
-import upgradePrompt from './upgrade-prompt.vue';
 import LpSelect from './lp-select.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { setLocale } from '../i18n';
+
+const profileSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-profile" */ './profile-settings.vue'));
+const creatorLinks = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-creator" */ './creator-links.vue'));
 
 export default {
     name: 'Account',
@@ -177,7 +178,6 @@ export default {
         spinner,
         profileSettings,
         creatorLinks,
-        upgradePrompt,
         LpSelect,
     },
     data() {

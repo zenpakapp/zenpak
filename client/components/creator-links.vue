@@ -72,12 +72,10 @@
 </template>
 
 <script>
-import upgradePrompt from './upgrade-prompt.vue';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 
 export default {
     name: 'CreatorLinks',
-    components: { upgradePrompt },
     computed: {
         creator() {
             return this.$store.state.library.creator;

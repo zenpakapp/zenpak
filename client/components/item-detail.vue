@@ -46,10 +46,12 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import modal from './modal.vue';
 import ItemDetailView from './item-detail-view.vue';
-import ItemDetailEdit from './item-detail-edit.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
+
+const ItemDetailEdit = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-detail-edit" */ './item-detail-edit.vue'));
 
 export default {
     name: 'ItemDetail',

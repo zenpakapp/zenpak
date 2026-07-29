@@ -144,13 +144,11 @@
         </div>
 
         <globalAlerts />
-        <copyList />
         <component
             :is="dialog.component"
             v-for="dialog in loadedDialogs"
             :key="dialog.name"
         />
-        <speedbump />
     </div>
 </template>
 
@@ -162,8 +160,6 @@ import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import accountDropdown from '../components/account-dropdown.vue';
 import list from '../components/list.vue';
-import copyList from '../components/copy-list.vue';
-import speedbump from '../components/speedbump.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
@@ -172,6 +168,7 @@ import guestSettings from '../components/guest-settings.vue';
 import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
 import { openDialog } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
+import { clearSpeedbumpLoader, setSpeedbumpLoader } from '../services/speedbump';
 
 const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
 const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
@@ -180,6 +177,7 @@ const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "da
 
 const lazyDialogs = {
     account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
+    copyList: { component: 'copyList', loader: () => import(/* webpackChunkName: "dialog-copy-list" */ '../components/copy-list.vue') },
     deleteAccount: { component: 'accountDelete', loader: () => import(/* webpackChunkName: "dialog-account-delete" */ '../components/account-delete.vue') },
     gearPicker: { component: 'gearPicker', loader: () => import(/* webpackChunkName: "dialog-gear-picker" */ '../components/gear-picker.vue') },
     help: { component: 'help', loader: () => import(/* webpackChunkName: "dialog-help" */ '../components/help.vue') },
@@ -194,6 +192,11 @@ const lazyDialogs = {
     shortcutsHelp: { component: 'shortcutsHelp', loader: () => import(/* webpackChunkName: "dialog-shortcuts-help" */ '../components/shortcuts-help.vue') },
 };
 
+const lazySpeedbump = {
+    component: 'speedbump',
+    loader: () => import(/* webpackChunkName: "dialog-speedbump" */ '../components/speedbump.vue'),
+};
+
 export default {
     name: 'Dashboard',
     components: {
@@ -204,8 +207,6 @@ export default {
         accountDropdown,
         guestSettings,
         list,
-        copyList,
-        speedbump,
         globalAlerts,
         gearRoom,
         profileInsights,
@@ -228,6 +229,7 @@ export default {
             loadingPrivateLibrary: false,
             loadedDialogs: [],
             dialogLoaders: [],
+            speedbumpLoader: null,
         };
     },
     computed: {
@@ -323,6 +325,8 @@ export default {
             this.dialogLoaders.push({ name, loader });
             registerDialogLoader(name, loader);
         });
+        this.speedbumpLoader = () => this.loadDialog(lazySpeedbump.component, lazySpeedbump.loader);
+        setSpeedbumpLoader(this.speedbumpLoader);
         this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
         registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
@@ -362,6 +366,8 @@ export default {
             unregisterDialogLoader(name, loader);
         });
         this.dialogLoaders = [];
+        clearSpeedbumpLoader(this.speedbumpLoader);
+        this.speedbumpLoader = null;
         unregisterShortcut('s');
         unregisterShortcut('?');
         if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
