@@ -39,6 +39,7 @@ morgan.token('requestid', function getUsername (req) {
 });
 
 const app = express();
+const runtimeEnvironment = getRuntimeEnvironment();
 app.enable('trust proxy');
 app.disable('x-powered-by');
 app.use(securityHeaders({ environment: getRuntimeEnvironment() }));
@@ -66,6 +67,7 @@ app.use(morgan(function (tokens, req, res) {
 }, { stream: logger.stream.write }));
 
 const oneDay = 86400000;
+const oneYear = 31536000000;
 
 app.use(compression());
 app.use(cookieParser());
@@ -80,6 +82,10 @@ app.use(express.urlencoded({
     limit: REQUEST_BODY_LIMIT,
 }));
 
+app.use('/dist', express.static(`${__dirname}/public/dist/`, {
+    immutable: runtimeEnvironment === 'production',
+    maxAge: runtimeEnvironment === 'production' ? oneYear : oneDay,
+}));
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
 const passport = require('passport');
 const db = require('./server/db.js');
@@ -109,7 +115,6 @@ logger.info("Starting up Lighterpack...");
 
 const appPort = getRuntimeNumber('PORT', config.get('port'));
 const devServerPort = getRuntimeNumber('DEV_SERVER_PORT', config.get('devServerPort'));
-const runtimeEnvironment = getRuntimeEnvironment();
 
 let webpackConfig;
 
