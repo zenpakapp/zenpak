@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 
 const devServerHost = process.env.DEV_SERVER_HOST || '127.0.0.1';
@@ -43,7 +44,9 @@ module.exports = {
             {
                 test: /\.scss$/,
                 use: [
-                    'vue-style-loader',
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                    },
                     'css-loader',
                     {
                         loader: 'sass-loader',
@@ -84,5 +87,9 @@ module.exports = {
     plugins: [
         new VueLoaderPlugin(),
         new webpack.DefinePlugin(vueFeatureFlags),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[name].css',
+        }),
     ],
 };

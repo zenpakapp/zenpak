@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import errors from './errors.vue';
 import spinner from './spinner.vue';
 import { push } from '../services/navigation';
@@ -34,7 +35,7 @@ import { fetchJson } from '../utils/utils';
 const dataTypes = require('../dataTypes.js');
 
 const Library = dataTypes.Library;
-const templatePicker = () => import(/* webpackChunkName: "template-picker" */ './template-picker.vue');
+const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ './template-picker.vue'));
 
 export default {
     name: 'RegisterForm',

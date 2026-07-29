@@ -6,6 +6,7 @@ const compression = require('compression');
 const config = require('config');
 const express = require('express');
 const fs = require('fs');
+const http = require('http');
 const morgan = require('morgan');
 const path = require('path');
 
@@ -42,6 +43,8 @@ morgan.token('requestid', function getUsername (req) {
 
 const app = express();
 const runtimeEnvironment = getRuntimeEnvironment();
+const appPort = getRuntimeNumber('PORT', config.get('port'));
+const devServerPort = getRuntimeNumber('DEV_SERVER_PORT', config.get('devServerPort'));
 app.enable('trust proxy');
 app.disable('x-powered-by');
 app.use(securityHeaders({ environment: getRuntimeEnvironment() }));
@@ -102,6 +105,37 @@ function serveCurrentDistAsset(entryName, extension) {
     };
 }
 
+function proxyDevDistAsset(req, res, next) {
+    const proxyReq = http.get({
+        hostname: '127.0.0.1',
+        port: devServerPort,
+        path: `/dist${req.url}`,
+        headers: {
+            accept: req.headers.accept || '*/*',
+        },
+    }, (proxyRes) => {
+        if (!proxyRes.statusCode || proxyRes.statusCode >= 400) {
+            proxyRes.resume();
+            next();
+            return;
+        }
+
+        res.status(proxyRes.statusCode);
+        Object.entries(proxyRes.headers).forEach(([name, value]) => {
+            if (value && name.toLowerCase() !== 'content-security-policy') {
+                res.setHeader(name, value);
+            }
+        });
+        proxyRes.pipe(res);
+    });
+
+    proxyReq.on('error', next);
+}
+
+if (runtimeEnvironment !== 'production') {
+    app.use('/dist', proxyDevDistAsset);
+}
+
 app.get('/dist/app.js', serveCurrentDistAsset('app', '.js'));
 app.get('/dist/app.css', serveCurrentDistAsset('app', '.css'));
 app.get('/dist/share.js', serveCurrentDistAsset('share', '.js'));
@@ -137,9 +171,6 @@ app.use('/', views);
 app.use(errorHandler);
 
 logger.info("Starting up Lighterpack...");
-
-const appPort = getRuntimeNumber('PORT', config.get('port'));
-const devServerPort = getRuntimeNumber('DEV_SERVER_PORT', config.get('devServerPort'));
 
 let webpackConfig;
 

@@ -109,6 +109,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
@@ -117,7 +118,7 @@ import { useBackNav } from '../composables/useBackNav';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 
-const upgradePrompt = () => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue');
+const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "upgrade-prompt" */ '../components/upgrade-prompt.vue'));
 
 export default {
     name: 'PublicProfile',

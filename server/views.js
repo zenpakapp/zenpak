@@ -83,7 +83,7 @@ let appScriptsHtml = '';
 let appStylesHtml = '';
 
 const assetManifestPath = path.join(__dirname, '../public/dist/assets.json');
-if (getRuntimeEnvironment() === 'production' || fs.existsSync(assetManifestPath)) {
+if (getRuntimeEnvironment() === 'production') {
     assetData = JSON.parse(fs.readFileSync(assetManifestPath, 'utf8'));
     const appAssetFiles = assetData.files.app;
 

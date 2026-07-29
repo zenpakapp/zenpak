@@ -155,9 +155,10 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import { fetchJson } from '../utils/utils.js';
 import globalAlerts from '../components/global-alerts.vue';
-import share from '../components/share.vue';
+import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import accountDropdown from '../components/account-dropdown.vue';
 import list from '../components/list.vue';
@@ -172,10 +173,10 @@ import { registerDialogLoader, unregisterDialogLoader } from '../services/dialog
 import { openDialog } from '../services/dialogs';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 
-const gearRoom = () => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue');
-const sidebar = () => import(/* webpackChunkName: "dashboard-sidebar" */ '../components/sidebar.vue');
-const profileInsights = () => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue');
-const upgradePrompt = () => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue');
+const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
+const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
+const profileInsights = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue'));
+const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue'));
 
 const lazyDialogs = {
     account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },

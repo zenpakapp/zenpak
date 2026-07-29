@@ -137,6 +137,7 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import blackoutFooter from '../components/blackout-footer.vue';
 import globalAlerts from '../components/global-alerts.vue';
 import registerForm from '../components/register-form.vue';
@@ -146,7 +147,7 @@ import WelcomeProof from '../components/welcome-proof.vue';
 import ZenpakBrandAsset from '../components/zenpak-brand-asset.vue';
 import { push } from '../services/navigation';
 
-const templatePicker = () => import(/* webpackChunkName: "template-picker" */ '../components/template-picker.vue');
+const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ '../components/template-picker.vue'));
 
 export default {
     name: 'Welcome',
