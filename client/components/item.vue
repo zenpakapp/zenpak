@@ -57,6 +57,7 @@
 
 <script>
 import { openDialog } from '../services/dialogs';
+import { showGlobalAlert } from '../services/user-feedback';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -185,18 +186,23 @@ export default {
             this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit);
         },
         openDetail() {
-            openDialog('itemDetail', {
+            this.openItemDetail({
                 item: this.item,
                 categoryItem: this.categoryItem,
                 category: this.category,
             });
         },
         openDetailEdit() {
-            openDialog('itemDetail', {
+            this.openItemDetail({
                 item: this.item,
                 categoryItem: this.categoryItem,
                 category: this.category,
                 startEditing: true,
+            });
+        },
+        openItemDetail(payload) {
+            openDialog('itemDetail', payload).catch(() => {
+                showGlobalAlert(this.$t('item.detailOpenError'));
             });
         },
         updateItemLink() {

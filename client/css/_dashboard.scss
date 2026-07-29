@@ -429,6 +429,12 @@
     white-space: nowrap;
 }
 
+.lpForkCurrencyNote {
+    color: $color-text-muted;
+    font-style: italic;
+    margin-top: -4px;
+}
+
 .lpForkSourceLink {
     color: inherit;
     font-weight: $fontWeight-medium;

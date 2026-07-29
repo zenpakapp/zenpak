@@ -17,6 +17,40 @@ const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
 const router = express.Router();
 
+function verificationEmail({ username, verifyUrl }) {
+    const title = `Verify your ZenPak email`;
+    const text = `Hi ${username},
+
+Confirm this email address to publish your gear lists and protect your ZenPak account:
+
+${verifyUrl}
+
+If you didn't create a ZenPak account, ignore this email.
+
+— The ZenPak team`;
+    const html = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Verify your email</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Confirm this address to publish your gear lists and protect your ZenPak account.</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#666;padding-bottom:20px;">If the button does not work, copy this link:<br><a href="${verifyUrl}" style="color:#2d6a4f;word-break:break-all;">${verifyUrl}</a></td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+    return { subject: title, text, html };
+}
+
 function isSessionRestoreSignin(req) {
     return req.method === 'POST'
         && req.path === '/signin'
@@ -131,32 +165,14 @@ router.post('/register', authLimiter, (req, res) => {
 
                         const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
                         const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
-                        const textBody = `Almost ready, ${username}!\n\nVerify your email to share your lists with the world:\n\n${verifyUrl}\n\n— The ZenPak team`;
-                        const htmlBody = `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
-        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Almost ready, ${username}!</td></tr>
-        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Verify your email to share your lists with the world.</td></tr>
-        <tr><td align="center" style="padding-bottom:28px;">
-          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
-        </td></tr>
-        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+                        const emailMessage = verificationEmail({ username, verifyUrl });
                         sendMail({
                             from: 'ZenPak <noreply@zenpak.app>',
                             to: email,
                             'h:Reply-To': 'ZenPak <support@zenpak.app>',
-                            subject: 'Verify your ZenPak email',
-                            text: textBody,
-                            html: htmlBody,
+                            subject: emailMessage.subject,
+                            text: emailMessage.text,
+                            html: emailMessage.html,
                         }).catch((e) => logWithRequest(req, e));
 
                         const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
@@ -387,32 +403,14 @@ router.post('/resendVerification', forgotLimiter, (req, res) => {
 
         const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
         const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
-        const textBody = `Hi ${user.username},\n\nVerify your ZenPak email:\n\n${verifyUrl}\n\n— The ZenPak team`;
-        const htmlBody = `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
-        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Verify your email</td></tr>
-        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">One click and your ZenPak pack is ready to share with the world.</td></tr>
-        <tr><td align="center" style="padding-bottom:28px;">
-          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
-        </td></tr>
-        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Ignore it.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+        const emailMessage = verificationEmail({ username: user.username, verifyUrl });
         sendMail({
             from: 'ZenPak <noreply@zenpak.app>',
             to: user.email,
             'h:Reply-To': 'ZenPak <support@zenpak.app>',
-            subject: 'Verify your ZenPak email',
-            text: textBody,
-            html: htmlBody,
+            subject: emailMessage.subject,
+            text: emailMessage.text,
+            html: emailMessage.html,
         }).then(() => {
             user.verifyEmailSentAt = Date.now();
             db.users.save(user, (saveErr) => {

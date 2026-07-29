@@ -17,6 +17,7 @@ function run() {
         ownerUsername: 'fx',
         ownerName: 'FX Bénard',
         listName: 'GR34 Summer',
+        sourceCurrencySymbol: '$',
         copiedAt: '2026-07-16T21:00:00.000Z',
     };
 
@@ -33,6 +34,7 @@ function run() {
     assert('new list created', Boolean(newList));
     assert('external fork uses source list name', newList.name === 'GR34 Summer');
     assert('forkedFrom assigned on new list', JSON.stringify(newList.forkedFrom) === JSON.stringify(forkedFrom));
+    assert('source currency preserved on fork', newList.forkedFrom.sourceCurrencySymbol === '$');
     assert('community seasons copied', JSON.stringify(newList.seasons) === JSON.stringify(['3-season', 'summer']));
     assert('community list types copied', JSON.stringify(newList.listTypes) === JSON.stringify(['trek', 'weekend']));
     assert('copied list stays private by default', newList.visibility === 'private');
@@ -51,6 +53,12 @@ function run() {
     mutations.importPublicList(unitState, {
         listName: 'Metric source',
         description: '',
+        sourceCurrencySymbol: '€',
+        forkedFrom: {
+            externalId: 'metric-source',
+            ownerUsername: 'alice',
+            listName: 'Metric source',
+        },
         categories: [{
             name: 'Shelter',
             categoryItems: [{
@@ -65,6 +73,7 @@ function run() {
     const copiedItem = unitState.library.items.find(item => item.name === 'Tent');
     assert('public copy keeps source weight as mg', copiedItem && copiedItem.weight === 925000);
     assert('public copy uses recipient library item unit', copiedItem && copiedItem.authorUnit === 'kg');
+    assert('source currency copied into fork metadata fallback', unitState.library.lists[unitState.library.lists.length - 1].forkedFrom.sourceCurrencySymbol === '€');
 
     const variantState = { library: new Library(), globalAlerts: [] };
     mutations.importPublicList(variantState, {

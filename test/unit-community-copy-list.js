@@ -7,6 +7,7 @@ const ownerUser = {
     _id: new ObjectId(),
     username: 'alice',
     library: {
+        currencySymbol: '€',
         lists: [{
             id: new ObjectId(),
             externalId: 'abc123',
@@ -100,6 +101,7 @@ async function run() {
     });
 
     assert('returns source list name', responseData && responseData.listName === 'PCT Section J');
+    assert('returns source currency symbol', responseData && responseData.sourceCurrencySymbol === '€');
     assert('saves source owner for copy count', savedUsers.some(u => u.username === 'alice'));
     assert('returns categories payload', responseData.categories && responseData.categories.length === 1);
     assert('copy payload preserves zero quantity', responseData.categories[0].categoryItems[0].qty === 0);

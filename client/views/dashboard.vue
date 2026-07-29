@@ -63,6 +63,9 @@
                             <span v-else>{{ forkSource.ownerName }}</span>
                         </span>
                     </span>
+                    <span v-if="forkCurrencyNote" class="lpForkSource lpForkCurrencyNote">
+                        {{ forkCurrencyNote }}
+                    </span>
                 </span>
                 <span class="headerItem headerIconItem">
                     <themeToggle />
@@ -144,6 +147,7 @@
         </div>
 
         <globalAlerts />
+        <itemDetail />
         <component
             :is="dialog.component"
             v-for="dialog in loadedDialogs"
@@ -153,12 +157,13 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import list from '../components/list.vue';
+import itemDetail from '../components/item-detail.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import themeToggle from '../components/theme-toggle.vue';
@@ -184,7 +189,6 @@ const lazyDialogs = {
     importCSV: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
     importLP: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
     importText: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
-    itemDetail: { component: 'itemDetail', loader: () => import(/* webpackChunkName: "dialog-item-detail" */ '../components/item-detail.vue') },
     itemImage: { component: 'itemImage', loader: () => import(/* webpackChunkName: "dialog-item-image" */ '../components/item-image.vue') },
     itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
     itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
@@ -207,6 +211,7 @@ export default {
         accountDropdown,
         guestSettings,
         list,
+        itemDetail,
         globalAlerts,
         gearRoom,
         profileInsights,
@@ -248,6 +253,12 @@ export default {
             if (!forkedFrom || !forkedFrom.listName) return null;
             if (forkedFrom.ownerUsername && forkedFrom.ownerUsername === this.$store.state.loggedIn) return null;
             return forkedFrom;
+        },
+        forkCurrencyNote() {
+            const sourceCurrency = this.forkSource && this.forkSource.sourceCurrencySymbol;
+            const currentCurrency = this.library && this.library.currencySymbol;
+            if (!sourceCurrency || !currentCurrency || sourceCurrency === currentCurrency) return '';
+            return this.$t('dash.sourceCurrencyNote', { source: sourceCurrency, current: currentCurrency });
         },
         isSignedIn() {
             return this.$store.state.loggedIn;
@@ -397,7 +408,7 @@ export default {
         async loadDialog(componentName, loader) {
             if (this.loadedDialogs.some(dialog => dialog.name === componentName)) return;
             const module = await loader();
-            this.loadedDialogs.push({ name: componentName, component: module.default || module });
+            this.loadedDialogs.push({ name: componentName, component: markRaw(module.default || module) });
             await this.$nextTick();
         },
         handleSidebarBreakpoint(event) {

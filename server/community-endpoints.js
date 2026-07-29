@@ -411,6 +411,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                 ownerUsername: owner.username,
                 ownerName,
                 listName: sourceList.name,
+                sourceCurrencySymbol: owner.library.currencySymbol || '$',
                 copiedAt: new Date().toISOString(),
             };
 
@@ -419,6 +420,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                 description: sourceList.description || '',
                 seasons: normalizeTagArray(sourceList.seasons),
                 listTypes: normalizeTagArray(sourceList.listTypes),
+                sourceCurrencySymbol: owner.library.currencySymbol || '$',
                 categories,
                 forkedFrom,
             });

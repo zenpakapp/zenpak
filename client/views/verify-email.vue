@@ -109,7 +109,15 @@ export default {
                         this.resendSent = true;
                     }
                 })
-                .catch((err) => { this.resendError = (err && err.message) || this.$t('auth.verifyEmailError'); });
+                .catch((err) => { this.resendError = this.translateServerError((err && err.message) || ''); });
+        },
+        translateServerError(message) {
+            const serverMessageKeys = {
+                'Please wait 5 minutes before requesting another verification email.': 'misc.alertVerifyEmailCooldown',
+                'Verification email could not be sent. Please try again later.': 'misc.alertVerificationEmailFailed',
+                'An error occurred, please try again later.': 'misc.alertTryAgainLater',
+            };
+            return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : this.$t('auth.verifyEmailError');
         },
     },
 };

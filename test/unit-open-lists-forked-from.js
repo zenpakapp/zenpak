@@ -7,6 +7,7 @@ const ownerUser = {
     _id: new ObjectId(),
     username: 'fx',
     library: {
+        currencySymbol: '€',
         lists: [{
             id: new ObjectId(),
             externalId: 'gr34-summer',
@@ -114,6 +115,8 @@ async function run() {
     assert('forkedFrom.ownerUsername matches source owner username', f1.ownerUsername === 'fx');
     assert('forkedFrom.ownerName uses publicProfile.displayName when set', f1.ownerName === 'FX Bénard');
     assert('forkedFrom.listName matches source list name', f1.listName === 'GR34 Summer');
+    assert('forkedFrom.sourceCurrencySymbol matches source library', f1.sourceCurrencySymbol === '€');
+    assert('copy payload includes source currency', response1.sourceCurrencySymbol === '€');
     assert('forkedFrom.copiedAt is a valid ISO date', !Number.isNaN(Date.parse(f1.copiedAt)));
     assert('copy payload includes source seasons', JSON.stringify(response1.seasons) === JSON.stringify(['3-season', 'summer']));
     assert('copy payload includes source list types', JSON.stringify(response1.listTypes) === JSON.stringify(['trek']));

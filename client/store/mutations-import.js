@@ -121,13 +121,15 @@ module.exports = {
             : { count: newCount, unit };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
-    importPublicList(state, { listName, description, categories, forkedFrom, seasons, listTypes }) {
+    importPublicList(state, { listName, description, categories, forkedFrom, seasons, listTypes, sourceCurrencySymbol }) {
         const list = state.library.newList();
         const sourceUsername = forkedFrom && forkedFrom.ownerUsername;
         const isExternalFork = sourceUsername && sourceUsername !== state.loggedIn;
         list.name = isExternalFork ? listName : `Copy of ${listName}`;
         list.description = description || '';
-        list.forkedFrom = forkedFrom || null;
+        list.forkedFrom = forkedFrom
+            ? { ...forkedFrom, sourceCurrencySymbol: forkedFrom.sourceCurrencySymbol || sourceCurrencySymbol || '' }
+            : null;
         list.seasons = Array.isArray(seasons) ? seasons.slice() : [];
         list.listTypes = Array.isArray(listTypes) ? listTypes.slice() : [];
 

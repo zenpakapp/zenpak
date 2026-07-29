@@ -1,9 +1,14 @@
 const dialogOpeners = {};
 const dialogLoaders = {};
 const dialogLoadPromises = {};
+const dialogOpenerWaiters = {};
 
 export function registerDialogOpener(name, opener) {
     dialogOpeners[name] = opener;
+    if (dialogOpenerWaiters[name]) {
+        dialogOpenerWaiters[name].forEach(resolve => resolve(opener));
+        delete dialogOpenerWaiters[name];
+    }
 }
 
 export function registerDialogLoader(name, loader) {
@@ -31,6 +36,28 @@ export function unregisterDialogOpener(name, opener) {
     }
 }
 
+function waitForDialogOpener(name) {
+    if (dialogOpeners[name]) {
+        return Promise.resolve(dialogOpeners[name]);
+    }
+
+    return new Promise((resolve, reject) => {
+        if (!dialogOpenerWaiters[name]) {
+            dialogOpenerWaiters[name] = [];
+        }
+        dialogOpenerWaiters[name].push(resolve);
+        setTimeout(() => {
+            const waiters = dialogOpenerWaiters[name];
+            if (!waiters) return;
+            dialogOpenerWaiters[name] = waiters.filter(waiter => waiter !== resolve);
+            if (!dialogOpenerWaiters[name].length) {
+                delete dialogOpenerWaiters[name];
+            }
+            reject(new Error(`Dialog "${name}" did not register an opener.`));
+        }, 2000);
+    });
+}
+
 export async function openDialog(name, ...args) {
     if (!dialogOpeners[name]) {
         if (!dialogLoaders[name]) {
@@ -41,10 +68,18 @@ export async function openDialog(name, ...args) {
             dialogLoadPromises[name] = Promise.resolve(dialogLoaders[name]());
         }
 
-        await dialogLoadPromises[name];
+        try {
+            await dialogLoadPromises[name];
+        } catch (error) {
+            delete dialogLoadPromises[name];
+            throw error;
+        }
 
         if (!dialogOpeners[name]) {
-            throw new Error(`Dialog "${name}" did not register an opener.`);
+            await waitForDialogOpener(name).catch((error) => {
+                delete dialogLoadPromises[name];
+                throw error;
+            });
         }
     }
 
