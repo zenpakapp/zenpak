@@ -131,7 +131,7 @@
                         <span v-if="displayName" class="accountDropdownUsernameHandle">@{{ username }}</span>
                     </div>
                     <a class="accountDropdownItem" role="button" tabindex="0" @click="showAccount" @keydown.enter="showAccount" @keydown.space.prevent="showAccount">{{ $t('dash.accountSettings') }}</a>
-                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.myProfile') }}</router-link>
+                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.profileAndLists') }}</router-link>
                     <a class="accountDropdownItem" role="button" tabindex="0" @click="showHelp" @keydown.enter="showHelp" @keydown.space.prevent="showHelp">{{ $t('dash.help') }}</a>
                     <hr class="accountDropdownDivider">
                     <a class="accountDropdownItem accountDropdownDanger" role="button" tabindex="0" @click="signout" @keydown.enter="signout" @keydown.space.prevent="signout">{{ $t('dash.signOut') }}</a>
