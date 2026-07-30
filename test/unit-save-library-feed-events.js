@@ -40,11 +40,11 @@ require.cache[require.resolve('../server/feed-events.js')] = {
     paths: [],
 };
 
-// We also need to stub mailgun and other heavy server deps
-require.cache[require.resolve('../server/mailgun.js')] = {
+// We also need to stub email sending and other heavy server deps
+require.cache[require.resolve('../server/email-provider.js')] = {
     exports: { sendMail: () => Promise.resolve() },
-    id: require.resolve('../server/mailgun.js'),
-    filename: require.resolve('../server/mailgun.js'),
+    id: require.resolve('../server/email-provider.js'),
+    filename: require.resolve('../server/email-provider.js'),
     loaded: true,
     children: [],
     paths: [],

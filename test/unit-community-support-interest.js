@@ -1,20 +1,20 @@
 // test/unit-community-support-interest.js
 'use strict';
 
-// Stub mailgun BEFORE loading router
+// Stub email provider BEFORE loading router
 let lastMailOptions = null;
-let mailgunShouldThrow = false;
+let emailProviderShouldThrow = false;
 
-require.cache[require.resolve('../server/mailgun.js')] = {
+require.cache[require.resolve('../server/email-provider.js')] = {
     exports: {
         sendMail(opts) {
             lastMailOptions = opts;
-            if (mailgunShouldThrow) return Promise.reject(new Error('Mailgun not configured'));
+            if (emailProviderShouldThrow) return Promise.reject(new Error('Email provider not configured'));
             return Promise.resolve({ id: 'stub-id' });
         },
     },
-    id: require.resolve('../server/mailgun.js'),
-    filename: require.resolve('../server/mailgun.js'),
+    id: require.resolve('../server/email-provider.js'),
+    filename: require.resolve('../server/email-provider.js'),
     loaded: true, children: [], paths: [],
 };
 
@@ -118,12 +118,12 @@ async function run() {
         assert('returns 200 on valid input (guide)', status === 200);
     }
 
-    // Test 6: returns 200 even if mailgun throws (unconfigured in dev)
+    // Test 6: returns 200 even if email provider throws
     {
-        mailgunShouldThrow = true;
+        emailProviderShouldThrow = true;
         const { status } = await callRoute(interestRoute, { email: 'a@b.com', tier: 'trail' });
-        assert('returns 200 even when mailgun throws', status === 200);
-        mailgunShouldThrow = false;
+        assert('returns 200 even when email provider throws', status === 200);
+        emailProviderShouldThrow = false;
     }
 
     // Test 7: optional message is forwarded in mail body

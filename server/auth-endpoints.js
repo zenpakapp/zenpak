@@ -7,8 +7,9 @@ const rateLimit = require('express-rate-limit');
 const config = require('config');
 
 const { logWithRequest } = require('./log.js');
-const { sendMail } = require('./mailgun.js');
+const { sendMail } = require('./email-provider.js');
 const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
+const { isReservedUsername } = require('./username-policy.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
@@ -91,6 +92,10 @@ router.post('/register', authLimiter, (req, res) => {
 
     if (username && (username.length < 3 || username.length > 32)) {
         errors.push({ field: 'username', message: 'Please enter a username between 3 and 32 characters.' });
+    }
+
+    if (username && isReservedUsername(username)) {
+        errors.push({ field: 'username', message: 'This username is reserved.' });
     }
 
     if (!email) {

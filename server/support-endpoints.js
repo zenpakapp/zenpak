@@ -1,7 +1,7 @@
 const express = require('express');
 const config = require('config');
 const router = express.Router();
-const { sendMail } = require('./mailgun.js');
+const { sendMail } = require('./email-provider.js');
 
 router.post('/interest', async (req, res) => {
     const email = String(req.body && req.body.email || '').trim();
@@ -24,7 +24,7 @@ router.post('/interest', async (req, res) => {
             text: `Email: ${email}\nTier: ${tier}\nMessage: ${message || '(none)'}`,
         });
     } catch {
-        // Mailgun may be unconfigured in dev — don't fail the request
+        // Email sending may be unconfigured locally — don't fail the request.
     }
 
     return res.status(200).json({ ok: true });
