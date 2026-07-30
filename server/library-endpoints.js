@@ -175,6 +175,46 @@ router.post('/api/restore', (req, res) => {
     });
 });
 
+router.post('/api/lists/:listId/hide-source-list-info', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '');
+        const library = user.library || {};
+        const list = (library.lists || []).find(l => String(l.id) === listId);
+        if (!list) {
+            return res.status(404).json({ message: 'List not found' });
+        }
+
+        const categoryIds = (list.categoryIds || []).map(String);
+        const itemIds = new Set();
+        (library.categories || []).forEach((category) => {
+            if (!categoryIds.includes(String(category.id))) return;
+            (category.categoryItems || []).forEach((categoryItem) => {
+                itemIds.add(String(categoryItem.itemId));
+            });
+        });
+
+        let count = 0;
+        (library.items || []).forEach((item) => {
+            if (!itemIds.has(String(item.id))) return;
+            if (!(item.affiliateUrl || item.promoCode || item.promoLabel)) return;
+            item.affiliateUrl = '';
+            item.promoCode = '';
+            item.promoLabel = '';
+            count++;
+        });
+
+        list.sourceListInfoHidden = true;
+        user.syncToken = (Number(user.syncToken) || 0) + 1;
+
+        db.users.save(user, () => {
+            syncUserPublicLists(user).catch((err) => {
+                logWithRequest(req, { message: 'public list projection sync failed after source list info hide', username: user.username, error: err.message });
+            });
+            return res.json({ ok: true, count, syncToken: user.syncToken });
+        });
+    });
+});
+
 router.post('/api/import/lighterpack', async (req, res) => {
     const { url } = req.body;
     if (!url) return res.status(400).json({ error: 'No URL provided.' });

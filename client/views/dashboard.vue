@@ -49,7 +49,7 @@
                 </span>
                 <span class="lpListTitleBlock headerItem">
                     <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" value="New List" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
-                    <span v-if="forkSource" class="lpForkSource">
+                    <span v-if="forkSource" class="lpForkSource" :title="forkCurrencyNote || null">
                         {{ $t('dash.source') }}
                         <router-link v-if="forkSource.externalId" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
                             {{ forkSource.listName }}
@@ -62,9 +62,14 @@
                             </router-link>
                             <span v-else>{{ forkSource.ownerName }}</span>
                         </span>
+                        <button v-if="forkCurrencyNote" class="lpForkSourceInfo" type="button" :title="forkCurrencyNote" @click="showForkCurrencyNotice">?</button>
                     </span>
-                    <span v-if="forkCurrencyNote" class="lpForkSource lpForkCurrencyNote">
-                        {{ forkCurrencyNote }}
+                    <span v-if="canHideSourceListInfo" class="lpForkSourceActions">
+                        <button class="lpForkSourceAction" type="button" @click="hideSourceListInfo">
+                            {{ $t('dash.hideSourceListInfo') }}
+                        </button>
+                        <span class="lpForkSourceHelp" :title="$t('dash.hideSourceListInfoHelp')">?</span>
+                        <button class="lpForkSourceDismiss" type="button" :title="$t('dash.hideSourceListInfoAction')" @click="dismissSourceListInfoAction">×</button>
                     </span>
                 </span>
                 <span class="headerItem headerIconItem">
@@ -200,6 +205,8 @@ const lazySpeedbump = {
     component: 'speedbump',
     loader: () => import(/* webpackChunkName: "dialog-speedbump" */ '../components/speedbump.vue'),
 };
+const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
+const legacySourceListInfoDismissedField = 'creator' + 'LinksActionDismissed';
 
 export default {
     name: 'Dashboard',
@@ -235,6 +242,7 @@ export default {
             loadedDialogs: [],
             dialogLoaders: [],
             speedbumpLoader: null,
+            currencyNoticeListId: null,
         };
     },
     computed: {
@@ -259,6 +267,16 @@ export default {
             const currentCurrency = this.library && this.library.currencySymbol;
             if (!sourceCurrency || !currentCurrency || sourceCurrency === currentCurrency) return '';
             return this.$t('dash.sourceCurrencyNote', { source: sourceCurrency, current: currentCurrency });
+        },
+        canHideSourceListInfo() {
+            return !!(
+                this.forkSource
+                && this.list
+                && this.list.sourceListInfoHidden !== true
+                && this.list[legacySourceListInfoHiddenField] !== true
+                && this.list.sourceListInfoActionDismissed !== true
+                && this.list[legacySourceListInfoDismissedField] !== true
+            );
         },
         isSignedIn() {
             return this.$store.state.loggedIn;
@@ -328,6 +346,14 @@ export default {
                 localStorage.removeItem('verifyBannerDismissed');
                 this.verifyBannerDismissed = false;
             }
+        },
+        forkCurrencyNote: {
+            immediate: true,
+            handler(note) {
+                if (!note || !this.list || this.currencyNoticeListId === this.list.id) return;
+                this.currencyNoticeListId = this.list.id;
+                this.showForkCurrencyNotice();
+            },
         },
     },
     created() {
@@ -430,6 +456,46 @@ export default {
         updateListName(evt) {
             if (!this.list) return;
             this.$store.commit('updateListName', { id: this.list.id, name: evt.target.value });
+        },
+        showForkCurrencyNotice() {
+            if (!this.forkCurrencyNote) return;
+            this.$store.commit('pushGlobalAlert', {
+                key: 'dash.sourceCurrencyNote',
+                params: {
+                    source: this.forkSource.sourceCurrencySymbol,
+                    current: this.library.currencySymbol,
+                },
+                type: 'info',
+            });
+        },
+        hideSourceListInfo() {
+            if (!this.list) return;
+            this.$store.commit('hideSourceListInfo', { listId: this.list.id });
+            const persist = this.$store.state.saveType === 'remote' && this.$store.state.loggedIn
+                ? fetchJson(`/api/lists/${this.list.id}/hide-source-list-info`, { method: 'POST', credentials: 'same-origin' })
+                    .then((response) => {
+                        if (response && typeof response.syncToken !== 'undefined') {
+                            this.$store.commit('setSyncToken', response.syncToken);
+                            this.$store.commit('setLastSaveData', JSON.stringify(this.library.save()));
+                        }
+                    })
+                : this.$store.dispatch('saveNow');
+
+            persist
+                .then(() => {
+                    this.$store.commit('pushGlobalAlert', {
+                        key: 'dash.sourceListInfoHidden',
+                        type: 'success',
+                    });
+                })
+                .catch(() => {
+                    this.$store.commit('pushGlobalAlert', { message: 'An error occurred while attempting to save your data.' });
+                });
+        },
+        dismissSourceListInfoAction() {
+            if (!this.list) return;
+            this.$store.commit('dismissSourceListInfoAction', { listId: this.list.id });
+            this.$store.dispatch('saveNow').catch(() => {});
         },
         dismissVerifyBanner() {
             localStorage.setItem('verifyBannerDismissed', '1');

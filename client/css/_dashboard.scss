@@ -429,10 +429,56 @@
     white-space: nowrap;
 }
 
-.lpForkCurrencyNote {
+.lpForkSourceActions {
+    align-self: flex-start;
+    align-items: center;
+    display: inline-flex;
+    gap: 6px;
+    margin: -4px 14px 5px;
+}
+
+.lpForkSourceAction,
+.lpForkSourceDismiss {
+    background: transparent;
+    border: 0;
     color: $color-text-muted;
-    font-style: italic;
-    margin-top: -4px;
+    cursor: pointer;
+    font-size: $fontSize-xs;
+    padding: 0;
+}
+
+.lpForkSourceAction {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+        color: $color-link;
+    }
+}
+
+.lpForkSourceHelp {
+    align-items: center;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    cursor: help;
+    display: inline-flex;
+    font-size: 10px;
+    height: 14px;
+    justify-content: center;
+    line-height: 1;
+    width: 14px;
+}
+
+.lpForkSourceDismiss {
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+        color: $color-text;
+        opacity: 1;
+    }
 }
 
 .lpForkSourceLink {
@@ -443,6 +489,29 @@
     &:hover {
         color: $color-link;
         text-decoration: underline;
+    }
+}
+
+.lpForkSourceInfo {
+    align-items: center;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    cursor: help;
+    display: inline-flex;
+    font-size: 10px;
+    height: 14px;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 6px;
+    padding: 0;
+    vertical-align: 1px;
+    width: 14px;
+
+    &:hover {
+        border-color: $color-link;
+        color: $color-link;
     }
 }
 

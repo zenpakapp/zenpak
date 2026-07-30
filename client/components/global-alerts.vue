@@ -81,12 +81,32 @@
 <script>
 import { fetchJson } from '../utils/utils';
 
+const AUTO_DISMISS_MS = 6000;
+
 export default {
     name: 'GlobalAlerts',
+    data() {
+        return {
+            dismissTimers: {},
+        };
+    },
     computed: {
         alerts() {
             return this.$store.state.globalAlerts;
         },
+    },
+    watch: {
+        alerts: {
+            handler(alerts) {
+                this.syncDismissTimers(alerts || []);
+            },
+            immediate: true,
+            deep: true,
+        },
+    },
+    beforeUnmount() {
+        Object.values(this.dismissTimers).forEach(clearTimeout);
+        this.dismissTimers = {};
     },
     methods: {
         displayMessage(alert) {
@@ -123,6 +143,40 @@ export default {
         isVerifyEmailAlert(alert) {
             return this.messageText(alert) === 'Please verify your email before making lists public.';
         },
+        isErrorLikeAlert(alert) {
+            const level = alert && (alert.level || alert.type || alert.variant || alert.status);
+            if (level && ['warning', 'warn', 'error', 'danger'].includes(String(level))) return true;
+            const message = this.messageText(alert) || '';
+            if (this.isVerifyEmailAlert(alert)) return true;
+            if (message.startsWith('An error occurred')) return true;
+            if (message.startsWith('Too many')) return true;
+            if (message.startsWith('Please log in')) return true;
+            if (message.startsWith('Invalid username')) return true;
+            if (message.startsWith('Your list is out of date')) return true;
+            if (message.includes('could not') || message.includes('Unable to')) return true;
+            return false;
+        },
+        shouldAutoDismiss(alert) {
+            const level = alert && (alert.level || alert.type || alert.variant || alert.status);
+            if (level && ['success', 'info'].includes(String(level))) return true;
+            return !this.isErrorLikeAlert(alert);
+        },
+        syncDismissTimers(alerts) {
+            const activeIds = new Set(alerts.map(alert => alert.id).filter(Boolean));
+            Object.keys(this.dismissTimers).forEach((id) => {
+                if (!activeIds.has(id)) {
+                    clearTimeout(this.dismissTimers[id]);
+                    delete this.dismissTimers[id];
+                }
+            });
+
+            alerts.forEach((alert) => {
+                if (!alert.id || this.dismissTimers[alert.id] || !this.shouldAutoDismiss(alert)) return;
+                this.dismissTimers[alert.id] = setTimeout(() => {
+                    this.dismiss(alert.id);
+                }, AUTO_DISMISS_MS);
+            });
+        },
         resendLabel(alert) {
             if (alert.resendSent) return this.$t('dash.verificationEmailSent');
             return this.$t('dash.resendEmail');
@@ -144,6 +198,10 @@ export default {
             return resolved;
         },
         dismiss(alertId) {
+            if (this.dismissTimers[alertId]) {
+                clearTimeout(this.dismissTimers[alertId]);
+                delete this.dismissTimers[alertId];
+            }
             this.$store.commit('removeGlobalAlert', alertId);
         },
     },

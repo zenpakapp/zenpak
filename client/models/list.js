@@ -19,6 +19,8 @@ const List = function ({ id, library }) {
     this.externalId = '';
     this.forkedFrom = null;
     this.copyable = false;
+    this.sourceListInfoHidden = false;
+    this.sourceListInfoActionDismissed = false;
 
     this.totalWeight = 0;
     this.totalWornWeight = 0;

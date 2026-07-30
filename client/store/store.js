@@ -150,6 +150,52 @@ const store = createStore({
                 context.commit('setLastSaveData', saveData);
             });
         },
+        saveNow(context) {
+            const state = context.state;
+            if (!state.library) return Promise.resolve();
+            const saveData = JSON.stringify(state.library.save());
+
+            if (saveData === state.lastSaveData) return Promise.resolve();
+
+            if (state.saveType === 'local') {
+                setLocalLibrary(saveData);
+                context.commit('setLastSaveData', saveData);
+                return Promise.resolve();
+            }
+
+            if (state.saveType !== 'remote' || !state.loggedIn) return Promise.resolve();
+
+            if (state.isSaving) {
+                return new Promise((resolve, reject) => {
+                    const unwatch = store.watch(
+                        nextState => nextState.isSaving,
+                        (isSaving) => {
+                            if (isSaving) return;
+                            unwatch();
+                            context.dispatch('saveNow').then(resolve).catch(reject);
+                        },
+                    );
+                });
+            }
+
+            context.commit('setIsSaving', true);
+            context.commit('setLastSaveData', saveData);
+
+            return fetchJson('/saveLibrary/', {
+                method: 'POST',
+                body: JSON.stringify({ syncToken: state.syncToken, username: state.loggedIn, data: saveData }),
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+            })
+                .then((response) => {
+                    context.commit('setSyncToken', response.syncToken);
+                    context.commit('setIsSaving', false);
+                })
+                .catch((error) => {
+                    context.commit('setIsSaving', false);
+                    throw error;
+                });
+        },
         async loadRemote(context) {
             try {
                 const response = await fetchJson('/signin', {

@@ -150,7 +150,7 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
     if (!item) {
         return null;
     }
-    const publicLink = resolvePublicItemLink(item, creator);
+    const publicLink = resolvePublicItemLink(item, options.applyCreatorRules === false ? null : creator);
     const includePrice = options.includePrice !== false;
 
     return Object.assign({
@@ -178,6 +178,7 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
 
 function buildPublicCategories(library, list, creator, options = {}) {
     const includePrice = options.includePrice !== false;
+    const applyCreatorRules = options.applyCreatorRules !== false;
     return (list.categoryIds || []).map((categoryId) => {
         const category = findById(library.categories, categoryId);
         if (!category) {
@@ -185,7 +186,7 @@ function buildPublicCategories(library, list, creator, options = {}) {
         }
 
         const items = (category.categoryItems || [])
-            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator, { includePrice }))
+            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator, { includePrice, applyCreatorRules }))
             .filter(Boolean);
 
         return {
@@ -201,6 +202,23 @@ function buildPublicCategories(library, list, creator, options = {}) {
         };
     }).filter(Boolean);
 }
+
+function listHasExplicitSourceListInfo(library, list) {
+    return (list.categoryIds || []).some((categoryId) => {
+        const category = findById(library.categories, categoryId);
+        if (!category) return false;
+
+        return (category.categoryItems || []).some((categoryItem) => {
+            const item = findById(library.items, categoryItem.itemId);
+            return item && (
+                normalizeString(item.affiliateUrl)
+                || normalizeString(item.promoCode)
+                || normalizeString(item.promoLabel)
+            );
+        });
+    });
+}
+const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
 
 function buildPublicProfile(user) {
     const library = getLibrary(user);
@@ -246,7 +264,10 @@ function buildPublicList(user, externalId) {
 
     const creator = library.creator || {};
     const includePrice = !!(list.publicFields && list.publicFields.price);
-    const categories = buildPublicCategories(library, list, creator, { includePrice });
+    const sourceListInfoHidden = list.sourceListInfoHidden === true || list[legacySourceListInfoHiddenField] === true;
+    const applyCreatorRules = !sourceListInfoHidden
+        && (!list.forkedFrom || listHasExplicitSourceListInfo(library, list));
+    const categories = buildPublicCategories(library, list, creator, { includePrice, applyCreatorRules });
     const hasAffiliateLinks = categories.some(category => category.items.some(item => item.hasAffiliateLink));
 
     const seenCodes = new Set();

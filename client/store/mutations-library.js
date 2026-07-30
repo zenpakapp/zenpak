@@ -165,6 +165,37 @@ module.exports = {
             item.shop = args.shop || item.shop || '';
         }
     },
+    hideSourceListInfo(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (!list) return 0;
+        list.sourceListInfoHidden = true;
+        list.sourceListInfoActionDismissed = true;
+
+        let count = 0;
+        list.categoryIds.forEach((categoryId) => {
+            const category = state.library.getCategoryById(categoryId);
+            if (!category) return;
+
+            category.categoryItems.forEach((categoryItem) => {
+                const item = state.library.getItemById(categoryItem.itemId);
+                if (!item || !(item.affiliateUrl || item.promoCode || item.promoLabel)) return;
+
+                item.affiliateUrl = '';
+                item.promoCode = '';
+                item.promoLabel = '';
+                state.library.updateItem(item);
+                count++;
+            });
+        });
+
+        state.itemVersion += 1;
+        return count;
+    },
+    dismissSourceListInfoAction(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (!list) return;
+        list.sourceListInfoActionDismissed = true;
+    },
     updateCreatorSettings(state, creator) {
         state.library.creator = { ...state.library.creator, ...creator };
     },

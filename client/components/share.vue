@@ -283,53 +283,7 @@ export default {
             }
         },
         saveShareState() {
-            if (this.$store.state.saveType !== 'remote' || !this.$store.state.loggedIn) {
-                return Promise.resolve();
-            }
-
-            if (this.$store.state.isSaving) {
-                return new Promise((resolve, reject) => {
-                    const unwatch = this.$store.watch(
-                        (state) => state.isSaving,
-                        (isSaving) => {
-                            if (!isSaving) {
-                                unwatch();
-                                this.saveShareState().then(resolve).catch(reject);
-                            }
-                        },
-                    );
-                });
-            }
-
-            const saveData = JSON.stringify(this.library.save());
-
-            if (saveData === this.$store.state.lastSaveData) {
-                return Promise.resolve();
-            }
-
-            this.$store.commit('setIsSaving', true);
-            this.$store.commit('setLastSaveData', saveData);
-
-            return fetchJson('/saveLibrary/', {
-                method: 'POST',
-                body: JSON.stringify({
-                    syncToken: this.$store.state.syncToken,
-                    username: this.$store.state.loggedIn,
-                    data: saveData,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-            })
-                .then((response) => {
-                    this.$store.commit('setSyncToken', response.syncToken);
-                    this.$store.commit('setIsSaving', false);
-                })
-                .catch((error) => {
-                    this.$store.commit('setIsSaving', false);
-                    throw error;
-                });
+            return this.$store.dispatch('saveNow');
         },
     },
 };

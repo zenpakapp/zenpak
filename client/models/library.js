@@ -78,11 +78,10 @@ Library.prototype.newItem = function ({ category, _isNew }) {
 
 Library.prototype.updateItem = function (item) {
     const oldItem = this.getItemById(item.id);
-    const newItem = assignIn({}, oldItem, item);
-    const idx = this.items.indexOf(oldItem);
-    if (idx !== -1) this.items.splice(idx, 1, newItem);
-    this.idMap[newItem.id] = newItem;
-    return newItem;
+    if (!oldItem) return false;
+    assignIn(oldItem, item);
+    this.idMap[oldItem.id] = oldItem;
+    return oldItem;
 };
 
 Library.prototype.removeItem = function (id) {

@@ -128,5 +128,84 @@ assert('hidden prices zero category subtotal', hiddenPricePayload.categories[0].
 assert('hidden prices zero item price', hiddenPricePayload.categories[0].items[0].price === 0);
 assert('public payload exposes fork source', hiddenPricePayload.forkedFrom && hiddenPricePayload.forkedFrom.externalId === 'source123');
 
+const hiddenSourceListInfoPayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator,
+        items: [{ id: 11, name: 'Pack', brand: 'Zpacks', price: 250, weight: 1000, authorUnit: 'g', url: 'https://zpacks.com/pack' }],
+        categories: [{
+            id: 12,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 11, qty: 1 }],
+        }],
+        lists: [{
+            id: 13,
+            externalId: 'copy123',
+            name: 'Copied Trail',
+            visibility: 'shareable',
+            publicFields: { links: true },
+            sourceListInfoHidden: true,
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
+            categoryIds: [12],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'copy123');
+
+assert('source list info hidden disables rules on copied list', hiddenSourceListInfoPayload.categories[0].items[0].promoCode === '');
+assert('main URL still exposed when source list info is hidden', hiddenSourceListInfoPayload.categories[0].items[0].publicUrl === 'https://zpacks.com/pack');
+
+const implicitlyHiddenSourceListInfoPayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator,
+        items: [{ id: 21, name: 'Pack', brand: 'Zpacks', price: 250, weight: 1000, authorUnit: 'g', url: 'https://zpacks.com/pack' }],
+        categories: [{
+            id: 22,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 21, qty: 1 }],
+        }],
+        lists: [{
+            id: 23,
+            externalId: 'copy456',
+            name: 'Copied Trail',
+            visibility: 'shareable',
+            publicFields: { links: true },
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
+            categoryIds: [22],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'copy456');
+
+assert('source list info rules disabled on copied list with no explicit source info', implicitlyHiddenSourceListInfoPayload.categories[0].items[0].promoCode === '');
+assert('source list info codes hidden when copied list has no explicit source info', implicitlyHiddenSourceListInfoPayload.creatorCodes.length === 0);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
