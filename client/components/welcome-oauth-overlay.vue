@@ -52,6 +52,12 @@ export default {
         }
     },
     methods: {
+        localizeError(message) {
+            if (message === 'This username is reserved.') return this.$t('auth.usernameReserved');
+            if (message === 'Username already taken.') return this.$t('auth.usernameTaken');
+            if (message && message.startsWith('Username must be')) return this.$t('auth.usernameOauthFormat');
+            return message;
+        },
         async submit() {
             this.loading = true;
             this.setupError = '';
@@ -63,7 +69,7 @@ export default {
                     body: JSON.stringify({ username: this.setupUsername, setupToken: this.setupToken }),
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Error');
+                if (!res.ok) throw new Error(this.localizeError(data.message || 'Error'));
                 document.cookie = 'oauth_setup_token=; path=/; max-age=0';
                 document.cookie = 'oauth_setup_suggested=; path=/; max-age=0';
                 window.location.replace('/welcome?onboarding=1');

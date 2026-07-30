@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const express = require('express');
 const db = require('./db.js');
 const { generateSession } = require('./auth.js');
+const { isReservedUsername } = require('./username-policy.js');
 const { Library } = require('../client/dataTypes.js');
 
 const router = express.Router();
@@ -99,6 +100,10 @@ if (oauthEnabled) {
         const clean = String(username).trim();
         if (!/^[a-zA-Z0-9_]{3,20}$/.test(clean)) {
             return res.status(400).json({ message: 'Username must be 3-20 characters: letters, numbers, or underscores.' });
+        }
+
+        if (isReservedUsername(clean)) {
+            return res.status(400).json({ message: 'This username is reserved.' });
         }
 
         try {

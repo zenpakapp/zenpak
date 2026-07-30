@@ -36,6 +36,30 @@ const dataTypes = require('../dataTypes.js');
 
 const Library = dataTypes.Library;
 const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ './template-picker.vue'));
+const reservedUsernames = ['admin', 'api', 'app', 'moderator', 'official', 'support', 'www', 'zenpak'];
+
+function normalizeUsername(value) {
+    return String(value || '')
+        .toLowerCase()
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[-_\s.]/g, '');
+}
+
+function normalizeBrandConfusables(value) {
+    return normalizeUsername(value)
+        .replace(/3/g, 'e')
+        .replace(/0/g, 'o')
+        .replace(/1/g, 'i')
+        .replace(/@/g, 'a');
+}
+
+function isReservedUsername(value) {
+    const normalized = normalizeUsername(value);
+    const brandNormalized = normalizeBrandConfusables(value);
+
+    return reservedUsernames.includes(normalized) || /^zenpa[cgkq]/.test(brandNormalized);
+}
 
 export default {
     name: 'RegisterForm',
@@ -92,6 +116,10 @@ export default {
 
             if (this.username && (this.username.length < 3 || this.username.length > 32)) {
                 this.errors.push({ field: 'username', message: this.$t('auth.usernameLengthError') });
+            }
+
+            if (this.username && isReservedUsername(this.username)) {
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameReserved') });
             }
 
             if (!this.email) {
