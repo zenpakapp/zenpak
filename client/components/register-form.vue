@@ -156,7 +156,7 @@ export default {
                 return;
             }
 
-            const registerData = { username: this.username.trim().toLowerCase(), email: this.email, password: this.password };
+            const registerData = { username: this.username.trim().toLowerCase(), email: this.email.trim().toLowerCase(), password: this.password };
 
             if (hasLocalLibrary()) {
                 registerData.library = getLocalLibrary();

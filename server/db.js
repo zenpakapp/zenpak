@@ -157,6 +157,10 @@ module.exports = {
         const users = _db.collection('users');
         await users.createIndex({ token: 1 }, { unique: true, sparse: true });
         await users.createIndex({ username: 1 }, { unique: true });
+        await users.createIndex(
+            { email: 1 },
+            { unique: true, sparse: true, collation: { locale: 'en', strength: 2 }, name: 'users_email_unique_ci' },
+        );
         await users.createIndex({ 'library.lists.externalId': 1 }, { sparse: true });
 
         const follows = _db.collection('follows');

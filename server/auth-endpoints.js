@@ -9,6 +9,7 @@ const config = require('config');
 const { logWithRequest } = require('./log.js');
 const { sendMail } = require('./email-provider.js');
 const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
+const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const {
     canonicalUsername,
     isReservedDisplayName,
@@ -87,7 +88,7 @@ eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 router.post('/register', authLimiter, (req, res) => {
     const username = canonicalUsername(req.body.username);
     const password = String(req.body.password);
-    let email = String(req.body.email);
+    const email = canonicalEmail(req.body.email);
 
     const errors = [];
 
@@ -106,8 +107,6 @@ router.post('/register', authLimiter, (req, res) => {
     if (!email) {
         errors.push({ field: 'email', message: 'Please enter an email.' });
     }
-
-    email = email.trim();
 
     if (!password) {
         errors.push({ field: 'password', message: 'Please enter a password.' });
@@ -133,7 +132,7 @@ router.post('/register', authLimiter, (req, res) => {
             return res.status(400).json({ errors: [{ field: 'username', message: 'That username already exists, please pick a different username.' }] });
         }
 
-        db.users.find({ email }, (err, users) => {
+        db.users.find(emailLookup(email), (err, users) => {
             if (err) {
                 logWithRequest(req, { message: 'DB error on email lookup', email, error: err.message });
                 return res.status(500).json({ errors: [{ message: 'An error occurred, please try again later.' }] });
@@ -176,23 +175,31 @@ router.post('/register', authLimiter, (req, res) => {
                             emailVerifyToken,
                         };
                         logWithRequest(req, { message: 'Saving new user', username });
-                        db.users.save(newUser);
+                        db.users.save(newUser, (err) => {
+                            if (err) {
+                                logWithRequest(req, { message: 'DB error on user save', username, email, error: err.message });
+                                if (err.code === 11000 && err.message.includes('email')) {
+                                    return res.status(400).json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
+                                }
+                                return res.status(500).json({ errors: [{ message: 'An error occurred, please try again later.' }] });
+                            }
 
-                        const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
-                        const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
-                        const emailMessage = verificationEmail({ username, verifyUrl });
-                        sendMail({
-                            from: 'ZenPak <noreply@zenpak.app>',
-                            to: email,
-                            'h:Reply-To': 'ZenPak <support@zenpak.app>',
-                            subject: emailMessage.subject,
-                            text: emailMessage.text,
-                            html: emailMessage.html,
-                        }).catch((e) => logWithRequest(req, e));
+                            const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
+                            const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
+                            const emailMessage = verificationEmail({ username, verifyUrl });
+                            sendMail({
+                                from: 'ZenPak <noreply@zenpak.app>',
+                                to: email,
+                                'h:Reply-To': 'ZenPak <support@zenpak.app>',
+                                subject: emailMessage.subject,
+                                text: emailMessage.text,
+                                html: emailMessage.html,
+                            }).catch((e) => logWithRequest(req, e));
 
-                        const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
-                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
-                        return res.status(200).json(out);
+                            const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
+                            res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
+                            return res.status(200).json(out);
+                        });
                     });
                 });
             });
@@ -307,13 +314,13 @@ router.post('/resetPassword', authLimiter, (req, res) => {
 
 router.post('/forgotUsername', forgotLimiter, (req, res) => {
     logWithRequest(req);
-    const email = String(req.body.email).toLowerCase().trim();
+    const email = canonicalEmail(req.body.email);
     if (!email || email.length < 1) {
         logWithRequest(req, { message: 'Bad forgot username', email });
         return res.status(400).json({ errors: [{ message: 'Please enter a valid email.' }] });
     }
 
-    db.users.findOne({ email }, (err, user) => {
+    db.users.findOne(emailLookup(email), (err, user) => {
         if (err) {
             logWithRequest(req, { message: 'Forgot email lookup error', email });
             return res.status(500).json({ message: 'An error occurred' });

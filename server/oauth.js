@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const express = require('express');
 const db = require('./db.js');
 const { generateSession } = require('./auth.js');
+const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const { canonicalUsername, isReservedUsername, isValidUsername } = require('./username-policy.js');
 const { Library } = require('../client/dataTypes.js');
 
@@ -27,7 +28,7 @@ if (oauthEnabled) {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null;
+                const email = profile.emails && profile.emails[0] ? canonicalEmail(profile.emails[0].value) : null;
                 const googleId = profile.id;
                 const avatarUrl = profile.photos && profile.photos[0] ? profile.photos[0].value : undefined;
 
@@ -35,7 +36,7 @@ if (oauthEnabled) {
                 if (byGoogleId) return done(null, byGoogleId);
 
                 if (email) {
-                    const byEmail = await db.users.findOne({ email });
+                    const byEmail = await db.users.findOne(emailLookup(email));
                     if (byEmail) {
                         byEmail.googleId = googleId;
                         if (!byEmail.avatarUrl && avatarUrl) byEmail.avatarUrl = avatarUrl;
