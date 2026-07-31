@@ -77,6 +77,15 @@ const oneYear = 31536000000;
 app.use(compression());
 app.use(cookieParser());
 
+app.get('/healthz', (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    res.json({
+        ok: true,
+        service: 'zenpak',
+        environment: runtimeEnvironment,
+    });
+});
+
 const webhookHandler = require('./server/webhook-handler.js');
 // Webhook MUST be before express.json() — needs raw body for signature verification
 app.use('/', webhookHandler);

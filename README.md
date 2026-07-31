@@ -35,7 +35,7 @@ Or paste any public lighterpack.com list URL directly into the import dialog. Li
 
 ## Self-hosting
 
-**Requirements:** Node.js 18+, MongoDB 6+
+**Requirements:** Node.js 22 LTS, MongoDB 6+
 
 ```bash
 git clone https://github.com/zenpakapp/zenpak
@@ -63,11 +63,14 @@ npm run start    # production build + start → http://localhost:3000
 
 | Service | Config keys | Purpose |
 |---------|-------------|---------|
-| Mailgun | `mailgunDomain`, `mailgunAPIKey`, `mailgunBaseURL` | Email verification, password reset |
+| Mailpit | `mailpitSmtpPort` | Development email capture |
+| Resend | `resendAPIKey`, `resendBaseURL` | Email verification, password reset |
 | Cloudinary | `cloudinaryCloudName`, `cloudinaryApiKey`, `cloudinaryApiSecret` | Item image uploads |
 | Google OAuth | `googleClientId`, `googleClientSecret`, `googleCallbackUrl` | Sign in with Google |
 
 **Billing:** Leave all `stripe*` and `kofiWebhookToken` fields empty. The full app runs without billing — no feature gates apply in self-hosted mode. Paid plans (Kin, Wayfarer) are hosted-only at zenpak.app.
+
+For a small self-hosted production setup, see [ops/self-hosting-runbook.md](ops/self-hosting-runbook.md).
 
 ## Plans
 

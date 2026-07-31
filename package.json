@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "LighterPack =========== LighterPack is a website to track the gear you take on adventures. It is still in Beta.",
   "main": "app.js",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
     "dev": "NODE_ENV=development node --max-old-space-size=8192 app.js",
     "start": "NODE_ENV=production webpack-cli --config ./webpack.config.js && NODE_ENV=production node app.js",
