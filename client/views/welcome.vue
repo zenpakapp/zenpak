@@ -145,6 +145,7 @@ import SigninForm from '../components/signin-form.vue';
 import WelcomeOauthOverlay from '../components/welcome-oauth-overlay.vue';
 import ZenpakBrandAsset from '../components/zenpak-brand-asset.vue';
 import { push } from '../services/navigation';
+import { applyQuickSetup } from '../utils/quick-setup';
 
 const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ '../components/template-picker.vue'));
 const WelcomeProof = defineAsyncComponent(() => import(/* webpackChunkName: "welcome-proof" */ '../components/welcome-proof.vue'));
@@ -183,14 +184,17 @@ export default {
         }
     },
     methods: {
-        async onTemplateSelect(templateData) {
-            if (templateData) {
-                await this.$store.dispatch('saveRemoteWithTemplate', templateData);
-            }
+        async saveOnboardingLibrary(templateData, setup) {
+            const currentLibrary = this.$store.state.library && this.$store.state.library.save();
+            const libraryData = applyQuickSetup(templateData || currentLibrary, setup);
+            await this.$store.dispatch('saveRemoteWithTemplate', libraryData);
             push('/');
         },
-        onTemplateSkip() {
-            push('/');
+        async onTemplateSelect(templateData, setup) {
+            await this.saveOnboardingLibrary(templateData, setup);
+        },
+        async onTemplateSkip(setup) {
+            await this.saveOnboardingLibrary(null, setup);
         },
     },
 };

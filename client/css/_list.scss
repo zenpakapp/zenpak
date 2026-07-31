@@ -431,8 +431,8 @@ input.lpCategoryName { /* specificity */
     justify-content: center;
     line-height: 1.7;
     margin-bottom: $spacingLarge;
-    min-height: 200px;
-    padding: $spacingLarge * 1.5;
+    min-height: 150px;
+    padding: $spacingLarge;
 
     h2 {
         align-items: center;
@@ -450,16 +450,6 @@ input.lpCategoryName { /* specificity */
         color: $color-text-muted;
         font-size: $fontSize-base;
         margin: 0 0 $spacingSmall;
-    }
-
-    ol {
-        color: $color-text-muted;
-        margin: 0 0 $spacingMedium;
-        padding-left: 20px;
-
-        li {
-            margin-bottom: 4px;
-        }
     }
 
     & > *:last-child {

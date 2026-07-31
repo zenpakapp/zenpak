@@ -113,6 +113,17 @@
     border-top: 1px solid $color-border;
     margin: 4px 0;
 }
+
+html.lpSigningOut body::before {
+    background: $color-bg;
+    bottom: 0;
+    content: "";
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 2147483647;
+}
 </style>
 
 <template>
@@ -188,6 +199,7 @@ export default {
             openDialog('help');
         },
         signout() {
+            document.documentElement.classList.add('lpSigningOut');
             this.$store.commit('signout');
             redirect('/welcome');
         },

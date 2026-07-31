@@ -28,14 +28,9 @@
         <div v-if="isListNew" id="getStarted">
             <h2>
                 <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
-                {{ $t('list.getStartedTitle') }}
+                {{ getStartedTitle }}
             </h2>
-            <p>{{ $t('list.getStartedIntro') }}</p>
-            <ol>
-                <li>{{ $t('list.getStartedStep1') }}</li>
-                <li>{{ $t('list.getStartedStep2') }}</li>
-                <li v-if="!isLocalSaving">{{ $t('list.getStartedStep3') }}</li>
-            </ol>
+            <p>{{ $t('list.getStartedText') }}</p>
             <p class="lpGetStartedCommunity">
                 {{ $t('list.communityHint') }}
                 <router-link to="/community" class="lpHref">{{ $t('list.communityHintCta') }}</router-link>
@@ -142,6 +137,14 @@ export default {
         },
         showGuestHint() {
             return this.isLocalSaving && !this.isListNew && !this.guestHintDismissed;
+        },
+        getStartedName() {
+            const displayName = this.library.publicProfile && this.library.publicProfile.displayName;
+            return displayName || this.$store.state.loggedIn || '';
+        },
+        getStartedTitle() {
+            if (this.getStartedName) return this.$t('list.getStartedTitleNamed', { name: this.getStartedName });
+            return this.$t('list.getStartedTitle');
         },
         allItemIds() {
             return this.categories.flatMap(cat =>

@@ -21,7 +21,7 @@
     "forgotPasswordTitle": "Mot de passe oublié ?",
     "forgotPasswordCheckEmail": "Un lien de réinitialisation a été envoyé à votre e-mail.",
     "forgotPasswordEnterUsername": "Veuillez saisir votre nom d'utilisateur.",
-    "forgotPasswordSubmit": "Soumettre",
+    "forgotPasswordSubmit": "Envoyer",
     "forgotUsernameTitle": "Nom d'utilisateur oublié ?",
     "forgotUsernameCheckInbox": "Si cet e-mail est enregistré, consultez votre boîte de réception. Votre nom d'utilisateur arrive.",
     "forgotUsernameEnterEmail": "Veuillez saisir votre adresse e-mail.",
@@ -106,11 +106,9 @@
     "exitPacking": "Quitter la préparation",
     "itemsPacked": "{packed} / {total} articles préparés",
     "packTotal": "Total : {weight}",
-    "getStartedTitle": "Bienvenue sur ZenPak !",
-    "getStartedIntro": "Voici comment démarrer :",
-    "getStartedStep1": "Cliquez sur les éléments pour les modifier. Donnez un nom à votre liste et à votre catégorie.",
-    "getStartedStep2": "Ajoutez de nouvelles catégories et donnez un poids aux articles pour lancer la visualisation.",
-    "getStartedStep3": "Une fois terminé, partagez votre liste avec d'autres !",
+    "getStartedTitle": "Bienvenue sur ZenPak",
+    "getStartedTitleNamed": "Bienvenue {name} sur ZenPak",
+    "getStartedText": "Nommez la première catégorie ci-dessous, puis ajoutez votre premier article.",
     "localSavingNoteLabel": "Note :",
     "localSavingNote": "Vos données sont enregistrées sur votre ordinateur local. Pour partager vos listes, veuillez créer un compte.",
     "settings": "Paramètres de la liste",
@@ -812,10 +810,40 @@
     "csvImportErrorFileToBig": "Le fichier est trop volumineux",
     "csvImportErrorNotCsv": "Veuillez sélectionner un CSV.",
     "csvImportErrorLoadFailed": "Impossible de charger le tableur — veuillez vérifier le format.",
-    "templatePickerTitle": "Commencer avec un modèle",
-    "templatePickerSubtitle": "Choisissez une liste de départ ou commencez à blanc.",
+    "templatePickerTitle": "Bienvenue dans ZenPak",
+    "templatePickerSubtitle": "On commence par votre prochaine aventure.",
+    "templatePickerListName": "Nom de la première liste",
+    "templatePickerListNamePlaceholder": "Tour du Mont Blanc 2026",
+    "templatePickerDisplayName": "Nom affiché",
+    "templatePickerDisplayNamePlaceholder": "Nom ou trail name",
+    "templatePickerUnits": "Unités",
+    "templatePickerMetricUnits": "g / kg",
+    "templatePickerImperialUnits": "oz / lb",
+    "templatePickerCurrency": "Devise",
+    "templatePickerStartWith": "Quelle est votre prochaine aventure ?",
     "templatePickerSelectButton": "Sélectionner",
     "templatePickerBlankLink": "Commencer à blanc",
+    "templatePickerBlankTitle": "Liste personnalisée",
+    "templatePickerBlankDesc": "Vous ajoutez vos propres articles et catégories.",
+    "templatePickerBlankButton": "Créer ma liste",
+    "templatePickerTemplates": {
+      "3-day-backpacking": {
+        "name": "Bivouac 3 jours",
+        "description": "30 articles, 6 catégories — abri, couchage, vêtements, eau, nourriture, essentiels"
+      },
+      "weekend-ultralight": {
+        "name": "Week-end ultraléger",
+        "description": "22 articles pour 2 jours, objectif sous 10 kg — tarp, quilt, sac minimaliste"
+      },
+      "thru-hike-pct": {
+        "name": "Grande Traversée des Alpes",
+        "description": "29 articles pour un trek long — setup léger, navigation, autonomie"
+      },
+      "4-season-backpacking": {
+        "name": "Rando 4 saisons",
+        "description": "30 articles pour hiver/alpin — tente solide, sac chaud, couches de protection"
+      }
+    },
     "gearPickerTitle": "Ajouter de l'équipement",
     "gearPickerSubtitle": "à {categoryName}",
     "gearPickerSearchPlaceholder": "Rechercher par nom ou marque...",

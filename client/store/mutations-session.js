@@ -36,7 +36,11 @@ module.exports = {
     setIsSaving(state, isSaving) { state.isSaving = isSaving; },
     signout(state) {
         clearCookie('lp');
-        fetch('/api/auth/signout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon('/api/auth/signout');
+        } else {
+            fetch('/api/auth/signout', { method: 'POST', credentials: 'same-origin', keepalive: true }).catch(() => {});
+        }
         state.library = false;
         state.loggedIn = false;
     },

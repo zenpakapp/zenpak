@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <template-picker v-if="showTemplatePicker" @select="submitWithTemplate" @dismiss="submitWithTemplate(null)" />
+        <template-picker v-if="showTemplatePicker" @select="submitWithTemplate" @dismiss="submitWithTemplate(null, $event)" />
         <form class="lpRegister lpFields" @submit.prevent="submit">
             <div class="lpFields">
                 <input v-model="username" v-focus-on-create type="text" :placeholder="$t('auth.username')" name="username">
@@ -30,6 +30,7 @@ import errors from './errors.vue';
 import spinner from './spinner.vue';
 import { push } from '../services/navigation';
 import { getLocalLibrary, hasLocalLibrary, moveLocalLibraryToRegistered } from '../services/browser-storage';
+import { applyQuickSetup } from '../utils/quick-setup';
 import { fetchJson } from '../utils/utils';
 
 const dataTypes = require('../dataTypes.js');
@@ -94,15 +95,12 @@ export default {
             this.pendingRegisterData = { localMode: true };
             this.showTemplatePicker = true;
         },
-        loadLocalWithTemplate(templateData) {
+        loadLocalWithTemplate(templateData, setup) {
             this.showTemplatePicker = false;
             this.pendingRegisterData = null;
             const library = new Library();
-            if (templateData) {
-                this.$store.commit('loadLibraryData', JSON.stringify(templateData));
-            } else {
-                this.$store.commit('loadLibraryData', JSON.stringify(library.save()));
-            }
+            const libraryData = applyQuickSetup(templateData || library.save(), setup);
+            this.$store.commit('loadLibraryData', JSON.stringify(libraryData));
             this.$store.commit('setSaveType', 'local');
             this.$store.commit('setLoggedIn', false);
             push('/');
@@ -155,9 +153,9 @@ export default {
             this.pendingRegisterData = registerData;
             this.showTemplatePicker = true;
         },
-        submitWithTemplate(templateData) {
+        submitWithTemplate(templateData, setup) {
             if (this.pendingRegisterData && this.pendingRegisterData.localMode) {
-                this.loadLocalWithTemplate(templateData);
+                this.loadLocalWithTemplate(templateData, setup);
                 return;
             }
 
@@ -165,9 +163,9 @@ export default {
             const registerData = this.pendingRegisterData;
             this.pendingRegisterData = null;
 
-            if (templateData !== null) {
-                registerData.library = JSON.stringify(templateData);
-            }
+            const existingLibraryData = registerData.library ? JSON.parse(registerData.library) : new Library().save();
+            const libraryData = templateData !== null ? templateData : existingLibraryData;
+            registerData.library = JSON.stringify(applyQuickSetup(libraryData, setup));
 
             this.saving = true;
             return fetchJson('/register', {

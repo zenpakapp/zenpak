@@ -106,11 +106,9 @@
     "exitPacking": "Packmodus beenden",
     "itemsPacked": "{packed} / {total} Gegenstände gepackt",
     "packTotal": "Gesamt: {weight}",
-    "getStartedTitle": "Willkommen bei ZenPak!",
-    "getStartedIntro": "So kannst du loslegen:",
-    "getStartedStep1": "Klicke auf Elemente, um sie zu bearbeiten. Gib deiner Liste und Kategorie einen Namen.",
-    "getStartedStep2": "Füge neue Kategorien hinzu und gib Gegenständen Gewichte, um die Visualisierung zu starten.",
-    "getStartedStep3": "Wenn du fertig bist, teile deine Liste mit anderen!",
+    "getStartedTitle": "Willkommen bei ZenPak",
+    "getStartedTitleNamed": "Willkommen {name} bei ZenPak",
+    "getStartedText": "Benenne die erste Kategorie unten und füge dann deinen ersten Gegenstand hinzu.",
     "localSavingNoteLabel": "Hinweis:",
     "localSavingNote": "Deine Daten werden auf deinem lokalen Computer gespeichert. Um deine Listen zu teilen, registriere bitte ein Konto.",
     "settings": "Listeneinstellungen",
@@ -812,10 +810,40 @@
     "csvImportErrorFileToBig": "Datei ist zu groß",
     "csvImportErrorNotCsv": "Bitte wähle eine CSV.",
     "csvImportErrorLoadFailed": "Tabellenkalkulation konnte nicht geladen werden — bitte überprüfe das Format.",
-    "templatePickerTitle": "Mit einer Vorlage starten",
-    "templatePickerSubtitle": "Wähle eine Starterliste oder beginne von vorne.",
+    "templatePickerTitle": "Willkommen bei ZenPak",
+    "templatePickerSubtitle": "Beginnen wir mit deinem nächsten Abenteuer.",
+    "templatePickerListName": "Name der ersten Liste",
+    "templatePickerListNamePlaceholder": "Tour du Mont Blanc 2026",
+    "templatePickerDisplayName": "Anzeigename",
+    "templatePickerDisplayNamePlaceholder": "Name oder Trailname",
+    "templatePickerUnits": "Einheiten",
+    "templatePickerMetricUnits": "g / kg",
+    "templatePickerImperialUnits": "oz / lb",
+    "templatePickerCurrency": "Währung",
+    "templatePickerStartWith": "Was ist dein nächstes Abenteuer?",
     "templatePickerSelectButton": "Auswählen",
     "templatePickerBlankLink": "Leer starten",
+    "templatePickerBlankTitle": "Eigene Liste",
+    "templatePickerBlankDesc": "Füge deine eigenen Gegenstände und Kategorien hinzu.",
+    "templatePickerBlankButton": "Meine Liste erstellen",
+    "templatePickerTemplates": {
+      "3-day-backpacking": {
+        "name": "3-Tage-Tour",
+        "description": "30 Gegenstände, 6 Kategorien — Schutz, Schlafen, Kleidung, Wasser, Essen, Essentials"
+      },
+      "weekend-ultralight": {
+        "name": "Ultraleichtes Wochenende",
+        "description": "22 Gegenstände für 2 Tage, Ziel unter 10 kg — Tarp, Quilt, minimalistischer Rucksack"
+      },
+      "thru-hike-pct": {
+        "name": "Fernwanderung",
+        "description": "29 Gegenstände für lange Touren — leichtes Setup, Navigation, Autonomie"
+      },
+      "4-season-backpacking": {
+        "name": "4-Jahreszeiten-Tour",
+        "description": "30 Gegenstände für Winter/Alpin — stabiles Zelt, warmer Schlaf, Schutzschichten"
+      }
+    },
     "gearPickerTitle": "Ausrüstung hinzufügen",
     "gearPickerSubtitle": "zu {categoryName}",
     "gearPickerSearchPlaceholder": "Nach Name oder Marke suchen...",
