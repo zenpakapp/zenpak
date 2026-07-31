@@ -7,6 +7,7 @@ const config = require('config');
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
+const { isReservedDisplayName } = require('./username-policy.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -83,7 +84,13 @@ router.put('/api/profile', (req, res) => {
         if (!user.library.publicProfile) user.library.publicProfile = {};
         const p = user.library.publicProfile;
 
-        if (typeof req.body.displayName === 'string') p.displayName = req.body.displayName.slice(0, 100);
+        if (typeof req.body.displayName === 'string') {
+            const displayName = req.body.displayName.slice(0, 100).trim();
+            if (isReservedDisplayName(displayName)) {
+                return res.status(400).json({ message: 'This display name is reserved for the ZenPak team.' });
+            }
+            p.displayName = displayName;
+        }
         if (typeof req.body.trailName === 'string') p.trailName = req.body.trailName.slice(0, 100);
         if (typeof req.body.bio === 'string') p.bio = req.body.bio.slice(0, 500);
         const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];

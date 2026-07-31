@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const express = require('express');
 const db = require('./db.js');
 const { generateSession } = require('./auth.js');
-const { isReservedUsername } = require('./username-policy.js');
+const { canonicalUsername, isReservedUsername, isValidUsername } = require('./username-policy.js');
 const { Library } = require('../client/dataTypes.js');
 
 const router = express.Router();
@@ -97,8 +97,8 @@ if (oauthEnabled) {
         if (!setupToken) return res.status(400).json({ message: 'Missing setup token.' });
         if (!username) return res.status(400).json({ message: 'Username is required.' });
 
-        const clean = String(username).trim();
-        if (!/^[a-zA-Z0-9_]{3,20}$/.test(clean)) {
+        const clean = canonicalUsername(username);
+        if (!isValidUsername(clean, { maxLength: 20 })) {
             return res.status(400).json({ message: 'Username must be 3-20 characters: letters, numbers, or underscores.' });
         }
 

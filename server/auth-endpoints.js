@@ -9,7 +9,12 @@ const config = require('config');
 const { logWithRequest } = require('./log.js');
 const { sendMail } = require('./email-provider.js');
 const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
-const { isReservedUsername } = require('./username-policy.js');
+const {
+    canonicalUsername,
+    isReservedDisplayName,
+    isReservedUsername,
+    isValidUsername,
+} = require('./username-policy.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
@@ -80,7 +85,7 @@ const forgotLimiter = rateLimit({
 eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 
 router.post('/register', authLimiter, (req, res) => {
-    const username = String(req.body.username).toLowerCase().trim();
+    const username = canonicalUsername(req.body.username);
     const password = String(req.body.password);
     let email = String(req.body.email);
 
@@ -90,7 +95,7 @@ router.post('/register', authLimiter, (req, res) => {
         errors.push({ field: 'username', message: 'Please enter a username.' });
     }
 
-    if (username && (username.length < 3 || username.length > 32)) {
+    if (username && !isValidUsername(username, { maxLength: 32 })) {
         errors.push({ field: 'username', message: 'Please enter a username between 3 and 32 characters.' });
     }
 
@@ -152,6 +157,11 @@ router.post('/register', authLimiter, (req, res) => {
                             }
                         } else {
                             library = new Library().save();
+                        }
+
+                        const displayName = library && library.publicProfile && library.publicProfile.displayName;
+                        if (isReservedDisplayName(displayName)) {
+                            return res.status(400).json({ errors: [{ field: 'displayName', message: 'This display name is reserved for the ZenPak team.' }] });
                         }
 
                         const emailVerifyToken = crypto.randomBytes(32).toString('hex');

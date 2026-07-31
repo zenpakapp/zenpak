@@ -4,7 +4,12 @@
 
 <template>
     <div>
-        <template-picker v-if="showTemplatePicker" @select="submitWithTemplate" @dismiss="submitWithTemplate(null, $event)" />
+        <template-picker
+            v-if="showTemplatePicker"
+            :request-display-name="requestDisplayName"
+            @select="submitWithTemplate"
+            @dismiss="submitWithTemplate(null, $event)"
+        />
         <form class="lpRegister lpFields" @submit.prevent="submit">
             <div class="lpFields">
                 <input v-model="username" v-focus-on-create type="text" :placeholder="$t('auth.username')" name="username">
@@ -85,6 +90,9 @@ export default {
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
         },
+        requestDisplayName() {
+            return !!(this.pendingRegisterData && !this.pendingRegisterData.localMode);
+        },
     },
     methods: {
         loadLocal() {
@@ -116,6 +124,10 @@ export default {
                 this.errors.push({ field: 'username', message: this.$t('auth.usernameLengthError') });
             }
 
+            if (this.username && !/^[a-z0-9_]+$/.test(this.username.trim().toLowerCase())) {
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameFormatError') });
+            }
+
             if (this.username && isReservedUsername(this.username)) {
                 this.errors.push({ field: 'username', message: this.$t('auth.usernameReserved') });
             }
@@ -144,7 +156,7 @@ export default {
                 return;
             }
 
-            const registerData = { username: this.username, email: this.email, password: this.password };
+            const registerData = { username: this.username.trim().toLowerCase(), email: this.email, password: this.password };
 
             if (hasLocalLibrary()) {
                 registerData.library = getLocalLibrary();

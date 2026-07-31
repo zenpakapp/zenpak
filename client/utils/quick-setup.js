@@ -11,6 +11,7 @@ function normalizeSetup(setup) {
     return {
         ...units,
         currencySymbol: String(normalized.currencySymbol || '').trim() || '€',
+        defaultListName: String(normalized.defaultListName || '').trim(),
         displayName: String(normalized.displayName || '').trim(),
         listName: String(normalized.listName || '').trim(),
     };
@@ -27,9 +28,9 @@ export function applyQuickSetup(libraryData, setup) {
     if (!data.publicProfile) data.publicProfile = {};
     if (settings.displayName) data.publicProfile.displayName = settings.displayName;
 
-    if (settings.listName && Array.isArray(data.lists)) {
+    if (Array.isArray(data.lists)) {
         const firstList = data.lists.find(list => list.id === data.defaultListId) || data.lists[0];
-        if (firstList) firstList.name = settings.listName;
+        if (firstList) firstList.name = settings.listName || firstList.name || settings.defaultListName;
     }
 
     return data;

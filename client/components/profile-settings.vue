@@ -225,6 +225,7 @@
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
+import { isReservedDisplayName } from '../utils/reserved-names';
 import LpSelect from './lp-select.vue';
 
 export default {
@@ -322,6 +323,11 @@ export default {
             this.profileSaving = true;
             this.profileSaved = false;
             this.profileError = null;
+            if (isReservedDisplayName(this.profile.displayName)) {
+                this.profileSaving = false;
+                this.profileError = this.$t('auth.displayNameReserved');
+                return;
+            }
             try {
                 await fetchJson('/api/profile', {
                     method: 'PUT',
@@ -336,8 +342,8 @@ export default {
                 });
                 this.profileSaved = true;
                 setTimeout(() => { this.profileSaved = false; }, 2000);
-            } catch {
-                this.profileError = 'Failed to save profile';
+            } catch (error) {
+                this.profileError = error && error.message ? error.message : 'Failed to save profile';
             } finally {
                 this.profileSaving = false;
             }

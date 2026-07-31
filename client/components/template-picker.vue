@@ -94,6 +94,12 @@
     grid-column: 1 / -1;
 }
 
+.lpTemplatePickerError {
+    color: #dc3545;
+    font-size: $fontSize-xs;
+    margin: 0;
+}
+
 .lpTemplatePickerSegments {
     background: $color-surface;
     border: 1px solid $color-border;
@@ -166,7 +172,7 @@
 
 <template>
     <teleport to="body">
-        <div class="lpTemplatePicker" @click.self="onDismiss">
+        <div class="lpTemplatePicker">
             <div class="lpTemplatePickerModal">
                 <p class="lpTemplatePickerTitle">{{ $t('library.templatePickerTitle') }}</p>
                 <p class="lpTemplatePickerSubtitle">{{ $t('library.templatePickerSubtitle') }}</p>
@@ -178,6 +184,7 @@
                     <div v-if="showDisplayName" class="lpTemplatePickerField lpTemplatePickerFieldWide">
                         <label for="template-display-name">{{ $t('library.templatePickerDisplayName') }}</label>
                         <input id="template-display-name" v-model.trim="setup.displayName" type="text" :placeholder="$t('library.templatePickerDisplayNamePlaceholder')">
+                        <p v-if="displayNameError" class="lpTemplatePickerError">{{ displayNameError }}</p>
                     </div>
                     <div class="lpTemplatePickerField">
                         <label>{{ $t('library.templatePickerUnits') }}</label>
@@ -234,13 +241,21 @@
 
 <script>
 import { templates } from '../composables/useTemplatePicker.js';
+import { isReservedDisplayName } from '../utils/reserved-names';
 
 export default {
     name: 'TemplatePicker',
+    props: {
+        requestDisplayName: {
+            type: Boolean,
+            default: false,
+        },
+    },
     emits: ['select', 'dismiss'],
     data() {
         return {
             templates,
+            displayNameError: '',
             setup: this.createInitialSetup(),
         };
     },
@@ -250,7 +265,7 @@ export default {
         },
         showDisplayName() {
             const profile = this.$store.state.library && this.$store.state.library.publicProfile;
-            return this.$store.state.loggedIn && (!profile || !profile.displayName);
+            return this.requestDisplayName || (this.$store.state.loggedIn && (!profile || !profile.displayName));
         },
         unitOptions() {
             return [
@@ -274,13 +289,26 @@ export default {
             };
         },
         getSetup() {
-            return { ...this.setup };
+            return {
+                ...this.setup,
+                defaultListName: this.$t('library.newListDefault'),
+            };
         },
         onSelect(template) {
+            if (!this.validateSetup()) return;
             this.$emit('select', template.data, this.getSetup());
         },
         onDismiss() {
+            if (!this.validateSetup()) return;
             this.$emit('dismiss', this.getSetup());
+        },
+        validateSetup() {
+            this.displayNameError = '';
+            if (this.showDisplayName && isReservedDisplayName(this.setup.displayName)) {
+                this.displayNameError = this.$t('auth.displayNameReserved');
+                return false;
+            }
+            return true;
         },
         templateDescription(template) {
             return this.$t(`library.templatePickerTemplates.${template.id}.description`);
