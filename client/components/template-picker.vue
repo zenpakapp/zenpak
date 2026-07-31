@@ -36,6 +36,7 @@
 .lpTemplatePickerSubtitle {
     color: $color-text-muted;
     font-size: $fontSize-base;
+    font-style: italic;
     margin: 0 0 $spacingLarge;
 }
 
@@ -53,17 +54,6 @@
     flex-direction: column;
     gap: $spacingSmall;
     margin-bottom: $spacingLarge;
-}
-
-.lpTemplatePickerSetup {
-    background: $color-bg;
-    border: 1px solid $color-border;
-    border-radius: $radius-md;
-    display: grid;
-    gap: $spacingMedium;
-    grid-template-columns: 1fr 1fr;
-    margin-bottom: $spacingLarge;
-    padding: $spacingMedium;
 }
 
 .lpTemplatePickerField {
@@ -90,14 +80,43 @@
     }
 }
 
-.lpTemplatePickerFieldWide {
-    grid-column: 1 / -1;
-}
-
 .lpTemplatePickerError {
     color: #dc3545;
     font-size: $fontSize-xs;
     margin: 0;
+}
+
+.lpTemplatePickerHint {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    margin: -2px 0 0;
+}
+
+.lpTemplatePickerSetup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacingSmall;
+    margin-bottom: $spacingLarge;
+}
+
+.lpTemplatePickerSetupCard {
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: $spacingMedium;
+}
+
+.lpTemplatePickerSetupTitle {
+    color: $color-text;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 $spacingSmall;
+}
+
+.lpTemplatePickerSettingsGrid {
+    display: grid;
+    gap: $spacingMedium;
+    grid-template-columns: 1fr 1fr;
 }
 
 .lpTemplatePickerSegments {
@@ -164,7 +183,7 @@
 }
 
 @media (max-width: 640px) {
-    .lpTemplatePickerSetup {
+    .lpTemplatePickerSettingsGrid {
         grid-template-columns: 1fr;
     }
 }
@@ -177,43 +196,53 @@
                 <p class="lpTemplatePickerTitle">{{ $t('library.templatePickerTitle') }}</p>
                 <p class="lpTemplatePickerSubtitle">{{ $t('library.templatePickerSubtitle') }}</p>
                 <div class="lpTemplatePickerSetup">
-                    <div class="lpTemplatePickerField lpTemplatePickerFieldWide">
-                        <label for="template-list-name">{{ $t('library.templatePickerListName') }}</label>
-                        <input id="template-list-name" v-model.trim="setup.listName" type="text" :placeholder="$t('library.templatePickerListNamePlaceholder')">
-                    </div>
-                    <div v-if="showDisplayName" class="lpTemplatePickerField lpTemplatePickerFieldWide">
-                        <label for="template-display-name">{{ $t('library.templatePickerDisplayName') }}</label>
-                        <input id="template-display-name" v-model.trim="setup.displayName" type="text" :placeholder="$t('library.templatePickerDisplayNamePlaceholder')">
-                        <p v-if="displayNameError" class="lpTemplatePickerError">{{ displayNameError }}</p>
-                    </div>
-                    <div class="lpTemplatePickerField">
-                        <label>{{ $t('library.templatePickerUnits') }}</label>
-                        <div class="lpTemplatePickerSegments">
-                            <button
-                                v-for="option in unitOptions"
-                                :key="option.value"
-                                class="lpTemplatePickerSegment"
-                                :class="{ lpTemplatePickerSegmentActive: setup.units === option.value }"
-                                type="button"
-                                @click="setup.units = option.value"
-                            >
-                                {{ option.label }}
-                            </button>
+                    <div class="lpTemplatePickerSetupCard">
+                        <div class="lpTemplatePickerField">
+                            <label for="template-list-name">{{ $t('library.templatePickerListName') }}</label>
+                            <input id="template-list-name" v-model.trim="setup.listName" type="text" :placeholder="$t('library.templatePickerListNamePlaceholder')">
                         </div>
                     </div>
-                    <div class="lpTemplatePickerField">
-                        <label>{{ $t('library.templatePickerCurrency') }}</label>
-                        <div class="lpTemplatePickerSegments lpTemplatePickerSegmentsCurrency">
-                            <button
-                                v-for="option in currencyOptions"
-                                :key="option"
-                                class="lpTemplatePickerSegment"
-                                :class="{ lpTemplatePickerSegmentActive: setup.currencySymbol === option }"
-                                type="button"
-                                @click="setup.currencySymbol = option"
-                            >
-                                {{ option }}
-                            </button>
+                    <div v-if="showDisplayName" class="lpTemplatePickerSetupCard">
+                        <div class="lpTemplatePickerField">
+                            <label for="template-display-name">{{ $t('library.templatePickerDisplayName') }}</label>
+                            <input id="template-display-name" v-model.trim="setup.displayName" type="text" :placeholder="$t('library.templatePickerDisplayNamePlaceholder')">
+                            <p class="lpTemplatePickerHint">{{ $t('library.templatePickerDisplayNameHint') }}</p>
+                            <p v-if="displayNameError" class="lpTemplatePickerError">{{ displayNameError }}</p>
+                        </div>
+                    </div>
+                    <div class="lpTemplatePickerSetupCard">
+                        <p class="lpTemplatePickerSetupTitle">{{ $t('library.templatePickerSettingsSection') }}</p>
+                        <div class="lpTemplatePickerSettingsGrid">
+                            <div class="lpTemplatePickerField">
+                                <label>{{ $t('library.templatePickerUnits') }}</label>
+                                <div class="lpTemplatePickerSegments">
+                                    <button
+                                        v-for="option in unitOptions"
+                                        :key="option.value"
+                                        class="lpTemplatePickerSegment"
+                                        :class="{ lpTemplatePickerSegmentActive: setup.units === option.value }"
+                                        type="button"
+                                        @click="setup.units = option.value"
+                                    >
+                                        {{ option.label }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="lpTemplatePickerField">
+                                <label>{{ $t('library.templatePickerCurrency') }}</label>
+                                <div class="lpTemplatePickerSegments lpTemplatePickerSegmentsCurrency">
+                                    <button
+                                        v-for="option in currencyOptions"
+                                        :key="option"
+                                        class="lpTemplatePickerSegment"
+                                        :class="{ lpTemplatePickerSegmentActive: setup.currencySymbol === option }"
+                                        type="button"
+                                        @click="setup.currencySymbol = option"
+                                    >
+                                        {{ option }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
