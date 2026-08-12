@@ -199,7 +199,4 @@ module.exports = {
             };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
-    save() {
-        // no-op
-    },
 };
