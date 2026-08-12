@@ -89,6 +89,34 @@ function run() {
     assert('CSV import keeps the imported same-name item details', imported && imported.price === 20);
     assert('CSV import links the imported same-name item to the list', imported && importedCategory.categoryItems[0].itemId === imported.id);
 
+    const mergeDupState = { library: new Library(), globalAlerts: [] };
+    mergeDupState.library.itemUnit = 'g';
+    const existingSpork = mergeDupState.library.newItem({});
+    existingSpork.name = 'Spork';
+    existingSpork.weight = 20;
+
+    mutations.importCSV(mergeDupState, {
+        name: 'Duplicate merge test',
+        data: [
+            {
+                name: 'Spork', category: 'Kitchen', description: '', qty: 1, weight: 20, unit: 'g', price: 0, worn: false, consumable: false,
+                _match: { decision: 'merge', item: existingSpork, score: 0.9 },
+            },
+            {
+                name: 'Spork', category: 'Kitchen', description: '', qty: 1, weight: 20, unit: 'g', price: 0, worn: false, consumable: false,
+                _match: { decision: 'merge', item: existingSpork, score: 0.9 },
+            },
+        ],
+    });
+
+    const mergeDupList = mergeDupState.library.getListById(mergeDupState.library.defaultListId);
+    const mergeDupCategory = mergeDupState.library.getCategoryById(mergeDupList.categoryIds[0]);
+    const sporkPlacements = mergeDupCategory.categoryItems.filter(ci => ci.itemId === existingSpork.id);
+    mergeDupCategory.calculateSubtotal();
+
+    assert('CSV import merging two rows into the same item+category creates one Placement', sporkPlacements.length === 1);
+    assert('CSV import merge duplicate does not double-count category weight', mergeDupCategory.subtotalWeight === 20);
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }

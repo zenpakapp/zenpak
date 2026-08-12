@@ -71,7 +71,9 @@ module.exports = {
                 if (item) {
                     if (row.category && !item.category) item.category = row.category;
                     if (row.brand && !item.brand) item.brand = row.brand;
-                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
+                    if (!category.getCategoryItemById(item.id)) {
+                        category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
+                    }
                     mergedCount++;
                 } else {
                     item = createImportedItem(state.library, category, row);
