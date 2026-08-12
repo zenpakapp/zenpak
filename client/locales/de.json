@@ -654,6 +654,7 @@
     "wornTitle": "Als getragen markieren",
     "consumableTitle": "Als Verbrauch markieren",
     "ratingTitle": "Diesen Gegenstand bewerten",
+    "optionalQtyTitle": "Menge 0 markiert diesen Gegenstand als optional — sein Gewicht wird nicht in die Summen einbezogen",
     "editTitle": "Details bearbeiten",
     "detailOpenError": "Der Editor für diesen Artikel konnte nicht geöffnet werden. Bitte versuche es erneut.",
     "removeTitle": "Entfernen",

@@ -43,7 +43,7 @@
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
-            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span class="lpArrows">
                 <span class="lpSprite lpUp" @click="incrementQty($event)" />
                 <span class="lpSprite lpDown" @click="decrementQty($event)" />

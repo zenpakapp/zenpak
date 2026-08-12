@@ -769,6 +769,7 @@
     "wornTitle": "Mark as worn",
     "consumableTitle": "Mark as consumable",
     "ratingTitle": "Rate this item",
+    "optionalQtyTitle": "Quantity 0 marks this item as optional — its weight isn't counted in totals",
     "editTitle": "Edit details",
     "detailOpenError": "Unable to open this item editor. Please try again.",
     "removeTitle": "Remove",

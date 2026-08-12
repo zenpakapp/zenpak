@@ -654,6 +654,7 @@
     "wornTitle": "Marcar como llevado",
     "consumableTitle": "Marcar como consumible",
     "ratingTitle": "Valorar este artículo",
+    "optionalQtyTitle": "La cantidad 0 marca este artículo como opcional — su peso no se cuenta en los totales",
     "editTitle": "Editar detalles",
     "detailOpenError": "No se puede abrir el editor de este artículo. Inténtalo de nuevo.",
     "removeTitle": "Eliminar",
