@@ -2,6 +2,7 @@ const {
     isPublicVisibility,
     allowsSearchIndexing,
 } = require('../client/services/public-visibility.js');
+const { normalizeTier } = require('./tier-policy.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -289,7 +290,7 @@ function buildPublicList(user, externalId) {
     const payload = {
         username: user.username || '',
         authorDisplayName: (library.publicProfile && library.publicProfile.displayName) || user.username || '',
-        authorTier: (library.entitlements && library.entitlements.plan) || null,
+        authorTier: normalizeTier(library.entitlements && library.entitlements.plan),
         list: sanitizeListSummary(list, { includePrice }),
         forkedFrom: list.forkedFrom || null,
         totalUnit: library.totalUnit || '',

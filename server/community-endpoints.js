@@ -8,6 +8,7 @@ const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
 const { createNotification } = require('./notifications.js');
+const { normalizeTier } = require('./tier-policy.js');
 const {
     incrementPublicListStat,
     normalizeTagArray,
@@ -36,12 +37,6 @@ function checkCopyRateLimit(key) {
     timestamps.push(now);
     copyRateMap.set(key, timestamps);
     return { limited: false, remaining: COPY_RATE_LIMIT - timestamps.length };
-}
-
-function normalizeTier(plan) {
-    if (plan === 'creator') return 'guide';
-    if (plan === 'supporter') return 'trail';
-    return 'base';
 }
 
 function parseNumberParam(value) {
@@ -192,10 +187,7 @@ router.get('/feed', (req, res) => {
 
             const tierMap = Object.fromEntries(authors.map((a) => {
                 const plan = (a.library && a.library.entitlements && a.library.entitlements.plan) || 'free';
-                let tier = 'base';
-                if (plan === 'creator') tier = 'guide';
-                else if (plan === 'supporter') tier = 'trail';
-                return [a._id.toString(), tier];
+                return [a._id.toString(), normalizeTier(plan)];
             }));
 
             // Resolve list names from author docs (lists stored in user.library.lists)
@@ -485,7 +477,7 @@ router.get('/users', async (req, res) => {
         const users = await db.users.aggregate(pipeline);
         const normalized = users.map(u => ({
             ...u,
-            tier: u.plan === 'creator' ? 'guide' : u.plan === 'supporter' ? 'trail' : 'base',
+            tier: normalizeTier(u.plan),
             plan: undefined,
         }));
 

@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 
 const db = require('./db.js');
+const { normalizeTier } = require('./tier-policy.js');
 
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
@@ -8,12 +9,6 @@ function normalizeTagArray(value) {
         .map(tag => String(tag || '').trim().toLowerCase())
         .filter(Boolean)
         .slice(0, 12);
-}
-
-function normalizeTier(plan) {
-    if (plan === 'creator') return 'guide';
-    if (plan === 'supporter') return 'trail';
-    return 'base';
 }
 
 function publicDisplayName(user) {
