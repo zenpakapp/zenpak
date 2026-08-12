@@ -28,9 +28,22 @@ _Avoid_: Pack, Trip (a List isn't the trip itself, just the gear plan for it).
 A free-text label on an Item (stored as `item.category`) used only for search/filter/sort in the Gear Room, the cross-List library view of every Item in the Library. Set at creation or CSV import, editable independently afterward. Carries no relationship to any Category the Item is Placed in.
 _Avoid_: Item Category, Category (reserved for the List-scoped grouping — using it here is the exact confusion this term exists to prevent).
 
+**Total Weight**:
+The sum of every Placement's weight × qty on a List, no exclusions. Also called skin-out weight.
+_Avoid_: Pack Weight, Full Weight.
+
+**Base Weight**:
+Total Weight minus worn weight minus consumable weight — the standard ultralight-backpacking metric. `totalBaseWeight = totalWeight - (totalWornWeight + totalConsumableWeight)`. This is the number shown by default everywhere a List's weight is summarized (community cards, public profile, list summary).
+_Avoid_: Pack Weight (a different, narrower metric — see below).
+
+**Pack Weight**:
+Total Weight minus worn weight only — what's actually carried in/on the pack, consumables included. `totalPackWeight = totalWeight - totalWornWeight`. Only surfaced today as a tooltip hint on the Base Weight row in `list-summary.vue`; no other UI shows it standalone.
+_Avoid_: Base Weight (excludes consumables too — a different number).
+
 ## Rules
 
 - A Category always belongs to exactly one List. `Library.copyList` creates new Categories rather than sharing them.
 - worn / consumable / qty live on the Placement, not the Item — the same Item can be worn on one List and packed (not worn) on another.
 - An Item's Gear Tag, its Category on List A, and its Category on List B are three independent answers to "what category is this in" — none derives from or stays in sync with the others. An Item placed on multiple Lists is expected to sit in differently-named (or even differently-numbered but same-named) Categories on each; that's a consequence of Category being List-scoped, not of the Gear Tag.
 - An Item has at most one Placement per Category. Enforced by every mutation that adds an Item to a Category (`addItemToCategory`, CSV import merge) checking for an existing Placement first — `Category.addItem` itself does not guard this, so any new caller must check.
+- Total Weight, Base Weight, and Pack Weight are each computed independently in two places: `client/models/list.js` (`List.calculateTotals`, the live client model) and `server/views.js` (`renderListTotals`, for server-rendered embed/print pages). Keep both formulas in sync by hand — there is no shared function.
