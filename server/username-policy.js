@@ -9,6 +9,10 @@ const RESERVED_USERNAMES = [
     'zenpak',
 ];
 
+const USERNAME_MIN_LENGTH = 3;
+const USERNAME_MAX_LENGTH = 32;
+const USERNAME_FORMAT_REGEX = /^[a-z0-9_]+$/;
+
 function normalizeUsername(value) {
     return String(value || '')
         .toLowerCase()
@@ -21,9 +25,9 @@ function canonicalUsername(value) {
     return String(value || '').trim().toLowerCase();
 }
 
-function isValidUsername(value, { maxLength = 32 } = {}) {
+function isValidUsername(value, { maxLength = USERNAME_MAX_LENGTH } = {}) {
     const username = canonicalUsername(value);
-    return /^[a-z0-9_]+$/.test(username) && username.length >= 3 && username.length <= maxLength;
+    return USERNAME_FORMAT_REGEX.test(username) && username.length >= USERNAME_MIN_LENGTH && username.length <= maxLength;
 }
 
 function normalizeBrandConfusables(value) {
@@ -52,6 +56,9 @@ function isReservedDisplayName(value) {
 
 module.exports = {
     RESERVED_USERNAMES,
+    USERNAME_FORMAT_REGEX,
+    USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH,
     canonicalUsername,
     isReservedDisplayName,
     isReservedUsername,
