@@ -17,11 +17,16 @@ function extractCategories(processedData) {
     return Object.values(processedData.points);
 }
 
+function getChartBorderColor() {
+    const style = getComputedStyle(document.documentElement);
+    return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
+}
+
 function buildDataset(categories) {
     return {
         data: categories.map((c) => c.total),
         backgroundColor: categories.map((c, i) => colorUtils.rgbToString(c.color || colorUtils.getColor(i))),
-        borderColor: 'rgb(245,245,245)',
+        borderColor: getChartBorderColor(),
         borderWidth: 3,
         hoverBorderColor: 'rgb(50,50,50)',
         hoverBorderWidth: 2,
@@ -41,6 +46,7 @@ export async function renderListChart({ chart, canvas, processedData, hoverCallb
         const ds = buildDataset(categories);
         chart.data.datasets[0].data = ds.data;
         chart.data.datasets[0].backgroundColor = ds.backgroundColor;
+        chart.data.datasets[0].borderColor = ds.borderColor;
         chart.update();
         return chart;
     }

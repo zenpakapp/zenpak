@@ -148,8 +148,11 @@ export default {
     },
     mounted() {
         this.updateChart();
+        this._themeObserver = new MutationObserver(() => this.updateChart());
+        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     beforeUnmount() {
+        if (this._themeObserver) this._themeObserver.disconnect();
         if (this.chart && typeof this.chart.destroy === 'function') {
             this.chart.destroy();
             this.chart = null;
