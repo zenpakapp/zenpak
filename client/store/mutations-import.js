@@ -66,7 +66,7 @@ module.exports = {
 
             const decision = row._match ? row._match.decision : 'new';
 
-            if (decision === 'merge' && row._match && row._match.item) {
+            if (decision === 'merge' && row._match.item) {
                 item = state.library.getItemById(row._match.item.id);
                 if (item) {
                     if (row.category && !item.category) item.category = row.category;
@@ -77,22 +77,9 @@ module.exports = {
                     item = createImportedItem(state.library, category, row);
                     newCount++;
                 }
-            } else if (row._match) {
+            } else {
                 item = createImportedItem(state.library, category, row);
                 newCount++;
-            } else {
-                const rowNameLower = (row.name || '').toLowerCase().trim();
-                const existing = rowNameLower
-                    ? state.library.items.find(i => (i.name || '').toLowerCase().trim() === rowNameLower)
-                    : null;
-                if (existing) {
-                    item = existing;
-                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
-                    mergedCount++;
-                } else {
-                    item = createImportedItem(state.library, category, row);
-                    newCount++;
-                }
             }
 
             categoryItem = category.getCategoryItemById(item.id);
