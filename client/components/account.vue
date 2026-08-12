@@ -91,13 +91,13 @@
                 <p class="accountSectionText">{{ $t('acct.upgradePrompt') }}</p>
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Kin</strong> — {{ $t('acct.kinPrice') }}</p>
+                        <p class="accountSectionText"><strong>{{ tierLabel('trail') }}</strong> — {{ $t('acct.kinPrice') }}</p>
                         <button @click="openCheckout('trail')" class="lpButton accountBillingKinBtn">
                             {{ $t('acct.upgradeToKin') }}
                         </button>
                     </div>
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Wayfarer</strong></p>
+                        <p class="accountSectionText"><strong>{{ tierLabel('guide') }}</strong></p>
                         <div class="accountIntervalToggle">
                             <button
                                 :class="['lpButton', selectedGuideInterval === 'month' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
@@ -124,7 +124,7 @@
 
             <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    {{ $t('acct.currentPlan') }}<strong>Kin</strong>
+                    {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
@@ -135,7 +135,7 @@
 
             <div v-if="billing.plan === 'creator'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    {{ $t('acct.currentPlan') }}<strong>Wayfarer</strong>
+                    {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
@@ -165,6 +165,7 @@ import LpSelect from './lp-select.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { planLabel as planTierLabel, tierLabel } from '../services/tier-labels.js';
 import { setLocale } from '../i18n';
 
 const profileSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-profile" */ './profile-settings.vue'));
@@ -212,8 +213,7 @@ export default {
             return this.$store.state.billing;
         },
         planLabel() {
-            const map = { supporter: 'Kin', creator: 'Wayfarer', free: 'Base' };
-            return map[this.billing && this.billing.plan] || 'Base';
+            return planTierLabel(this.billing && this.billing.plan);
         },
         localeOptions() {
             return [
@@ -238,6 +238,7 @@ export default {
         unregisterDialogOpener('account');
     },
     methods: {
+        tierLabel,
         selectLocale(val) {
             this.selectedLocale = val;
             this.changeLocale();

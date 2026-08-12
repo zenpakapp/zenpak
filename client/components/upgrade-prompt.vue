@@ -88,6 +88,7 @@
 <script>
 import modal from './modal.vue';
 import { fetchJson } from '../utils/utils.js';
+import { tierLabel as sharedTierLabel } from '../services/tier-labels.js';
 
 const TRAIL_BENEFITS_KEYS = [
     'guide.upgrade.trailBenefit1',
@@ -160,7 +161,7 @@ export default {
     },
     computed: {
         tierLabel() {
-            return this.tier === 'trail' ? 'Kin' : 'Wayfarer';
+            return sharedTierLabel(this.tier);
         },
         inlineText() {
             const key = INLINE_TEXTS_KEYS[this.feature];

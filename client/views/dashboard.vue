@@ -171,6 +171,7 @@ import list from '../components/list.vue';
 import itemDetail from '../components/item-detail.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
+import { planLabel as planTierLabel } from '../services/tier-labels.js';
 import themeToggle from '../components/theme-toggle.vue';
 import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
 import { openDialog } from '../services/dialogs';
@@ -307,9 +308,8 @@ export default {
             return billing && billing.status === 'past_due';
         },
         planLabel() {
-            const map = { supporter: 'Kin', creator: 'Wayfarer' };
             const billing = this.$store.state.billing;
-            return map[billing && billing.plan] || 'plan';
+            return (billing && billing.plan) ? planTierLabel(billing.plan) : 'plan';
         },
     },
     watch: {

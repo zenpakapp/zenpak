@@ -39,8 +39,8 @@
                     <router-link v-else-if="backTo === '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
                     <span v-else-if="username" class="lpPublicNavAuthor">
                         <router-link :to="profileTo(username)">{{ $t('public.backToProfile', { username: authorName }) }}</router-link>
-                        <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
-                        <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+                        <span v-if="authorTier === 'guide'" class="lpPublicListBadge">{{ tierLabel('guide') }}</span>
+                        <span v-else-if="authorTier === 'trail'" class="lpPublicListBadge">{{ tierLabel('trail') }}</span>
                     </span>
                     <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
                 </span>
@@ -51,8 +51,8 @@
             <p v-if="username" class="lpPublicListAuthor">
                 {{ $t('public.byAuthor') }}
                 <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">{{ authorName }}</router-link>
-                <span v-if="authorTier === 'creator'" class="lpPublicListBadge">Wayfarer</span>
-                <span v-else-if="authorTier === 'supporter'" class="lpPublicListBadge">Kin</span>
+                <span v-if="authorTier === 'guide'" class="lpPublicListBadge">{{ tierLabel('guide') }}</span>
+                <span v-else-if="authorTier === 'trail'" class="lpPublicListBadge">{{ tierLabel('trail') }}</span>
             </p>
             <p v-if="forkSource" class="lpPublicForkSource">
                 {{ $t('dash.source') }}
@@ -192,6 +192,7 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { tierLabel } from '../services/tier-labels.js';
 import { useTheme } from '../composables/useTheme';
 import { useRouter } from 'vue-router';
 import { useBackNav } from '../composables/useBackNav';
@@ -352,6 +353,7 @@ export default {
             });
     },
     methods: {
+        tierLabel,
         setDisplayUnit(unit) {
             this.totalUnit = unit;
             localStorage.setItem('lpGuestUnit', unit);

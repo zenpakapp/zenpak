@@ -27,8 +27,8 @@
                 <div class="lpCommunityCardUserBody">
                     <div class="lpCommunityCardName">
                         {{ user.displayName || user.username }}
-                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">Kin</span>
+                        <span v-if="user.tier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                        <span v-else-if="user.tier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                     </div>
                     <div class="lpCommunityCardAuthor">@{{ user.username }}</div>
                     <div v-if="user.bio" class="lpCommunityCardMeta">{{ user.bio }}</div>
@@ -41,6 +41,7 @@
 <script>
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import { fetchJson } from '../utils/utils.js';
+import { tierLabel } from '../services/tier-labels.js';
 
 export default {
     name: 'CommunityPeople',
@@ -57,6 +58,7 @@ export default {
         this.search();
     },
     methods: {
+        tierLabel,
         onInput() {
             clearTimeout(this.timeout);
             this.timeout = setTimeout(() => this.search(), 300);

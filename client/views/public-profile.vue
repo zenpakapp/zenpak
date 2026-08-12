@@ -47,8 +47,8 @@
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
                             <h1 class="lpPublicName">{{ profile.displayName }}</h1>
-                            <span v-if="isCreator" class="lpPublicBadge">Wayfarer</span>
-                            <span v-else-if="isSupporter" class="lpPublicBadge">Kin</span>
+                            <span v-if="isCreator" class="lpPublicBadge">{{ tierLabel('guide') }}</span>
+                            <span v-else-if="isSupporter" class="lpPublicBadge">{{ tierLabel('trail') }}</span>
                         </div>
                         <p v-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
                         <div class="lpPublicStats">
@@ -118,6 +118,7 @@ import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
+import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 
@@ -222,6 +223,7 @@ export default {
             });
     },
     methods: {
+        tierLabel,
         updateDocumentMeta() {
             if (!this.profile) return;
             document.title = `${this.profile.displayName || 'Public profile'} - ZenPak`;

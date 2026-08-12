@@ -113,8 +113,8 @@
                 <div class="lpFeedEventBody">
                     <div>
                         <router-link :to="`/u/${event.author}`"><strong>{{ event.author }}</strong></router-link>
-                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">Wayfarer</span>
-                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">Kin</span>
+                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">{{ tierLabel('guide') }}</span>
+                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">{{ tierLabel('trail') }}</span>
                         <span> {{ eventLabel(event.type) }}</span>
                     </div>
                     <div v-if="event.listName" class="lpFeedListCard">
@@ -136,6 +136,7 @@
 
 <script>
 import { useFeed } from '../composables/useFeed';
+import { tierLabel } from '../services/tier-labels.js';
 
 export default {
     name: 'FeedView',
@@ -145,6 +146,7 @@ export default {
         return { events, loading, error, hasMore, loadMore };
     },
     methods: {
+        tierLabel,
         eventLabel(type) {
             if (type === 'list.published') return this.$t('community.eventPublished');
             if (type === 'list.made-public') return this.$t('community.eventMadePublic');

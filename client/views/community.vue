@@ -132,8 +132,8 @@
                                 <div class="lpCommunityCardName">{{ list.name }}</div>
                                 <div class="lpCommunityCardAuthor">
                                     {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
-                                    <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                                    <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                    <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                                    <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                                 </div>
                                 <div v-if="listSourceName(list)" class="lpCommunityCardSource">
                                     {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
@@ -159,8 +159,8 @@
                             <div class="lpCommunityCardName">{{ list.name }}</div>
                             <div class="lpCommunityCardAuthor">
                                 {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
-                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             </div>
                             <div v-if="listSourceName(list)" class="lpCommunityCardSource">
                                 {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
@@ -223,8 +223,8 @@
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
                             <router-link :to="communityProfileTo(event.author)">{{ event.author }}</router-link>
-                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             <span> {{ eventLabel(event.type) }}</span>
                         </div>
                         <div v-if="event.listName" class="lpCommunityEventList">
@@ -257,6 +257,7 @@ import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
+import { tierLabel } from '../services/tier-labels.js';
 import LpSelect from '../components/lp-select.vue';
 
 const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
@@ -359,6 +360,7 @@ export default {
         if (this.canSeeFeed) this.fetchModeratorFlag();
     },
     methods: {
+        tierLabel,
         setTab(tab) {
             this.activeTab = tab;
             const path = tab === 'feed' ? '/community/feed' : '/community';
