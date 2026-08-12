@@ -4,7 +4,8 @@ process.env.NODE_CONFIG = JSON.stringify({
     environment: 'test',
     stripeSecretKey: '',
     stripeWebhookSecret: '',
-    stripePriceIdTrail: 'price_trail_annual',
+    stripePriceIdTrail: 'price_trail_monthly',
+    stripePriceIdTrailAnnual: 'price_trail_annual',
     stripePriceIdGuide: 'price_guide_monthly',
     stripePriceIdGuideAnnual: 'price_guide_annual',
     kofiWebhookToken: 'test-token-123',
@@ -87,7 +88,7 @@ async function run() {
     assert('library.entitlements.plan=supporter', user3.library && user3.library.entitlements && user3.library.entitlements.plan === 'supporter');
 
     console.log(`\n${passed} passed, ${failed} failed`);
-    if (failed > 0) process.exit(1);
+    process.exit(failed > 0 ? 1 : 0);
 }
 
 run().catch(err => { console.error(err); process.exit(1); });
