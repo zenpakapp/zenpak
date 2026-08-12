@@ -40,6 +40,10 @@ _Avoid_: Pack Weight (a different, narrower metric — see below).
 Total Weight minus worn weight only — what's actually carried in/on the pack, consumables included. `totalPackWeight = totalWeight - totalWornWeight`. Only surfaced today as a tooltip hint on the Base Weight row in `list-summary.vue`; no other UI shows it standalone.
 _Avoid_: Base Weight (excludes consumables too — a different number).
 
+**Optional Item**:
+A Placement with `qty === 0`. Its weight is excluded from every total (weight × 0), but it still appears in the Item list. On the public List view it's shown with an explicit "Option" badge; in the private editor it's only a dimmed row (`lpQtyZero`) plus a hover tooltip explaining the meaning — there is no separate "optional" field, `qty === 0` *is* the signal.
+_Avoid_: treating this as a distinct boolean field — it would decouple from `qty` and raise "optional=true, qty=3" as an undefined state. Keep `qty === 0` as the single source of truth.
+
 ## Rules
 
 - A Category always belongs to exactly one List. `Library.copyList` creates new Categories rather than sharing them.
