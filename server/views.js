@@ -547,7 +547,7 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     let totalWeight = 0;
     let totalWornWeight = 0;
     let totalConsumableWeight = 0;
-    let totalPackWeight = 0;
+    let totalBaseWeight = 0;
     let totalQty = 0;
     let totalPrice = 0;
     let totalConsumablePrice = 0;
@@ -571,7 +571,7 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
         }
     }
 
-    totalPackWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
+    totalBaseWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
 
     out.totalWeight = totalWeight;
     out.totalWeightDisplay = weightUtils.MgToWeight(totalWeight, unit);
@@ -581,9 +581,9 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     out.totalWornWeightDisplay = weightUtils.MgToWeight(totalWornWeight, unit);
     out.totalConsumableWeight = totalConsumableWeight;
     out.totalConsumableWeightDisplay = weightUtils.MgToWeight(totalConsumableWeight, unit);
-    out.totalPackWeight = totalPackWeight;
-    out.totalPackWeightDisplay = weightUtils.MgToWeight(totalPackWeight, unit);
-    out.shouldDisplayPackWeight = totalPackWeight !== totalWeight;
+    out.totalBaseWeight = totalBaseWeight;
+    out.totalBaseWeightDisplay = weightUtils.MgToWeight(totalBaseWeight, unit);
+    out.shouldDisplayBaseWeight = totalBaseWeight !== totalWeight;
     out.totalQty = totalQty;
     out.totalPrice = totalPrice;
     out.totalPriceDisplay = formatDisplayPrice(totalPrice || 0, list.library.currencySymbol);
