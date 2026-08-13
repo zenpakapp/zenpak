@@ -143,7 +143,7 @@ export default {
             })
                 .then((response) => {
                     this.uploading = false;
-                    this.$store.commit('updateItemImage', { image: response.data.id, item: this.item });
+                    this.$store.commit('updateItemImageUrl', { imageUrl: response.data.url, item: this.item });
                     this.shown = false;
                 })
                 .catch(() => {
@@ -153,7 +153,6 @@ export default {
         },
         removeItemImage() {
             this.$store.commit('removeItemImage', this.item);
-            this.item.image = '';
         },
     },
 };
