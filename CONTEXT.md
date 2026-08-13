@@ -12,6 +12,10 @@ _Avoid_: Account (that's auth/User, a different concept), Data.
 The canonical gear record — name, weight, price, brand, links. Exists once per Library, independent of any List. Reused across Lists via Placement.
 _Avoid_: Gear, Product.
 
+**Item photo**:
+An Item's picture, stored in one of two fields depending on source: `imageUrl` (a plain URL — the current path, used both for pasted external links and for uploads, which land on Cloudinary and are stored by their `secure_url`) or `image` (a bare Cloudinary/legacy-Imgur public id, display-reconstructed as `https://i.imgur.com/{id}s.jpg` — legacy only, kept for photos uploaded before the Cloudinary migration; no code writes new values into it anymore). Display always prefers `image` over `imageUrl` when both are set.
+_Avoid_: assuming `image` is still an active upload target — every current upload path (`item-image.vue`, `item-detail-edit.vue`) writes to `imageUrl`.
+
 **Placement**:
 An Item placed into a Category, carrying its own quantity and contextual attributes: `qty`, `worn`, `consumable`, `star`. The same Item can have different Placements (different qty/worn/consumable) in different Lists — worn/consumable/qty describe how the gear is used *on this list*, not a property of the gear itself. Implemented as `categoryItems` entries on a Category.
 _Avoid_: CategoryItem (implementation name, not domain language), Entry.
