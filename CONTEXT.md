@@ -32,6 +32,10 @@ _Avoid_: Pack, Trip (a List isn't the trip itself, just the gear plan for it).
 A free-text label on an Item (stored as `item.category`) used only for search/filter/sort in the Gear Room, the cross-List library view of every Item in the Library. Set at creation or CSV import, editable independently afterward. Carries no relationship to any Category the Item is Placed in.
 _Avoid_: Item Category, Category (reserved for the List-scoped grouping — using it here is the exact confusion this term exists to prevent).
 
+**Template**:
+A bundled example Library (`client/data/templates/*.json`, same shape as `Library.save()`) offered at signup to seed a new account's first List. Applied once via `applyQuickSetup` + `saveRemoteWithTemplate`; no lineage is kept afterward — the new Library has no record it came from a Template.
+_Avoid_: confusing with a copied/forked public List — that's a different mechanism (`forkedFrom`) that *does* track lineage. A Template is a one-shot unlinked seed.
+
 **Total Weight**:
 The sum of every Placement's weight × qty on a List, no exclusions. Also called skin-out weight.
 _Avoid_: Pack Weight, Full Weight.
