@@ -95,7 +95,6 @@ Category.prototype.save = function () {
     const out = assignIn({}, this);
 
     delete out.library;
-    delete out.template;
     delete out._isNew;
 
     return out;
