@@ -5,7 +5,9 @@ let chartModulePromise = null;
 async function loadChart() {
     if (!chartModulePromise) {
         chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
-            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+            .then(({
+                Chart, DoughnutController, ArcElement, Tooltip,
+            }) => {
                 Chart.register(DoughnutController, ArcElement, Tooltip);
                 return Chart;
             });
@@ -34,7 +36,9 @@ function buildDataset(categories) {
     };
 }
 
-export async function renderListChart({ chart, canvas, processedData, hoverCallback }) {
+export async function renderListChart({
+    chart, canvas, processedData, hoverCallback,
+}) {
     if (!canvas || !processedData) return chart;
 
     const Chart = await loadChart();

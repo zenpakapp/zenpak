@@ -92,8 +92,8 @@ import { bindWindowListeners, unbindWindowListeners } from '../services/window-e
 
 export default {
     name: 'UnitSelect',
-    emits: ['change'],
     props: ['weight', 'unit'],
+    emits: ['change'],
     data() {
         return {
             units: [

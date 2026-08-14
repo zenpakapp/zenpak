@@ -1,5 +1,6 @@
 const { clearCookie } = require('../services/browser-storage');
 const dataTypes = require('../dataTypes.js');
+
 const Library = dataTypes.Library;
 
 function alertKey(alert) {
@@ -13,7 +14,7 @@ function pushGlobalAlert(state, alert) {
     const key = alertKey(alert);
     if (!key) return;
 
-    const existingIndex = state.globalAlerts.findIndex(existing => alertKey(existing) === key);
+    const existingIndex = state.globalAlerts.findIndex((existing) => alertKey(existing) === key);
     const nextAlert = {
         id: existingIndex >= 0 ? state.globalAlerts[existingIndex].id : `${Date.now()}-${Math.random()}`,
         ...(typeof alert === 'string' ? { message: alert } : alert),

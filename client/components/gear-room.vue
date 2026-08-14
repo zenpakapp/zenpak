@@ -4,9 +4,15 @@
 <template>
     <div class="lpGearRoom">
         <div class="lpGearRoomHeader">
-            <button class="lpButton lpSmall lpButtonSecondary" @click="$emit('close')">{{ $t('gearroom.backToLists') }}</button>
-            <h1 class="lpGearRoomTitle">{{ $t('gearroom.title') }}</h1>
-            <button class="lpButton lpSmall" @click="createItem">{{ $t('gearroom.newItem') }}</button>
+            <button class="lpButton lpSmall lpButtonSecondary" @click="$emit('close')">
+                {{ $t('gearroom.backToLists') }}
+            </button>
+            <h1 class="lpGearRoomTitle">
+                {{ $t('gearroom.title') }}
+            </h1>
+            <button class="lpButton lpSmall" @click="createItem">
+                {{ $t('gearroom.newItem') }}
+            </button>
         </div>
 
         <button class="lpGearRoomFiltersToggle" @click="filtersOpen = !filtersOpen">
@@ -16,46 +22,66 @@
         <div class="lpGearRoomBody">
             <div :class="['lpGearRoomFilters', { open: filtersOpen }]">
                 <div>
-                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.search') }}</div>
+                    <div class="lpGearRoomFiltersLabel">
+                        {{ $t('gearroom.search') }}
+                    </div>
                     <input v-model="search" class="lpGearRoomSearch" type="text" :placeholder="$t('gearroom.searchPlaceholder')">
                 </div>
                 <div v-if="library.lists.length > 0">
-                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterList') }}</div>
+                    <div class="lpGearRoomFiltersLabel">
+                        {{ $t('gearroom.filterList') }}
+                    </div>
                     <div class="lpGearRoomCategoryChips">
                         <button
                             :class="['lpGearRoomChip', { active: filterList === '' }]"
                             @click="filterList = ''; filterOrphan = false; filterStarred = false"
-                        >{{ $t('gearroom.filterAll') }}</button>
+                        >
+                            {{ $t('gearroom.filterAll') }}
+                        </button>
                         <button
                             v-for="list in library.lists"
                             :key="list.id"
                             :class="['lpGearRoomChip', { active: filterList === list.id }]"
                             @click="filterList = list.id; filterCategory = ''; filterOrphan = false; filterStarred = false"
-                        >{{ list.name }}</button>
+                        >
+                            {{ list.name }}
+                        </button>
                     </div>
                 </div>
                 <div>
-                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterType') }}</div>
+                    <div class="lpGearRoomFiltersLabel">
+                        {{ $t('gearroom.filterType') }}
+                    </div>
                     <div class="lpGearRoomCategoryChips">
-                        <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">{{ $t('gearroom.filterAll') }}</button>
+                        <button :class="['lpGearRoomChip', { active: filterCategory === '' && !filterOrphan && !filterStarred }]" @click="filterCategory = ''; filterOrphan = false; filterStarred = false">
+                            {{ $t('gearroom.filterAll') }}
+                        </button>
                         <button
                             :class="['lpGearRoomChip', { active: filterOrphan }]"
                             @click="filterOrphan = !filterOrphan; filterCategory = ''; filterStarred = false; filterList = ''"
-                        >{{ $t('gearroom.filterNoList') }}</button>
+                        >
+                            {{ $t('gearroom.filterNoList') }}
+                        </button>
                         <button
                             :class="['lpGearRoomChip', { active: filterStarred }]"
                             @click="filterStarred = !filterStarred; filterCategory = ''; filterOrphan = false; filterList = ''"
-                        >{{ $t('gearroom.filterFavorites') }}</button>
+                        >
+                            {{ $t('gearroom.filterFavorites') }}
+                        </button>
                         <button
                             v-for="cat in availableCategories"
                             :key="cat"
                             :class="['lpGearRoomChip', { active: filterCategory === cat }]"
                             @click="filterCategory = cat; filterOrphan = false; filterStarred = false; filterList = ''"
-                        >{{ cat }}</button>
+                        >
+                            {{ cat }}
+                        </button>
                     </div>
                 </div>
                 <div>
-                    <div class="lpGearRoomFiltersLabel">{{ $t('gearroom.filterWeight') }}</div>
+                    <div class="lpGearRoomFiltersLabel">
+                        {{ $t('gearroom.filterWeight') }}
+                    </div>
                     <div class="lpGearRoomWeightRange">
                         <input v-model.number="weightMin" class="lpGearRoomWeightInput" type="number" min="0" :placeholder="$t('gearroom.filterMin')">
                         <span>–</span>
@@ -83,11 +109,11 @@
                                         @change="toggleSelectAll"
                                     >
                                 </th>
-                                <th class="lpGRImgCol"></th>
+                                <th class="lpGRImgCol" />
                                 <th class="lpGRSortable" @click="setSort('name')">
                                     {{ $t('gearroom.tableHeaderItem') }} {{ sortKey === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
-                                <th class="lpGRSortable lpGRStarCol" @click="setSort('starred')" :title="$t('gearroom.tableHeaderStarred')">
+                                <th class="lpGRSortable lpGRStarCol" :title="$t('gearroom.tableHeaderStarred')" @click="setSort('starred')">
                                     ★ {{ sortKey === 'starred' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRCategoryCol lpGRSortable" @click="setSort('category')">
@@ -108,11 +134,15 @@
                                 </td>
                                 <td class="lpGRImgCol" @click="openItemDetail(item)">
                                     <img v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomThumb" :alt="item.name">
-                                    <div v-else class="lpGearRoomThumbPlaceholder"></div>
+                                    <div v-else class="lpGearRoomThumbPlaceholder" />
                                 </td>
                                 <td @click="openItemDetail(item)">
-                                    <div class="lpGearRoomItemName">{{ itemDisplayName(item) }}</div>
-                                    <div v-if="item.description" class="lpGearRoomItemDesc">{{ item.description }}</div>
+                                    <div class="lpGearRoomItemName">
+                                        {{ itemDisplayName(item) }}
+                                    </div>
+                                    <div v-if="item.description" class="lpGearRoomItemDesc">
+                                        {{ item.description }}
+                                    </div>
                                 </td>
                                 <td class="lpGRStarCol" @click="openItemDetail(item)">
                                     <span v-if="item.starred" class="lpGearRoomStarBadge">★</span>
@@ -120,8 +150,12 @@
                                 <td class="lpGRCategoryCol" @click="openItemDetail(item)">
                                     <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
                                 </td>
-                                <td class="lpGRWeightCol" @click="openItemDetail(item)">{{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}</td>
-                                <td v-if="showPrice" class="lpGRPriceCol" @click="openItemDetail(item)">{{ item.price > 0 ? '€' + item.price : '–' }}</td>
+                                <td class="lpGRWeightCol" @click="openItemDetail(item)">
+                                    {{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}
+                                </td>
+                                <td v-if="showPrice" class="lpGRPriceCol" @click="openItemDetail(item)">
+                                    {{ item.price > 0 ? '€' + item.price : '–' }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -182,14 +216,14 @@ export default {
     },
     computed: {
         allSelected() {
-            return this.filteredItems.length > 0 && this.filteredItems.every(i => this.selected.includes(i.id));
+            return this.filteredItems.length > 0 && this.filteredItems.every((i) => this.selected.includes(i.id));
         },
         someSelected() {
-            return this.filteredItems.some(i => this.selected.includes(i.id)) && !this.allSelected;
+            return this.filteredItems.some((i) => this.selected.includes(i.id)) && !this.allSelected;
         },
         compareItems() {
             return this.selected
-                .map(id => {
+                .map((id) => {
                     const item = this.library.getItemById(id);
                     if (!item) return null;
                     return { ...item, _usedInLists: this.itemUsedInLists(id) };
@@ -211,7 +245,7 @@ export default {
             if (this.allSelected) {
                 this.selected.splice(0, this.selected.length);
             } else {
-                const ids = this.filteredItems.map(i => i.id);
+                const ids = this.filteredItems.map((i) => i.id);
                 this.selected.splice(0, this.selected.length, ...ids);
             }
         },
@@ -221,13 +255,15 @@ export default {
         createItem() {
             this.$store.commit('newItem', { _isNew: true, name: '' });
             const newItem = this.library.items[this.library.items.length - 1];
-            openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, startEditing: true });
+            openDialog('itemDetail', {
+                item: newItem, categoryItem: null, category: null, startEditing: true,
+            });
         },
         batchSwapNameDesc() {
             const ids = new Set(this.selected);
             this.allItems
-                .filter(i => ids.has(i.id))
-                .forEach(item => {
+                .filter((i) => ids.has(i.id))
+                .forEach((item) => {
                     this.$store.commit('updateItem', { ...item, name: item.description, description: item.name });
                 });
             this.selected.splice(0, this.selected.length);
@@ -235,8 +271,8 @@ export default {
         applyBatchCategory(category) {
             const ids = new Set(this.selected);
             this.allItems
-                .filter(i => ids.has(i.id))
-                .forEach(item => {
+                .filter((i) => ids.has(i.id))
+                .forEach((item) => {
                     this.$store.commit('updateItem', { ...item, category });
                 });
             this.selected.splice(0, this.selected.length);
@@ -244,8 +280,8 @@ export default {
         applyBatchBrand(brand) {
             const ids = new Set(this.selected);
             this.allItems
-                .filter(i => ids.has(i.id))
-                .forEach(item => {
+                .filter((i) => ids.has(i.id))
+                .forEach((item) => {
                     this.$store.commit('updateItem', { ...item, brand });
                 });
             this.selected.splice(0, this.selected.length);
@@ -253,8 +289,8 @@ export default {
         applyBatchTag(tag) {
             const ids = new Set(this.selected);
             this.allItems
-                .filter(i => ids.has(i.id))
-                .forEach(item => {
+                .filter((i) => ids.has(i.id))
+                .forEach((item) => {
                     const tags = [...(item.tags || [])];
                     if (!tags.includes(tag)) tags.push(tag);
                     this.$store.commit('updateItem', { ...item, tags });
@@ -264,7 +300,7 @@ export default {
         applyBatchAddToList({ categoryId, itemIds }) {
             const category = this.library.getCategoryById(categoryId);
             if (!category) return;
-            itemIds.forEach(itemId => {
+            itemIds.forEach((itemId) => {
                 if (category.getCategoryItemById(itemId)) return;
                 this.$store.commit('addItemToCategory', {
                     itemId,
@@ -286,8 +322,8 @@ export default {
             openSpeedbump(
                 () => {
                     this.allItems
-                        .filter(i => ids.has(i.id))
-                        .forEach(item => {
+                        .filter((i) => ids.has(i.id))
+                        .forEach((item) => {
                             this.$store.commit('removeItem', item);
                         });
                     this.selected.splice(0, this.selected.length);
@@ -296,18 +332,16 @@ export default {
             );
         },
         itemUsedInLists(itemId) {
-            return this.library.lists.filter(list =>
-                list.categoryIds.some(catId => {
-                    const cat = this.library.getCategoryById(catId);
-                    return cat && cat.categoryItems.some(ci => ci.itemId === itemId);
-                })
-            ).length;
+            return this.library.lists.filter((list) => list.categoryIds.some((catId) => {
+                const cat = this.library.getCategoryById(catId);
+                return cat && cat.categoryItems.some((ci) => ci.itemId === itemId);
+            })).length;
         },
         applyMerge(keepId) {
-            const removeIds = this.selected.filter(id => id !== keepId);
+            const removeIds = this.selected.filter((id) => id !== keepId);
             openSpeedbump(
                 () => {
-                    removeIds.forEach(removeId => {
+                    removeIds.forEach((removeId) => {
                         this.$store.commit('mergeItems', { keepId, removeId });
                     });
                     this.selected.splice(0, this.selected.length);

@@ -71,7 +71,9 @@
 <template>
     <div class="lpSelectWrap">
         <select class="lpInvisible" :value="value" tabindex="-1" @change="select($event.target.value)">
-            <option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+            <option v-for="opt in options" :key="opt.value" :value="opt.value">
+                {{ opt.label }}
+            </option>
         </select>
         <div
             class="lpSelectTrigger"
@@ -102,11 +104,11 @@ import { bindWindowListeners, unbindWindowListeners } from '../services/window-e
 
 export default {
     name: 'LpSelect',
-    emits: ['change'],
     props: {
         value: { type: String, required: true },
         options: { type: Array, required: true },
     },
+    emits: ['change'],
     data() {
         return {
             isOpen: false,
@@ -115,7 +117,7 @@ export default {
     },
     computed: {
         selectedLabel() {
-            const opt = this.options.find(o => o.value === this.value);
+            const opt = this.options.find((o) => o.value === this.value);
             return opt ? opt.label : '';
         },
     },

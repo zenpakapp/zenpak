@@ -5,22 +5,30 @@
 <template>
     <div>
         <modal id="itemImageDialog" :shown="shown" @hide="shown = false">
-            <h2 class="itemImageTitle">{{ $t('item.imageDialogTitle') }}</h2>
+            <h2 class="itemImageTitle">
+                {{ $t('item.imageDialogTitle') }}
+            </h2>
 
             <div class="itemImageSections">
                 <!-- Current image -->
                 <div v-if="item && (item.image || item.imageUrl)" class="itemImageSection">
-                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionCurrent') }}</div>
+                    <div class="itemImageSectionLabel">
+                        {{ $t('item.imageSectionCurrent') }}
+                    </div>
                     <div class="itemImageCurrentWrap">
                         <img class="itemImageCurrentThumb" :src="currentThumb" alt="Current item image">
                         <span class="itemImageCurrentLabel">{{ $t('item.imageLabelAttached') }}</span>
-                        <button class="lpButton lpSmall lpButtonDanger" @click="removeItemImage">{{ $t('item.imageButtonRemove') }}</button>
+                        <button class="lpButton lpSmall lpButtonDanger" @click="removeItemImage">
+                            {{ $t('item.imageButtonRemove') }}
+                        </button>
                     </div>
                 </div>
 
                 <!-- URL input -->
                 <div class="itemImageSection">
-                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionUrl') }}</div>
+                    <div class="itemImageSectionLabel">
+                        {{ $t('item.imageSectionUrl') }}
+                    </div>
                     <form class="itemImageUrlRow" @submit.prevent="saveImageUrl">
                         <input
                             v-model="imageUrl"
@@ -29,15 +37,21 @@
                             :placeholder="$t('item.imageUrlPlaceholder')"
                             autocomplete="off"
                         >
-                        <button type="submit" class="lpButton lpSmall">{{ $t('item.imageButtonSave') }}</button>
+                        <button type="submit" class="lpButton lpSmall">
+                            {{ $t('item.imageButtonSave') }}
+                        </button>
                     </form>
                 </div>
 
-                <div class="itemImageDivider">{{ $t('item.imageOrDivider') }}</div>
+                <div class="itemImageDivider">
+                    {{ $t('item.imageOrDivider') }}
+                </div>
 
                 <!-- Upload -->
                 <div class="itemImageSection">
-                    <div class="itemImageSectionLabel">{{ $t('item.imageSectionUpload') }}</div>
+                    <div class="itemImageSectionLabel">
+                        {{ $t('item.imageSectionUpload') }}
+                    </div>
                     <div
                         class="itemImageDropZone"
                         :class="{ dragover: isDragOver }"
@@ -50,7 +64,9 @@
                         <span class="itemImageDropText">{{ $t('item.imageDropText') }}</span>
                         <span class="itemImageDropHint">{{ $t('item.imageDropHint') }}</span>
                     </div>
-                    <p v-if="uploading" class="itemImageStatus">{{ $t('item.imageUploading') }}</p>
+                    <p v-if="uploading" class="itemImageStatus">
+                        {{ $t('item.imageUploading') }}
+                    </p>
                     <p class="itemImageNotice">
                         {{ $t('item.imageNotice') }}
                     </p>

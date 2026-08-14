@@ -179,7 +179,7 @@ router.post('/api/lists/:listId/hide-source-list-info', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         const listId = String(req.params.listId || '');
         const library = user.library || {};
-        const list = (library.lists || []).find(l => String(l.id) === listId);
+        const list = (library.lists || []).find((l) => String(l.id) === listId);
         if (!list) {
             return res.status(404).json({ message: 'List not found' });
         }

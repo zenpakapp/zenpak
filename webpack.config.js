@@ -24,7 +24,7 @@ class AssetJsonPlugin {
                 const entrypointFiles = {};
                 Object.entries(statsData.entrypoints || {}).forEach(([name, entrypoint]) => {
                     entrypointFiles[name] = (entrypoint.assets || [])
-                        .map(asset => (typeof asset === 'string' ? asset : asset.name))
+                        .map((asset) => (typeof asset === 'string' ? asset : asset.name))
                         .filter(Boolean);
                 });
 
@@ -39,7 +39,8 @@ class AssetJsonPlugin {
                 require('fs').writeFileSync(
                     path.join(__dirname, '/public/dist/', 'assets.json'), JSON.stringify(assetData),
                 );
-            });
+            },
+        );
     }
 }
 

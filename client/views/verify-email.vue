@@ -34,38 +34,66 @@
     <div id="verifyEmailContainer">
         <modal id="verifyEmail" :shown="true" :blackout="true">
             <template v-if="status === 'success'">
-                <div class="lpVerifyIcon" style="color: var(--color-accent);">✓</div>
+                <div class="lpVerifyIcon" style="color: var(--color-accent);">
+                    ✓
+                </div>
                 <h2>{{ $t('auth.emailVerifiedTitle') }}</h2>
-                <p class="lpVerifyMessage">{{ $t('auth.emailVerifiedMessage') }}</p>
+                <p class="lpVerifyMessage">
+                    {{ $t('auth.emailVerifiedMessage') }}
+                </p>
                 <div class="lpButtons">
-                    <button class="lpButton" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
+                    <button class="lpButton" @click="goToPack">
+                        {{ $t('auth.backToMyPack') }}
+                    </button>
                 </div>
             </template>
             <template v-else-if="status === 'error'">
-                <div class="lpVerifyIcon" style="color: var(--color-danger);">✗</div>
+                <div class="lpVerifyIcon" style="color: var(--color-danger);">
+                    ✗
+                </div>
                 <h2>{{ $t('auth.linkExpiredTitle') }}</h2>
-                <p class="lpVerifyMessage">{{ $t('auth.linkExpiredMessage') }}</p>
+                <p class="lpVerifyMessage">
+                    {{ $t('auth.linkExpiredMessage') }}
+                </p>
                 <div class="lpButtons">
                     <template v-if="alreadyVerified">
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.alreadyVerified') }}</button>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">
+                            {{ $t('auth.alreadyVerified') }}
+                        </button>
                     </template>
                     <template v-else-if="resendSent">
-                        <p class="lpVerifyMessage" style="margin:0 0 16px;">{{ $t('auth.newLinkSent') }}</p>
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
+                        <p class="lpVerifyMessage" style="margin:0 0 16px;">
+                            {{ $t('auth.newLinkSent') }}
+                        </p>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">
+                            {{ $t('auth.backToMyPack') }}
+                        </button>
                     </template>
                     <template v-else>
-                        <button class="lpButton" @click="resend">{{ $t('auth.sendNewLink') }}</button>
-                        <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
+                        <button class="lpButton" @click="resend">
+                            {{ $t('auth.sendNewLink') }}
+                        </button>
+                        <button class="lpButton lpButtonSecondary" @click="goToPack">
+                            {{ $t('auth.backToMyPack') }}
+                        </button>
                     </template>
                 </div>
-                <p v-if="resendError" class="lpVerifyError">{{ resendError }}</p>
+                <p v-if="resendError" class="lpVerifyError">
+                    {{ resendError }}
+                </p>
             </template>
             <template v-else>
-                <div class="lpVerifyIcon" style="color: var(--color-accent);">✉</div>
+                <div class="lpVerifyIcon" style="color: var(--color-accent);">
+                    ✉
+                </div>
                 <h2>{{ $t('auth.checkInboxTitle') }}</h2>
-                <p class="lpVerifyMessage">{{ $t('auth.checkInboxMessage') }}</p>
+                <p class="lpVerifyMessage">
+                    {{ $t('auth.checkInboxMessage') }}
+                </p>
                 <div class="lpButtons">
-                    <button class="lpButton lpButtonSecondary" @click="goToPack">{{ $t('auth.backToMyPack') }}</button>
+                    <button class="lpButton lpButtonSecondary" @click="goToPack">
+                        {{ $t('auth.backToMyPack') }}
+                    </button>
                 </div>
             </template>
         </modal>

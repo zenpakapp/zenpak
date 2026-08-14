@@ -36,5 +36,7 @@ export function useFeed() {
         }
     }
 
-    return { events, loading, error, hasMore, load, loadMore };
+    return {
+        events, loading, error, hasMore, load, loadMore,
+    };
 }

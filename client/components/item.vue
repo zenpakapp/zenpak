@@ -11,7 +11,7 @@
                 class="lpPackCheckbox"
                 :checked="isPacked"
                 @change="onPackCheckbox"
-            />
+            >
             <div v-else class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
@@ -122,7 +122,7 @@ export default {
             this.setDisplayWeight();
             this.setDisplayPrice();
         },
-        'library.itemUnit'() {
+        'library.itemUnit': function () {
             this.setDisplayWeight();
         },
         categoryItem() {

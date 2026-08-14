@@ -25,7 +25,7 @@
 
             <div class="itemDetailField">
                 <label>{{ $t('item.editLabelDescription') }}</label>
-                <textarea ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'"></textarea>
+                <textarea ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'" />
             </div>
 
             <div class="itemDetailField">
@@ -37,10 +37,13 @@
                 <label>{{ $t('item.editLabelType') }}</label>
                 <div class="itemDetailTypeWrap">
                     <input v-model="editCategory" type="text" :placeholder="$t('item.editPlaceholderType')"
-                        @focus="showCategoryDropdown = true"
-                        @blur="showCategoryDropdown = false">
+                           @focus="showCategoryDropdown = true"
+                           @blur="showCategoryDropdown = false"
+                    >
                     <ul v-if="showCategoryDropdown && filteredGearCategories.length" class="itemDetailTypeSuggestions">
-                        <li v-for="cat in filteredGearCategories" :key="cat" @mousedown.prevent="selectCategory(cat)">{{ cat }}</li>
+                        <li v-for="cat in filteredGearCategories" :key="cat" @mousedown.prevent="selectCategory(cat)">
+                            {{ cat }}
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -52,7 +55,9 @@
                         <input v-model="editWeight" type="text" placeholder="0">
                         <div class="itemDetailSelectWrap itemDetailSelectUnit">
                             <select v-model="editUnit">
-                                <option v-for="u in units" :key="u" :value="u">{{ u }}</option>
+                                <option v-for="u in units" :key="u" :value="u">
+                                    {{ u }}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -95,13 +100,15 @@
                     </template>
                     <template v-else-if="editImageUrl">
                         <img :src="editImageUrl" class="itemDetailDropZonePreview">
-                        <button type="button" class="itemDetailDropZoneRemove" @click.stop="editImageUrl = ''">×</button>
+                        <button type="button" class="itemDetailDropZoneRemove" @click.stop="editImageUrl = ''">
+                            ×
+                        </button>
                     </template>
                     <template v-else>
                         <svg class="itemDetailDropZoneIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <path d="m21 15-5-5L5 21"/>
+                            <rect x="3" y="3" width="18" height="18" rx="2" />
+                            <circle cx="8.5" cy="8.5" r="1.5" />
+                            <path d="m21 15-5-5L5 21" />
                         </svg>
                         <span class="itemDetailDropZoneText">{{ $t('item.editDropZoneText') }}</span>
                         <span class="itemDetailDropZoneHint">{{ $t('item.editDropZoneHint') }}</span>
@@ -120,14 +127,18 @@
                 </div>
                 <div class="itemDetailTagInput">
                     <input v-model="tagInput" type="text" :placeholder="$t('item.editPlaceholderTags')" @keydown.enter.prevent="addTag">
-                    <button type="button" class="lpButton lpSmall lpButtonSecondary" @click="addTag">{{ $t('item.editButtonAddTag') }}</button>
+                    <button type="button" class="lpButton lpSmall lpButtonSecondary" @click="addTag">
+                        {{ $t('item.editButtonAddTag') }}
+                    </button>
                 </div>
             </div>
         </form>
 
         <div class="itemDetailEditFooter">
             <a class="lpHref close" role="button" tabindex="0" @click="$emit('close')" @keydown.enter="$emit('close')" @keydown.space.prevent="$emit('close')">{{ $t('item.editButtonCancel') }}</a>
-            <button class="lpButton" @click="saveEdit">{{ $t('item.editButtonSave') }}</button>
+            <button class="lpButton" @click="saveEdit">
+                {{ $t('item.editButtonSave') }}
+            </button>
         </div>
     </div>
 </template>
@@ -185,7 +196,7 @@ export default {
         units() { return UNITS; },
         filteredGearCategories() {
             const q = (this.editCategory || '').toLowerCase();
-            return q ? GEAR_CATEGORIES.filter(c => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
+            return q ? GEAR_CATEGORIES.filter((c) => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
         },
         thumbnailImage() {
             if (this.editImageUrl) return this.editImageUrl;
@@ -194,7 +205,7 @@ export default {
         },
     },
     watch: {
-        'item.starred'(val) { this.localStarred = !!val; },
+        'item.starred': function (val) { this.localStarred = !!val; },
     },
     created() {
         this.localStarred = !!this.item?.starred;

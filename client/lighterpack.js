@@ -87,7 +87,7 @@ registerAppEventHandlers({
     },
 });
 
-var initLighterPack = function () {
+const initLighterPack = function () {
     const app = createApp({
         render() {
             return h(RouterView);

@@ -3,7 +3,9 @@ let chartModulePromise = null;
 function loadChart() {
     if (!chartModulePromise) {
         chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
-            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+            .then(({
+                Chart, DoughnutController, ArcElement, Tooltip,
+            }) => {
                 Chart.register(DoughnutController, ArcElement, Tooltip);
                 return Chart;
             });

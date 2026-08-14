@@ -20,7 +20,9 @@
             {{ messages.title }}
         </h2>
 
-        <p class="speedbumpBody">{{ messages.body }}</p>
+        <p class="speedbumpBody">
+            {{ messages.body }}
+        </p>
 
         <div class="lpModalActions">
             <button v-focus-on-create class="lpButton" @click="confirmSpeedbump()">

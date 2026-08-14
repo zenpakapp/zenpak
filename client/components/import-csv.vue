@@ -51,18 +51,34 @@
                 <h3>{{ $t('library.importReviewTitle') }}</h3>
                 <div v-for="(row, index) in ambiguousRows" :key="index" class="importReviewRow">
                     <div class="importReviewCol">
-                        <p class="importReviewLabel">{{ $t('library.importReviewLabelImported') }}</p>
-                        <p class="importReviewName">{{ row.name }}</p>
-                        <p class="importReviewMeta">{{ row.weight }} {{ row.unit }}<span v-if="row.brand"> · {{ row.brand }}</span></p>
+                        <p class="importReviewLabel">
+                            {{ $t('library.importReviewLabelImported') }}
+                        </p>
+                        <p class="importReviewName">
+                            {{ row.name }}
+                        </p>
+                        <p class="importReviewMeta">
+                            {{ row.weight }} {{ row.unit }}<span v-if="row.brand"> · {{ row.brand }}</span>
+                        </p>
                     </div>
                     <div class="importReviewCol">
-                        <p class="importReviewLabel">{{ $t('library.importReviewLabelExisting') }}</p>
-                        <p class="importReviewName">{{ row._match.item.name }}</p>
-                        <p class="importReviewMeta">{{ displayWeight(row._match.item.weight, itemUnit) }} {{ itemUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span></p>
+                        <p class="importReviewLabel">
+                            {{ $t('library.importReviewLabelExisting') }}
+                        </p>
+                        <p class="importReviewName">
+                            {{ row._match.item.name }}
+                        </p>
+                        <p class="importReviewMeta">
+                            {{ displayWeight(row._match.item.weight, itemUnit) }} {{ itemUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span>
+                        </p>
                     </div>
                     <div class="importReviewActions">
-                        <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">{{ $t('library.importReviewMergeButton') }}</button>
-                        <button class="lpButton lpButtonSm lpButtonSecondary" @click="resolveReview(index, 'new')">{{ $t('library.importReviewKeepBothButton') }}</button>
+                        <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">
+                            {{ $t('library.importReviewMergeButton') }}
+                        </button>
+                        <button class="lpButton lpButtonSm lpButtonSecondary" @click="resolveReview(index, 'new')">
+                            {{ $t('library.importReviewKeepBothButton') }}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -73,7 +89,9 @@
         </modal>
         <modal id="importText" :shown="showTextInput" @hide="closeTextInput">
             <h2>{{ $t('library.textImportTitle') }}</h2>
-            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">{{ $t('library.textImportHint') }}</p>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">
+                {{ $t('library.textImportHint') }}
+            </p>
             <textarea
                 v-model="textInput"
                 class="lpImportTextarea"
@@ -87,7 +105,9 @@
                 type="text"
                 :placeholder="$t('library.textImportListNamePlaceholder')"
             >
-            <p v-if="textError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ textError }}</p>
+            <p v-if="textError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">
+                {{ textError }}
+            </p>
             <div class="lpModalActions">
                 <a class="lpButton lpButtonSecondary" @click="closeTextInput">{{ $t('library.textImportCancelButton') }}</a>
                 <a class="lpButton" @click="importFromText">{{ $t('library.textImportButton') }}</a>
@@ -95,7 +115,9 @@
         </modal>
         <modal id="importLP" :shown="showLPInput" @hide="closeLPInput">
             <h2>{{ $t('library.lpImportTitle') }}</h2>
-            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">{{ $t('library.lpImportHint') }}</p>
+            <p style="color: var(--color-text-muted); font-size: 14px; margin: 0 0 16px;">
+                {{ $t('library.lpImportHint') }}
+            </p>
             <input
                 v-model="lpUrl"
                 class="lpImportUrlInput"
@@ -111,7 +133,9 @@
                 :placeholder="$t('library.lpImportListNamePlaceholder')"
                 @keyup.enter="importFromLP"
             >
-            <p v-if="lpError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">{{ lpError }}</p>
+            <p v-if="lpError" style="color: var(--color-danger); font-size: 13px; margin: 8px 0 0;">
+                {{ lpError }}
+            </p>
             <div class="lpModalActions">
                 <a class="lpButton lpButtonSecondary" @click="closeLPInput">{{ $t('library.lpImportCancelButton') }}</a>
                 <a class="lpButton" :class="{ disabled: lpLoading }" @click="importFromLP">
@@ -133,6 +157,7 @@ import { findBestMatch } from '../composables/useGearMatcher.js';
 import { useUtils } from '../composables/useUtils.js';
 
 const weightUtils = require('../utils/weight.js');
+
 const { displayWeight } = useUtils();
 
 async function loadCsvImportUtils() {
@@ -149,7 +174,7 @@ function computeDedup(importData, libraryItems) {
     let mergeCount = 0;
     let reviewCount = 0;
 
-    importData.data = importData.data.map(row => {
+    importData.data = importData.data.map((row) => {
         const weightMg = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
         const match = findBestMatch(row, libraryItems, weightMg);
         if (match.decision === 'merge') mergeCount++;
@@ -202,7 +227,7 @@ export default {
         },
         ambiguousRows() {
             if (!this.importData.data) return [];
-            return this.importData.data.filter(row => row._match && row._match.decision === 'review');
+            return this.importData.data.filter((row) => row._match && row._match.decision === 'review');
         },
         reviewCount() {
             return this.ambiguousRows.length;
@@ -346,7 +371,7 @@ export default {
         },
         displayWeight,
         resolveReview(rowIndex, decision) {
-            const ambiguous = this.importData.data.filter(row => row._match && row._match.decision === 'review');
+            const ambiguous = this.importData.data.filter((row) => row._match && row._match.decision === 'review');
             const row = ambiguous[rowIndex];
             if (row) row._match.decision = decision;
         },

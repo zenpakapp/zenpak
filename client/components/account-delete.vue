@@ -12,7 +12,7 @@
             <p class="lpWarning">
                 <strong>{{ $t('acct.deleteAccountPermanent') }}</strong>
             </p>
-            <p v-html="$t('acct.deleteAccountInstructions')"></p>
+            <p v-html="$t('acct.deleteAccountInstructions')" />
             <div class="lpFields">
                 <input v-model="currentPassword" type="password" :placeholder="$t('acct.currentPassword')" name="currentPassword" class="currentPassword">
 

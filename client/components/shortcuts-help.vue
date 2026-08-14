@@ -1,13 +1,17 @@
 <template>
     <modal id="shortcutsHelpDialog" :shown="shown" @hide="shown = false">
         <div class="lpModalHeader">
-            <h2 id="shortcutsHelpDialogLabel">{{ $t('shortcuts.title') }}</h2>
+            <h2 id="shortcutsHelpDialogLabel">
+                {{ $t('shortcuts.title') }}
+            </h2>
         </div>
         <table class="shortcutsTable">
             <tbody>
                 <tr v-for="{ combo, description } in shortcuts" :key="combo">
                     <td><kbd class="shortcutKey">{{ combo }}</kbd></td>
-                    <td class="shortcutDesc">{{ description }}</td>
+                    <td class="shortcutDesc">
+                        {{ description }}
+                    </td>
                 </tr>
             </tbody>
         </table>

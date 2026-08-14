@@ -49,7 +49,7 @@ export default {
                     }
                     return false;
                 })
-                    .filter(error => !!error.message);
+                    .filter((error) => !!error.message);
 
                 if (massagedErrors.length) {
                     return massagedErrors;

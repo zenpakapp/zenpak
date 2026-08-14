@@ -1,5 +1,3 @@
-'use strict';
-
 const REQUEST_BODY_LIMIT = '10mb';
 
 function securityHeaders(options = {}) {

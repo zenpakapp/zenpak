@@ -149,15 +149,23 @@
             <zenpak-gear-icon />
         </div>
         <div class="itemDetailHeaderInfo">
-            <div class="itemDetailName">{{ name || $t('gearroom.unnamedItem') }}</div>
-            <div v-if="brand" class="itemDetailBrand">{{ brand }}</div>
+            <div class="itemDetailName">
+                {{ name || $t('gearroom.unnamedItem') }}
+            </div>
+            <div v-if="brand" class="itemDetailBrand">
+                {{ brand }}
+            </div>
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
-            <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">+ Add type</button>
+            <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">
+                + Add type
+            </button>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
-        <button class="lpIconButton itemDetailClose" :title="$t('misc.close')" @click="$emit('close')">×</button>
+        <button class="lpIconButton itemDetailClose" :title="$t('misc.close')" @click="$emit('close')">
+            ×
+        </button>
     </div>
 </template>
 
@@ -168,12 +176,12 @@ export default {
     name: 'ItemDetailHeader',
     components: { ZenpakGearIcon },
     props: {
-        name:     { type: String, default: '' },
-        brand:    { type: String, default: '' },
+        name: { type: String, default: '' },
+        brand: { type: String, default: '' },
         category: { type: String, default: '' },
         imageKey: { type: String, default: '' },
         imageUrl: { type: String, default: '' },
-        starred:  { type: Boolean, default: false },
+        starred: { type: Boolean, default: false },
         showAddCategory: { type: Boolean, default: false },
     },
     emits: ['toggle-star', 'close', 'view-image', 'click-category'],

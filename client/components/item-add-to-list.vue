@@ -14,7 +14,9 @@
                     {{ list.name || $t('gearroom.unnamedList') }} ›
                 </li>
                 <li class="itemDetailAddCreate">
-                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">{{ $t('item.addToListNewList') }}</div>
+                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">
+                        {{ $t('item.addToListNewList') }}
+                    </div>
                     <div v-else class="itemDetailAddCreateRow">
                         <input
                             ref="newListInput"
@@ -25,12 +27,16 @@
                             @keydown.enter.prevent="createListAndNavigate"
                             @keydown.esc="creatingList = false"
                         >
-                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">{{ $t('item.addToListCreate') }}</button>
+                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">
+                            {{ $t('item.addToListCreate') }}
+                        </button>
                     </div>
                 </li>
             </template>
             <template v-else>
-                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">{{ $t('item.addToListBack') }}</li>
+                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">
+                    {{ $t('item.addToListBack') }}
+                </li>
                 <li class="itemDetailAddOptionalRow">
                     <label class="itemDetailAddOptionalLabel">
                         <input
@@ -38,7 +44,7 @@
                             type="checkbox"
                             class="lpOptionalToggle"
                             :title="$t('item.optionalTitle')"
-                        />
+                        >
                         {{ $t('public.option') }}
                     </label>
                 </li>
@@ -77,18 +83,6 @@ export default {
         item: { type: Object, required: true },
     },
     emits: ['added'],
-    mounted() {
-        this._outsideHandler = (e) => {
-            if (this.open && !this.$el.contains(e.target)) {
-                this.open = false;
-                this.creatingList = false;
-            }
-        };
-        document.addEventListener('click', this._outsideHandler, true);
-    },
-    beforeUnmount() {
-        document.removeEventListener('click', this._outsideHandler, true);
-    },
     data() {
         return {
             open: false,
@@ -107,20 +101,30 @@ export default {
         selectedListCategories() {
             const library = this.$store.state.library;
             if (!library || !this.selectedListId) return [];
-            const list = library.lists.find(l => l.id === this.selectedListId);
+            const list = library.lists.find((l) => l.id === this.selectedListId);
             if (!list) return [];
-            return list.categoryIds.map(id => library.getCategoryById(id)).filter(Boolean);
+            return list.categoryIds.map((id) => library.getCategoryById(id)).filter(Boolean);
         },
         itemUsedInLists() {
             const library = this.$store.state.library;
             if (!library || !this.item) return [];
-            return library.lists.filter(list =>
-                list.categoryIds.some(catId => {
-                    const cat = library.getCategoryById(catId);
-                    return cat && cat.categoryItems.some(ci => ci.itemId === this.item.id);
-                })
-            );
+            return library.lists.filter((list) => list.categoryIds.some((catId) => {
+                const cat = library.getCategoryById(catId);
+                return cat && cat.categoryItems.some((ci) => ci.itemId === this.item.id);
+            }));
         },
+    },
+    mounted() {
+        this._outsideHandler = (e) => {
+            if (this.open && !this.$el.contains(e.target)) {
+                this.open = false;
+                this.creatingList = false;
+            }
+        };
+        document.addEventListener('click', this._outsideHandler, true);
+    },
+    beforeUnmount() {
+        document.removeEventListener('click', this._outsideHandler, true);
     },
     methods: {
         addToCategory(category) {

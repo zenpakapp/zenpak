@@ -30,7 +30,7 @@
     <a class="lpThemeItem" role="button" tabindex="0" @click="cycleTheme" @keydown.enter="cycleTheme" @keydown.space.prevent="cycleTheme">
         <span class="lpThemeGlyph">{{ mode === 'dark' ? '☾' : mode === 'light' ? '☀' : '⚙' }}</span>
     </a>
- </template>
+</template>
 
 <script>
 import { useTheme } from '../composables/useTheme.js';

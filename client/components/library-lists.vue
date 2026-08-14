@@ -103,14 +103,18 @@
         <div class="listContainerHeader">
             <h2>{{ $t('library.listsTitle') }}</h2>
             <PopoverHover id="addListFlyout" placement="right">
-                <template #target><span><a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span></template>
-                <template #content><div style="display:flex;flex-direction:column;gap:8px;">
-                    <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
-                    <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
-                    <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
-                    <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
-                    <a class="lpCopy" role="button" tabindex="0" @click="copyList" @keydown.enter="copyList" @keydown.space.prevent="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
-                </div></template>
+                <template #target>
+                    <span><a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span>
+                </template>
+                <template #content>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
+                        <a class="lpCopy" role="button" tabindex="0" @click="copyList" @keydown.enter="copyList" @keydown.space.prevent="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
+                    </div>
+                </template>
             </PopoverHover>
         </div>
         <ul id="lists" ref="lists">
@@ -138,16 +142,16 @@ export default {
         PopoverHover,
     },
     props: ['list'],
-    computed: {
-        library() {
-            return this.$store.state.library;
-        },
-    },
     data() {
         return {
             dragStartIndex: null,
             drake: null,
         };
+    },
+    computed: {
+        library() {
+            return this.$store.state.library;
+        },
     },
     mounted() {
         this.handleListReorder();

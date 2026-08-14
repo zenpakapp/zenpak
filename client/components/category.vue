@@ -125,7 +125,7 @@
                         @keydown.tab.exact.prevent="createInlineItem('description')"
                         @keydown.escape="dismissSuggestions"
                         @blur="dismissSuggestions"
-                    />
+                    >
                     <span v-else class="lpAddItemActions">
                         <a class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
                         <a class="lpAdd lpAddItemWithDetails" @click="createAndOpenEditor">{{ $t('misc.addItemWithDetails') }}</a>
@@ -190,8 +190,8 @@ export default {
             void this.$store.state.itemVersion;
             void this.$store.state.categoryItemVersion;
             return this.category.categoryItems
-                .map(categoryItem => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }))
-                .filter(itemContainer => itemContainer.item);
+                .map((categoryItem) => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }))
+                .filter((itemContainer) => itemContainer.item);
         },
         displayUnit() {
             if (this.library.totalUnit !== 'oz') {

@@ -42,14 +42,14 @@ module.exports = {
     duplicateItem(state, item) {
         const copy = state.library.newItem({});
         const fields = ['name', 'description', 'weight', 'authorUnit', 'price', 'image', 'imageUrl', 'url', 'shop', 'affiliateUrl', 'promoCode', 'promoLabel', 'brand', 'category', 'tags', 'starred'];
-        fields.forEach(f => {
+        fields.forEach((f) => {
             if (item[f] !== undefined) copy[f] = Array.isArray(item[f]) ? [...item[f]] : item[f];
         });
         state.library.updateItem(copy);
     },
     removeItem(state, item) {
         if (state.library.removeItem(item.id)) {
-            state.library.lists.forEach(list => list.calculateTotals());
+            state.library.lists.forEach((list) => list.calculateTotals());
             state.itemVersion += 1;
             state.categoryItemVersion += 1;
         }
@@ -214,7 +214,7 @@ module.exports = {
     },
     updateItem(state, item) {
         state.library.updateItem(item);
-        state.library.lists.forEach(list => list.calculateTotals());
+        state.library.lists.forEach((list) => list.calculateTotals());
         state.itemVersion += 1;
     },
     mergeItems(state, { keepId, removeId }) {
@@ -241,7 +241,7 @@ module.exports = {
             state.library.items.splice(state.library.items.indexOf(removeItem), 1);
             delete state.library.idMap[removeId];
         }
-        state.library.lists.forEach(list => list.calculateTotals());
+        state.library.lists.forEach((list) => list.calculateTotals());
         state.itemVersion += 1;
     },
     updateItemLink(state, args) {

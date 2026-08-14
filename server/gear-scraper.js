@@ -93,7 +93,7 @@ async function fetchHtml(url) {
                 signal: controller.signal,
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (compatible; LighterPack/1.0; +https://lighterpack.com)',
-                    'Accept': 'text/html,application/xhtml+xml',
+                    Accept: 'text/html,application/xhtml+xml',
                     'Accept-Language': 'en-US,en;q=0.9',
                 },
                 redirect: 'manual',
@@ -195,7 +195,9 @@ function extractWeightFromJsonLd(jsonLd) {
     if (!w) return null;
     if (typeof w === 'string') return parseWeight(w);
     if (w.value && w.unitCode) {
-        const unitMap = { GRM: 'g', KGM: 'kg', ONZ: 'oz', LBR: 'lb' };
+        const unitMap = {
+            GRM: 'g', KGM: 'kg', ONZ: 'oz', LBR: 'lb',
+        };
         return { value: parseFloat(w.value), unit: unitMap[w.unitCode] || 'g' };
     }
     if (w.value) return { value: parseFloat(w.value), unit: 'g' };

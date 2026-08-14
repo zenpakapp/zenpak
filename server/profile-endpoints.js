@@ -21,7 +21,7 @@ async function cloudinaryUpload(imageFile, { folder, transformation } = {}) {
     // params sorted alphabetically before apiSecret
     const params = { folder, timestamp };
     if (transformation) params.transformation = transformation;
-    const signatureStr = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join('&') + apiSecret;
+    const signatureStr = Object.keys(params).sort().map((k) => `${k}=${params[k]}`).join('&') + apiSecret;
     const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
 
     const imageBuffer = await readFile(imageFile.filepath);

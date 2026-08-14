@@ -61,8 +61,8 @@ function scoreMatch(parsed, libraryItem, weightMg) {
 }
 
 // Thresholds
-const THRESHOLD_AUTO_MERGE = 0.80;  // score >= this → merge silently
-const THRESHOLD_AMBIGUOUS  = 0.60;  // score >= this → show review screen
+const THRESHOLD_AUTO_MERGE = 0.80; // score >= this → merge silently
+const THRESHOLD_AMBIGUOUS = 0.60; // score >= this → show review screen
 
 // Find best match for a parsed row in the library items array.
 // Returns { item, score, decision: 'merge'|'review'|'new' }
@@ -93,7 +93,7 @@ function suggestItems(query, libraryItems, categoryName, limit = 6) {
     if (!query || query.length < 2) return [];
 
     return libraryItems
-        .map(item => {
+        .map((item) => {
             let score = nameSimilarity(query, item.name);
             // Boost items in same category
             if (categoryName && item.category && normalizeStr(item.category) === normalizeStr(categoryName)) {
@@ -101,10 +101,10 @@ function suggestItems(query, libraryItems, categoryName, limit = 6) {
             }
             return { item, score };
         })
-        .filter(r => r.score > 0.3)
+        .filter((r) => r.score > 0.3)
         .sort((a, b) => b.score - a.score)
         .slice(0, limit)
-        .map(r => r.item);
+        .map((r) => r.item);
 }
 
 export {

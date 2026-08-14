@@ -7,83 +7,114 @@
         <!-- Panel: Set type -->
         <div v-if="activeBatchPanel === 'category'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchSetTypeButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
-                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+                <div class="lpGearRoomBatchPanelTitle">
+                    {{ $t('gearroom.batchSetTypeButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}
+                </div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">
+                    ✕
+                </button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchType') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputCategory" v-model="batchCategory" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderType')"
-                        autocomplete="off"
-                        @focus="openDropdown('type')"
-                        @blur="closeDropdown('type')"
-                        @keydown.down.prevent="moveDropdown('type', 1)"
-                        @keydown.up.prevent="moveDropdown('type', -1)"
-                        @keydown.enter.prevent="confirmDropdown('type')"
-                        @keydown.escape="closeDropdown('type')">
+                           autocomplete="off"
+                           @focus="openDropdown('type')"
+                           @blur="closeDropdown('type')"
+                           @keydown.down.prevent="moveDropdown('type', 1)"
+                           @keydown.up.prevent="moveDropdown('type', -1)"
+                           @keydown.enter.prevent="confirmDropdown('type')"
+                           @keydown.escape="closeDropdown('type')"
+                    >
                     <ul v-if="showTypeDropdown && filteredTypes.length" ref="typeDropdown" class="lpBrandSuggestions" role="listbox">
-                        <li v-for="(cat, index) in filteredTypes" :key="cat" :class="{ active: dropdownActiveIndex.type === index }" role="option" :aria-selected="dropdownActiveIndex.type === index" @mousedown.prevent="selectType(cat)">{{ cat }}</li>
+                        <li v-for="(cat, index) in filteredTypes" :key="cat" :class="{ active: dropdownActiveIndex.type === index }" role="option" :aria-selected="dropdownActiveIndex.type === index" @mousedown.prevent="selectType(cat)">
+                            {{ cat }}
+                        </li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyCategory">{{ $t('gearroom.apply') }}</button>
+            <button class="lpGearRoomBatchApply" @click="applyCategory">
+                {{ $t('gearroom.apply') }}
+            </button>
         </div>
 
         <!-- Panel: Set brand -->
         <div v-else-if="activeBatchPanel === 'brand'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchSetBrandButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
-                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+                <div class="lpGearRoomBatchPanelTitle">
+                    {{ $t('gearroom.batchSetBrandButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}
+                </div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">
+                    ✕
+                </button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchBrand') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputBrand" v-model="batchBrand" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderBrand')"
-                        autocomplete="off"
-                        @focus="openDropdown('brand')"
-                        @blur="closeDropdown('brand')"
-                        @keydown.down.prevent="moveDropdown('brand', 1)"
-                        @keydown.up.prevent="moveDropdown('brand', -1)"
-                        @keydown.enter.prevent="confirmDropdown('brand')"
-                        @keydown.escape="closeDropdown('brand')">
+                           autocomplete="off"
+                           @focus="openDropdown('brand')"
+                           @blur="closeDropdown('brand')"
+                           @keydown.down.prevent="moveDropdown('brand', 1)"
+                           @keydown.up.prevent="moveDropdown('brand', -1)"
+                           @keydown.enter.prevent="confirmDropdown('brand')"
+                           @keydown.escape="closeDropdown('brand')"
+                    >
                     <ul v-if="showBrandDropdown && filteredBrands.length" ref="brandDropdown" class="lpBrandSuggestions" role="listbox">
-                        <li v-for="(brand, index) in filteredBrands" :key="brand" :class="{ active: dropdownActiveIndex.brand === index }" role="option" :aria-selected="dropdownActiveIndex.brand === index" @mousedown.prevent="selectBrand(brand)">{{ brand }}</li>
+                        <li v-for="(brand, index) in filteredBrands" :key="brand" :class="{ active: dropdownActiveIndex.brand === index }" role="option" :aria-selected="dropdownActiveIndex.brand === index" @mousedown.prevent="selectBrand(brand)">
+                            {{ brand }}
+                        </li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyBrand">{{ $t('gearroom.apply') }}</button>
+            <button class="lpGearRoomBatchApply" @click="applyBrand">
+                {{ $t('gearroom.apply') }}
+            </button>
         </div>
 
         <!-- Panel: Add tag -->
         <div v-else-if="activeBatchPanel === 'tag'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchAddTagButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
-                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+                <div class="lpGearRoomBatchPanelTitle">
+                    {{ $t('gearroom.batchAddTagButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}
+                </div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">
+                    ✕
+                </button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchTag') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputTag" v-model="batchTag" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderTag')"
-                        autocomplete="off"
-                        @focus="openDropdown('tag')"
-                        @blur="closeDropdown('tag')"
-                        @keydown.down.prevent="moveDropdown('tag', 1)"
-                        @keydown.up.prevent="moveDropdown('tag', -1)"
-                        @keydown.enter.prevent="confirmDropdown('tag')"
-                        @keydown.escape="closeDropdown('tag')">
+                           autocomplete="off"
+                           @focus="openDropdown('tag')"
+                           @blur="closeDropdown('tag')"
+                           @keydown.down.prevent="moveDropdown('tag', 1)"
+                           @keydown.up.prevent="moveDropdown('tag', -1)"
+                           @keydown.enter.prevent="confirmDropdown('tag')"
+                           @keydown.escape="closeDropdown('tag')"
+                    >
                     <ul v-if="showTagDropdown && filteredTags.length" ref="tagDropdown" class="lpBrandSuggestions" role="listbox">
-                        <li v-for="(tag, index) in filteredTags" :key="tag" :class="{ active: dropdownActiveIndex.tag === index }" role="option" :aria-selected="dropdownActiveIndex.tag === index" @mousedown.prevent="selectTag(tag)">{{ tag }}</li>
+                        <li v-for="(tag, index) in filteredTags" :key="tag" :class="{ active: dropdownActiveIndex.tag === index }" role="option" :aria-selected="dropdownActiveIndex.tag === index" @mousedown.prevent="selectTag(tag)">
+                            {{ tag }}
+                        </li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" @click="applyTag">{{ $t('gearroom.apply') }}</button>
+            <button class="lpGearRoomBatchApply" @click="applyTag">
+                {{ $t('gearroom.apply') }}
+            </button>
         </div>
 
         <!-- Panel: Merge -->
         <div v-else-if="activeBatchPanel === 'merge' && selected.length >= 2" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchMergeTitle') }}</div>
-                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+                <div class="lpGearRoomBatchPanelTitle">
+                    {{ $t('gearroom.batchMergeTitle') }}
+                </div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">
+                    ✕
+                </button>
             </div>
             <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
                 <button
@@ -97,28 +128,37 @@
                     <span style="color:#aaa;margin-left:8px;font-size:11px">{{ getItemById(id).description }}</span>
                 </button>
             </div>
-            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">{{ $t('gearroom.batchMergeButton') }}</button>
+            <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">
+                {{ $t('gearroom.batchMergeButton') }}
+            </button>
         </div>
 
         <!-- Panel: Add to list -->
         <div v-else-if="activeBatchPanel === 'addToList'" class="lpGearRoomBatchPanel">
             <div class="lpGearRoomBatchPanelHeader">
-                <div class="lpGearRoomBatchPanelTitle">{{ $t('gearroom.batchAddToListButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}</div>
-                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">✕</button>
+                <div class="lpGearRoomBatchPanelTitle">
+                    {{ $t('gearroom.batchAddToListButton') }} {{ $t('gearroom.batchForItems', { count: selected.length, plural: selected.length !== 1 ? 's' : '' }) }}
+                </div>
+                <button class="lpGearRoomBatchPanelClose" @click="activeBatchPanel = null">
+                    ✕
+                </button>
             </div>
             <div class="lpGearRoomBatchPanelRow">
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchList') }}</span>
                 <div class="lpBrandInputWrap">
                     <input ref="inputList" v-model="batchListName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderList')"
-                        autocomplete="off"
-                        @focus="openListDropdown"
-                        @blur="closeDropdown('list')"
-                        @keydown.down.prevent="moveDropdown('list', 1)"
-                        @keydown.up.prevent="moveDropdown('list', -1)"
-                        @keydown.enter.prevent="confirmDropdown('list')"
-                        @keydown.escape="closeDropdown('list')">
+                           autocomplete="off"
+                           @focus="openListDropdown"
+                           @blur="closeDropdown('list')"
+                           @keydown.down.prevent="moveDropdown('list', 1)"
+                           @keydown.up.prevent="moveDropdown('list', -1)"
+                           @keydown.enter.prevent="confirmDropdown('list')"
+                           @keydown.escape="closeDropdown('list')"
+                    >
                     <ul v-if="showListDropdown && listDropdownOptions.length" ref="listDropdown" class="lpBrandSuggestions" role="listbox">
-                        <li v-for="(option, index) in listDropdownOptions" :key="option.key" :class="{ active: dropdownActiveIndex.list === index, lpBrandSuggestionsCreate: option.type === 'create' }" role="option" :aria-selected="dropdownActiveIndex.list === index" @mousedown.prevent="selectListOption(option)">{{ option.label }}</li>
+                        <li v-for="(option, index) in listDropdownOptions" :key="option.key" :class="{ active: dropdownActiveIndex.list === index, lpBrandSuggestionsCreate: option.type === 'create' }" role="option" :aria-selected="dropdownActiveIndex.list === index" @mousedown.prevent="selectListOption(option)">
+                            {{ option.label }}
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -126,36 +166,59 @@
                 <span class="lpGearRoomBatchPanelLabel">{{ $t('gearroom.batchListCat') }}</span>
                 <div class="lpBrandInputWrap">
                     <input :value="selectedCatName" class="lpGearRoomBatchPanelInput" type="text" :placeholder="$t('gearroom.placeholderChoose')" readonly
-                        @click="toggleListCatDropdown"
-                        @focus="openDropdown('listCat')"
-                        @blur="closeDropdown('listCat')"
-                        @keydown.down.prevent="moveDropdown('listCat', 1)"
-                        @keydown.up.prevent="moveDropdown('listCat', -1)"
-                        @keydown.enter.prevent="confirmDropdown('listCat')"
-                        @keydown.space.prevent="toggleListCatDropdown"
-                        @keydown.escape="closeDropdown('listCat')">
+                           @click="toggleListCatDropdown"
+                           @focus="openDropdown('listCat')"
+                           @blur="closeDropdown('listCat')"
+                           @keydown.down.prevent="moveDropdown('listCat', 1)"
+                           @keydown.up.prevent="moveDropdown('listCat', -1)"
+                           @keydown.enter.prevent="confirmDropdown('listCat')"
+                           @keydown.space.prevent="toggleListCatDropdown"
+                           @keydown.escape="closeDropdown('listCat')"
+                    >
                     <ul v-if="showListCatDropdown && categoriesForSelectedList.length" ref="listCatDropdown" class="lpBrandSuggestions" role="listbox">
-                        <li v-for="(cat, index) in categoriesForSelectedList" :key="cat.id" :class="{ active: dropdownActiveIndex.listCat === index }" role="option" :aria-selected="dropdownActiveIndex.listCat === index" @mousedown.prevent="selectListCat(cat)">{{ cat.name || $t('gearroom.unnamed') }}</li>
+                        <li v-for="(cat, index) in categoriesForSelectedList" :key="cat.id" :class="{ active: dropdownActiveIndex.listCat === index }" role="option" :aria-selected="dropdownActiveIndex.listCat === index" @mousedown.prevent="selectListCat(cat)">
+                            {{ cat.name || $t('gearroom.unnamed') }}
+                        </li>
                     </ul>
                 </div>
             </div>
-            <button class="lpGearRoomBatchApply" :disabled="!batchListId || (batchListId !== '__new__' && !batchCategoryId)" @click="applyAddToList">{{ $t('gearroom.apply') }}</button>
+            <button class="lpGearRoomBatchApply" :disabled="!batchListId || (batchListId !== '__new__' && !batchCategoryId)" @click="applyAddToList">
+                {{ $t('gearroom.apply') }}
+            </button>
         </div>
 
         <!-- Action buttons -->
         <div class="lpGearRoomBatchActions">
             <span class="lpGearRoomBatchCount">{{ $t('gearroom.batchCount', { count: selected.length }) }}</span>
             <span class="lpGearRoomBatchSep">|</span>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">{{ $t('gearroom.batchMerge') }}</button>
-            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">{{ compareOpen ? $t('gearroom.batchCloseCompare') : $t('gearroom.batchCompare') }}</button>
-            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">{{ $t('gearroom.batchSwapNameDesc') }}</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">{{ $t('gearroom.batchSetTypeButton') }}</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('brand')">{{ $t('gearroom.batchSetBrandButton') }}</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">{{ $t('gearroom.batchAddTagButton') }}</button>
-            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">{{ $t('gearroom.batchAddToListButton') }}</button>
-            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">{{ $t('gearroom.batchDelete') }}</button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="togglePanel('merge')">
+                {{ $t('gearroom.batchMerge') }}
+            </button>
+            <button v-if="selected.length >= 2" class="lpGearRoomBatchAction" @click="$emit('toggle-compare')">
+                {{ compareOpen ? $t('gearroom.batchCloseCompare') : $t('gearroom.batchCompare') }}
+            </button>
+            <button class="lpGearRoomBatchAction" @click="$emit('batch-swap-name-desc')">
+                {{ $t('gearroom.batchSwapNameDesc') }}
+            </button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('category')">
+                {{ $t('gearroom.batchSetTypeButton') }}
+            </button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('brand')">
+                {{ $t('gearroom.batchSetBrandButton') }}
+            </button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('tag')">
+                {{ $t('gearroom.batchAddTagButton') }}
+            </button>
+            <button class="lpGearRoomBatchAction" @click="togglePanel('addToList')">
+                {{ $t('gearroom.batchAddToListButton') }}
+            </button>
+            <button class="lpGearRoomBatchAction danger" @click="$emit('batch-delete')">
+                {{ $t('gearroom.batchDelete') }}
+            </button>
             <span class="lpGearRoomBatchSep">|</span>
-            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">{{ $t('gearroom.batchCancel') }}</button>
+            <button class="lpGearRoomBatchCancel" @click="$emit('update:selected', [])">
+                {{ $t('gearroom.batchCancel') }}
+            </button>
         </div>
     </div>
 </template>
@@ -228,35 +291,35 @@ export default {
     computed: {
         existingBrands() {
             const brands = new Set();
-            (this.allItems || []).forEach(item => { if (item.brand) brands.add(item.brand); });
+            (this.allItems || []).forEach((item) => { if (item.brand) brands.add(item.brand); });
             return [...brands].sort((a, b) => a.localeCompare(b));
         },
         filteredTypes() {
             const q = (this.batchCategory || '').toLowerCase();
             return q
-                ? this.availableCategories.filter(c => c.toLowerCase().includes(q))
+                ? this.availableCategories.filter((c) => c.toLowerCase().includes(q))
                 : this.availableCategories;
         },
         filteredBrands() {
             const q = (this.batchBrand || '').toLowerCase();
-            return q ? this.existingBrands.filter(b => b.toLowerCase().includes(q)) : this.existingBrands;
+            return q ? this.existingBrands.filter((b) => b.toLowerCase().includes(q)) : this.existingBrands;
         },
         existingTags() {
             const tags = new Set();
-            (this.allItems || []).forEach(item => { (item.tags || []).forEach(t => tags.add(t)); });
+            (this.allItems || []).forEach((item) => { (item.tags || []).forEach((t) => tags.add(t)); });
             return [...tags].sort((a, b) => a.localeCompare(b));
         },
         filteredTags() {
             const q = (this.batchTag || '').toLowerCase();
-            return q ? this.existingTags.filter(t => t.toLowerCase().includes(q)) : this.existingTags;
+            return q ? this.existingTags.filter((t) => t.toLowerCase().includes(q)) : this.existingTags;
         },
         filteredLists() {
             const q = (this.batchListName || '').toLowerCase();
-            return q ? this.lists.filter(l => l.name.toLowerCase().includes(q)) : this.lists;
+            return q ? this.lists.filter((l) => l.name.toLowerCase().includes(q)) : this.lists;
         },
         showCreateList() {
             const q = (this.batchListName || '').trim();
-            return q && !this.lists.some(l => l.name.toLowerCase() === q.toLowerCase());
+            return q && !this.lists.some((l) => l.name.toLowerCase() === q.toLowerCase());
         },
         listDropdownOptions() {
             const options = [];
@@ -267,7 +330,7 @@ export default {
                     label: `${this.$t('gearroom.createList')} "${this.batchListName}"`,
                 });
             }
-            this.filteredLists.forEach(list => {
+            this.filteredLists.forEach((list) => {
                 options.push({
                     key: list.id,
                     type: 'list',
@@ -278,19 +341,19 @@ export default {
             return options;
         },
         selectedListName() {
-            const list = this.lists.find(l => l.id === this.batchListId);
+            const list = this.lists.find((l) => l.id === this.batchListId);
             return list ? list.name : '';
         },
         selectedCatName() {
-            const cat = this.categoriesForSelectedList.find(c => c.id === this.batchCategoryId);
+            const cat = this.categoriesForSelectedList.find((c) => c.id === this.batchCategoryId);
             return cat ? (cat.name || this.$t('gearroom.unnamed')) : '';
         },
         categoriesForSelectedList() {
             if (!this.batchListId) return [];
-            const list = this.lists.find(l => l.id === this.batchListId);
+            const list = this.lists.find((l) => l.id === this.batchListId);
             if (!list) return [];
             return (list.categoryIds || [])
-                .map(id => this.getCategoryById(id))
+                .map((id) => this.getCategoryById(id))
                 .filter(Boolean);
         },
     },
@@ -315,7 +378,9 @@ export default {
         togglePanel(panel) {
             this.activeBatchPanel = this.activeBatchPanel === panel ? null : panel;
             if (this.activeBatchPanel) {
-                const refMap = { category: 'inputCategory', brand: 'inputBrand', tag: 'inputTag', addToList: 'inputList' };
+                const refMap = {
+                    category: 'inputCategory', brand: 'inputBrand', tag: 'inputTag', addToList: 'inputList',
+                };
                 const ref = refMap[panel];
                 if (ref) this.$nextTick(() => { this.$refs[ref] && this.$refs[ref].focus(); });
             }
@@ -397,7 +462,7 @@ export default {
             if (kind === 'listCat') this.selectListCat(option);
         },
         getItemById(id) {
-            return this.allItems.find(i => i.id === id) || {};
+            return this.allItems.find((i) => i.id === id) || {};
         },
         getCategoryById(id) {
             if (this.library && this.library.getCategoryById) {

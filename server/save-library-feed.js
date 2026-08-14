@@ -2,8 +2,6 @@
 // Visibility-change detection logic for saveLibrary.
 // Extracted so it can be unit-tested without an HTTP context.
 
-'use strict';
-
 const { emitFeedEvent } = require('./feed-events.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 

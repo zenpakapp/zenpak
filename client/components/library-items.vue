@@ -6,20 +6,26 @@
     <section class="libraryContainer">
         <div v-if="showTitle" class="libraryHeader">
             <h2>{{ $t('library.itemsTitle') }}</h2>
-            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">{{ $t('library.newGearButton') }}</button>
+            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">
+                {{ $t('library.newGearButton') }}
+            </button>
         </div>
         <div class="lpLibraryFilters">
             <div class="lpLibraryFilterSelectWrap">
                 <select v-model="filterCategory" class="lpLibraryFilterSelect">
-                    <option value="">{{ $t('library.allCategories') }}</option>
-                    <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                    <option value="">
+                        {{ $t('library.allCategories') }}
+                    </option>
+                    <option v-for="cat in gearCategories" :key="cat" :value="cat">
+                        {{ cat }}
+                    </option>
                 </select>
             </div>
             <div class="librarySearchWrap librarySearchInline">
                 <input
                     ref="searchInput"
-                    class="librarySearch"
                     v-model="searchText"
+                    class="librarySearch"
                     type="text"
                     :placeholder="$t('library.searchPlaceholder')"
                 >
@@ -46,7 +52,7 @@
                 @keydown.enter.prevent="addFilterTag"
                 @focus="tagInputFocused = true"
                 @blur="tagInputFocused = false"
-            />
+            >
         </div>
         <ul
             ref="library"
@@ -75,7 +81,9 @@
                     {{ item.description }}
                 </span>
                 <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
-                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">⋯</button>
+                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">
+                    ⋯
+                </button>
                 <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
             </li>
             <li v-if="virtualWindow.bottom" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.bottom}px` }" aria-hidden="true" />
@@ -161,7 +169,7 @@ export default {
         },
         categories() {
             if (!this.list) return [];
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id));
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id));
         },
     },
     watch: {
@@ -224,7 +232,9 @@ export default {
             });
         },
         openDetail(item, startEditing = false) {
-            openDialog('itemDetail', { item, categoryItem: null, category: null, startEditing });
+            openDialog('itemDetail', {
+                item, categoryItem: null, category: null, startEditing,
+            });
         },
         addFilterTag() {
             const tag = this.tagInput.trim().toLowerCase();
@@ -234,7 +244,7 @@ export default {
             this.tagInput = '';
         },
         removeFilterTag(tag) {
-            this.filterTags = this.filterTags.filter(t => t !== tag);
+            this.filterTags = this.filterTags.filter((t) => t !== tag);
         },
         clearSearch() {
             this.searchText = '';

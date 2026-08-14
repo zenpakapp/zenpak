@@ -1,5 +1,3 @@
-'use strict';
-
 const db = require('../server/db.js');
 const {
     buildPublicListProjection,
@@ -35,7 +33,7 @@ async function upsertLegacyStats(externalId, insights) {
             $set: { updatedAt: new Date() },
             $setOnInsert: { externalId, createdAt: new Date() },
         },
-        { upsert: true }
+        { upsert: true },
     );
 }
 
@@ -87,7 +85,7 @@ async function run() {
             await db.publicLists.updateOne(
                 { externalId: list.externalId },
                 { $set: projection },
-                { upsert: true }
+                { upsert: true },
             );
             activeExternalIds.push(list.externalId);
             listsProjected++;

@@ -1,9 +1,11 @@
 // server/community-endpoints.js
 const express = require('express');
 const { ObjectId } = require('mongodb');
+
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
+
 const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
@@ -25,7 +27,7 @@ const copyRateMap = new Map();
 function checkCopyRateLimit(key) {
     const now = Date.now();
     const windowStart = now - COPY_RATE_WINDOW_MS;
-    const timestamps = (copyRateMap.get(key) || []).filter(t => t > windowStart);
+    const timestamps = (copyRateMap.get(key) || []).filter((t) => t > windowStart);
     if (timestamps.length >= COPY_RATE_LIMIT) {
         copyRateMap.set(key, timestamps);
         const retryAfterMs = COPY_RATE_WINDOW_MS - (now - timestamps[0]);
@@ -244,9 +246,9 @@ router.get('/discover', async (req, res) => {
         let projections = await db.publicLists.findSorted(
             query,
             sort === 'popular' ? { viewCount: -1, updatedAt: -1 } : { updatedAt: -1 },
-            200
+            200,
         );
-        projections = projections.filter(list => projectionMatchesFilters(list, filters));
+        projections = projections.filter((list) => projectionMatchesFilters(list, filters));
 
         const page = projections.slice(0, PAGE_SIZE).map(projectionToDiscoverItem);
         const nextCursor = sort === 'recent' && page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
@@ -272,7 +274,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                 return res.status(404).json({ message: 'List not found' });
             }
 
-            const sourceList = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const sourceList = (owner.library.lists || []).find((l) => l.externalId === externalId);
             const isAlwaysCopyable = sourceList?.visibility === 'discoverable' || sourceList?.visibility === 'indexable';
             const isOptInCopyable = sourceList?.visibility === 'shareable' && sourceList?.copyable === true;
             if (!sourceList || (!isAlwaysCopyable && !isOptInCopyable)) {
@@ -322,11 +324,11 @@ router.post('/copy-list/:externalId', (req, res) => {
             // Return list data (categories + items) for client-side dedup import
             const categoryIds = sourceList.categoryIds || [];
             const categories = (owner.library.categories || [])
-                .filter(c => categoryIds.includes(c.id) || categoryIds.map(String).includes(String(c.id)))
-                .map(c => ({
+                .filter((c) => categoryIds.includes(c.id) || categoryIds.map(String).includes(String(c.id)))
+                .map((c) => ({
                     name: c.name,
-                    categoryItems: (c.categoryItems || []).map(ci => {
-                        const item = (owner.library.items || []).find(i => String(i.id) === String(ci.itemId));
+                    categoryItems: (c.categoryItems || []).map((ci) => {
+                        const item = (owner.library.items || []).find((i) => String(i.id) === String(ci.itemId));
                         if (!item) return null;
                         return {
                             name: item.name || '',
@@ -385,11 +387,11 @@ router.get('/insights', (req, res) => {
 
         try {
             const publicLists = ((user.library && user.library.lists) || []).filter(
-                l => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable')
+                (l) => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable'),
             );
 
-            const statsDocs = await db.publicListStats.findMany({ externalId: { $in: publicLists.map(l => l.externalId) } });
-            const statsByExternalId = Object.fromEntries(statsDocs.map(s => [s.externalId, s]));
+            const statsDocs = await db.publicListStats.findMany({ externalId: { $in: publicLists.map((l) => l.externalId) } });
+            const statsByExternalId = Object.fromEntries(statsDocs.map((s) => [s.externalId, s]));
 
             const listsData = publicLists.map((l) => {
                 const stats = statsByExternalId[l.externalId] || {};
@@ -441,41 +443,47 @@ router.get('/users', async (req, res) => {
             // Default: discoverable/indexable profiles sorted by most recent public list
             pipeline = [
                 { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] } } },
-                { $addFields: {
-                    _latestList: {
-                        $max: {
-                            $map: {
-                                input: { $filter: {
-                                    input: { $ifNull: ['$library.lists', []] },
+                {
+                    $addFields: {
+                        _latestList: {
+                            $max: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ['$library.lists', []] },
+                                            as: 'l',
+                                            cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
+                                        },
+                                    },
                                     as: 'l',
-                                    cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
-                                } },
-                                as: 'l',
-                                in: '$$l.dateUpdated',
+                                    in: '$$l.dateUpdated',
+                                },
                             },
                         },
                     },
-                } },
+                },
                 { $sort: { _latestList: -1 } },
                 { $limit: PAGE_SIZE },
                 { $project: PROJECT },
             ];
         } else {
             pipeline = [
-                { $match: {
-                    $or: [
-                        { username: { $regex: q, $options: 'i' } },
-                        { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
-                    ],
-                    'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
-                } },
+                {
+                    $match: {
+                        $or: [
+                            { username: { $regex: q, $options: 'i' } },
+                            { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
+                        ],
+                        'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
+                    },
+                },
                 { $limit: PAGE_SIZE },
                 { $project: PROJECT },
             ];
         }
 
         const users = await db.users.aggregate(pipeline);
-        const normalized = users.map(u => ({
+        const normalized = users.map((u) => ({
             ...u,
             tier: normalizeTier(u.plan),
             plan: undefined,

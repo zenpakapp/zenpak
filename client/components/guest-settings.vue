@@ -82,7 +82,7 @@
 </style>
 
 <template>
-    <span class="guestSettings" v-click-outside="close">
+    <span v-click-outside="close" class="guestSettings">
         <button class="guestSettingsBtn" :title="$t('acct.defaultUnits')" @click="toggle">{{ library.itemUnit }} ▾</button>
         <div v-if="open" class="guestSettingsPopover">
             <div class="guestSettingsRow">

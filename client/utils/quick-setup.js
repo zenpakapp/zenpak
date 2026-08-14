@@ -29,7 +29,7 @@ export function applyQuickSetup(libraryData, setup) {
     if (settings.displayName) data.publicProfile.displayName = settings.displayName;
 
     if (Array.isArray(data.lists)) {
-        const firstList = data.lists.find(list => list.id === data.defaultListId) || data.lists[0];
+        const firstList = data.lists.find((list) => list.id === data.defaultListId) || data.lists[0];
         if (firstList) firstList.name = settings.listName || firstList.name || settings.defaultListName;
     }
 

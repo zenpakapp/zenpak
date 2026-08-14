@@ -3,7 +3,7 @@ let dragulaPromise = null;
 async function loadDragula() {
     if (!dragulaPromise) {
         dragulaPromise = import(/* webpackChunkName: "vendor-dragula" */ 'dragula')
-            .then(module => module.default || module);
+            .then((module) => module.default || module);
     }
     return dragulaPromise;
 }

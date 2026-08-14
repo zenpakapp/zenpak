@@ -153,7 +153,9 @@
 
 <template>
     <section class="profileSettings">
-        <h3 class="profileSettingsSectionTitle">{{ $t('acct.defaultUnits') }}</h3>
+        <h3 class="profileSettingsSectionTitle">
+            {{ $t('acct.defaultUnits') }}
+        </h3>
         <div class="profileSettingsGrid">
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.itemWeight') }}</span>
@@ -169,7 +171,9 @@
             </div>
         </div>
 
-        <h3 class="profileSettingsSectionTitle">{{ $t('acct.publicProfile') }}</h3>
+        <h3 class="profileSettingsSectionTitle">
+            {{ $t('acct.publicProfile') }}
+        </h3>
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
@@ -184,9 +188,13 @@
                             {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
                             <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
                         </label>
-                        <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">{{ $t('acct.remove') }}</button>
+                        <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">
+                            {{ $t('acct.remove') }}
+                        </button>
                     </div>
-                    <p v-if="avatarError" class="profileSettingsAvatarError">{{ avatarError }}</p>
+                    <p v-if="avatarError" class="profileSettingsAvatarError">
+                        {{ avatarError }}
+                    </p>
                 </template>
             </div>
         </div>
@@ -210,7 +218,9 @@
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
             <lp-select :value="profile.visibility" :options="visibilityOptions" @change="update('visibility', $event)" />
-            <p v-if="visibilityHint" class="profileSettingsHint">{{ visibilityHint }}</p>
+            <p v-if="visibilityHint" class="profileSettingsHint">
+                {{ visibilityHint }}
+            </p>
         </div>
         <div class="profileSettingsActions">
             <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
@@ -261,7 +271,7 @@ export default {
             return avatarInitial(this.profile && this.profile.displayName, this.username);
         },
         unitOptions() {
-            return this.units.map(u => ({ value: u, label: u }));
+            return this.units.map((u) => ({ value: u, label: u }));
         },
         currencyOptions() {
             return [

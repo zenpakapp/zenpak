@@ -110,7 +110,9 @@ module.exports = {
             : { count: newCount, unit };
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
-    importPublicList(state, { listName, description, categories, forkedFrom, seasons, listTypes, sourceCurrencySymbol }) {
+    importPublicList(state, {
+        listName, description, categories, forkedFrom, seasons, listTypes, sourceCurrencySymbol,
+    }) {
         const list = state.library.newList();
         const sourceUsername = forkedFrom && forkedFrom.ownerUsername;
         const isExternalFork = sourceUsername && sourceUsername !== state.loggedIn;
@@ -132,7 +134,7 @@ module.exports = {
             for (const ci of (catDef.categoryItems || [])) {
                 const signature = copiedItemSignature(ci);
                 const existing = normalizeText(ci.name)
-                    ? state.library.items.find(i => copiedItemSignature(i) === signature)
+                    ? state.library.items.find((i) => copiedItemSignature(i) === signature)
                     : null;
 
                 let item;

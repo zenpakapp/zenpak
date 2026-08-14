@@ -15,7 +15,9 @@ export function useDiscover(options = {}) {
     const hasMore = ref(false);
     const sort = ref(options.sort || 'recent');
     const query = ref('');
-    const filters = ref({ season: '', type: '', minWeightKg: '', maxWeightKg: '' });
+    const filters = ref({
+        season: '', type: '', minWeightKg: '', maxWeightKg: '',
+    });
     const limit = ref(options.limit || 20);
 
     async function load(cursor = null) {
@@ -73,5 +75,7 @@ export function useDiscover(options = {}) {
         load();
     }
 
-    return { lists, loading, error, hasMore, sort, query, filters, setSort, setQuery, setFilters, load, loadMore };
+    return {
+        lists, loading, error, hasMore, sort, query, filters, setSort, setQuery, setFilters, load, loadMore,
+    };
 }

@@ -7,33 +7,41 @@
         <h1>{{ $t('community.moderationTitle') }}</h1>
 
         <form @submit.prevent="searchUsers">
-            <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')" />
+            <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')">
             <button>{{ $t('community.moderationSearchButton') }}</button>
         </form>
-        <p v-if="error" class="lp-moderation-error">{{ error }}</p>
+        <p v-if="error" class="lp-moderation-error">
+            {{ error }}
+        </p>
         <ul v-if="resultsLoaded" class="lp-moderation-search-results">
-            <li v-for="result in searchResults" @click="setUser(result)" :key="result.username">
-                {{result.username}}
+            <li v-for="result in searchResults" :key="result.username" @click="setUser(result)">
+                {{ result.username }}
             </li>
         </ul>
 
         <div v-if="userToInspect" class="lp-moderation-user-to-inspect">
-            <h2>{{userToInspect.username}}</h2>
+            <h2>{{ userToInspect.username }}</h2>
             <section>
-                <button @click="clearSession(userToInspect)">{{ $t('community.moderationClearSession') }}</button>
-                <button @click="resetPassword(userToInspect)">{{ $t('community.moderationResetPassword') }}</button>
+                <button @click="clearSession(userToInspect)">
+                    {{ $t('community.moderationClearSession') }}
+                </button>
+                <button @click="resetPassword(userToInspect)">
+                    {{ $t('community.moderationResetPassword') }}
+                </button>
                 <template v-if="newPassword">
                     <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
                 </template>
             </section>
             <section>
-                <textarea id="lp-moderation-user-library-json" v-model="editableLibrary"></textarea>
+                <textarea id="lp-moderation-user-library-json" v-model="editableLibrary" />
             </section>
         </div>
 
         <div class="lp-moderation-reports">
             <h2>{{ $t('community.moderationReports') }} ({{ reports.length }} pending)</h2>
-            <p v-if="reports.length === 0" style="color:#888">{{ $t('community.moderationNoPendingReports') }}</p>
+            <p v-if="reports.length === 0" style="color:#888">
+                {{ $t('community.moderationNoPendingReports') }}
+            </p>
             <table v-else class="lp-reports-table">
                 <thead>
                     <tr>
@@ -57,10 +65,18 @@
                         <td>{{ formatDate(r.createdAt) }}</td>
                         <td>
                             <div class="lp-report-actions">
-                                <button class="lp-btn-resolve" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
-                                <button class="lp-btn-dismiss" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
-                                <button v-if="r.targetType === 'list'" class="lp-btn-danger" @click="unpublishList(r)">Unpublish</button>
-                                <button class="lp-btn-danger" @click="banUser(r)">Ban{{ r.targetType === 'user' ? ` ${r.targetId}` : '' }}</button>
+                                <button class="lp-btn-resolve" @click="resolveReport(r, 'resolved')">
+                                    ✓ Resolve
+                                </button>
+                                <button class="lp-btn-dismiss" @click="resolveReport(r, 'dismissed')">
+                                    ✕ Dismiss
+                                </button>
+                                <button v-if="r.targetType === 'list'" class="lp-btn-danger" @click="unpublishList(r)">
+                                    Unpublish
+                                </button>
+                                <button class="lp-btn-danger" @click="banUser(r)">
+                                    Ban{{ r.targetType === 'user' ? ` ${r.targetId}` : '' }}
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -101,12 +117,12 @@ export default {
                 method: 'GET',
                 credentials: 'same-origin',
             })
-            .then((response) => {
-                this.searchResults = response.results;
-            })
-            .catch(() => {
-                this.error = 'Unable to search users.';
-            });
+                .then((response) => {
+                    this.searchResults = response.results;
+                })
+                .catch(() => {
+                    this.error = 'Unable to search users.';
+                });
         },
         setUser(user) {
             this.userToInspect = user;
@@ -115,7 +131,7 @@ export default {
         },
         clearSession(user) {
             this.error = null;
-            fetchJson(`/moderation/clear-session`, {
+            fetchJson('/moderation/clear-session', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
@@ -123,13 +139,13 @@ export default {
                 },
                 body: JSON.stringify({ username: user.username }),
             })
-            .catch(() => {
-                this.error = 'Unable to clear session.';
-            });
+                .catch(() => {
+                    this.error = 'Unable to clear session.';
+                });
         },
         resetPassword(user) {
             this.error = null;
-            fetchJson(`/moderation/reset-password`, {
+            fetchJson('/moderation/reset-password', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
@@ -137,12 +153,12 @@ export default {
                 },
                 body: JSON.stringify({ username: user.username }),
             })
-            .then((response) => {
-                this.newPassword = response.newPassword;
-            })
-            .catch(() => {
-                this.error = 'Unable to reset password.';
-            });
+                .then((response) => {
+                    this.newPassword = response.newPassword;
+                })
+                .catch(() => {
+                    this.error = 'Unable to reset password.';
+                });
         },
         async loadReports() {
             try {
@@ -158,7 +174,7 @@ export default {
                     method: 'PATCH',
                     body: JSON.stringify({ status }),
                 });
-                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
+                this.reports = this.reports.filter((r) => String(r._id) !== String(report._id));
             } catch {}
         },
         async banUser(report) {

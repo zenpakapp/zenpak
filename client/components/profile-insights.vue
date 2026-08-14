@@ -64,10 +64,16 @@
 
 <template>
     <div class="lpInsights">
-        <div class="lpInsightsTitle">{{ $t('misc.insights') }}</div>
+        <div class="lpInsightsTitle">
+            {{ $t('misc.insights') }}
+        </div>
 
-        <p v-if="loading">{{ $t('misc.loading') }}</p>
-        <p v-else-if="error" style="color: var(--color-text-muted); font-size: 13px;">{{ error }}</p>
+        <p v-if="loading">
+            {{ $t('misc.loading') }}
+        </p>
+        <p v-else-if="error" style="color: var(--color-text-muted); font-size: 13px;">
+            {{ error }}
+        </p>
         <template v-else-if="data">
             <div class="lpInsightsTotals">
                 <div class="lpInsightsStat">
@@ -100,7 +106,9 @@
                     </tr>
                 </tbody>
             </table>
-            <p v-else style="color: var(--color-text-muted); font-size: 13px;">No public lists yet.</p>
+            <p v-else style="color: var(--color-text-muted); font-size: 13px;">
+                No public lists yet.
+            </p>
         </template>
     </div>
 </template>
@@ -115,7 +123,7 @@ export default {
     },
     created() {
         fetchJson('/api/community/insights')
-            .then(d => { this.data = d; })
+            .then((d) => { this.data = d; })
             .catch(() => { this.error = 'Unable to load insights.'; })
             .finally(() => { this.loading = false; });
     },

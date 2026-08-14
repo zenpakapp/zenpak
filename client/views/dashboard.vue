@@ -100,10 +100,14 @@
                 <span v-if="verifyResendSent">{{ $t('dash.verificationEmailSent') }}</span>
                 <template v-else>
                     <span>{{ $t('dash.verifyEmailPrompt') }}</span>
-                    <button class="lpVerifyBannerBtn" @click="resendVerification">{{ $t('dash.resendEmail') }}</button>
+                    <button class="lpVerifyBannerBtn" @click="resendVerification">
+                        {{ $t('dash.resendEmail') }}
+                    </button>
                     <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
                 </template>
-                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">✕</button>
+                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">
+                    ✕
+                </button>
             </div>
 
             <div v-if="billingSuccess" class="lpBillingSuccessBanner">
@@ -115,9 +119,11 @@
             <div v-if="billingManaged" class="lpBillingSuccessBanner">
                 ✓ {{ $t('dash.billingManaged') }}
             </div>
-<div v-if="isPastDue" class="lpPastDueBanner">
+            <div v-if="isPastDue" class="lpPastDueBanner">
                 <span>⚠ {{ $t('dash.paymentFailed') }} {{ planLabel }} {{ $t('dash.plan') }}.</span>
-                <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">{{ $t('dash.fixPayment') }}</button>
+                <button class="lpButton lpButtonDanger lpButtonSmall" @click="openPortal">
+                    {{ $t('dash.fixPayment') }}
+                </button>
             </div>
 
             <list />
@@ -129,7 +135,9 @@
                 <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
                 <template v-else>
                     <p>{{ $t('dash.enjoyingApp') }}</p>
-                    <router-link to="/about" class="lpHref">{{ $t('dash.learnMore') }}</router-link>
+                    <router-link to="/about" class="lpHref">
+                        {{ $t('dash.learnMore') }}
+                    </router-link>
                 </template>
             </div>
 
@@ -173,8 +181,8 @@ import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import { planLabel as planTierLabel } from '../services/tier-labels.js';
 import themeToggle from '../components/theme-toggle.vue';
-import { registerDialogLoader, unregisterDialogLoader } from '../services/dialogs';
-import { openDialog } from '../services/dialogs';
+import { registerDialogLoader, unregisterDialogLoader, openDialog } from '../services/dialogs';
+
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 import { clearSpeedbumpLoader, setSpeedbumpLoader } from '../services/speedbump';
 
@@ -376,8 +384,8 @@ export default {
         }
         if (this.$route && this.$route.query.billing === 'success') {
             fetch('/api/billing/me', { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingSuccess = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -390,8 +398,8 @@ export default {
         }
         if (this.$route && this.$route.query.billing === 'managed') {
             fetch('/api/billing/me', { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingManaged = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -432,7 +440,7 @@ export default {
             }
         },
         async loadDialog(componentName, loader) {
-            if (this.loadedDialogs.some(dialog => dialog.name === componentName)) return;
+            if (this.loadedDialogs.some((dialog) => dialog.name === componentName)) return;
             const module = await loader();
             this.loadedDialogs.push({ name: componentName, component: markRaw(module.default || module) });
             await this.$nextTick();
@@ -519,7 +527,8 @@ export default {
         async openPortal() {
             try {
                 const res = await fetch('/api/billing/portal-session', {
-                    method: 'POST', credentials: 'include',
+                    method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                 });
                 const data = await res.json();

@@ -29,7 +29,9 @@
                         class="itemMetaBrandSuggestion"
                         :class="{ active: i === brandActiveIndex }"
                         @mousedown.prevent="brand = b; brandDropdownOpen = false; brandActiveIndex = -1"
-                    >{{ b }}</li>
+                    >
+                        {{ b }}
+                    </li>
                 </ul>
             </div>
 
@@ -37,8 +39,12 @@
                 <span class="itemMetaLabel">{{ $t('item.metaLabelType') }}</span>
                 <div class="itemMetaSelectWrap">
                     <select id="itemMetaCategory" v-model="category" class="itemMetaSelect">
-                        <option value="">{{ $t('item.metaSelectNone') }}</option>
-                        <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                        <option value="">
+                            {{ $t('item.metaSelectNone') }}
+                        </option>
+                        <option v-for="cat in gearCategories" :key="cat" :value="cat">
+                            {{ cat }}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -53,7 +59,9 @@
                 </div>
                 <div class="itemMetaTagInput">
                     <input v-model="tagInput" type="text" class="itemMetaInput" :placeholder="$t('item.metaTagPlaceholder')" @keydown.enter.prevent="addTag">
-                    <button type="button" @click="addTag">{{ $t('item.metaButtonAdd') }}</button>
+                    <button type="button" @click="addTag">
+                        {{ $t('item.metaButtonAdd') }}
+                    </button>
                 </div>
             </div>
 
@@ -103,7 +111,7 @@ export default {
         brandSuggestionsFiltered() {
             if (!this.brand) return this.knownBrands;
             const q = this.brand.toLowerCase();
-            return this.knownBrands.filter(b => b.toLowerCase().includes(q));
+            return this.knownBrands.filter((b) => b.toLowerCase().includes(q));
         },
     },
     mounted() {

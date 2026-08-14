@@ -4,19 +4,23 @@
 
 <template>
     <teleport to="head">
-        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
     </teleport>
     <main class="lpPublicList">
-        <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex" />
+        <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex">
 
-        <p v-if="isLoading">{{ $t('public.loading') }}</p>
+        <p v-if="isLoading">
+            {{ $t('public.loading') }}
+        </p>
         <div v-else-if="error" class="lpPublicUnavailable">
             <section class="lpPublicUnavailableCard">
-                <div class="lpPublicUnavailableIcon">×</div>
+                <div class="lpPublicUnavailableIcon">
+                    ×
+                </div>
                 <h1>{{ unavailableTitle }}</h1>
                 <p>{{ unavailableMessage }}</p>
                 <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicUnavailablePrimary">
@@ -44,13 +48,19 @@
                     </span>
                     <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
                 </span>
-                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">{{ $t('public.openApp') }}</router-link>
+                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">
+                    {{ $t('public.openApp') }}
+                </router-link>
             </nav>
 
-            <h1 class="lpPublicListTitle">{{ list.name }}</h1>
+            <h1 class="lpPublicListTitle">
+                {{ list.name }}
+            </h1>
             <p v-if="username" class="lpPublicListAuthor">
                 {{ $t('public.byAuthor') }}
-                <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">{{ authorName }}</router-link>
+                <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">
+                    {{ authorName }}
+                </router-link>
                 <span v-if="authorTier === 'guide'" class="lpPublicListBadge">{{ tierLabel('guide') }}</span>
                 <span v-else-if="authorTier === 'trail'" class="lpPublicListBadge">{{ tierLabel('trail') }}</span>
             </p>
@@ -80,19 +90,33 @@
                 <router-link v-else-if="!isLoggedIn && isCopyable" :to="`/welcome?redirect=/p/${list.externalId}`" class="lpCopyListSignIn">
                     {{ $t('public.signInToCopy') }}
                 </router-link>
-                <p v-if="copyError" class="lpCopyListError">{{ formatCopyError(copyError) }}</p>
-                <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">{{ $t('public.printSaveAsPdf') }}</button>
+                <p v-if="copyError" class="lpCopyListError">
+                    {{ formatCopyError(copyError) }}
+                </p>
+                <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">
+                    {{ $t('public.printSaveAsPdf') }}
+                </button>
                 <a v-if="canDownloadCsv" class="lpPublicCsvLink noprint" :href="csvUrl" target="_blank" rel="noopener noreferrer">
                     {{ $t('share.exportToCsv') }}
                 </a>
                 <select class="lpPublicUnitSelect noprint" :value="totalUnit" @change="setDisplayUnit($event.target.value)">
-                    <option value="oz">oz</option>
-                    <option value="g">g</option>
-                    <option value="kg">kg</option>
-                    <option value="lb">lb</option>
+                    <option value="oz">
+                        oz
+                    </option>
+                    <option value="g">
+                        g
+                    </option>
+                    <option value="kg">
+                        kg
+                    </option>
+                    <option value="lb">
+                        lb
+                    </option>
                 </select>
             </div>
-            <p v-if="list.summary || list.description" class="lpPublicListSummary">{{ list.summary || list.description }}</p>
+            <p v-if="list.summary || list.description" class="lpPublicListSummary">
+                {{ list.summary || list.description }}
+            </p>
 
             <!-- Chart + tableau catégories -->
             <div v-show="chartCategories.length" class="lpPublicChart">
@@ -101,7 +125,9 @@
                     <thead>
                         <tr>
                             <th>{{ $t('public.category') }}</th>
-                            <th v-if="publicFields.price">{{ $t('public.price') }}</th>
+                            <th v-if="publicFields.price">
+                                {{ $t('public.price') }}
+                            </th>
                             <th>{{ $t('public.weight') }}</th>
                         </tr>
                     </thead>
@@ -111,24 +137,28 @@
                                 <span class="lpPublicChartSwatch" :style="{ background: cat.color }" />
                                 {{ cat.name }}
                             </td>
-                            <td v-if="publicFields.price">{{ currencySymbol }}{{ formatPrice(cat.subtotalPrice) }}</td>
+                            <td v-if="publicFields.price">
+                                {{ currencySymbol }}{{ formatPrice(cat.subtotalPrice) }}
+                            </td>
                             <td><strong>{{ displayWeight(cat.subtotalWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td>{{ $t('public.total') }}</td>
-                            <td v-if="publicFields.price">{{ currencySymbol }}{{ formatPrice(list.totalPrice) }}</td>
+                            <td v-if="publicFields.price">
+                                {{ currencySymbol }}{{ formatPrice(list.totalPrice) }}
+                            </td>
                             <td><strong>{{ displayWeight(list.totalWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr v-if="list.totalWornWeight">
                             <td>{{ $t('public.worn') }}</td>
-                            <td v-if="publicFields.price"></td>
+                            <td v-if="publicFields.price" />
                             <td><strong>{{ displayWeight(list.totalWornWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                         <tr>
                             <td>{{ $t('public.baseWeight') }}</td>
-                            <td v-if="publicFields.price"></td>
+                            <td v-if="publicFields.price" />
                             <td><strong>{{ displayWeight(list.totalBaseWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                     </tfoot>
@@ -136,7 +166,9 @@
             </div>
 
             <aside v-if="affiliateDisclosure || creatorCodes.length" class="lpPublicDisclosure">
-                <p v-if="affiliateDisclosure">{{ affiliateDisclosure }}</p>
+                <p v-if="affiliateDisclosure">
+                    {{ affiliateDisclosure }}
+                </p>
                 <div v-if="creatorCodes.length" class="lpPublicCreatorCodes">
                     <strong>{{ $t('public.creatorCodes') }}</strong>
                     <ul>
@@ -167,7 +199,7 @@
                         class="lpPublicListItem"
                         :class="{ 'lpPublicListItemWithPrice': publicFields.price, 'lpPublicListItemOptional': isOptionalItem(item) }"
                     >
-                        <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name" />
+                        <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name">
                         <div v-else class="lpPublicListItemImagePlaceholder" />
                         <div class="lpPublicListItemBody">
                             <div><span class="lpPublicListItemName">{{ item.name }}</span><span v-if="isOptionalItem(item)" class="lpPublicListItemBadge">{{ $t('public.option') }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span></div>
@@ -185,17 +217,20 @@
             </section>
         </template>
         <footer class="lpPublicMadeWith">
-            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'">Made with ❤️ ZenPak</router-link>
+            <router-link :to="$store.state.loggedIn ? '/' : '/welcome'">
+                Made with ❤️ ZenPak
+            </router-link>
         </footer>
     </main>
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { tierLabel } from '../services/tier-labels.js';
 import { useTheme } from '../composables/useTheme';
-import { useRouter } from 'vue-router';
 import { useBackNav } from '../composables/useBackNav';
+
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
 
@@ -204,7 +239,9 @@ let chartModulePromise = null;
 async function loadChart() {
     if (!chartModulePromise) {
         chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
-            .then(({ Chart, DoughnutController, ArcElement, Tooltip }) => {
+            .then(({
+                Chart, DoughnutController, ArcElement, Tooltip,
+            }) => {
                 Chart.register(DoughnutController, ArcElement, Tooltip);
                 return Chart;
             });
@@ -231,7 +268,9 @@ export default {
             totalUnit: 'oz',
             itemUnit: 'oz',
             currencySymbol: '$',
-            publicFields: { price: false, links: false, images: false, downloadable: false },
+            publicFields: {
+                price: false, links: false, images: false, downloadable: false,
+            },
             categories: [],
             affiliateDisclosure: null,
             creatorCodes: [],
@@ -304,13 +343,6 @@ export default {
             }));
         },
     },
-    mounted() {
-        if (this.chartCategories.length) {
-            this.$nextTick(this.renderChart);
-        }
-        this._themeObserver = new MutationObserver(() => this.renderChart());
-        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    },
     watch: {
         categories() {
             this.$nextTick(() => {
@@ -319,6 +351,13 @@ export default {
                 });
             });
         },
+    },
+    mounted() {
+        if (this.chartCategories.length) {
+            this.$nextTick(this.renderChart);
+        }
+        this._themeObserver = new MutationObserver(() => this.renderChart());
+        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     beforeUnmount() {
         if (this._themeObserver) this._themeObserver.disconnect();
@@ -336,7 +375,9 @@ export default {
                 this.totalUnit = localStorage.getItem('lpGuestUnit') || payload.totalUnit || 'oz';
                 this.itemUnit = payload.itemUnit || 'oz';
                 this.currencySymbol = payload.currencySymbol || '$';
-                this.publicFields = payload.publicFields || { price: false, links: false, images: false, downloadable: false };
+                this.publicFields = payload.publicFields || {
+                    price: false, links: false, images: false, downloadable: false,
+                };
                 this.categories = payload.categories || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
                 this.creatorCodes = payload.creatorCodes || [];

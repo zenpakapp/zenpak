@@ -6,7 +6,7 @@ const dialogOpenerWaiters = {};
 export function registerDialogOpener(name, opener) {
     dialogOpeners[name] = opener;
     if (dialogOpenerWaiters[name]) {
-        dialogOpenerWaiters[name].forEach(resolve => resolve(opener));
+        dialogOpenerWaiters[name].forEach((resolve) => resolve(opener));
         delete dialogOpenerWaiters[name];
     }
 }
@@ -49,7 +49,7 @@ function waitForDialogOpener(name) {
         setTimeout(() => {
             const waiters = dialogOpenerWaiters[name];
             if (!waiters) return;
-            dialogOpenerWaiters[name] = waiters.filter(waiter => waiter !== resolve);
+            dialogOpenerWaiters[name] = waiters.filter((waiter) => waiter !== resolve);
             if (!dialogOpenerWaiters[name].length) {
                 delete dialogOpenerWaiters[name];
             }

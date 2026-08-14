@@ -83,7 +83,9 @@
 <template>
     <div class="lpAbout">
         <nav class="lpAboutNav">
-            <router-link to="/">{{ $t('misc.backToZenPak') }}</router-link>
+            <router-link to="/">
+                {{ $t('misc.backToZenPak') }}
+            </router-link>
         </nav>
         <h1>{{ $t('misc.aboutTitle') }}</h1>
         <p>{{ $t('misc.aboutDeck') }}</p>
@@ -109,14 +111,24 @@
             <li><strong>Wayfarer</strong> — {{ $t('misc.planDescWayfarer') }}</li>
         </ul>
 
-        <p class="lpAboutBuiltBy">{{ $t('misc.builtByPrefix') }} <router-link class="lpHref" to="/u/fxbenard">fxbenard</router-link>{{ $t('misc.builtBySuffix') }}</p>
+        <p class="lpAboutBuiltBy">
+            {{ $t('misc.builtByPrefix') }} <router-link class="lpHref" to="/u/fxbenard">
+                fxbenard
+            </router-link>{{ $t('misc.builtBySuffix') }}
+        </p>
 
         <div class="lpAboutActions">
             <div class="lpAboutCtaRow">
-                <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">{{ $t('misc.becomeKin') }}</button>
-                <button class="lpButton" @click="showGuidePrompt = true">{{ $t('misc.becomeWayfarer') }}</button>
+                <button class="lpButton lpButtonSecondary" @click="showTrailPrompt = true">
+                    {{ $t('misc.becomeKin') }}
+                </button>
+                <button class="lpButton" @click="showGuidePrompt = true">
+                    {{ $t('misc.becomeWayfarer') }}
+                </button>
             </div>
-            <p class="lpAboutKofiNote">{{ $t('auth.or') }} <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a> — {{ $t('misc.kofiNote') }}.</p>
+            <p class="lpAboutKofiNote">
+                {{ $t('auth.or') }} <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a> — {{ $t('misc.kofiNote') }}.
+            </p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>

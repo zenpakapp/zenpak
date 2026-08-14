@@ -11,28 +11,42 @@
             :image-key="item.image || ''"
             :image-url="item.imageUrl || ''"
             :starred="localStarred"
+            :show-add-category="true"
             @toggle-star="toggleStar"
             @close="$emit('close')"
             @view-image="viewImage"
-            :show-add-category="true"
             @click-category="$emit('start-edit')"
         />
 
         <div class="itemDetailStats">
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelWeight') }}</div>
-                <div class="itemDetailStatValue">{{ displayWeight }} {{ itemUnit }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelWeight') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ displayWeight }} {{ itemUnit }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelPrice') }}</div>
-                <div class="itemDetailStatValue">{{ item.price ? item.price.toFixed(2) : '—' }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelPrice') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ item.price ? item.price.toFixed(2) : '—' }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelQty') }}</div>
-                <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelQty') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ categoryItem ? categoryItem.qty : 1 }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelRating') }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelRating') }}
+                </div>
                 <div class="itemDetailStatValue itemDetailStarRow">
                     <span
                         v-for="n in 3"
@@ -47,7 +61,9 @@
 
         <div class="itemDetailBody">
             <div class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelDescription') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelDescription') }}
+                </div>
                 <div :class="['itemDetailSectionValue', { muted: !item.description }]">
                     {{ item.description || $t('item.viewNoDescription') }}
                 </div>
@@ -56,7 +72,9 @@
             <hr v-if="item.url" class="itemDetailDivider">
 
             <div v-if="item.url" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelLink') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelLink') }}
+                </div>
                 <a :href="item.url" target="_blank" rel="noopener" class="itemDetailLink">
                     {{ $t('item.viewLinkText') }}
                 </a>
@@ -65,7 +83,9 @@
             <hr v-if="item.tags && item.tags.length" class="itemDetailDivider">
 
             <div v-if="item.tags && item.tags.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelTags') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelTags') }}
+                </div>
                 <div class="itemDetailTags">
                     <span v-for="tag in item.tags" :key="tag" class="itemDetailTag">{{ tag }}</span>
                 </div>
@@ -74,7 +94,9 @@
             <hr v-if="itemUsedInLists.length" class="itemDetailDivider">
 
             <div v-if="itemUsedInLists.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelUsedIn') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelUsedIn') }}
+                </div>
                 <div class="itemDetailUsedInLists">
                     <button
                         v-for="list in itemUsedInLists"
@@ -113,6 +135,7 @@ import { openSpeedbump } from '../services/speedbump';
 import { openDialog } from '../services/dialogs';
 
 const weightUtils = require('../utils/weight.js');
+
 const ItemAddToList = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-add-to-list" */ './item-add-to-list.vue'));
 
 export default {
@@ -129,14 +152,6 @@ export default {
             localStarred: false,
             localCategoryStar: 0,
         };
-    },
-    created() {
-        this.localStarred = !!this.item?.starred;
-        this.localCategoryStar = this.categoryItem?.star || 0;
-    },
-    watch: {
-        'item.starred'(val) { this.localStarred = !!val; },
-        'categoryItem.star'(val) { this.localCategoryStar = val || 0; },
     },
     computed: {
         thumbnailImage() {
@@ -155,13 +170,19 @@ export default {
         itemUsedInLists() {
             const library = this.$store.state.library;
             if (!library || !this.item) return [];
-            return library.lists.filter(list =>
-                list.categoryIds.some(catId => {
-                    const cat = library.getCategoryById(catId);
-                    return cat && cat.categoryItems.some(ci => ci.itemId === this.item.id);
-                })
-            );
+            return library.lists.filter((list) => list.categoryIds.some((catId) => {
+                const cat = library.getCategoryById(catId);
+                return cat && cat.categoryItems.some((ci) => ci.itemId === this.item.id);
+            }));
         },
+    },
+    watch: {
+        'item.starred': function (val) { this.localStarred = !!val; },
+        'categoryItem.star': function (val) { this.localCategoryStar = val || 0; },
+    },
+    created() {
+        this.localStarred = !!this.item?.starred;
+        this.localCategoryStar = this.categoryItem?.star || 0;
     },
     methods: {
         toggleStar() {

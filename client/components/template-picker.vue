@@ -193,8 +193,12 @@
     <teleport to="body">
         <div class="lpTemplatePicker">
             <div class="lpTemplatePickerModal">
-                <p class="lpTemplatePickerTitle">{{ $t('library.templatePickerTitle') }}</p>
-                <p class="lpTemplatePickerSubtitle">{{ $t('library.templatePickerSubtitle') }}</p>
+                <p class="lpTemplatePickerTitle">
+                    {{ $t('library.templatePickerTitle') }}
+                </p>
+                <p class="lpTemplatePickerSubtitle">
+                    {{ $t('library.templatePickerSubtitle') }}
+                </p>
                 <div class="lpTemplatePickerSetup">
                     <div class="lpTemplatePickerSetupCard">
                         <div class="lpTemplatePickerField">
@@ -206,12 +210,18 @@
                         <div class="lpTemplatePickerField">
                             <label for="template-display-name">{{ $t('library.templatePickerDisplayName') }}</label>
                             <input id="template-display-name" v-model.trim="setup.displayName" type="text" :placeholder="$t('library.templatePickerDisplayNamePlaceholder')">
-                            <p class="lpTemplatePickerHint">{{ $t('library.templatePickerDisplayNameHint') }}</p>
-                            <p v-if="displayNameError" class="lpTemplatePickerError">{{ displayNameError }}</p>
+                            <p class="lpTemplatePickerHint">
+                                {{ $t('library.templatePickerDisplayNameHint') }}
+                            </p>
+                            <p v-if="displayNameError" class="lpTemplatePickerError">
+                                {{ displayNameError }}
+                            </p>
                         </div>
                     </div>
                     <div class="lpTemplatePickerSetupCard">
-                        <p class="lpTemplatePickerSetupTitle">{{ $t('library.templatePickerSettingsSection') }}</p>
+                        <p class="lpTemplatePickerSetupTitle">
+                            {{ $t('library.templatePickerSettingsSection') }}
+                        </p>
                         <div class="lpTemplatePickerSettingsGrid">
                             <div class="lpTemplatePickerField">
                                 <label>{{ $t('library.templatePickerUnits') }}</label>
@@ -246,21 +256,35 @@
                         </div>
                     </div>
                 </div>
-                <p class="lpTemplatePickerSectionTitle">{{ $t('library.templatePickerStartWith') }}</p>
+                <p class="lpTemplatePickerSectionTitle">
+                    {{ $t('library.templatePickerStartWith') }}
+                </p>
                 <div class="lpTemplatePickerCards">
                     <div class="lpTemplatePickerCard lpTemplatePickerCardBlank">
                         <div class="lpTemplatePickerCardBody">
-                            <p class="lpTemplatePickerCardName">{{ $t('library.templatePickerBlankTitle') }}</p>
-                            <p class="lpTemplatePickerCardDesc">{{ $t('library.templatePickerBlankDesc') }}</p>
+                            <p class="lpTemplatePickerCardName">
+                                {{ $t('library.templatePickerBlankTitle') }}
+                            </p>
+                            <p class="lpTemplatePickerCardDesc">
+                                {{ $t('library.templatePickerBlankDesc') }}
+                            </p>
                         </div>
-                        <button class="lpButton" @click="onDismiss">{{ $t('library.templatePickerBlankButton') }}</button>
+                        <button class="lpButton" @click="onDismiss">
+                            {{ $t('library.templatePickerBlankButton') }}
+                        </button>
                     </div>
                     <div v-for="template in templates" :key="template.id" class="lpTemplatePickerCard">
                         <div class="lpTemplatePickerCardBody">
-                            <p class="lpTemplatePickerCardName">{{ templateName(template) }}</p>
-                            <p class="lpTemplatePickerCardDesc">{{ templateDescription(template) }}</p>
+                            <p class="lpTemplatePickerCardName">
+                                {{ templateName(template) }}
+                            </p>
+                            <p class="lpTemplatePickerCardDesc">
+                                {{ templateDescription(template) }}
+                            </p>
                         </div>
-                        <button class="lpButton" @click="onSelect(template)">{{ $t('library.templatePickerSelectButton') }}</button>
+                        <button class="lpButton" @click="onSelect(template)">
+                            {{ $t('library.templatePickerSelectButton') }}
+                        </button>
                     </div>
                 </div>
             </div>

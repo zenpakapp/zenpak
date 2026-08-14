@@ -25,7 +25,8 @@ function parseTextList(input) {
         if (line.startsWith('*')) {
             const content = line.slice(1).trim();
             const sepIdx = content.lastIndexOf(' - ');
-            let name, url, desc;
+            let name; let url; let
+                desc;
 
             if (sepIdx > -1) {
                 const left = content.slice(0, sepIdx).trim();

@@ -20,7 +20,9 @@
                 class="brandSuggestion"
                 :class="{ active: i === activeIndex }"
                 @mousedown.prevent="selectByClick(brand)"
-            >{{ brand }}</li>
+            >
+                {{ brand }}
+            </li>
         </ul>
     </div>
 </template>
@@ -42,13 +44,13 @@ export default {
         knownBrands() {
             const library = this.$store.state.library;
             if (!library || !library.items) return [];
-            const brands = new Set(library.items.map(i => i.brand).filter(Boolean));
+            const brands = new Set(library.items.map((i) => i.brand).filter(Boolean));
             return [...brands].sort();
         },
         suggestionsFiltered() {
             if (!this.modelValue) return this.knownBrands;
             const q = this.modelValue.toLowerCase();
-            return this.knownBrands.filter(b => b.toLowerCase().includes(q));
+            return this.knownBrands.filter((b) => b.toLowerCase().includes(q));
         },
     },
     methods: {

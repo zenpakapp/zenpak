@@ -1,5 +1,6 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
+
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
@@ -14,7 +15,7 @@ router.get('/', (req, res) => {
             // tri par date desc, max 50
             notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             const page = notes.slice(0, 50);
-            const unreadCount = page.filter(n => !n.read).length;
+            const unreadCount = page.filter((n) => !n.read).length;
             const prefs = user.notificationPrefs || { follow: true, copy: true };
             return res.json({ notifications: page, unreadCount, prefs });
         } catch (err) {

@@ -1,5 +1,6 @@
 const express = require('express');
 const config = require('config');
+
 const router = express.Router();
 const { sendMail } = require('./email-provider.js');
 

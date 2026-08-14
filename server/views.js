@@ -6,7 +6,7 @@ const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es'];
 const serverLocales = {};
 SUPPORTED_LOCALES.forEach((lang) => {
     serverLocales[lang] = JSON.parse(
-        fs.readFileSync(path.join(__dirname, `locales/${lang}.json`), 'utf8')
+        fs.readFileSync(path.join(__dirname, `locales/${lang}.json`), 'utf8'),
     );
 });
 
@@ -391,7 +391,7 @@ router.get('/csv/:id', (req, res) => {
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
-        res.send('﻿' + out);
+        res.send(`﻿${out}`);
     });
 });
 
@@ -489,7 +489,8 @@ const renderItem = function (item, args) {
     const unitSelect = renderUnitSelect(unit, args.unitSelectTemplate, item.weight);
 
     const starClass = item.star ? `lpStar${item.star}` : '';
-    const out = Object.assign({}, item, {
+    const out = {
+        ...item,
         classes,
         unit,
         displayWeight,
@@ -498,7 +499,7 @@ const renderItem = function (item, args) {
         showPrices: args.showPrices,
         starClass,
         displayPrice,
-    });
+    };
 
     return Mustache.render(args.itemTemplate, out);
 };
@@ -512,7 +513,7 @@ const renderCategory = function (category, args) {
         const rowClasses = [];
         if (args.classes) rowClasses.push(args.classes);
         if (parseFloat(categoryItem.qty) <= 0) rowClasses.push('lpQtyZero');
-        const renderArgs = Object.assign({}, args);
+        const renderArgs = { ...args };
         renderArgs.classes = rowClasses.join(' ').trim();
         items += renderItem(item, renderArgs);
     }
@@ -520,9 +521,9 @@ const renderCategory = function (category, args) {
     category.calculateSubtotal();
     category.subtotalWeightDisplay = weightUtils.MgToWeight(category.subtotalWeight, args.totalUnit);
     category.subtotalPriceDisplay = formatDisplayPrice(category.subtotalPrice || 0, args.currencySymbol);
-    const temp = Object.assign({}, category, {
-        items, subtotalUnit: args.totalUnit, showPrices: args.showPrices,
-    });
+    const temp = {
+        ...category, items, subtotalUnit: args.totalUnit, showPrices: args.showPrices,
+    };
 
     return Mustache.render(args.categoryTemplate, temp);
 };
@@ -539,7 +540,7 @@ const renderList = function (list, args) {
 };
 
 var renderLibrary = function (library, args) {
-    const renderArgs = Object.assign({}, args, { itemUnit: library.itemUnit, totalUnit: library.totalUnit });
+    const renderArgs = { ...args, itemUnit: library.itemUnit, totalUnit: library.totalUnit };
     return renderList(library.getListById(library.defaultListId), renderArgs);
 };
 

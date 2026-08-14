@@ -106,10 +106,11 @@
 </template>
 
 <script>
-import colorPicker from './colorpicker.vue';
 import { markRaw } from 'vue';
+import colorPicker from './colorpicker.vue';
 import { renderListChart } from '../services/list-chart';
 import { useUtils } from '../composables/useUtils.js';
+
 const colorUtils = require('../utils/color.js');
 
 const { displayWeight, displayPrice } = useUtils();

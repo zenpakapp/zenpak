@@ -1,6 +1,7 @@
 // server/report-endpoints.js
 const express = require('express');
 const { ObjectId } = require('mongodb');
+
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
@@ -107,7 +108,7 @@ router.post('/feature/:externalId', (req, res) => {
         try {
             const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
             if (!owner) return res.status(404).json({ message: 'List not found' });
-            const list = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.featured = !list.featured;
             await db.users.save(owner);
@@ -126,7 +127,7 @@ router.post('/unpublish/:externalId', (req, res) => {
         try {
             const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
             if (!owner) return res.status(404).json({ message: 'List not found' });
-            const list = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.visibility = 'private';
             await db.users.save(owner);

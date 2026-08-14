@@ -157,20 +157,22 @@ $sidebarPadding: 20px;
     <div>
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
-        <div id="scrollable">
-            <h1>
-                {{ $t('dash.zenPakSidebar') }}
-            </h1>
+            <div id="scrollable">
+                <h1>
+                    {{ $t('dash.zenPakSidebar') }}
+                </h1>
 
-            <libraryLists />
-            <section class="lpGearSection">
-                <h2 class="lpGearSectionHeader">
-                    {{ $t('dash.items') }}
-                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">{{ $t('dash.itemLibrary') }}</button>
-                </h2>
-                <libraryItems :show-title="false" />
-            </section>
-        </div>
+                <libraryLists />
+                <section class="lpGearSection">
+                    <h2 class="lpGearSectionHeader">
+                        {{ $t('dash.items') }}
+                        <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">
+                            {{ $t('dash.itemLibrary') }}
+                        </button>
+                    </h2>
+                    <libraryItems :show-title="false" />
+                </section>
+            </div>
         </div>
     </div>
 </template>
@@ -178,6 +180,7 @@ $sidebarPadding: 20px;
 <script>
 import libraryItems from './library-items.vue';
 import libraryLists from './library-lists.vue';
+
 export default {
     name: 'Sidebar',
     components: {

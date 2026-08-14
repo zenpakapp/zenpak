@@ -1,9 +1,7 @@
-'use strict';
-
 function filterLibraryItems(items, filters = {}, activeItemIds = []) {
     const search = String(filters.searchText || '').trim().toLowerCase();
     const category = String(filters.category || '').trim().toLowerCase();
-    const tags = (filters.tags || []).map(tag => String(tag).toLowerCase());
+    const tags = (filters.tags || []).map((tag) => String(tag).toLowerCase());
     const activeIds = new Set(activeItemIds.map(String));
 
     return (items || []).filter((item) => {
@@ -11,10 +9,10 @@ function filterLibraryItems(items, filters = {}, activeItemIds = []) {
             || String(item.name || '').toLowerCase().includes(search)
             || String(item.description || '').toLowerCase().includes(search);
         const matchesCategory = !category || String(item.category || '').toLowerCase() === category;
-        const itemTags = (item.tags || []).map(tag => String(tag).toLowerCase());
-        const matchesTags = tags.every(tag => itemTags.includes(tag));
+        const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
+        const matchesTags = tags.every((tag) => itemTags.includes(tag));
         return matchesSearch && matchesCategory && matchesTags;
-    }).map(item => ({
+    }).map((item) => ({
         ...item,
         inCurrentList: activeIds.has(String(item.id)),
     }));

@@ -6,7 +6,7 @@ const { normalizeTier } = require('./tier-policy.js');
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
     return value
-        .map(tag => String(tag || '').trim().toLowerCase())
+        .map((tag) => String(tag || '').trim().toLowerCase())
         .filter(Boolean)
         .slice(0, 12);
 }
@@ -97,8 +97,8 @@ async function syncUserPublicLists(user) {
 
     const lists = Array.isArray(user.library.lists) ? user.library.lists : [];
     const publicExternalIds = lists
-        .filter(list => list.externalId && isDiscoverableVisibility(list.visibility))
-        .map(list => list.externalId);
+        .filter((list) => list.externalId && isDiscoverableVisibility(list.visibility))
+        .map((list) => list.externalId);
 
     for (const list of lists) {
         if (!list.externalId) continue;
@@ -111,7 +111,7 @@ async function syncUserPublicLists(user) {
         await db.publicLists.updateOne(
             { externalId: list.externalId },
             { $set: projection },
-            { upsert: true }
+            { upsert: true },
         );
     }
 
@@ -130,12 +130,12 @@ async function incrementPublicListStat(externalId, field, amount = 1) {
             $set: { updatedAt: new Date() },
             $setOnInsert: { externalId, createdAt: new Date() },
         },
-        { upsert: true }
+        { upsert: true },
     );
     if (db.publicLists && (field === 'viewCount' || field === 'copyCount')) {
         await db.publicLists.updateOne(
             { externalId },
-            { $inc: { [field]: amount }, $set: { projectedAt: new Date() } }
+            { $inc: { [field]: amount }, $set: { projectedAt: new Date() } },
         );
     }
 }
@@ -151,11 +151,11 @@ async function rememberPublicListViewer(externalId, viewerKey, limit = 500) {
         const viewers = await db.publicListViewers.findSorted(
             { externalId },
             { createdAt: -1 },
-            limit + 1
+            limit + 1,
         );
         if (viewers.length > limit) {
             const stale = viewers.slice(limit);
-            await Promise.all(stale.map(v => db.publicListViewers.deleteOne({ _id: v._id })));
+            await Promise.all(stale.map((v) => db.publicListViewers.deleteOne({ _id: v._id })));
         }
         return true;
     } catch (err) {

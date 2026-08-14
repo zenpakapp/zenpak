@@ -28,7 +28,7 @@ function activate(listId, allItemIds) {
         localStorage.removeItem(storageKey(listId));
     }
     const validSet = new Set(allItemIds);
-    packedItemIds.value = new Set(saved.filter(id => validSet.has(id)));
+    packedItemIds.value = new Set(saved.filter((id) => validSet.has(id)));
     isPackingMode.value = true;
 }
 
@@ -57,5 +57,7 @@ function reset() {
 }
 
 export function usePackingMode() {
-    return { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset };
+    return {
+        isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset,
+    };
 }

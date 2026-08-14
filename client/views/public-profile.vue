@@ -4,14 +4,14 @@
 
 <template>
     <teleport to="head">
-        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
     </teleport>
     <main class="lpPublicProfile">
-        <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
+        <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex">
 
         <nav v-if="!error" class="lpPublicNav">
             <span class="lpPublicProfileNavLeft">
@@ -25,32 +25,45 @@
             </span>
         </nav>
 
-        <p v-if="isLoading">{{ $t('public.loading') }}</p>
+        <p v-if="isLoading">
+            {{ $t('public.loading') }}
+        </p>
         <div v-else-if="error" class="lpPublicError">
-            <div class="lpPublicErrorIcon">×</div>
-            <h2 v-if="error === 'Profile not found.'">{{ $t('public.profileNotFoundTitle') }}</h2>
-            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">{{ $t('public.profileNotFoundSub') }}</p>
-            <h2 v-else>{{ $t('public.unableToLoadProfile') }}</h2>
+            <div class="lpPublicErrorIcon">
+                ×
+            </div>
+            <h2 v-if="error === 'Profile not found.'">
+                {{ $t('public.profileNotFoundTitle') }}
+            </h2>
+            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">
+                {{ $t('public.profileNotFoundSub') }}
+            </p>
+            <h2 v-else>
+                {{ $t('public.unableToLoadProfile') }}
+            </h2>
             <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicErrorBack">
                 {{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}
             </router-link>
         </div>
         <template v-else-if="profile">
-
             <!-- Hero -->
             <div class="lpPublicHero">
                 <div class="lpPublicHeroInner">
                     <div class="lpPublicAvatar">
-                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName" />
+                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName">
                         <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                     </div>
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
-                            <h1 class="lpPublicName">{{ profile.displayName }}</h1>
+                            <h1 class="lpPublicName">
+                                {{ profile.displayName }}
+                            </h1>
                             <span v-if="isCreator" class="lpPublicBadge">{{ tierLabel('guide') }}</span>
                             <span v-else-if="isSupporter" class="lpPublicBadge">{{ tierLabel('trail') }}</span>
                         </div>
-                        <p v-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
+                        <p v-if="profile.bio" class="lpPublicBio">
+                            {{ profile.bio }}
+                        </p>
                         <div class="lpPublicStats">
                             <span><strong>{{ lists.length }}</strong> {{ $t('public.statLists') }}</span>
                             <span><strong>{{ followerCount }}</strong> {{ $t('public.statFollowers') }}</span>
@@ -79,25 +92,35 @@
 
             <!-- Listes -->
             <div v-if="lists && lists.length">
-                <div class="lpPublicListsHeader">{{ $t('public.publicLists') }}</div>
+                <div class="lpPublicListsHeader">
+                    {{ $t('public.publicLists') }}
+                </div>
                 <router-link
                     v-for="list in lists"
                     :key="list.externalId"
                     :to="listTo(list.externalId)"
                     class="lpPublicListCard"
                 >
-                    <div class="lpPublicListName">{{ list.name }}</div>
-                    <div v-if="list.description" class="lpPublicListDesc">{{ list.description }}</div>
+                    <div class="lpPublicListName">
+                        {{ list.name }}
+                    </div>
+                    <div v-if="list.description" class="lpPublicListDesc">
+                        {{ list.description }}
+                    </div>
                     <div class="lpPublicListMeta">
                         <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }} base</span>
                         <span v-if="list.totalQty">📦 {{ list.totalQty }} items</span>
                     </div>
                 </router-link>
             </div>
-            <p v-else style="color: var(--color-text-muted); font-size: 14px;">{{ $t('public.noPublicLists') }}</p>
+            <p v-else style="color: var(--color-text-muted); font-size: 14px;">
+                {{ $t('public.noPublicLists') }}
+            </p>
 
             <aside v-if="affiliateDisclosure || creatorCodes.length" class="lpPublicDisclosure">
-                <p v-if="affiliateDisclosure">{{ affiliateDisclosure }}</p>
+                <p v-if="affiliateDisclosure">
+                    {{ affiliateDisclosure }}
+                </p>
                 <div v-if="creatorCodes.length" class="lpPublicCreatorCodes">
                     <strong>{{ $t('public.creatorCodes') }}</strong>
                     <ul>
@@ -108,7 +131,6 @@
                     </ul>
                 </div>
             </aside>
-
         </template>
     </main>
 </template>
@@ -136,7 +158,9 @@ export default {
             follow: followUser,
             unfollow: unfollowUser,
         } = useFollow(username);
-        return { following, mode, followLoading, followUser, unfollowUser, backTo, backLabelKey };
+        return {
+            following, mode, followLoading, followUser, unfollowUser, backTo, backLabelKey,
+        };
     },
     data() {
         return {

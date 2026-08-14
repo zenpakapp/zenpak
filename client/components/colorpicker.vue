@@ -26,13 +26,17 @@
 
 <template>
     <Popover id="lpPickerContainer" :shown="shown" @hide="shown = false">
-        <template #target><span class="lpLegend" :style="{'background-color': color}" @click="shown = true" /></template>
-        <template #content><input
-            class="lpNativeColorInput"
-            type="color"
-            :value="normalizedColor"
-            @input="onColorChange($event.target.value)"
-        ></template>
+        <template #target>
+            <span class="lpLegend" :style="{'background-color': color}" @click="shown = true" />
+        </template>
+        <template #content>
+            <input
+                class="lpNativeColorInput"
+                type="color"
+                :value="normalizedColor"
+                @input="onColorChange($event.target.value)"
+            >
+        </template>
     </Popover>
 </template>
 

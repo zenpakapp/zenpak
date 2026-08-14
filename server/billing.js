@@ -1,5 +1,3 @@
-'use strict';
-
 const config = require('config');
 const db = require('./db.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');

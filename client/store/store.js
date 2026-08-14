@@ -63,7 +63,7 @@ function waitUntilNotSaving(context) {
     if (!context.state.isSaving) return Promise.resolve();
     return new Promise((resolve) => {
         const unwatch = store.watch(
-            nextState => nextState.isSaving,
+            (nextState) => nextState.isSaving,
             (isSaving) => {
                 if (isSaving) return;
                 unwatch();
@@ -108,8 +108,8 @@ const store = createStore({
     actions: {
         init(context) {
             fetch('/api/billing/config')
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
                 .catch(() => {});
             return context.dispatch('loadRemote')
                 .catch((error) => {
@@ -131,8 +131,8 @@ const store = createStore({
         },
         initPublic(context) {
             fetch('/api/billing/config')
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) context.commit('setStripeConfigured', data.stripeEnabled); })
                 .catch(() => {});
             return fetchJson('/api/auth/me', { credentials: 'same-origin' })
                 .then((response) => {
@@ -202,8 +202,8 @@ const store = createStore({
                 context.commit('setLoggedIn', response.username);
                 context.commit('setEmailVerified', response.emailVerified ?? null);
                 fetch('/api/billing/me', { credentials: 'include' })
-                    .then(res => res.ok ? res.json() : null)
-                    .then(data => { if (data) context.commit('setBilling', data); })
+                    .then((res) => (res.ok ? res.json() : null))
+                    .then((data) => { if (data) context.commit('setBilling', data); })
                     .catch(() => {});
             } catch (error) {
                 if (error && error.statusCode === 401) notifyUnauthorized(error.message);

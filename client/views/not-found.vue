@@ -11,7 +11,6 @@
     text-align: center;
 }
 
-
 .lpNotFoundCode {
     color: $color-accent;
     font-size: 96px;
@@ -68,12 +67,22 @@
 
 <template>
     <div class="lpNotFound">
-        <div class="lpNotFoundCode">{{ $t('misc.notFoundCode') }}</div>
-        <h1 class="lpNotFoundTitle">{{ $t('misc.notFoundTitle') }}</h1>
-        <p class="lpNotFoundSub">{{ $t('misc.notFoundSub') }}</p>
+        <div class="lpNotFoundCode">
+            {{ $t('misc.notFoundCode') }}
+        </div>
+        <h1 class="lpNotFoundTitle">
+            {{ $t('misc.notFoundTitle') }}
+        </h1>
+        <p class="lpNotFoundSub">
+            {{ $t('misc.notFoundSub') }}
+        </p>
         <div class="lpNotFoundActions">
-            <router-link to="/" class="lpNotFoundBtn lpNotFoundBtn--primary">{{ $t('misc.notFoundBackPack') }}</router-link>
-            <router-link to="/community" class="lpNotFoundBtn lpNotFoundBtn--ghost">{{ $t('misc.notFoundExploreCommunity') }}</router-link>
+            <router-link to="/" class="lpNotFoundBtn lpNotFoundBtn--primary">
+                {{ $t('misc.notFoundBackPack') }}
+            </router-link>
+            <router-link to="/community" class="lpNotFoundBtn lpNotFoundBtn--ghost">
+                {{ $t('misc.notFoundExploreCommunity') }}
+            </router-link>
         </div>
     </div>
 </template>

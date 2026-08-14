@@ -32,14 +32,9 @@ function getRuntimeEnvironment() {
     return process.env.NODE_ENV || config.get('environment');
 }
 
-morgan.token('username', function getUsername (req) {
-    return req.lighterpackusername
-});
+morgan.token('username', (req) => req.lighterpackusername);
 
-
-morgan.token('requestid', function getUsername (req) {
-    return req.uuid
-});
+morgan.token('requestid', (req) => req.uuid);
 
 const app = express();
 const runtimeEnvironment = getRuntimeEnvironment();
@@ -49,27 +44,25 @@ app.enable('trust proxy');
 app.disable('x-powered-by');
 app.use(securityHeaders({ environment: getRuntimeEnvironment() }));
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     req.uuid = crypto.randomUUID();
     next();
 });
 
-app.use(morgan(function (tokens, req, res) {
-    return JSON.stringify({
-        'timestamp': tokens.date(req, res, 'iso'),
-        'requestid': tokens.requestid(req, res),
-        "remote-addr": tokens['remote-addr'](req, res),
-        'method': tokens.method(req, res),
-        'http-version': tokens['http-version'](req, res),
-        'user-agent': tokens['user-agent'](req, res),
-        'url': tokens.url(req, res),
-        'status': tokens.status(req, res),
-        'referrer': tokens.referrer(req, res),
-        'content-length': tokens.res(req, res, 'content-length'),
-        'response-time': tokens['response-time'](req, res),
-        'username': tokens.username(req, res),
-    })
-}, { stream: logger.stream.write }));
+app.use(morgan((tokens, req, res) => JSON.stringify({
+    timestamp: tokens.date(req, res, 'iso'),
+    requestid: tokens.requestid(req, res),
+    'remote-addr': tokens['remote-addr'](req, res),
+    method: tokens.method(req, res),
+    'http-version': tokens['http-version'](req, res),
+    'user-agent': tokens['user-agent'](req, res),
+    url: tokens.url(req, res),
+    status: tokens.status(req, res),
+    referrer: tokens.referrer(req, res),
+    'content-length': tokens.res(req, res, 'content-length'),
+    'response-time': tokens['response-time'](req, res),
+    username: tokens.username(req, res),
+}), { stream: logger.stream.write }));
 
 const oneDay = 86400000;
 const oneYear = 31536000000;
@@ -104,8 +97,8 @@ function serveCurrentDistAsset(entryName, extension) {
         try {
             const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
             const assetFiles = manifest.files?.[entryName] || [];
-            const assetName = assetFiles.find(name => name.startsWith(`${entryName}.`) && name.endsWith(extension))
-                || assetFiles.find(name => name.endsWith(extension));
+            const assetName = assetFiles.find((name) => name.startsWith(`${entryName}.`) && name.endsWith(extension))
+                || assetFiles.find((name) => name.endsWith(extension));
             if (!assetName) return next();
             return res.sendFile(path.join(__dirname, 'public/dist', assetName));
         } catch (err) {
@@ -178,12 +171,13 @@ app.use('/api/reports', reportEndpoints);
 app.use('/', oauthEndpoints);
 
 const billingEndpoints = require('./server/billing-endpoints.js');
+
 app.use('/api/billing', billingEndpoints);
 
 app.use('/', views);
 app.use(errorHandler);
 
-logger.info("Starting up Lighterpack...");
+logger.info('Starting up Lighterpack...');
 
 let webpackConfig;
 

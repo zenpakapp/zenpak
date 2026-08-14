@@ -9,7 +9,9 @@ function notificationActorName(displayName, username) {
     return name || username;
 }
 
-async function createNotification({ userId, type, actorUsername, actorDisplayName, actorTier, listName }) {
+async function createNotification({
+    userId, type, actorUsername, actorDisplayName, actorTier, listName,
+}) {
     try {
         const user = await db.users.findOne({ _id: new ObjectId(userId) });
         if (!user) return;
@@ -24,7 +26,7 @@ async function createNotification({ userId, type, actorUsername, actorDisplayNam
                 actorUsername,
             });
             const cutoff = now.getTime() - FOLLOW_NOTIFICATION_DEDUPE_MS;
-            if (recent.some(n => new Date(n.createdAt).getTime() >= cutoff)) return;
+            if (recent.some((n) => new Date(n.createdAt).getTime() >= cutoff)) return;
         }
 
         await db.notifications.save({

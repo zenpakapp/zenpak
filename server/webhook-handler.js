@@ -1,11 +1,12 @@
-'use strict';
-
 const express = require('express');
 const config = require('config');
+
 const router = express.Router();
 const { logger } = require('./log.js');
 const db = require('./db.js');
-const { stripeEnabled, getStripe, syncUserBilling, syncKofiBilling } = require('./billing.js');
+const {
+    stripeEnabled, getStripe, syncUserBilling, syncKofiBilling,
+} = require('./billing.js');
 
 // Raw body parser — MUST be applied before express.json() in app.js
 router.post(
@@ -46,7 +47,7 @@ router.post(
         }
 
         return res.json({ received: true });
-    }
+    },
 );
 
 async function handleEvent(event) {
@@ -54,70 +55,70 @@ async function handleEvent(event) {
     const obj = data.object;
 
     switch (type) {
-        case 'checkout.session.completed': {
-            // Store customerId on user — plan activated by subscription.created
-            const username = obj.metadata && obj.metadata.username;
-            if (!username) return;
-            const user = await db.users.findOne({ username });
-            if (!user) return;
-            if (!user.billing) user.billing = {};
-            if (obj.customer) user.billing.customerId = obj.customer;
-            user.billing.provider = 'stripe';
-            if (obj.consent && obj.consent.terms_of_service === 'accepted') {
-                user.billing.termsVersionAccepted = new Date().toISOString().slice(0, 10);
-            }
-            await db.users.save(user);
-            break;
+    case 'checkout.session.completed': {
+        // Store customerId on user — plan activated by subscription.created
+        const username = obj.metadata && obj.metadata.username;
+        if (!username) return;
+        const user = await db.users.findOne({ username });
+        if (!user) return;
+        if (!user.billing) user.billing = {};
+        if (obj.customer) user.billing.customerId = obj.customer;
+        user.billing.provider = 'stripe';
+        if (obj.consent && obj.consent.terms_of_service === 'accepted') {
+            user.billing.termsVersionAccepted = new Date().toISOString().slice(0, 10);
         }
+        await db.users.save(user);
+        break;
+    }
 
-        case 'customer.subscription.created':
-        case 'customer.subscription.updated': {
-            const user = await findUserByCustomerId(obj.customer);
-            if (!user) return;
-            // Retrieve fresh to use our pinned API version (2024-04-10) — webhook
-            // events arrive in the CLI/dashboard API version which may omit fields
-            // like current_period_end present in older versions.
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated': {
+        const user = await findUserByCustomerId(obj.customer);
+        if (!user) return;
+        // Retrieve fresh to use our pinned API version (2024-04-10) — webhook
+        // events arrive in the CLI/dashboard API version which may omit fields
+        // like current_period_end present in older versions.
+        const stripe = getStripe();
+        const subscription = await stripe.subscriptions.retrieve(obj.id);
+        await syncUserBilling(user, subscription, subscription.status);
+        break;
+    }
+
+    case 'customer.subscription.deleted': {
+        const user = await findUserByCustomerId(obj.customer);
+        if (!user) return;
+        await syncUserBilling(user, null, 'canceled');
+        break;
+    }
+
+    case 'invoice.paid': {
+        const user = await findUserByCustomerId(obj.customer);
+        if (!user) return;
+        if (obj.subscription) {
             const stripe = getStripe();
-            const subscription = await stripe.subscriptions.retrieve(obj.id);
+            const subscription = await stripe.subscriptions.retrieve(obj.subscription);
             await syncUserBilling(user, subscription, subscription.status);
-            break;
-        }
-
-        case 'customer.subscription.deleted': {
-            const user = await findUserByCustomerId(obj.customer);
-            if (!user) return;
-            await syncUserBilling(user, null, 'canceled');
-            break;
-        }
-
-        case 'invoice.paid': {
-            const user = await findUserByCustomerId(obj.customer);
-            if (!user) return;
-            if (obj.subscription) {
-                const stripe = getStripe();
-                const subscription = await stripe.subscriptions.retrieve(obj.subscription);
-                await syncUserBilling(user, subscription, subscription.status);
-            } else {
-                if (!user.billing) user.billing = {};
-                user.billing.lastSyncedAt = new Date().toISOString();
-                await db.users.save(user);
-            }
-            break;
-        }
-
-        case 'invoice.payment_failed': {
-            const user = await findUserByCustomerId(obj.customer);
-            if (!user) return;
+        } else {
             if (!user.billing) user.billing = {};
-            user.billing.status = 'past_due';
             user.billing.lastSyncedAt = new Date().toISOString();
-            // Do NOT downgrade plan — Stripe retries. Plan stays during grace period.
             await db.users.save(user);
-            break;
         }
+        break;
+    }
 
-        default:
-            break;
+    case 'invoice.payment_failed': {
+        const user = await findUserByCustomerId(obj.customer);
+        if (!user) return;
+        if (!user.billing) user.billing = {};
+        user.billing.status = 'past_due';
+        user.billing.lastSyncedAt = new Date().toISOString();
+        // Do NOT downgrade plan — Stripe retries. Plan stays during grace period.
+        await db.users.save(user);
+        break;
+    }
+
+    default:
+        break;
     }
 }
 
@@ -205,7 +206,7 @@ router.post(
 
         logger.info('Ko-fi Trail activated', { username: user.username, amount: payload.amountCents });
         return res.json({ received: true, matched: true });
-    }
+    },
 );
 
 module.exports = router;

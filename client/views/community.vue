@@ -5,7 +5,9 @@
 <template>
     <main class="lpCommunity">
         <nav class="lpCommunityNav">
-            <router-link to="/">{{ $t('public.backToZenPak') }}</router-link>
+            <router-link to="/">
+                {{ $t('public.backToZenPak') }}
+            </router-link>
         </nav>
 
         <div class="lpCommunityHeader">
@@ -75,7 +77,7 @@
                     class="lpCommunitySearchInput"
                     :placeholder="$t('community.searchListsPlaceholder')"
                     @input="onSearchInput"
-                />
+                >
             </div>
 
             <div class="lpCommunityFilters">
@@ -98,7 +100,7 @@
                     :placeholder="$t('community.filterMinKgPlaceholder')"
                     :aria-label="$t('community.ariaMinWeight')"
                     @input="onFilterInput"
-                />
+                >
                 <input
                     v-model="filterMaxWeight"
                     type="number"
@@ -108,12 +110,18 @@
                     :placeholder="$t('community.filterMaxKgPlaceholder')"
                     :aria-label="$t('community.ariaMaxWeight')"
                     @input="onFilterInput"
-                />
-                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">{{ $t('community.filterReset') }}</button>
+                >
+                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">
+                    {{ $t('community.filterReset') }}
+                </button>
             </div>
 
-            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
-            <p v-else-if="discoverError" class="lpCommunityEmpty">{{ discoverError }}</p>
+            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">
+                {{ $t('community.loading') }}
+            </p>
+            <p v-else-if="discoverError" class="lpCommunityEmpty">
+                {{ discoverError }}
+            </p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
                 {{ $t('community.emptyDiscoverNone') }}
             </p>
@@ -121,7 +129,9 @@
                 <div class="lpCommunityDiscoverLayout">
                     <section class="lpCommunityResults">
                         <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
-                            <div class="lpCommunityFeaturedLabel">{{ $t('community.featuredLabel') }}</div>
+                            <div class="lpCommunityFeaturedLabel">
+                                {{ $t('community.featuredLabel') }}
+                            </div>
                             <div
                                 v-for="list in featuredLists"
                                 :key="'f-' + list.externalId"
@@ -129,14 +139,20 @@
                                 style="cursor:pointer"
                                 @click="$router.push(communityListTo(list))"
                             >
-                                <div class="lpCommunityCardName">{{ list.name }}</div>
+                                <div class="lpCommunityCardName">
+                                    {{ list.name }}
+                                </div>
                                 <div class="lpCommunityCardAuthor">
-                                    {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
+                                    {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                        {{ listAuthorName(list) }}
+                                    </router-link>
                                     <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
                                     <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                                 </div>
                                 <div v-if="listSourceName(list)" class="lpCommunityCardSource">
-                                    {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
+                                    {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>
+                                        {{ listSourceName(list) }}
+                                    </router-link>
                                 </div>
                                 <div class="lpCommunityCardMeta">
                                     <span class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -156,14 +172,20 @@
                             style="cursor:pointer"
                             @click="$router.push(communityListTo(list))"
                         >
-                            <div class="lpCommunityCardName">{{ list.name }}</div>
+                            <div class="lpCommunityCardName">
+                                {{ list.name }}
+                            </div>
                             <div class="lpCommunityCardAuthor">
-                                {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
+                                {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                    {{ listAuthorName(list) }}
+                                </router-link>
                                 <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
                                 <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             </div>
                             <div v-if="listSourceName(list)" class="lpCommunityCardSource">
-                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
+                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>
+                                    {{ listSourceName(list) }}
+                                </router-link>
                             </div>
                             <div class="lpCommunityCardMeta">
                                 <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -184,8 +206,12 @@
                         </button>
                     </section>
                     <aside class="lpCommunityPopular" :aria-label="$t('community.ariaPopularPacks')">
-                        <div class="lpCommunityPopularTitle">{{ $t('community.popularPacksTitle') }}</div>
-                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">{{ $t('community.loading') }}</p>
+                        <div class="lpCommunityPopularTitle">
+                            {{ $t('community.popularPacksTitle') }}
+                        </div>
+                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">
+                            {{ $t('community.loading') }}
+                        </p>
                         <div
                             v-for="list in popularLists"
                             :key="'popular-' + list.externalId"
@@ -193,7 +219,9 @@
                             @click="$router.push(communityListTo(list))"
                         >
                             <span class="lpCommunityPopularName">{{ list.name }}</span>
-                            <router-link class="lpCommunityPopularAuthor" :to="communityProfileTo(list.author)" @click.stop>{{ listAuthorName(list) }}</router-link>
+                            <router-link class="lpCommunityPopularAuthor" :to="communityProfileTo(list.author)" @click.stop>
+                                {{ listAuthorName(list) }}
+                            </router-link>
                             <span v-if="listSourceName(list)" class="lpCommunityPopularSource">
                                 {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
                             </span>
@@ -209,20 +237,26 @@
 
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
-            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
-            <p v-else-if="feedError" class="lpCommunityEmpty">{{ feedError }}</p>
+            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">
+                {{ $t('community.loading') }}
+            </p>
+            <p v-else-if="feedError" class="lpCommunityEmpty">
+                {{ feedError }}
+            </p>
             <p v-else-if="feedEvents.length === 0" class="lpCommunityEmpty">
                 {{ $t('community.emptyFeedNone') }}
             </p>
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
                     <div class="lpCommunityEventAvatar">
-                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author" />
+                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author">
                         <span v-else>{{ event.author.charAt(0).toUpperCase() }}</span>
                     </div>
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
-                            <router-link :to="communityProfileTo(event.author)">{{ event.author }}</router-link>
+                            <router-link :to="communityProfileTo(event.author)">
+                                {{ event.author }}
+                            </router-link>
                             <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
                             <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             <span> {{ eventLabel(event.type) }}</span>
@@ -233,7 +267,9 @@
                         <div v-else-if="event.listDeleted" class="lpCommunityEventList lpCommunityEventListDeleted">
                             {{ $t('community.listNoLongerAvailable') }}
                         </div>
-                        <div class="lpCommunityEventTime">{{ timeAgo(event.createdAt) }}</div>
+                        <div class="lpCommunityEventTime">
+                            {{ timeAgo(event.createdAt) }}
+                        </div>
                     </div>
                 </article>
                 <button v-if="feedHasMore" class="lpCommunityLoadMore" :disabled="feedLoading" @click="feedLoadMore">
@@ -243,7 +279,9 @@
         </div>
 
         <!-- Moderation tab -->
-        <p v-if="moderationError" class="lpCommunityEmpty">{{ moderationError }}</p>
+        <p v-if="moderationError" class="lpCommunityEmpty">
+            {{ moderationError }}
+        </p>
         <community-moderation
             v-if="activeTab === 'moderation' && isModerator"
             @feature-list="featureList"
@@ -266,7 +304,9 @@ const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "com
 
 export default {
     name: 'CommunityView',
-    components: { CommunityModeration, CommunityPeople, reportButton, LpSelect },
+    components: {
+        CommunityModeration, CommunityPeople, reportButton, LpSelect,
+    },
     setup() {
         useTheme();
         const {
@@ -301,10 +341,23 @@ export default {
         popularLoad();
 
         return {
-            discoverLists, discoverLoading, discoverError, discoverHasMore,
-            discoverSort, setDiscoverSort, setDiscoverQuery, setDiscoverFilters, discoverLoadMore,
-            popularLists, popularLoading,
-            feedEvents, feedLoading, feedError, feedHasMore, feedLoad, feedLoadMore,
+            discoverLists,
+            discoverLoading,
+            discoverError,
+            discoverHasMore,
+            discoverSort,
+            setDiscoverSort,
+            setDiscoverQuery,
+            setDiscoverFilters,
+            discoverLoadMore,
+            popularLists,
+            popularLoading,
+            feedEvents,
+            feedLoading,
+            feedError,
+            feedHasMore,
+            feedLoad,
+            feedLoadMore,
         };
     },
     data() {
@@ -346,10 +399,10 @@ export default {
             return Boolean(this.$store.state.loggedIn);
         },
         featuredLists() {
-            return this.discoverLists.filter(l => l.featured);
+            return this.discoverLists.filter((l) => l.featured);
         },
         nonFeaturedLists() {
-            return this.discoverLists.filter(l => !l.featured);
+            return this.discoverLists.filter((l) => !l.featured);
         },
         filtersActive() {
             return Boolean(this.filterSeason || this.filterType || this.filterMinWeight || this.filterMaxWeight);
@@ -427,7 +480,7 @@ export default {
             ];
         },
         formatTag(value) {
-            const label = [...this.seasonOptions, ...this.listTypeOptions].find(option => option.value === value);
+            const label = [...this.seasonOptions, ...this.listTypeOptions].find((option) => option.value === value);
             return label ? label.label : value;
         },
         timeAgo(dateStr) {
@@ -445,7 +498,7 @@ export default {
             this.moderationError = null;
             try {
                 const data = await fetchJson(`/api/reports/feature/${externalId}`, { method: 'POST' });
-                const list = this.discoverLists.find(l => l.externalId === externalId);
+                const list = this.discoverLists.find((l) => l.externalId === externalId);
                 if (list) list.featured = data.featured;
             } catch {
                 this.moderationError = 'Unable to update featured list.';

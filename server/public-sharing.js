@@ -93,17 +93,17 @@ function publicListsForProfile(library) {
     }, {});
 
     return (library.lists || [])
-        .filter(list => isPublicVisibility(list.visibility))
-        .filter(list => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)])
+        .filter((list) => isPublicVisibility(list.visibility))
+        .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)])
         .map(sanitizeListSummary);
 }
 
 function findListByExternalId(library, externalId) {
-    return (library.lists || []).find(list => list.externalId && list.externalId === externalId) || null;
+    return (library.lists || []).find((list) => list.externalId && list.externalId === externalId) || null;
 }
 
 function findById(collection, id) {
-    return (collection || []).find(entry => entry.id == id) || null;
+    return (collection || []).find((entry) => entry.id == id) || null;
 }
 
 function isSafeUrl(value) {
@@ -117,7 +117,9 @@ function isSafeUrl(value) {
 
 function resolvePublicItemLink(item, creator) {
     if (!item) {
-        return { url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false };
+        return {
+            url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false,
+        };
     }
 
     const rawAffiliate = normalizeString(item.affiliateUrl);
@@ -154,7 +156,7 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
     const publicLink = resolvePublicItemLink(item, options.applyCreatorRules === false ? null : creator);
     const includePrice = options.includePrice !== false;
 
-    return Object.assign({
+    return {
         id: item.id,
         name: item.name || '',
         description: item.description || '',
@@ -174,7 +176,7 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
         worn: categoryItem.worn || 0,
         consumable: categoryItem.consumable === true,
         star: categoryItem.star || 0,
-    });
+    };
 }
 
 function buildPublicCategories(library, list, creator, options = {}) {
@@ -187,7 +189,7 @@ function buildPublicCategories(library, list, creator, options = {}) {
         }
 
         const items = (category.categoryItems || [])
-            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator, { includePrice, applyCreatorRules }))
+            .map((categoryItem) => sanitizeCategoryItem(library, categoryItem, creator, { includePrice, applyCreatorRules }))
             .filter(Boolean);
 
         return {
@@ -240,7 +242,9 @@ function buildPublicProfile(user) {
             const url = rule.type === 'domain' && normalizeString(rule.match)
                 ? `https://${normalizeString(rule.match)}`
                 : '';
-            creatorCodes.push({ name: normalizeString(rule.match), code, label, url });
+            creatorCodes.push({
+                name: normalizeString(rule.match), code, label, url,
+            });
         }
     }
 
@@ -269,7 +273,7 @@ function buildPublicList(user, externalId) {
     const applyCreatorRules = !sourceListInfoHidden
         && (!list.forkedFrom || listHasExplicitSourceListInfo(library, list));
     const categories = buildPublicCategories(library, list, creator, { includePrice, applyCreatorRules });
-    const hasAffiliateLinks = categories.some(category => category.items.some(item => item.hasAffiliateLink));
+    const hasAffiliateLinks = categories.some((category) => category.items.some((item) => item.hasAffiliateLink));
 
     const seenCodes = new Set();
     const creatorCodes = [];

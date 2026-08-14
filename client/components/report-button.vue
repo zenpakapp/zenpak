@@ -88,25 +88,35 @@
 
 <template>
     <div style="position:relative;display:inline-block">
-        <button class="lpReportBtn" @click.stop.prevent="open = !open">{{ $t('misc.report') }}</button>
+        <button class="lpReportBtn" @click.stop.prevent="open = !open">
+            {{ $t('misc.report') }}
+        </button>
         <div v-if="open" class="lpReportModal" @click.stop>
             <div v-if="!submitted">
-                <div class="lpReportTitle">{{ $t('misc.reportThis') }} {{ targetType }}</div>
+                <div class="lpReportTitle">
+                    {{ $t('misc.reportThis') }} {{ targetType }}
+                </div>
                 <div class="lpReportReasons">
                     <label v-for="r in reasons" :key="r.value" class="lpReportReason">
-                        <input type="radio" v-model="reason" :value="r.value" />
+                        <input v-model="reason" type="radio" :value="r.value">
                         {{ r.label }}
                     </label>
                 </div>
-                <div v-if="error" style="color:var(--color-warning,#e53e3e);font-size:11px;margin-bottom:8px">{{ error }}</div>
+                <div v-if="error" style="color:var(--color-warning,#e53e3e);font-size:11px;margin-bottom:8px">
+                    {{ error }}
+                </div>
                 <div class="lpReportActions">
-                    <button class="lpReportCancel" @click="open = false">{{ $t('misc.cancel') }}</button>
+                    <button class="lpReportCancel" @click="open = false">
+                        {{ $t('misc.cancel') }}
+                    </button>
                     <button class="lpReportSubmit" :disabled="!reason || submitting" @click="submit">
                         {{ submitting ? '…' : $t('misc.send') }}
                     </button>
                 </div>
             </div>
-            <div v-else class="lpReportConfirm">Thanks, we'll review it.</div>
+            <div v-else class="lpReportConfirm">
+                Thanks, we'll review it.
+            </div>
         </div>
     </div>
 </template>

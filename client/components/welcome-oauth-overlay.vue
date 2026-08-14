@@ -1,9 +1,15 @@
 <template>
     <div v-if="showUsernameSetup" class="lpOAuthSetup">
         <div class="lpOAuthSetupCard">
-            <h2 class="lpOAuthSetupTitle">{{ $t('misc.oauthSetupTitle') }}</h2>
-            <p class="lpOAuthSetupText">{{ $t('misc.oauthSetupText') }}</p>
-            <div v-if="setupError" class="lpError">{{ setupError }}</div>
+            <h2 class="lpOAuthSetupTitle">
+                {{ $t('misc.oauthSetupTitle') }}
+            </h2>
+            <p class="lpOAuthSetupText">
+                {{ $t('misc.oauthSetupText') }}
+            </p>
+            <div v-if="setupError" class="lpError">
+                {{ setupError }}
+            </div>
             <input
                 v-model="setupUsername"
                 class="lpOAuthSetupInput"
@@ -11,7 +17,7 @@
                 :placeholder="$t('misc.oauthSetupPlaceholder')"
                 maxlength="20"
                 @keyup.enter="submit"
-            />
+            >
             <div class="lpButtons" style="margin-top: 16px;">
                 <button
                     class="lpButton lpButtonPrimary"
@@ -39,7 +45,7 @@ export default {
     },
     mounted() {
         const getCookie = (name) => {
-            const c = document.cookie.split('; ').find(r => r.startsWith(`${name}=`));
+            const c = document.cookie.split('; ').find((r) => r.startsWith(`${name}=`));
             return c ? decodeURIComponent(c.split('=')[1]) : '';
         };
         const token = getCookie('oauth_setup_token');

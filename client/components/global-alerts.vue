@@ -162,7 +162,7 @@ export default {
             return !this.isErrorLikeAlert(alert);
         },
         syncDismissTimers(alerts) {
-            const activeIds = new Set(alerts.map(alert => alert.id).filter(Boolean));
+            const activeIds = new Set(alerts.map((alert) => alert.id).filter(Boolean));
             Object.keys(this.dismissTimers).forEach((id) => {
                 if (!activeIds.has(id)) {
                     clearTimeout(this.dismissTimers[id]);

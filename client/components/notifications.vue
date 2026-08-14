@@ -140,28 +140,38 @@
             <div class="lpNotifHeader">
                 <span>{{ $t('misc.notifications') }}</span>
                 <div class="lpNotifHeaderActions">
-                    <button v-if="unreadCount > 0" @click="markAllRead">{{ $t('misc.markAllRead') }}</button>
-                    <button v-if="notifications.length > 0" @click="clearNotifications">{{ $t('misc.clearNotifications') }}</button>
+                    <button v-if="unreadCount > 0" @click="markAllRead">
+                        {{ $t('misc.markAllRead') }}
+                    </button>
+                    <button v-if="notifications.length > 0" @click="clearNotifications">
+                        {{ $t('misc.clearNotifications') }}
+                    </button>
                 </div>
             </div>
-            <p v-if="notifications.length === 0" class="lpNotifEmpty">{{ $t('misc.noNotifications') }}</p>
+            <p v-if="notifications.length === 0" class="lpNotifEmpty">
+                {{ $t('misc.noNotifications') }}
+            </p>
             <div
                 v-for="n in notifications"
                 :key="String(n._id)"
                 class="lpNotifItem"
                 :class="{ unread: !n.read }"
             >
-                <div class="lpNotifText">{{ formatText(n) }}</div>
-                <div class="lpNotifTime">{{ timeAgo(n.createdAt) }}</div>
+                <div class="lpNotifText">
+                    {{ formatText(n) }}
+                </div>
+                <div class="lpNotifTime">
+                    {{ timeAgo(n.createdAt) }}
+                </div>
             </div>
             <div class="lpNotifPrefs">
                 <label class="lpNotifPrefRow">
                     <span>{{ $t('misc.notificationFollows') }}</span>
-                    <input type="checkbox" :checked="prefs.follow" @change="updatePref('follow', $event.target.checked)" />
+                    <input type="checkbox" :checked="prefs.follow" @change="updatePref('follow', $event.target.checked)">
                 </label>
                 <label class="lpNotifPrefRow">
                     <span>{{ $t('misc.notificationCopies') }}</span>
-                    <input type="checkbox" :checked="prefs.copy" @change="updatePref('copy', $event.target.checked)" />
+                    <input type="checkbox" :checked="prefs.copy" @change="updatePref('copy', $event.target.checked)">
                 </label>
             </div>
         </div>
@@ -221,7 +231,7 @@ export default {
         async markAllRead() {
             try {
                 await fetchJson('/api/notifications/read-all', { method: 'POST' });
-                this.notifications = this.notifications.map(n => ({ ...n, read: true }));
+                this.notifications = this.notifications.map((n) => ({ ...n, read: true }));
                 this.unreadCount = 0;
             } catch {
                 // silent

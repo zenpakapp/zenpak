@@ -25,7 +25,7 @@ const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 const router = express.Router();
 
 function verificationEmail({ username, verifyUrl }) {
-    const title = `Verify your ZenPak email`;
+    const title = 'Verify your ZenPak email';
     const text = `Hi ${username},
 
 Confirm this email address to publish your gear lists and protect your ZenPak account:
@@ -177,7 +177,9 @@ router.post('/register', authLimiter, (req, res) => {
                         logWithRequest(req, { message: 'Saving new user', username });
                         db.users.save(newUser, (err) => {
                             if (err) {
-                                logWithRequest(req, { message: 'DB error on user save', username, email, error: err.message });
+                                logWithRequest(req, {
+                                    message: 'DB error on user save', username, email, error: err.message,
+                                });
                                 if (err.code === 11000 && err.message.includes('email')) {
                                     return res.status(400).json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
                                 }
@@ -196,8 +198,12 @@ router.post('/register', authLimiter, (req, res) => {
                                 html: emailMessage.html,
                             }).catch((e) => logWithRequest(req, e));
 
-                            const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
-                            res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
+                            const out = {
+                                username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false,
+                            };
+                            res.cookie('lp', token, {
+                                path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie,
+                            });
                             return res.status(200).json(out);
                         });
                     });
@@ -217,7 +223,9 @@ function returnLibrary(req, res, user) {
         user.syncToken = 0;
         db.users.updateOne({ _id: user._id }, { $set: { syncToken: 0 } });
     }
-    return res.json({ username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified });
+    return res.json({
+        username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified,
+    });
 }
 
 router.post('/forgotPassword', forgotLimiter, (req, res) => {
@@ -387,13 +395,11 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
 });
 
 router.get('/api/auth/me', (req, res) => {
-    authenticateUser(req, res, (req, res, user) => {
-        return res.json({
-            username: user.username,
-            emailVerified: !!user.emailVerified,
-            isModerator: isModerator(user.username),
-        });
-    });
+    authenticateUser(req, res, (req, res, user) => res.json({
+        username: user.username,
+        emailVerified: !!user.emailVerified,
+        isModerator: isModerator(user.username),
+    }));
 });
 
 router.get('/verify-email', (req, res, next) => {

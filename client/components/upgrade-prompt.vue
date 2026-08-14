@@ -13,16 +13,22 @@
             <div class="lpUpgradeModal">
                 <div class="lpModalHeader">
                     <div>
-                        <div class="lpUpgradeTier">{{ tierLabel }}</div>
+                        <div class="lpUpgradeTier">
+                            {{ tierLabel }}
+                        </div>
                         <h2>{{ $t('guide.upgrade.supportProject') }}</h2>
                     </div>
                     <a class="lpHref close" @click="closeModal">✕</a>
                 </div>
 
-                <p class="lpUpgradeTagline">{{ tagline }}</p>
+                <p class="lpUpgradeTagline">
+                    {{ tagline }}
+                </p>
 
                 <ul class="lpUpgradeBenefits">
-                    <li v-for="benefit in benefits" :key="benefit">{{ benefit }}</li>
+                    <li v-for="benefit in benefits" :key="benefit">
+                        {{ benefit }}
+                    </li>
                 </ul>
 
                 <div v-if="stripeEnabled" class="lpUpgradeActions">
@@ -31,17 +37,23 @@
                             class="lpUpgradeIntervalBtn"
                             :class="{ active: interval === 'month' }"
                             @click="interval = 'month'"
-                        >{{ $t('guide.upgrade.monthly') }}</button>
+                        >
+                            {{ $t('guide.upgrade.monthly') }}
+                        </button>
                         <button
                             class="lpUpgradeIntervalBtn"
                             :class="{ active: interval === 'year' }"
                             @click="interval = 'year'"
-                        >{{ $t('guide.upgrade.annual') }} <span class="lpUpgradeIntervalSave">{{ $t('guide.upgrade.annualSave') }}</span></button>
+                        >
+                            {{ $t('guide.upgrade.annual') }} <span class="lpUpgradeIntervalSave">{{ $t('guide.upgrade.annualSave') }}</span>
+                        </button>
                     </div>
                     <div class="lpUpgradePrice">
                         {{ priceDisplay }}<span>{{ priceUnit }}</span>
                     </div>
-                    <p v-if="checkoutError" class="lpUpgradeError">{{ checkoutError }}</p>
+                    <p v-if="checkoutError" class="lpUpgradeError">
+                        {{ checkoutError }}
+                    </p>
                     <button class="lpButton" :disabled="checkingOut" @click="checkout">
                         {{ checkingOut ? $t('guide.upgrade.redirecting') : $t('guide.upgrade.becomeButton', { tier: tierLabel }) }}
                     </button>
@@ -56,20 +68,26 @@
                         <div v-if="showForm" class="lpUpgradeInterestForm">
                             <div>
                                 <label>{{ $t('guide.upgrade.yourEmail') }}</label>
-                                <input v-model="email" type="email" :placeholder="$t('guide.upgrade.yourEmailPlaceholder')" />
+                                <input v-model="email" type="email" :placeholder="$t('guide.upgrade.yourEmailPlaceholder')">
                             </div>
                             <div>
                                 <label>{{ $t('guide.upgrade.whichPlan') }}</label>
                                 <select v-model="selectedTier">
-                                    <option value="trail">Kin</option>
-                                    <option value="guide">Wayfarer</option>
+                                    <option value="trail">
+                                        Kin
+                                    </option>
+                                    <option value="guide">
+                                        Wayfarer
+                                    </option>
                                 </select>
                             </div>
                             <div>
                                 <label>{{ $t('guide.upgrade.message') }}</label>
                                 <textarea v-model="message" :placeholder="$t('guide.upgrade.messagePlaceholder')" rows="3" />
                             </div>
-                            <p v-if="formError" class="lpUpgradeError">{{ formError }}</p>
+                            <p v-if="formError" class="lpUpgradeError">
+                                {{ formError }}
+                            </p>
                             <button class="lpButton" :disabled="submitting" @click="submit">
                                 {{ submitting ? $t('guide.upgrade.sending') : $t('guide.upgrade.send') }}
                             </button>
@@ -125,7 +143,7 @@ export default {
         tier: {
             type: String,
             required: true,
-            validator: v => ['trail', 'guide'].includes(v),
+            validator: (v) => ['trail', 'guide'].includes(v),
         },
         feature: {
             type: String,
@@ -136,7 +154,7 @@ export default {
             type: String,
             required: false,
             default: 'inline',
-            validator: v => ['inline', 'modal'].includes(v),
+            validator: (v) => ['inline', 'modal'].includes(v),
         },
         open: {
             type: Boolean,
@@ -173,12 +191,12 @@ export default {
         },
         benefits() {
             const keys = this.tier === 'trail' ? TRAIL_BENEFITS_KEYS : GUIDE_BENEFITS_KEYS;
-            return keys.map(key => this.$t(key));
+            return keys.map((key) => this.$t(key));
         },
         stripeEnabled() {
             if (!this.$store.state.loggedIn) return false;
-            return this.$store.state.stripeConfigured === true ||
-                (this.$store.state.billing && this.$store.state.billing.stripeEnabled);
+            return this.$store.state.stripeConfigured === true
+                || (this.$store.state.billing && this.$store.state.billing.stripeEnabled);
         },
         priceDisplay() {
             if (this.tier === 'trail') return '€19';

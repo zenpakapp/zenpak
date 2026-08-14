@@ -106,10 +106,10 @@ function collection(name) {
                 .then((mongoCollection) => mongoCollection.aggregate(pipeline).toArray());
         },
         updateOne(filter, update, options) {
-            return getCollection(name).then(col => col.updateOne(filter, update, options));
+            return getCollection(name).then((col) => col.updateOne(filter, update, options));
         },
         updateMany(filter, update) {
-            return getCollection(name).then(col => col.updateMany(filter, update));
+            return getCollection(name).then((col) => col.updateMany(filter, update));
         },
         deleteOne(filter) {
             return deleteOne(filter);
@@ -159,7 +159,9 @@ module.exports = {
         await users.createIndex({ username: 1 }, { unique: true });
         await users.createIndex(
             { email: 1 },
-            { unique: true, sparse: true, collation: { locale: 'en', strength: 2 }, name: 'users_email_unique_ci' },
+            {
+                unique: true, sparse: true, collation: { locale: 'en', strength: 2 }, name: 'users_email_unique_ci',
+            },
         );
         await users.createIndex({ 'library.lists.externalId': 1 }, { sparse: true });
 

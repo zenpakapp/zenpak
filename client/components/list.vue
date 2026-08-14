@@ -10,17 +10,27 @@
             <div class="lpPackingProgressTrack">
                 <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
             </div>
-            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">{{ $t('list.exitPacking') }}</button>
+            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">
+                {{ $t('list.exitPacking') }}
+            </button>
         </div>
 
         <!-- Completion modal -->
         <div v-if="showCompletionModal" class="lpPackModal" @click.self="showCompletionModal = false">
             <div class="lpPackModalInner">
-                <p class="lpPackModalPhrase">{{ completionPhrase }}</p>
-                <p class="lpPackModalWeight">{{ $t('list.packTotal', { weight: packTotalWeight }) }}</p>
+                <p class="lpPackModalPhrase">
+                    {{ completionPhrase }}
+                </p>
+                <p class="lpPackModalWeight">
+                    {{ $t('list.packTotal', { weight: packTotalWeight }) }}
+                </p>
                 <div class="lpPackModalActions">
-                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">{{ $t('list.reset') }}</button>
-                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">{{ $t('list.close') }}</button>
+                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">
+                        {{ $t('list.reset') }}
+                    </button>
+                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">
+                        {{ $t('list.close') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -33,25 +43,37 @@
             <p>{{ $t('list.getStartedText') }}</p>
             <p class="lpGetStartedCommunity">
                 {{ $t('list.communityHint') }}
-                <router-link to="/community" class="lpHref">{{ $t('list.communityHintCta') }}</router-link>
+                <router-link to="/community" class="lpHref">
+                    {{ $t('list.communityHintCta') }}
+                </router-link>
             </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
         <div v-if="!isListNew && !isPackingMode" style="margin-bottom: 10px;">
-            <button class="lpPackBtn" @click="enterPackingMode">🎒 {{ $t('list.packThis') }}</button>
+            <button class="lpPackBtn" @click="enterPackingMode">
+                🎒 {{ $t('list.packThis') }}
+            </button>
         </div>
 
         <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.guestHint') }}</span>
-            <router-link to="/register" class="lpCommunityHintCta">{{ $t('list.guestHintCta') }}</router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">✕</button>
+            <router-link to="/register" class="lpCommunityHintCta">
+                {{ $t('list.guestHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">
+                ✕
+            </button>
         </div>
 
         <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.communityHint') }}</span>
-            <router-link to="/community" class="lpCommunityHintCta">{{ $t('list.communityHintCta') }}</router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">✕</button>
+            <router-link to="/community" class="lpCommunityHintCta">
+                {{ $t('list.communityHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">
+                ✕
+            </button>
         </div>
 
         <div style="clear: both;" />
@@ -61,7 +83,7 @@
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
-        <TransitionGroup name="lp-list" tag="ul" ref="categories" class="lpCategories">
+        <TransitionGroup ref="categories" name="lp-list" tag="ul" class="lpCategories">
             <category
                 v-for="category in categories"
                 :key="category.id"
@@ -100,8 +122,12 @@ export default {
         itemDragId: false,
     },
     setup() {
-        const { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset } = usePackingMode();
-        return { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset };
+        const {
+            isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset,
+        } = usePackingMode();
+        return {
+            isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset,
+        };
     },
     data() {
         return {
@@ -121,10 +147,10 @@ export default {
             return this.$store.getters.activeList;
         },
         categories() {
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id)).filter(Boolean);
         },
         isListNew() {
-            return this.list.totalWeight === 0 && this.categories.every(c => c.categoryItems.length === 0);
+            return this.list.totalWeight === 0 && this.categories.every((c) => c.categoryItems.length === 0);
         },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
@@ -147,9 +173,7 @@ export default {
             return this.$t('list.getStartedTitle');
         },
         allItemIds() {
-            return this.categories.flatMap(cat =>
-                cat.categoryItems.map(ci => ci.itemId)
-            );
+            return this.categories.flatMap((cat) => cat.categoryItems.map((ci) => ci.itemId));
         },
         packingProgress() {
             return {

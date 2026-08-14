@@ -281,7 +281,7 @@ export default {
                 this._returnFocus = document.activeElement;
                 this.$nextTick(() => {
                     const first = this.$refs.modalEl?.querySelector(
-                        'button:not([disabled]),input:not([disabled]),select,textarea,a[href],[tabindex]:not([tabindex="-1"])'
+                        'button:not([disabled]),input:not([disabled]),select,textarea,a[href],[tabindex]:not([tabindex="-1"])',
                     );
                     if (first) first.focus();
                 });
@@ -320,7 +320,7 @@ export default {
         trapFocus(e) {
             if (!this.shown || e.key !== 'Tab') return;
             const focusable = this.$refs.modalEl?.querySelectorAll(
-                'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])'
+                'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',
             );
             if (!focusable || focusable.length === 0) return;
             const first = focusable[0];

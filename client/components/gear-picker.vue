@@ -122,8 +122,12 @@
     <modal id="gearPickerDialog" :shown="shown" @hide="reset">
         <div class="gearPicker">
             <div class="gearPickerHeader">
-                <p class="gearPickerTitle">{{ $t('library.gearPickerTitle') }}</p>
-                <p class="gearPickerSubtitle">{{ $t('library.gearPickerSubtitle', { categoryName }) }}</p>
+                <p class="gearPickerTitle">
+                    {{ $t('library.gearPickerTitle') }}
+                </p>
+                <p class="gearPickerSubtitle">
+                    {{ $t('library.gearPickerSubtitle', { categoryName }) }}
+                </p>
             </div>
 
             <input
@@ -184,11 +188,9 @@ export default {
         },
         filteredItems() {
             const q = this.search.toLowerCase();
-            return (this.library?.items || []).filter(gearItem =>
-                !q ||
-                (gearItem.name && gearItem.name.toLowerCase().includes(q)) ||
-                (gearItem.brand && gearItem.brand.toLowerCase().includes(q))
-            );
+            return (this.library?.items || []).filter((gearItem) => !q
+                || (gearItem.name && gearItem.name.toLowerCase().includes(q))
+                || (gearItem.brand && gearItem.brand.toLowerCase().includes(q)));
         },
     },
     mounted() {
