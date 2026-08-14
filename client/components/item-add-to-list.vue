@@ -1,6 +1,6 @@
 <template>
     <div class="itemDetailAddToList">
-        <button class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null">
+        <button class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null; addAsOptional = false">
             {{ $t('item.addToListButtonText') }}
         </button>
         <ul v-if="open" class="itemDetailAddDropdown">
@@ -31,6 +31,17 @@
             </template>
             <template v-else>
                 <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">{{ $t('item.addToListBack') }}</li>
+                <li class="itemDetailAddOptionalRow">
+                    <label class="itemDetailAddOptionalLabel">
+                        <input
+                            v-model="addAsOptional"
+                            type="checkbox"
+                            class="lpOptionalToggle"
+                            :title="$t('item.optionalTitle')"
+                        />
+                        {{ $t('public.option') }}
+                    </label>
+                </li>
                 <li
                     v-for="cat in selectedListCategories"
                     :key="cat.id"
@@ -85,6 +96,7 @@ export default {
             newCategoryName: '',
             creatingList: false,
             newListName: '',
+            addAsOptional: false,
         };
     },
     computed: {
@@ -116,6 +128,7 @@ export default {
                 itemId: this.item.id,
                 categoryId: category.id,
                 dropIndex: category.categoryItems.length,
+                optional: this.addAsOptional,
             });
             this.$emit('added');
         },
@@ -140,6 +153,7 @@ export default {
                 itemId: this.item.id,
                 name,
                 listId: this.selectedListId,
+                optional: this.addAsOptional,
             });
             this.$emit('added');
         },
@@ -203,6 +217,26 @@ export default {
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.06);
     }
+}
+
+.itemDetailAddOptionalRow {
+    border-bottom: 1px solid $color-border;
+    padding: 6px 14px;
+}
+
+.itemDetailAddOptionalLabel {
+    align-items: center;
+    color: $color-text-muted;
+    cursor: pointer;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 6px;
+}
+
+.lpOptionalToggle {
+    cursor: pointer;
+    height: 14px;
+    width: 14px;
 }
 
 .itemDetailAddOption {

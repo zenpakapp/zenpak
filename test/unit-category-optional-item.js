@@ -73,6 +73,30 @@ console.log('\n--- toggleOptionalItem: on -> off -> on re-stores the latest prio
     assert('latest qty is stored, not the original', categoryItem.qtyBeforeOptional === 5);
 }
 
+console.log('\n--- updateCategoryItem: manual qty edit after toggling on clears stale qtyBeforeOptional ---');
+
+{
+    const { category, item } = setupCategoryWithItem(3);
+    category.toggleOptionalItem(item.id);
+    category.updateCategoryItem({ itemId: item.id, qty: 5 });
+    const categoryItem = category.getCategoryItemById(item.id);
+
+    assert('stale qtyBeforeOptional is cleared by the manual edit', typeof categoryItem.qtyBeforeOptional === 'undefined');
+}
+
+console.log('\n--- updateCategoryItem then toggle off does not resurrect a stale qty ---');
+
+{
+    const { category, item } = setupCategoryWithItem(3);
+    category.toggleOptionalItem(item.id);
+    category.updateCategoryItem({ itemId: item.id, qty: 5 });
+    category.updateCategoryItem({ itemId: item.id, qty: 0 });
+    category.toggleOptionalItem(item.id);
+    const categoryItem = category.getCategoryItemById(item.id);
+
+    assert('falls back to 1, not the stale toggled-on value of 3', categoryItem.qty === 1);
+}
+
 console.log('\n--- toggleOptionalItem: weight excluded from subtotal while optional ---');
 
 {

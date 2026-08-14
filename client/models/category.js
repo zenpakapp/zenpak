@@ -33,6 +33,11 @@ Category.prototype.addItem = function (partialCategoryItem) {
 Category.prototype.updateCategoryItem = function (categoryItem) {
     const oldCategoryItem = this.getCategoryItemById(categoryItem.itemId);
     const newCategoryItem = assignIn({}, oldCategoryItem, categoryItem);
+
+    if (typeof categoryItem.qty !== 'undefined' && categoryItem.qty !== oldCategoryItem.qty) {
+        delete newCategoryItem.qtyBeforeOptional;
+    }
+
     const idx = this.categoryItems.indexOf(oldCategoryItem);
     if (idx !== -1) this.categoryItems.splice(idx, 1, newCategoryItem);
 };

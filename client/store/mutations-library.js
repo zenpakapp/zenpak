@@ -91,7 +91,7 @@ module.exports = {
         const item = state.library.getItemById(args.itemId);
         const dropCategory = state.library.getCategoryById(args.categoryId);
         if (item && dropCategory) {
-            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id });
+            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
             const categoryItem = dropCategory.getCategoryItemById(item.id);
             const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
             if (categoryItem && categoryItemIndex !== -1) {
@@ -112,7 +112,7 @@ module.exports = {
             .find((category) => category && String(category.name || '').trim().toLowerCase() === name.toLowerCase());
         const category = existingCategory || state.library.newCategory({ list });
         category.name = existingCategory ? existingCategory.name : name;
-        if (!category.getCategoryItemById(item.id)) category.addItem({ itemId: item.id });
+        if (!category.getCategoryItemById(item.id)) category.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
         list.calculateTotals();
     },
     updateListName(state, updatedList) {
