@@ -655,6 +655,7 @@
     "consumableTitle": "Marquer comme consommable",
     "ratingTitle": "Noter cet article",
     "optionalQtyTitle": "Quantité 0 marque cet article comme optionnel — son poids n'est pas compté dans les totaux",
+    "optionalTitle": "Marquer comme optionnel",
     "editTitle": "Modifier les détails",
     "detailOpenError": "Impossible d'ouvrir l'éditeur de cet article. Réessayez.",
     "removeTitle": "Supprimer",

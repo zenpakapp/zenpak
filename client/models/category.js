@@ -37,6 +37,23 @@ Category.prototype.updateCategoryItem = function (categoryItem) {
     if (idx !== -1) this.categoryItems.splice(idx, 1, newCategoryItem);
 };
 
+Category.prototype.toggleOptionalItem = function (itemId) {
+    const categoryItem = this.getCategoryItemById(itemId);
+    if (!categoryItem) return;
+
+    const updatedCategoryItem = { ...categoryItem };
+    if (categoryItem.qty > 0) {
+        updatedCategoryItem.qtyBeforeOptional = categoryItem.qty;
+        updatedCategoryItem.qty = 0;
+    } else {
+        updatedCategoryItem.qty = categoryItem.qtyBeforeOptional || 1;
+        delete updatedCategoryItem.qtyBeforeOptional;
+    }
+
+    const idx = this.categoryItems.indexOf(categoryItem);
+    if (idx !== -1) this.categoryItems.splice(idx, 1, updatedCategoryItem);
+};
+
 Category.prototype.removeItem = function (itemId) {
     const categoryItem = this.getCategoryItemById(itemId);
     const index = this.categoryItems.indexOf(categoryItem);

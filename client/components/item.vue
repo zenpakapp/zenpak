@@ -20,6 +20,7 @@
         <span class="lpNameCell">
             <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @input="saveItem">
             <input v-model="item.description" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @input="saveItem">
+            <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
             <span v-if="item.brand || item.category" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
                 <span v-if="item.brand && item.category" class="lpItemMetaSep">·</span>
@@ -43,6 +44,15 @@
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
+            <input
+                type="checkbox"
+                class="lpOptionalToggle"
+                :checked="categoryItem.qty === 0"
+                :title="$t('item.optionalTitle')"
+                @change="toggleOptional"
+                @click.stop
+                @dblclick.stop
+            />
             <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span class="lpArrows">
                 <span class="lpSprite lpUp" @click="incrementQty($event)" />
@@ -230,6 +240,9 @@ export default {
             }
             this.categoryItem.consumable = !this.categoryItem.consumable;
             this.saveCategoryItem();
+        },
+        toggleOptional() {
+            this.$store.commit('toggleOptionalItem', { category: this.category, itemId: this.item.id });
         },
         cycleStar() {
             if (!this.categoryItem.star) {

@@ -268,6 +268,11 @@ module.exports = {
         state.library.getListById(state.library.defaultListId).calculateTotals();
         state.categoryItemVersion += 1;
     },
+    toggleOptionalItem(state, args) {
+        args.category.toggleOptionalItem(args.itemId);
+        state.library.getListById(state.library.defaultListId).calculateTotals();
+        state.categoryItemVersion += 1;
+    },
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
         state.library.getListById(state.library.defaultListId).calculateTotals();

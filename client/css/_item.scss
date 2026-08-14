@@ -75,6 +75,24 @@
     width: 18px;
 }
 
+.lpOptionalToggle {
+    cursor: pointer;
+    height: 14px;
+    margin-right: 4px;
+    width: 14px;
+}
+
+.lpItemOptionalBadge {
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 5px;
+    text-transform: uppercase;
+}
+
 .lpItemPacked {
     opacity: 0.4;
 

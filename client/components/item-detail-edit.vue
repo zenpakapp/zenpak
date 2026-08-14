@@ -245,7 +245,8 @@ export default {
 
             let updatedCategoryItem = this.categoryItem;
             if (this.categoryItem && this.category) {
-                updatedCategoryItem = { ...this.categoryItem, qty: parseFloat(this.editQty) || 1 };
+                const qtyFloat = parseFloat(this.editQty);
+                updatedCategoryItem = { ...this.categoryItem, qty: Number.isNaN(qtyFloat) ? 1 : qtyFloat };
                 this.$store.commit('updateCategoryItem', {
                     category: this.category,
                     categoryItem: updatedCategoryItem,
