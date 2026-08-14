@@ -1,3 +1,4 @@
+/* global $, chartData */
 let chartModulePromise = null;
 
 function loadChart() {
@@ -13,7 +14,7 @@ function loadChart() {
     return chartModulePromise;
 }
 
-listReport = function () {
+function listReport() {
     const $list = $('.lpList');
     const $categories = $('.lpCategories');
     const $chartContainer = $('.lpChart');
@@ -143,7 +144,7 @@ listReport = function () {
     }
 
     init();
-};
+}
 
 function centerDialog() {
     const $dialog = $('.dialog:visible');

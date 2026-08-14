@@ -117,7 +117,7 @@ router.get('/items', (req, res) => {
                     try {
                         const hostname = new URL(item.url).hostname.replace(/^www\./i, '').toLowerCase();
                         if (hostname === matchLower) return `domain:${rule.match}`;
-                    } catch (_) {}
+                    } catch (_) { /* ignore */ }
                 }
             }
             return null;

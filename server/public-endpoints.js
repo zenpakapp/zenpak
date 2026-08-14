@@ -24,7 +24,7 @@ async function resolveViewerKey(req) {
             if (viewer && viewer._id) {
                 return `user:${String(viewer._id)}`;
             }
-        } catch (_) {}
+        } catch (_) { /* ignore */ }
     }
 
     const forwardedFor = typeof req.get === 'function' ? req.get('x-forwarded-for') : '';

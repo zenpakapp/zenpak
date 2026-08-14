@@ -175,7 +175,7 @@ export default {
                     body: JSON.stringify({ status }),
                 });
                 this.reports = this.reports.filter((r) => String(r._id) !== String(report._id));
-            } catch {}
+            } catch { /* ignore */ }
         },
         async banUser(report) {
             const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');

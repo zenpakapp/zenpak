@@ -48,6 +48,9 @@ function getRuntimeEnvironment() {
 
 const templates = {};
 
+let shareTemplate = '';
+let embedTemplate = '';
+let embedJTemplate = '';
 let privacyTemplate = '';
 let termsTemplate = '';
 let legalTemplate = '';
@@ -334,7 +337,7 @@ router.get('/csv/:id', (req, res) => {
         }
 
         library.load(user.library);
-        for (var i in library.lists) {
+        for (const i in library.lists) {
             if (library.lists[i].externalId && library.lists[i].externalId == id) {
                 library.defaultListId = library.lists[i].id;
                 list = library.lists[i];
@@ -352,7 +355,7 @@ router.get('/csv/:id', (req, res) => {
         }
         out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,brand,image_url\n';
 
-        for (var i in list.categoryIds) {
+        for (const i in list.categoryIds) {
             const category = library.getCategoryById(list.categoryIds[i]);
             if (category) {
                 for (const j in category.categoryItems) {

@@ -143,8 +143,8 @@ function extractMeta(html, property) {
 
 function extractJsonLd(html) {
     const re = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
-    let m;
-    while ((m = re.exec(html)) !== null) {
+    let m = re.exec(html);
+    while (m !== null) {
         try {
             const data = JSON.parse(m[1]);
             const items = Array.isArray(data) ? data : [data];
@@ -158,6 +158,7 @@ function extractJsonLd(html) {
                 }
             }
         } catch (_) { /* malformed JSON-LD — skip */ }
+        m = re.exec(html);
     }
     return null;
 }

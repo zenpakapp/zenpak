@@ -59,8 +59,8 @@ List.prototype.renderChart = function (type, linkParent) {
 
     if (typeof linkParent === 'undefined') linkParent = true;
 
-    for (var i in this.categoryIds) {
-        var category = this.library.getCategoryById(this.categoryIds[i]);
+    for (const i in this.categoryIds) {
+        const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
             category.calculateSubtotal();
 
@@ -82,12 +82,12 @@ List.prototype.renderChart = function (type, linkParent) {
         return `${name}: ${weightUtils.MgToWeight(valueMg, unit)} ${unit}`;
     };
 
-    for (var i in this.categoryIds) {
-        var category = this.library.getCategoryById(this.categoryIds[i]);
+    for (const i in this.categoryIds) {
+        const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
             const points = {};
 
-            var categoryTotal;
+            let categoryTotal;
             if (type === 'consumable') {
                 categoryTotal = category.subtotalConsumableWeight;
             } else if (type === 'worn') {
@@ -109,14 +109,14 @@ List.prototype.renderChart = function (type, linkParent) {
                 let name = getTooltipText(item.name, value, item.authorUnit);
                 const color = colorUtils.getColor(j, tempColor);
                 if (item.qty > 1) name += ` x ${item.qty}`;
-                var percent = value / categoryTotal;
+                const itemPercent = value / categoryTotal;
                 const tempItem = {
-                    value, id: item.id, name, color, percent,
+                    value, id: item.id, name, color, percent: itemPercent,
                 };
                 if (linkParent) tempItem.parent = tempCategory;
                 points[j] = tempItem;
             }
-            var percent = categoryTotal / total;
+            const percent = categoryTotal / total;
             const tempCategoryData = {
                 points, color: category.color, id: category.id, name: getTooltipText(category.name, categoryTotal, this.library.totalUnit), total: categoryTotal, percent, visiblePoints: false,
             };

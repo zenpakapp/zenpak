@@ -91,8 +91,10 @@ export function fetchJson(url, options) {
 
 export function getElementIndex(node) {
     let index = 0;
-    while ((node = node.previousElementSibling)) {
+    let current = node.previousElementSibling;
+    while (current) {
         index++;
+        current = current.previousElementSibling;
     }
     return index;
 }

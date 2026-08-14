@@ -146,7 +146,7 @@ Library.prototype.removeList = function (id) {
     if (this.lists.length === 1) return;
     const list = this.getListById(id);
 
-    for (var i = 0; i < list.categoryIds.length; i++) {
+    for (let i = 0; i < list.categoryIds.length; i++) {
         this.removeCategory(list.categoryIds[i], true);
     }
 
@@ -155,7 +155,7 @@ Library.prototype.removeList = function (id) {
 
     if (this.defaultListId == id) {
         let newId = -1;
-        for (var i in this.lists) {
+        for (const i in this.lists) {
             newId = this.lists[i].id;
             break;
         }
@@ -220,21 +220,21 @@ Library.prototype.getItemsInCurrentList = function () {
 Library.prototype.findCategoryWithItemById = function (itemId, listId) {
     if (listId) {
         const list = this.getListById(listId);
-        for (i in list.categoryIds) {
-            var category = this.getCategoryById(list.categoryIds[i]);
+        for (const i in list.categoryIds) {
+            const category = this.getCategoryById(list.categoryIds[i]);
             if (category) {
-                for (var j in category.categoryItems) {
-                    var categoryItem = category.categoryItems[j];
+                for (const j in category.categoryItems) {
+                    const categoryItem = category.categoryItems[j];
                     if (categoryItem.itemId == itemId) return category;
                 }
             }
         }
     } else {
-        for (var i in this.categories) {
-            var category = this.categories[i];
+        for (const i in this.categories) {
+            const category = this.categories[i];
             if (category) {
-                for (var j in category.categoryItems) {
-                    var categoryItem = category.categoryItems[j];
+                for (const j in category.categoryItems) {
+                    const categoryItem = category.categoryItems[j];
                     if (categoryItem.itemId == itemId) return category;
                 }
             }
@@ -272,17 +272,17 @@ Library.prototype.save = function () {
     out.insights = this.insights;
 
     out.items = [];
-    for (var i in this.items) {
+    for (const i in this.items) {
         out.items.push(this.items[i].save());
     }
 
     out.categories = [];
-    for (var i in this.categories) {
+    for (const i in this.categories) {
         out.categories.push(this.categories[i].save());
     }
 
     out.lists = [];
-    for (var i in this.lists) {
+    for (const i in this.lists) {
         out.lists.push(this.lists[i].save());
     }
 
@@ -317,24 +317,24 @@ Library.prototype.load = function (serializedLibrary) {
         assignIn(this.insights, serializedLibrary.insights);
     }
 
-    for (var i in serializedLibrary.items) {
-        var temp = new Item({ id: serializedLibrary.items[i].id });
+    for (const i in serializedLibrary.items) {
+        const temp = new Item({ id: serializedLibrary.items[i].id });
         temp.load(serializedLibrary.items[i]);
         this.items.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.categories = [];
-    for (var i in serializedLibrary.categories) {
-        var temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
+    for (const i in serializedLibrary.categories) {
+        const temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
         temp.load(serializedLibrary.categories[i]);
         this.categories.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.lists = [];
-    for (var i in serializedLibrary.lists) {
-        var temp = new List({ id: serializedLibrary.lists[i].id, library: this });
+    for (const i in serializedLibrary.lists) {
+        const temp = new List({ id: serializedLibrary.lists[i].id, library: this });
         temp.load(serializedLibrary.lists[i]);
         this.lists.push(temp);
         this.idMap[temp.id] = temp;
@@ -442,7 +442,7 @@ Library.prototype.fixDuplicateIds = function (serializedLibrary) {
         foundIds[list.id].push({ type: 'list', list });
     });
 
-    for (id in foundIds) {
+    for (const id in foundIds) {
         if (foundIds[id].length > 1) {
             const duplicateSet = foundIds[id];
             duplicateSet.forEach((duplicate, index) => {
