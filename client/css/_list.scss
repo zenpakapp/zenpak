@@ -236,7 +236,10 @@ input.lpCategoryName { /* specificity */
     }
 
     .lpQtyCell {
-        flex: 0 0 60px;
+        align-items: center;
+        display: flex;
+        flex: 0 0 66px;
+        gap: 4px;
 
         .lpQty {
             width: 39px;
@@ -664,7 +667,7 @@ input.lpCategoryName { /* specificity */
         }
 
         .lpQtyCell {
-            flex: 0 0 44px;
+            flex: 0 0 50px;
         }
     }
 
