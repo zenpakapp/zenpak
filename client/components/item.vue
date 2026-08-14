@@ -33,6 +33,7 @@
             <i class="lpSprite lpTag" :class="{lpActive: item.brand}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
             <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" @click="toggleWorn" />
             <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" @click="toggleConsumable" />
+            <i class="lpSprite lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" @click="toggleOptional" />
             <i :class="'lpSprite lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" @click="cycleStar" />
             <i class="lpSprite lpEdit" :title="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
@@ -44,15 +45,6 @@
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
-            <input
-                type="checkbox"
-                class="lpOptionalToggle"
-                :checked="categoryItem.qty === 0"
-                :title="$t('item.optionalTitle')"
-                @change="toggleOptional"
-                @click.stop
-                @dblclick.stop
-            />
             <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span class="lpArrows">
                 <span class="lpSprite lpUp" @click="incrementQty($event)" />

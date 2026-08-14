@@ -75,13 +75,6 @@
     width: 18px;
 }
 
-.lpOptionalToggle {
-    cursor: pointer;
-    flex-shrink: 0;
-    height: 14px;
-    width: 14px;
-}
-
 .lpItemOptionalBadge {
     border: 1px solid $color-border;
     border-radius: $radius-sm;
@@ -91,6 +84,24 @@
     font-weight: 600;
     padding: 1px 5px;
     text-transform: uppercase;
+}
+
+.lpOptionDot {
+    background-color: var(--color-text-muted);
+    height: 14px;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4' stroke-dasharray='2.1 2.1'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4' stroke-dasharray='2.1 2.1'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    width: 14px;
+
+    &.lpActive {
+        background-color: var(--color-accent);
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='7' cy='7' r='2.6' fill='black'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='7' cy='7' r='2.6' fill='black'/%3E%3C/svg%3E");
+    }
 }
 
 .lpItemPacked {
