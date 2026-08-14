@@ -1,7 +1,7 @@
 {
-  "name": "lighterpack",
+  "name": "zenpak",
   "version": "2.0.0",
-  "description": "LighterPack =========== LighterPack is a website to track the gear you take on adventures. It is still in Beta.",
+  "description": "ZenPak =========== ZenPak is a website to track the gear you take on adventures. It is still in Beta.",
   "main": "app.js",
   "engines": {
     "node": ">=22 <23"
