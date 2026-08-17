@@ -297,6 +297,7 @@ import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
 import { tierLabel } from '../services/tier-labels.js';
 import LpSelect from '../components/lp-select.vue';
+import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
 
 const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
 const CommunityPeople = defineAsyncComponent(() => import(/* webpackChunkName: "community-people" */ '../components/community-people.vue'));
@@ -378,21 +379,13 @@ export default {
         seasonOptions() {
             return [
                 { value: '', label: this.$t('community.filterSeasonAny') },
-                { value: '3-season', label: this.$t('list.season3') },
-                { value: '4-season', label: this.$t('list.season4') },
-                { value: 'spring', label: this.$t('list.seasonSpring') },
-                { value: 'summer', label: this.$t('list.seasonSummer') },
-                { value: 'fall', label: this.$t('list.seasonFall') },
-                { value: 'winter', label: this.$t('list.seasonWinter') },
+                ...toI18nOptions(SEASON_VALUES, (key) => this.$t(key)),
             ];
         },
         listTypeOptions() {
             return [
                 { value: '', label: this.$t('community.filterTypeAny') },
-                { value: 'day-hike', label: this.$t('list.typeDay') },
-                { value: 'weekend', label: this.$t('list.typeWeekend') },
-                { value: 'trek', label: this.$t('list.typeThru') },
-                { value: 'bikepacking', label: this.$t('list.typeBike') },
+                ...toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key)),
             ];
         },
         canSeeFeed() {

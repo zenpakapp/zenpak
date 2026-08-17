@@ -36,6 +36,10 @@ _Avoid_: Item Category, Category (reserved for the List-scoped grouping — usin
 A bundled example Library (`client/data/templates/*.json`, same shape as `Library.save()`) offered at signup to seed a new account's first List. Applied once via `applyQuickSetup` + `saveRemoteWithTemplate`; no lineage is kept afterward — the new Library has no record it came from a Template.
 _Avoid_: confusing with a copied/forked public List — that's a different mechanism (`forkedFrom`) that *does* track lineage. A Template is a one-shot unlinked seed.
 
+**List Type**:
+A free-choice tag on a List (`list.listTypes`, an array — a List can carry several) describing what kind of trip it's for, set manually by the owner via the Share dialog's "community tags" section. Drives the Community discovery filter (`filters.type` in `server/community-endpoints.js`) and is indexed server-side. Current values: `day-hike`, `weekend`, `trek`, `bikepacking`. Sibling to **Season** (`list.seasons`: `3-season`/`4-season`/`spring`/`summer`/`fall`/`winter`), the other community discovery tag on List — both default to `[]` and are only ever set by the owner, never inferred.
+_Avoid_: confusing with a List's Category (gear grouping) — unrelated. Also avoid inventing a parallel "Activity" concept — List Type already is that concept; extend its value set instead of adding a second field.
+
 **Total Weight**:
 The sum of every Placement's weight × qty on a List, no exclusions. Also called skin-out weight.
 _Avoid_: Pack Weight, Full Weight.

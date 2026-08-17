@@ -100,6 +100,7 @@
 import PopoverHover from './popover-hover.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { fetchJson } from '../utils/utils';
+import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
 
 export default {
     name: 'Share',
@@ -113,22 +114,10 @@ export default {
     },
     computed: {
         seasonOptions() {
-            return [
-                { value: '3-season', label: this.$t('list.season3') },
-                { value: '4-season', label: this.$t('list.season4') },
-                { value: 'spring', label: this.$t('list.seasonSpring') },
-                { value: 'summer', label: this.$t('list.seasonSummer') },
-                { value: 'fall', label: this.$t('list.seasonFall') },
-                { value: 'winter', label: this.$t('list.seasonWinter') },
-            ];
+            return toI18nOptions(SEASON_VALUES, (key) => this.$t(key));
         },
         listTypeOptions() {
-            return [
-                { value: 'day-hike', label: this.$t('list.typeDay') },
-                { value: 'weekend', label: this.$t('list.typeWeekend') },
-                { value: 'trek', label: this.$t('list.typeThru') },
-                { value: 'bikepacking', label: this.$t('list.typeBike') },
-            ];
+            return toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key));
         },
         visibilityHint() {
             const hints = {

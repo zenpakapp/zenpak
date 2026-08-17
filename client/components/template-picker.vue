@@ -349,7 +349,7 @@ export default {
         },
         onSelect(template) {
             if (!this.validateSetup()) return;
-            this.$emit('select', template.data, this.getSetup());
+            this.$emit('select', template.data, { ...this.getSetup(), listTypes: [...(template.listTypes || [])] });
         },
         onDismiss() {
             if (!this.validateSetup()) return;
