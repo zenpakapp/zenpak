@@ -172,6 +172,7 @@ export default {
                     canvas: this.$refs.chartCanvas,
                     processedData: chartData,
                     hoverCallback: this.chartHover,
+                    unit: this.displayUnit,
                 }));
             }
             return chartData;

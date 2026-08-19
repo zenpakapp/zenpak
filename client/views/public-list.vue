@@ -427,6 +427,12 @@ export default {
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
         },
+        basePercent(cat) {
+            const baseTotal = this.list && this.list.totalBaseWeight;
+            if (!baseTotal) return '';
+            const baseWeight = cat.subtotalWeight - (cat.subtotalWornWeight || 0) - (cat.subtotalConsumableWeight || 0);
+            return `${Math.round((baseWeight / baseTotal) * 100)}%`;
+        },
         getChartBg() {
             const style = getComputedStyle(document.documentElement);
             return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
@@ -444,11 +450,10 @@ export default {
                 this.chart = null;
             }
 
-            const unit = this.totalUnit;
             this.chart = new Chart(canvas, {
                 type: 'doughnut',
                 data: {
-                    labels: categories.map((cat) => `${cat.name}: ${weightUtils.MgToWeight(cat.subtotalWeight, unit)} ${unit}`),
+                    labels: categories.map((cat) => cat.name),
                     datasets: [{
                         data: categories.map((cat) => cat.subtotalWeight),
                         backgroundColor: categories.map((cat) => cat.color),
@@ -465,7 +470,16 @@ export default {
                     animation: { duration: 400 },
                     plugins: {
                         legend: { display: false },
-                        tooltip: { enabled: false },
+                        tooltip: {
+                            caretSize: 0,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => {
+                                    const cat = categories[context.dataIndex];
+                                    return `${this.displayWeight(cat.subtotalWeight)} ${this.totalUnit} (${this.basePercent(cat)})`;
+                                },
+                            },
+                        },
                     },
                     onHover: (event, elements) => {
                         this.hoveredCategoryIdx = elements.length > 0 ? elements[0].index : null;

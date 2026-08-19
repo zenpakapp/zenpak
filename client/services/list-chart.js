@@ -1,4 +1,5 @@
 const colorUtils = require('../utils/color.js');
+const weightUtils = require('../utils/weight.js');
 
 let chartModulePromise = null;
 
@@ -37,7 +38,7 @@ function buildDataset(categories) {
 }
 
 export async function renderListChart({
-    chart, canvas, processedData, hoverCallback,
+    chart, canvas, processedData, hoverCallback, unit,
 }) {
     if (!canvas || !processedData) return chart;
 
@@ -46,6 +47,7 @@ export async function renderListChart({
 
     if (chart) {
         chart._categories = categories;
+        chart._unit = unit;
         chart.data.labels = categories.map((c) => c.name);
         const ds = buildDataset(categories);
         chart.data.datasets[0].data = ds.data;
@@ -71,7 +73,12 @@ export async function renderListChart({
                     caretSize: 0,
                     displayColors: false,
                     callbacks: {
-                        label: () => null,
+                        label: (context) => {
+                            const cat = context.chart._categories?.[context.dataIndex];
+                            if (!cat) return null;
+                            const chartUnit = context.chart._unit;
+                            return `${weightUtils.MgToWeight(cat.total, chartUnit)} ${chartUnit} (${Math.round((cat.basePercent || 0) * 100)}%)`;
+                        },
                     },
                 },
             },
@@ -86,5 +93,6 @@ export async function renderListChart({
     });
 
     newChart._categories = categories;
+    newChart._unit = unit;
     return newChart;
 }

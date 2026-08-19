@@ -117,8 +117,10 @@ List.prototype.renderChart = function (type, linkParent) {
                 points[j] = tempItem;
             }
             const percent = categoryTotal / total;
+            const categoryBaseWeight = category.subtotalWeight - (category.subtotalWornWeight || 0) - (category.subtotalConsumableWeight || 0);
+            const basePercent = this.totalBaseWeight ? categoryBaseWeight / this.totalBaseWeight : 0;
             const tempCategoryData = {
-                points, color: category.color, id: category.id, name: getTooltipText(category.name, categoryTotal, this.library.totalUnit), total: categoryTotal, percent, visiblePoints: false,
+                points, color: category.color, id: category.id, name: category.name, total: categoryTotal, percent, basePercent, visiblePoints: false,
             };
             if (linkParent) tempCategoryData.parent = chartData;
             assignIn(tempCategory, tempCategoryData);
