@@ -88,6 +88,14 @@
     }
 }
 
+.lpPublicAvatarImage {
+    background: $color-surface;
+
+    img {
+        background: $color-surface;
+    }
+}
+
 .lpPublicHeroMeta {
     flex: 1;
     min-width: 0;
@@ -188,12 +196,19 @@
     cursor: pointer;
     display: block;
     margin-bottom: 8px;
-    padding: 14px 16px;
+    padding: 15px 16px;
     text-decoration: none;
     transition: border-color $transitionDurationFast ease;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
         border-color: $color-accent;
+    }
+
+    &:hover .lpPublicListDesc,
+    &:focus-visible .lpPublicListDesc {
+        -webkit-line-clamp: 6;
+        color: $color-text;
     }
 
     &:last-child {
@@ -201,25 +216,59 @@
     }
 }
 
+.lpPublicListCardTop {
+    align-items: flex-start;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
 .lpPublicListName {
     color: $color-accent;
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 5px;
+    line-height: 1.25;
+    min-width: 0;
 }
 
 .lpPublicListDesc {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     color: $color-text-muted;
+    display: -webkit-box;
     font-size: 12px;
     line-height: 1.5;
-    margin-bottom: 8px;
+    max-width: 58ch;
+    overflow: hidden;
+    transition: color $transitionDurationFast ease;
 }
 
 .lpPublicListMeta {
+    align-items: center;
     color: $color-text-muted;
     display: flex;
     font-size: 11px;
-    gap: 14px;
+    flex-shrink: 0;
+    gap: 10px;
+    line-height: 1.25;
+    padding-top: 2px;
+    white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+    .lpPublicListCardTop {
+        display: block;
+    }
+
+    .lpPublicListName {
+        margin-bottom: 6px;
+    }
+
+    .lpPublicListMeta {
+        gap: 12px;
+        padding-top: 0;
+    }
 }
 
 .lpPublicDisclosure {

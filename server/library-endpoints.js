@@ -89,10 +89,7 @@ function saveLibrary(req, res, user) {
     if (serverEntitlements) user.library.entitlements = serverEntitlements;
     if (serverInsights) user.library.insights = serverInsights;
     if (serverProfile) {
-        if (!user.library.publicProfile) user.library.publicProfile = {};
-        user.library.publicProfile.bio = serverProfile.bio || '';
-        user.library.publicProfile.links = serverProfile.links || [];
-        user.library.publicProfile.gearPhilosophy = serverProfile.gearPhilosophy || [];
+        user.library.publicProfile = { ...serverProfile };
     }
     if (user.library.items) {
         for (const item of user.library.items) {

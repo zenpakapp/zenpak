@@ -49,7 +49,7 @@
             <!-- Hero -->
             <div class="lpPublicHero">
                 <div class="lpPublicHeroInner">
-                    <div class="lpPublicAvatar">
+                    <div class="lpPublicAvatar" :class="{ lpPublicAvatarImage: profile.avatarUrl }">
                         <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName">
                         <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                     </div>
@@ -101,15 +101,17 @@
                     :to="listTo(list.externalId)"
                     class="lpPublicListCard"
                 >
-                    <div class="lpPublicListName">
-                        {{ list.name }}
+                    <div class="lpPublicListCardTop">
+                        <div class="lpPublicListName">
+                            {{ list.name }}
+                        </div>
+                        <div class="lpPublicListMeta">
+                            <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }}</span>
+                            <span v-if="list.totalQty">📦 {{ list.totalQty }}</span>
+                        </div>
                     </div>
                     <div v-if="list.description" class="lpPublicListDesc">
                         {{ list.description }}
-                    </div>
-                    <div class="lpPublicListMeta">
-                        <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }} base</span>
-                        <span v-if="list.totalQty">📦 {{ list.totalQty }} items</span>
                     </div>
                 </router-link>
             </div>
@@ -263,10 +265,10 @@ export default {
                 robots.remove();
             }
         },
-        formatWeight(grams) {
-            if (!grams) return '';
-            const kg = grams / 1000;
-            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${grams} g`;
+        formatWeight(mg) {
+            if (!mg) return '';
+            const kg = mg / 1000000;
+            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${Math.round(mg / 1000)} g`;
         },
         listTo(externalId) {
             const profileUsername = this.profileUsername || this.$route.params.username;

@@ -423,8 +423,18 @@ input.lpCategoryName { /* specificity */
     }
 
     textarea {
-        height: 65px;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        height: 100px;
+        padding: 10px $spacingSmall;
+        resize: vertical;
         width: 100%;
+
+        &:focus {
+            border-color: $color-accent;
+            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+            outline: none;
+        }
     }
 }
 

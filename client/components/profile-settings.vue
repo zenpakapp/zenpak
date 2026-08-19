@@ -104,6 +104,14 @@
     }
 }
 
+.profileSettingsAvatarPreviewImage {
+    background: $color-bg;
+
+    img {
+        background: $color-bg;
+    }
+}
+
 .profileSettingsAvatarActions {
     display: flex;
     flex-wrap: wrap;
@@ -178,8 +186,8 @@
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
             <div class="profileSettingsAvatar">
-                <div class="profileSettingsAvatarPreview">
-                    <img v-if="profile.avatarUrl" :src="profile.avatarUrl" alt="avatar">
+                <div class="profileSettingsAvatarPreview" :class="{ profileSettingsAvatarPreviewImage: storeProfile.avatarUrl }">
+                    <img v-if="storeProfile.avatarUrl" :src="storeProfile.avatarUrl" alt="avatar">
                     <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                 </div>
                 <template v-if="hasProfileCustomization">
@@ -188,7 +196,7 @@
                             {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
                             <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
                         </label>
-                        <button v-if="profile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">
+                        <button v-if="storeProfile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">
                             {{ $t('acct.remove') }}
                         </button>
                     </div>
@@ -201,23 +209,23 @@
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
-            <input type="text" class="profileSettingsInput" :value="profile.displayName" @input="update('displayName', $event.target.value)">
+            <input type="text" class="profileSettingsInput" :value="draftProfile.displayName" @input="update('displayName', $event.target.value)">
         </div>
 
         <template v-if="hasProfileCustomization">
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.trailName') }}</span>
-                <input type="text" class="profileSettingsInput" :value="profile.trailName" @input="update('trailName', $event.target.value)">
+                <input type="text" class="profileSettingsInput" :value="draftProfile.trailName" @input="update('trailName', $event.target.value)">
             </div>
             <div class="profileSettingsField">
                 <span class="profileSettingsLabel">{{ $t('acct.bio') }}</span>
-                <textarea class="profileSettingsTextarea" :value="profile.bio" @input="update('bio', $event.target.value)" />
+                <textarea class="profileSettingsTextarea" :value="draftProfile.bio" @input="update('bio', $event.target.value)" />
             </div>
         </template>
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
-            <lp-select :value="profile.visibility" :options="visibilityOptions" @change="update('visibility', $event)" />
+            <lp-select :value="draftProfile.visibility" :options="visibilityOptions" @change="update('visibility', $event)" />
             <p v-if="visibilityHint" class="profileSettingsHint">
                 {{ visibilityHint }}
             </p>
@@ -249,13 +257,20 @@ export default {
             profileSaving: false,
             profileSaved: false,
             profileError: null,
+            draftProfile: {
+                displayName: '',
+                trailName: '',
+                bio: '',
+                visibility: 'private',
+                allowSearchIndexing: false,
+            },
         };
     },
     computed: {
         library() {
             return this.$store.state.library;
         },
-        profile() {
+        storeProfile() {
             return this.$store.state.library.publicProfile;
         },
         username() {
@@ -268,7 +283,7 @@ export default {
             return avatarColor(this.username);
         },
         avatarLetter() {
-            return avatarInitial(this.profile && this.profile.displayName, this.username);
+            return avatarInitial(this.draftProfile && this.draftProfile.displayName, this.username);
         },
         unitOptions() {
             return this.units.map((u) => ({ value: u, label: u }));
@@ -294,12 +309,43 @@ export default {
                 discoverable: this.$t('acct.visibilityHintDiscoverable'),
                 indexable: this.$t('acct.visibilityHintIndexable'),
             };
-            return map[this.profile && this.profile.visibility] || '';
+            return map[this.draftProfile && this.draftProfile.visibility] || '';
+        },
+        storeProfileDraftSnapshot() {
+            const profile = this.storeProfile || {};
+            return JSON.stringify({
+                displayName: profile.displayName || '',
+                trailName: profile.trailName || '',
+                bio: profile.bio || '',
+                visibility: profile.visibility || 'private',
+                allowSearchIndexing: !!profile.allowSearchIndexing,
+            });
+        },
+    },
+    created() {
+        this.draftProfile = this.profileDraftFromStore();
+    },
+    watch: {
+        storeProfileDraftSnapshot() {
+            if (this.profileSaving) return;
+            this.draftProfile = this.profileDraftFromStore();
         },
     },
     methods: {
+        profileDraftFromStore() {
+            const profile = this.$store.state.library.publicProfile || {};
+            return {
+                displayName: profile.displayName || '',
+                trailName: profile.trailName || '',
+                bio: profile.bio || '',
+                visibility: profile.visibility || 'private',
+                allowSearchIndexing: !!profile.allowSearchIndexing,
+            };
+        },
         update(field, value) {
-            this.$store.commit('updatePublicProfile', { [field]: value });
+            this.draftProfile = { ...this.draftProfile, [field]: value };
+            this.profileSaved = false;
+            this.profileError = null;
         },
         updateDefaultUnit(field, value) {
             this.$store.commit('setDefaultUnits', {
@@ -333,7 +379,7 @@ export default {
             this.profileSaving = true;
             this.profileSaved = false;
             this.profileError = null;
-            if (isReservedDisplayName(this.profile.displayName)) {
+            if (isReservedDisplayName(this.draftProfile.displayName)) {
                 this.profileSaving = false;
                 this.profileError = this.$t('auth.displayNameReserved');
                 return;
@@ -343,13 +389,14 @@ export default {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        displayName: this.profile.displayName || '',
-                        trailName: this.profile.trailName || '',
-                        bio: this.profile.bio || '',
-                        visibility: this.profile.visibility || 'private',
-                        allowSearchIndexing: !!this.profile.allowSearchIndexing,
+                        displayName: this.draftProfile.displayName || '',
+                        trailName: this.draftProfile.trailName || '',
+                        bio: this.draftProfile.bio || '',
+                        visibility: this.draftProfile.visibility || 'private',
+                        allowSearchIndexing: !!this.draftProfile.allowSearchIndexing,
                     }),
                 });
+                this.$store.commit('updatePublicProfile', this.draftProfile);
                 this.profileSaved = true;
                 setTimeout(() => { this.profileSaved = false; }, 2000);
             } catch (error) {
