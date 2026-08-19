@@ -1,17 +1,20 @@
-export default [
-    'The mountains are calling. 🏔️',
-    'Pack light, go far. 🌍',
-    'Adventure starts here. ⛺',
-    'You\'re ready. Let\'s go. 🚀',
-    'Ready to roll. 🎒',
-    'Go far, carry little. 🌿',
+// CommonJS, matching list-type-options.js: keeps this require()'able by
+// test/unit-*.js on any Node >=22, without relying on require(esm) support
+// that only became unflagged by default in later 22.x patches.
+module.exports = [
+    'Packed and ready. 🎒',
     'Everything you need. Nothing you don\'t. ✨',
-    'The trail is waiting. 🥾',
-    'Light pack, open road. 🛤️',
-    'All set. Time to move. 👣',
-    'The world is out there. Go get it. 🌄',
-    'Less weight, more freedom. 🦅',
-    'Your pack is perfect. Enjoy the journey. ☀️',
+    'All set. Time to go. 🚀',
+    'Bag\'s ready. So are you. 😄',
     'Nothing forgotten. Everything essential. 💚',
-    'Step one: packed. Step two: everything else. 🏕️',
+    'Light load, easy going. 🌿',
+    'You\'re all packed up. ✅',
+    'Ready when you are. ☀️',
+    'Every item counted, every gram too. ⚖️',
+    'Packed with care, ready to roll. 📦',
+    'That\'s everything. Off you go. 👍',
+    'Bag\'s zipped. Enjoy the trip. 🚀',
+    'Nothing left behind. Nothing extra either. ✨',
+    'You\'re good to go. 🌍',
+    'One last check — you\'re set. ☀️',
 ];
