@@ -163,9 +163,6 @@
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
-        <button class="lpIconButton itemDetailClose" :title="$t('misc.close')" @click="$emit('close')">
-            ×
-        </button>
     </div>
 </template>
 
@@ -184,7 +181,7 @@ export default {
         starred: { type: Boolean, default: false },
         showAddCategory: { type: Boolean, default: false },
     },
-    emits: ['toggle-star', 'close', 'view-image', 'click-category'],
+    emits: ['toggle-star', 'view-image', 'click-category'],
     computed: {
         thumbnailImage() {
             if (this.imageKey) return `https://i.imgur.com/${this.imageKey}l.jpg`;

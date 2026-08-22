@@ -18,7 +18,6 @@
                         </div>
                         <h2>{{ $t('guide.upgrade.supportProject') }}</h2>
                     </div>
-                    <a class="lpHref close" @click="closeModal">✕</a>
                 </div>
 
                 <p class="lpUpgradeTagline">

@@ -173,6 +173,35 @@
         max-height: 400px;
         overflow-y: scroll;
     }
+
+    .lpModalClose {
+        align-items: center;
+        background: transparent;
+        border: none;
+        border-radius: $radius-md;
+        color: $color-text-muted;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 22px;
+        height: 32px;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        transition:
+            background-color $transitionDurationFast ease,
+            color $transitionDurationFast ease;
+        width: 32px;
+        z-index: 1;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(var(--color-accent-rgb), 0.08);
+            color: $color-accent;
+        }
+    }
 }
 
 .lpModalHeader {
@@ -241,6 +270,16 @@
                 aria-modal="true"
                 :aria-labelledby="id ? `${id}Label` : undefined"
             >
+                <button
+                    v-if="!hideClose"
+                    type="button"
+                    class="lpModalClose"
+                    :aria-label="$t('misc.close')"
+                    :title="$t('misc.close')"
+                    @click="hide"
+                >
+                    ×
+                </button>
                 <slot />
             </div>
         </transition>
@@ -270,6 +309,11 @@ export default {
             default: false,
         },
         transparentOverlay: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+        hideClose: {
             type: Boolean,
             required: false,
             default: false,
