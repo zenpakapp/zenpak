@@ -84,7 +84,7 @@ Free on **zenpak.app**, free to self-host.
 | Affiliate links + promo codes | | ✓ |
 | Insights (views, copies, clicks) | | ✓ |
 
-Plans support the project. Self-hosting is always fully functional.
+Plans support the project. Your data stays yours: full CSV export, self-hosting under GPL v2, always free. Self-hosting is always fully functional.
 
 ## License
 
