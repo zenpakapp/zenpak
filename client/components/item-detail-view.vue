@@ -13,7 +13,6 @@
             :starred="localStarred"
             :show-add-category="true"
             @toggle-star="toggleStar"
-            @close="$emit('close')"
             @view-image="viewImage"
             @click-category="$emit('start-edit')"
         />

@@ -11,6 +11,10 @@
     &::before {
         display: none;
     }
+
+    .lpModalClose {
+        top: 20px;
+    }
 }
 
 .itemDetail {

@@ -2,7 +2,7 @@
 @import "../css/_globals";
 
 .itemDetailHeader {
-    align-items: center;
+    align-items: flex-start;
     background:
         linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.02)),
         $color-surface;
@@ -13,6 +13,7 @@
     gap: 18px;
     min-height: 132px;
     padding: 22px 24px;
+    padding-right: 52px;
     position: relative;
 
     .itemDetailThumb {
@@ -99,6 +100,7 @@
     }
 
     .itemDetailStar {
+        align-self: flex-start;
         background: none;
         border: none;
         color: $color-text-muted;
@@ -115,28 +117,6 @@
 
         &.active {
             color: #f59e0b;
-        }
-    }
-
-    .itemDetailClose {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.12);
-        border: none;
-        border-radius: 50%;
-        color: $color-accent;
-        cursor: pointer;
-        display: flex;
-        flex-shrink: 0;
-        font-size: 22px;
-        font-weight: $fontWeight-bold;
-        height: 44px;
-        justify-content: center;
-        line-height: 1;
-        margin-left: auto;
-        width: 44px;
-
-        &:hover {
-            background: rgba(var(--color-accent-rgb), 0.2);
         }
     }
 }
@@ -163,9 +143,6 @@
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
-        <button class="lpIconButton itemDetailClose" :title="$t('misc.close')" @click="$emit('close')">
-            ×
-        </button>
     </div>
 </template>
 
@@ -184,7 +161,7 @@ export default {
         starred: { type: Boolean, default: false },
         showAddCategory: { type: Boolean, default: false },
     },
-    emits: ['toggle-star', 'close', 'view-image', 'click-category'],
+    emits: ['toggle-star', 'view-image', 'click-category'],
     computed: {
         thumbnailImage() {
             if (this.imageKey) return `https://i.imgur.com/${this.imageKey}l.jpg`;

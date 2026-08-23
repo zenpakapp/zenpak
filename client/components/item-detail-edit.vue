@@ -12,7 +12,6 @@
             :image-url="item.imageUrl || ''"
             :starred="localStarred"
             @toggle-star="toggleStar"
-            @close="$emit('close')"
             @view-image="viewImage"
         />
 
