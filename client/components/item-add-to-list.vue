@@ -155,8 +155,8 @@ export default {
             const gap = 8;
             const spaceAbove = r.top - gap;
             const spaceBelow = window.innerHeight - r.bottom - gap;
-            const openUp = spaceAbove >= spaceBelow;
-            const maxH = Math.max(160, Math.floor(openUp ? spaceAbove : spaceBelow));
+            const openUp = spaceBelow < spaceAbove;
+            const maxH = Math.min(280, Math.floor(openUp ? spaceAbove : spaceBelow));
             const width = Math.min(Math.max(r.width, 320), window.innerWidth - gap * 2);
             const left = Math.max(gap, Math.min(r.left, window.innerWidth - width - gap));
             const style = {
