@@ -138,6 +138,7 @@ export default {
             if (this.open && !this.$el.contains(e.target) && !(dropdown && dropdown.contains(e.target))) {
                 this.open = false;
                 this.creatingList = false;
+                this.newListName = '';
             }
         };
         document.addEventListener('click', this._outsideHandler, true);
@@ -231,7 +232,7 @@ export default {
     margin: 0;
     overflow-y: auto;
     padding: 4px 0;
-    z-index: 3000;
+    z-index: $popover;
 }
 
 .itemDetailAddListHeader {
