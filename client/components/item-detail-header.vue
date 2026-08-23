@@ -119,28 +119,6 @@
             color: #f59e0b;
         }
     }
-
-    .itemDetailClose {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.12);
-        border: none;
-        border-radius: 50%;
-        color: $color-accent;
-        cursor: pointer;
-        display: flex;
-        flex-shrink: 0;
-        font-size: 22px;
-        font-weight: $fontWeight-bold;
-        height: 44px;
-        justify-content: center;
-        line-height: 1;
-        margin-left: auto;
-        width: 44px;
-
-        &:hover {
-            background: rgba(var(--color-accent-rgb), 0.2);
-        }
-    }
 }
 </style>
 
