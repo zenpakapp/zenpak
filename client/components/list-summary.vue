@@ -162,9 +162,9 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
-        async updateChart(type) {
+        async updateChart() {
             if (!this.library || typeof this.library.renderChart !== 'function') return;
-            const chartData = this.library.renderChart(type);
+            const chartData = this.library.renderChart();
 
             if (chartData) {
                 this.chart = markRaw(await renderListChart({

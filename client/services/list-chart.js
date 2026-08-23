@@ -77,7 +77,7 @@ export async function renderListChart({
                             const cat = context.chart._categories?.[context.dataIndex];
                             if (!cat) return null;
                             const chartUnit = context.chart._unit;
-                            return `${weightUtils.MgToWeight(cat.total, chartUnit)} ${chartUnit} (${Math.round((cat.basePercent || 0) * 100)}%)`;
+                            return `${weightUtils.MgToWeight(cat.total, chartUnit)} ${chartUnit} (${Math.round((cat.percent || 0) * 100)}%)`;
                         },
                     },
                 },

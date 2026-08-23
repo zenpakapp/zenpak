@@ -427,11 +427,10 @@ export default {
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
         },
-        basePercent(cat) {
-            const baseTotal = this.list && this.list.totalBaseWeight;
-            if (!baseTotal) return '';
-            const baseWeight = cat.subtotalWeight - (cat.subtotalWornWeight || 0) - (cat.subtotalConsumableWeight || 0);
-            return `${Math.round((baseWeight / baseTotal) * 100)}%`;
+        totalPercent(cat) {
+            const total = this.list && this.list.totalWeight;
+            if (!total) return '';
+            return `${Math.round((cat.subtotalWeight / total) * 100)}%`;
         },
         getChartBg() {
             const style = getComputedStyle(document.documentElement);
@@ -476,7 +475,7 @@ export default {
                             callbacks: {
                                 label: (context) => {
                                     const cat = categories[context.dataIndex];
-                                    return `${this.displayWeight(cat.subtotalWeight)} ${this.totalUnit} (${this.basePercent(cat)})`;
+                                    return `${this.displayWeight(cat.subtotalWeight)} ${this.totalUnit} (${this.totalPercent(cat)})`;
                                 },
                             },
                         },
