@@ -1,78 +1,80 @@
 <template>
     <div class="itemDetailAddToList">
-        <button class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null; addAsOptional = false">
+        <button ref="trigger" class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null; addAsOptional = false">
             {{ $t('item.addToListButtonText') }}
         </button>
-        <ul v-if="open" class="itemDetailAddDropdown">
-            <template v-if="!selectedListId">
-                <li
-                    v-for="list in allLists"
-                    :key="list.id"
-                    :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
-                    @click="selectedListId = list.id"
-                >
-                    {{ list.name || $t('gearroom.unnamedList') }} ›
-                </li>
-                <li class="itemDetailAddCreate">
-                    <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">
-                        {{ $t('item.addToListNewList') }}
-                    </div>
-                    <div v-else class="itemDetailAddCreateRow">
-                        <input
-                            ref="newListInput"
-                            v-model="newListName"
-                            type="text"
-                            class="itemDetailAddCreateInput"
-                            :placeholder="$t('item.addToListPlaceholderNewList')"
-                            @keydown.enter.prevent="createListAndNavigate"
-                            @keydown.esc="creatingList = false"
-                        >
-                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">
-                            {{ $t('item.addToListCreate') }}
-                        </button>
-                    </div>
-                </li>
-            </template>
-            <template v-else>
-                <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">
-                    {{ $t('item.addToListBack') }}
-                </li>
-                <li class="itemDetailAddOptionalRow">
-                    <label class="itemDetailAddOptionalLabel">
-                        <input
-                            v-model="addAsOptional"
-                            type="checkbox"
-                            class="lpOptionalToggle"
-                            :title="$t('item.optionalTitle')"
-                        >
-                        {{ $t('public.option') }}
-                    </label>
-                </li>
-                <li
-                    v-for="cat in selectedListCategories"
-                    :key="cat.id"
-                    :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
-                    @click="addToCategory(cat)"
-                >
-                    {{ cat.name || 'Unnamed category' }}
-                </li>
-                <li class="itemDetailAddCreate">
-                    <div class="itemDetailAddCreateRow">
-                        <input
-                            :value="newCategoryName"
-                            type="text"
-                            class="itemDetailAddCreateInput"
-                            :placeholder="$t('item.addToListPlaceholderNewCategory')"
-                            @input="newCategoryName = $event.target.value"
-                            @keydown.enter.prevent="createCategoryAndAdd"
-                        >
-                        <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd">
-                            {{ $t('item.addToListCreate') }}
-                        </button>
-                    </div>
-                </li>
-            </template>
-        </ul>
+        <teleport to="body">
+            <ul v-if="open" ref="dropdown" class="itemDetailAddDropdown" :style="dropdownStyle">
+                <template v-if="!selectedListId">
+                    <li
+                        v-for="list in allLists"
+                        :key="list.id"
+                        :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
+                        @click="selectedListId = list.id"
+                    >
+                        {{ list.name || $t('gearroom.unnamedList') }} ›
+                    </li>
+                    <li class="itemDetailAddCreate">
+                        <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">
+                            {{ $t('item.addToListNewList') }}
+                        </div>
+                        <div v-else class="itemDetailAddCreateRow">
+                            <input
+                                ref="newListInput"
+                                v-model="newListName"
+                                type="text"
+                                class="itemDetailAddCreateInput"
+                                :placeholder="$t('item.addToListPlaceholderNewList')"
+                                @keydown.enter.prevent="createListAndNavigate"
+                                @keydown.esc="creatingList = false"
+                            >
+                            <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createListAndNavigate">
+                                {{ $t('item.addToListCreate') }}
+                            </button>
+                        </div>
+                    </li>
+                </template>
+                <template v-else>
+                    <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">
+                        {{ $t('item.addToListBack') }}
+                    </li>
+                    <li class="itemDetailAddOptionalRow">
+                        <label class="itemDetailAddOptionalLabel">
+                            <input
+                                v-model="addAsOptional"
+                                type="checkbox"
+                                class="lpOptionalToggle"
+                                :title="$t('item.optionalTitle')"
+                            >
+                            {{ $t('public.option') }}
+                        </label>
+                    </li>
+                    <li
+                        v-for="cat in selectedListCategories"
+                        :key="cat.id"
+                        :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
+                        @click="addToCategory(cat)"
+                    >
+                        {{ cat.name || 'Unnamed category' }}
+                    </li>
+                    <li class="itemDetailAddCreate">
+                        <div class="itemDetailAddCreateRow">
+                            <input
+                                :value="newCategoryName"
+                                type="text"
+                                class="itemDetailAddCreateInput"
+                                :placeholder="$t('item.addToListPlaceholderNewCategory')"
+                                @input="newCategoryName = $event.target.value"
+                                @keydown.enter.prevent="createCategoryAndAdd"
+                            >
+                            <button class="lpButton lpSmall itemDetailAddCreateBtn" @click="createCategoryAndAdd">
+                                {{ $t('item.addToListCreate') }}
+                            </button>
+                        </div>
+                    </li>
+                </template>
+            </ul>
+        </teleport>
     </div>
 </template>
 
@@ -91,6 +93,7 @@ export default {
             creatingList: false,
             newListName: '',
             addAsOptional: false,
+            dropdownStyle: {},
         };
     },
     computed: {
@@ -114,9 +117,25 @@ export default {
             }));
         },
     },
+    watch: {
+        open(val) {
+            if (val) {
+                this.$nextTick(this.positionDropdown);
+                window.addEventListener('resize', this.positionDropdown);
+                window.addEventListener('scroll', this.positionDropdown, true);
+            } else {
+                window.removeEventListener('resize', this.positionDropdown);
+                window.removeEventListener('scroll', this.positionDropdown, true);
+            }
+        },
+        selectedListId() {
+            if (this.open) this.$nextTick(this.positionDropdown);
+        },
+    },
     mounted() {
         this._outsideHandler = (e) => {
-            if (this.open && !this.$el.contains(e.target)) {
+            const dropdown = this.$refs.dropdown;
+            if (this.open && !this.$el.contains(e.target) && !(dropdown && dropdown.contains(e.target))) {
                 this.open = false;
                 this.creatingList = false;
             }
@@ -125,8 +144,31 @@ export default {
     },
     beforeUnmount() {
         document.removeEventListener('click', this._outsideHandler, true);
+        window.removeEventListener('resize', this.positionDropdown);
+        window.removeEventListener('scroll', this.positionDropdown, true);
     },
     methods: {
+        positionDropdown() {
+            const btn = this.$refs.trigger;
+            if (!btn) return;
+            const r = btn.getBoundingClientRect();
+            const gap = 8;
+            const spaceAbove = r.top - gap;
+            const spaceBelow = window.innerHeight - r.bottom - gap;
+            const openUp = spaceAbove >= spaceBelow;
+            const maxH = Math.max(160, Math.floor(openUp ? spaceAbove : spaceBelow));
+            const width = Math.min(Math.max(r.width, 320), window.innerWidth - gap * 2);
+            const left = Math.max(gap, Math.min(r.left, window.innerWidth - width - gap));
+            const style = {
+                position: 'fixed',
+                left: `${left}px`,
+                width: `${width}px`,
+                maxHeight: `${maxH}px`,
+            };
+            if (openUp) style.bottom = `${window.innerHeight - r.top + gap}px`;
+            else style.top = `${r.bottom + gap}px`;
+            this.dropdownStyle = style;
+        },
         addToCategory(category) {
             this.$store.commit('addItemToCategory', {
                 itemId: this.item.id,
@@ -184,16 +226,12 @@ export default {
     background: $color-surface;
     border: 1px solid rgba(var(--color-accent-rgb), 0.12);
     border-radius: $radius-md;
-    bottom: 100%;
     box-shadow: $shadow-popover;
-    left: 0;
     list-style: none;
-    margin: 0 0 8px;
-    min-width: 320px;
+    margin: 0;
+    overflow-y: auto;
     padding: 4px 0;
-    padding-left: 0;
-    position: absolute;
-    z-index: 10;
+    z-index: 3000;
 }
 
 .itemDetailAddListHeader {
@@ -309,10 +347,6 @@ export default {
 }
 
 @media (max-width: 640px) {
-    .itemDetailAddDropdown {
-        min-width: min(320px, calc(100vw - 72px));
-    }
-
     .itemDetailAddCreateRow {
         grid-template-columns: minmax(0, 1fr);
     }
