@@ -118,8 +118,10 @@ export default {
         },
     },
     watch: {
-        item() {
+        'item.weight': function () {
             this.setDisplayWeight();
+        },
+        'item.price': function () {
             this.setDisplayPrice();
         },
         'library.itemUnit': function () {
