@@ -2,7 +2,7 @@
 @import "../css/_globals";
 
 .itemDetailHeader {
-    align-items: center;
+    align-items: flex-start;
     background:
         linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.02)),
         $color-surface;
@@ -13,6 +13,7 @@
     gap: 18px;
     min-height: 132px;
     padding: 22px 24px;
+    padding-right: 52px;
     position: relative;
 
     .itemDetailThumb {
@@ -99,6 +100,7 @@
     }
 
     .itemDetailStar {
+        align-self: flex-start;
         background: none;
         border: none;
         color: $color-text-muted;
