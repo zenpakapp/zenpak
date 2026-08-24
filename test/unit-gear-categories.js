@@ -35,7 +35,7 @@ assert('undefined resolves to empty', resolveGearCategory(undefined) === '');
 assert('"COOK" (case-insensitive) resolves to Cook', resolveGearCategory('COOK') === 'Cook');
 
 console.log('\n--- Library.load migration (fuzzy matching) ---');
-function loadItemCategory(category) {
+function buildLibrary(category) {
     const library = new Library();
     library.load({
         version: '0.3',
@@ -48,7 +48,11 @@ function loadItemCategory(category) {
         categories: [{ id: 102, name: 'Cat', categoryItems: [{ itemId: 101, qty: 1, worn: 0, consumable: false, star: 0 }] }],
         lists: [{ id: 42, name: 'List', categoryIds: [102] }],
     });
-    return library.getItemById(101).category;
+    return library;
+}
+
+function loadItemCategory(category) {
+    return buildLibrary(category).getItemById(101).category;
 }
 
 assert('migration keeps an exact enum value (Sleep)', loadItemCategory('Sleep') === 'Sleep');
@@ -59,18 +63,7 @@ assert('migration keeps an empty category', loadItemCategory('') === '');
 
 // Idempotence: re-loading the migrated data must not change it further.
 function reloadedCategory(category) {
-    const library = new Library();
-    library.load({
-        version: '0.3',
-        totalUnit: 'g',
-        itemUnit: 'g',
-        defaultListId: 42,
-        sequence: 10,
-        optionalFields: {},
-        items: [{ id: 101, name: 'Item', category }],
-        categories: [{ id: 102, name: 'Cat', categoryItems: [{ itemId: 101, qty: 1, worn: 0, consumable: false, star: 0 }] }],
-        lists: [{ id: 42, name: 'List', categoryIds: [102] }],
-    });
+    const library = buildLibrary(category);
     const first = library.getItemById(101).category;
     const serialized = JSON.parse(JSON.stringify(library.save()));
     library.load(serialized);

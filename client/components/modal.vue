@@ -271,7 +271,6 @@
                 :aria-labelledby="id ? `${id}Label` : undefined"
             >
                 <button
-                    v-if="!hideClose"
                     type="button"
                     class="lpModalClose"
                     :aria-label="$t('misc.close')"
@@ -309,11 +308,6 @@ export default {
             default: false,
         },
         transparentOverlay: {
-            type: Boolean,
-            required: false,
-            default: false,
-        },
-        hideClose: {
             type: Boolean,
             required: false,
             default: false,

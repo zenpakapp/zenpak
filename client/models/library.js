@@ -185,10 +185,10 @@ Library.prototype.copyList = function (id) {
     return copiedList;
 };
 
-Library.prototype.renderChart = function (type) {
+Library.prototype.renderChart = function () {
     const list = this.getListById(this.defaultListId);
     if (!list) return false;
-    return list.renderChart(type);
+    return list.renderChart();
 };
 
 Library.prototype.getCategoryById = function (id) {
