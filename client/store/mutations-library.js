@@ -21,8 +21,7 @@ module.exports = {
         state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     newCategory(state, list) {
-        const category = state.library.newCategory({ list, _isNew: true });
-        state.library.newItem({ category });
+        state.library.newCategory({ list, _isNew: true });
         state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     newList(state) {
