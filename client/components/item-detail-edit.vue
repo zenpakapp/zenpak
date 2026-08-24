@@ -146,13 +146,9 @@
 import ItemDetailHeader from './item-detail-header.vue';
 import ItemBrandInput from './item-brand-input.vue';
 import { openDialog } from '../services/dialogs';
+import { GEAR_CATEGORIES } from '../data/gear-categories';
 
 const weightUtils = require('../utils/weight.js');
-
-const GEAR_CATEGORIES = [
-    'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
-    'Navigation', 'Safety', 'Hygiene', 'Electronics', 'Essentials', 'Other',
-];
 
 const UNITS = ['oz', 'lb', 'g', 'kg'];
 

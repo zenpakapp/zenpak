@@ -1,4 +1,5 @@
 const weightUtils = require('../utils/weight.js');
+const { resolveGearCategory } = require('../data/gear-categories');
 
 function normalizeQuantity(value) {
     const quantity = parseFloat(value);
@@ -24,7 +25,7 @@ function createImportedItem(library, category, row) {
     item.description = row.description;
     item.url = row.url;
     item.price = row.price;
-    if (row.category) item.category = row.category;
+    if (row.category) item.category = resolveGearCategory(row.category);
     if (row.brand) item.brand = row.brand;
     if (row.imageUrl) item.imageUrl = row.imageUrl;
     item.weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
@@ -69,7 +70,7 @@ module.exports = {
             if (decision === 'merge' && row._match.item) {
                 item = state.library.getItemById(row._match.item.id);
                 if (item) {
-                    if (row.category && !item.category) item.category = row.category;
+                    if (row.category && !item.category) item.category = resolveGearCategory(row.category);
                     if (row.brand && !item.brand) item.brand = row.brand;
                     if (!category.getCategoryItemById(item.id)) {
                         category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });

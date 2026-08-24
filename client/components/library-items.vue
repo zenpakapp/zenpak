@@ -98,13 +98,10 @@ import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
+import { GEAR_CATEGORIES } from '../data/gear-categories';
 
 const { displayWeight } = useUtils();
 
-const GEAR_CATEGORIES = [
-    'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
-    'Navigation', 'Safety', 'Hygiene', 'Electronics', 'Essentials', 'Other',
-];
 const LIBRARY_ROW_HEIGHT = 52;
 const LIBRARY_OVERSCAN = 6;
 

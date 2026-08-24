@@ -76,11 +76,7 @@
 <script>
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
-
-const GEAR_CATEGORIES = [
-    'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
-    'Navigation', 'Safety', 'Hygiene', 'Essentials', 'Other',
-];
+import { GEAR_CATEGORIES } from '../data/gear-categories';
 
 export default {
     name: 'ItemMeta',

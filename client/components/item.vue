@@ -21,10 +21,8 @@
             <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @input="saveItem">
             <input v-model="item.description" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @input="saveItem">
             <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
-            <span v-if="item.brand || item.category" class="lpItemMeta">
-                <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
-                <span v-if="item.brand && item.category" class="lpItemMetaSep">·</span>
-                <span v-if="item.category" class="lpItemCategory">{{ item.category }}</span>
+            <span v-if="item.brand" class="lpItemMeta">
+                <span class="lpItemBrand">{{ item.brand }}</span>
             </span>
         </span>
         <span v-if="!isPackingMode" class="lpActionsCell">

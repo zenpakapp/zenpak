@@ -18,7 +18,6 @@ module.exports = {
     newItem(state, { category, _isNew, name }) {
         const item = state.library.newItem({ category, _isNew });
         if (name) item.name = name;
-        if (category && category.name && !item.category) item.category = category.name;
         state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     newCategory(state, list) {
