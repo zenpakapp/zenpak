@@ -187,6 +187,9 @@ export default {
         };
     },
     computed: {
+        library() {
+            return this.$store.state.library;
+        },
         gearCategories() { return GEAR_CATEGORIES; },
         units() { return UNITS; },
         filteredGearCategories() {
@@ -208,8 +211,8 @@ export default {
         this.editDescription = this.item.description || '';
         this.editBrand = this.item.brand || '';
         this.editCategory = this.item.category || '';
-        this.editWeight = weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
-        this.editUnit = this.item.authorUnit || 'g';
+        this.editUnit = (this.library && this.library.itemUnit) || 'g';
+        this.editWeight = weightUtils.MgToWeight(this.item.weight, this.editUnit);
         this.editPrice = this.item.price != null ? this.item.price.toFixed(2) : '0.00';
         this.editQty = this.categoryItem ? this.categoryItem.qty : 1;
         this.editUrl = this.item.url || '';
