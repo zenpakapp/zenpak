@@ -29,7 +29,7 @@ A named pack list for one trip, composed of an ordered sequence of Categories.
 _Avoid_: Pack, Trip (a List isn't the trip itself, just the gear plan for it).
 
 **Gear Tag**:
-A free-text label on an Item (stored as `item.category`) used only for search/filter/sort in the Gear Room, the cross-List library view of every Item in the Library. Set at creation or CSV import, editable independently afterward. Carries no relationship to any Category the Item is Placed in.
+An Item's equipment type (stored as `item.category`), drawn from the `GEAR_CATEGORIES` enum (`client/data/gear-categories.js` — values: Pack & Bags, Shelter, Sleep, Clothing, Water, Food, Cook, Navigation, Safety, Hygiene, Electronics, Essentials, Other). Not free text: creation starts empty, and both CSV import and the one-shot `Library.load` migration normalize incoming strings to an enum value by fuzzy matching (`resolveGearCategory`), dropping only values that match nothing. Used only for search/filter/sort in the Gear Room, the cross-List library view of every Item in the Library. Carries no relationship to any Category the Item is Placed in.
 _Avoid_: Item Category, Category (reserved for the List-scoped grouping — using it here is the exact confusion this term exists to prevent).
 
 **Template**:

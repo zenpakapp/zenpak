@@ -3,13 +3,19 @@ const {
     allowsSearchIndexing,
 } = require('../client/services/public-visibility.js');
 const { normalizeTier } = require('./tier-policy.js');
+const { Library } = require('../client/models/library.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
         return null;
     }
 
-    return user.library;
+    // Hydrate through the shared client model so list/category totals are
+    // recalculated (List.load → calculateTotals) instead of trusting persisted
+    // values that may predate the ×qty worn/consumable rule.
+    const library = new Library();
+    library.load(user.library);
+    return library;
 }
 
 function normalizeString(value) {

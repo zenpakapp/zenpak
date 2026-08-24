@@ -34,7 +34,7 @@ assert('empty string resolves to empty', resolveGearCategory('') === '');
 assert('undefined resolves to empty', resolveGearCategory(undefined) === '');
 assert('"COOK" (case-insensitive) resolves to Cook', resolveGearCategory('COOK') === 'Cook');
 
-console.log('\n--- Library.load migration (strict equality) ---');
+console.log('\n--- Library.load migration (fuzzy matching) ---');
 function loadItemCategory(category) {
     const library = new Library();
     library.load({
@@ -52,8 +52,9 @@ function loadItemCategory(category) {
 }
 
 assert('migration keeps an exact enum value (Sleep)', loadItemCategory('Sleep') === 'Sleep');
+assert('migration keeps a near-match lowercase value (shelter)', loadItemCategory('shelter') === 'Shelter');
 assert('migration drops a non-enum value (Electronique)', loadItemCategory('Electronique') === '');
-assert('migration drops a near-match lowercase value (shelter)', loadItemCategory('shelter') === '');
+assert('migration drops a non-mappable value (Truc)', loadItemCategory('Truc') === '');
 assert('migration keeps an empty category', loadItemCategory('') === '');
 
 // Idempotence: re-loading the migrated data must not change it further.

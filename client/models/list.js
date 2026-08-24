@@ -56,6 +56,7 @@ List.prototype.removeCategory = function (categoryId) {
 List.prototype.renderChart = function (type, linkParent) {
     const chartData = { points: {} };
     let total = 0;
+    let totalBase = 0;
 
     if (typeof linkParent === 'undefined') linkParent = true;
 
@@ -63,6 +64,7 @@ List.prototype.renderChart = function (type, linkParent) {
         const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
             category.calculateSubtotal();
+            totalBase += category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
 
             if (type === 'consumable') {
                 total += category.subtotalConsumableWeight;
@@ -117,8 +119,8 @@ List.prototype.renderChart = function (type, linkParent) {
                 points[j] = tempItem;
             }
             const percent = categoryTotal / total;
-            const categoryBaseWeight = category.subtotalWeight - (category.subtotalWornWeight || 0) - (category.subtotalConsumableWeight || 0);
-            const basePercent = this.totalBaseWeight ? categoryBaseWeight / this.totalBaseWeight : 0;
+            const categoryBase = category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
+            const basePercent = totalBase ? categoryBase / totalBase : 0;
             const tempCategoryData = {
                 points, color: category.color, id: category.id, name: category.name, total: categoryTotal, percent, basePercent, visiblePoints: false,
             };

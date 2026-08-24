@@ -1,6 +1,6 @@
 const assignIn = require('../utils/assign-in.js');
 
-const { GEAR_CATEGORIES } = require('../data/gear-categories');
+const { resolveGearCategory } = require('../data/gear-categories');
 const { PLAN_FREE, getPlanFeatures } = require('../services/entitlements.js');
 const { VISIBILITY_PRIVATE, normalizeVisibility } = require('../services/public-visibility.js');
 const { Item } = require('./item.js');
@@ -322,8 +322,8 @@ Library.prototype.load = function (serializedLibrary) {
         const temp = new Item({ id: serializedLibrary.items[i].id });
         temp.load(serializedLibrary.items[i]);
         // One-shot migration: item.category is now a gear type from GEAR_CATEGORIES.
-        // Keep only values that already match the enum exactly; drop the rest.
-        temp.category = GEAR_CATEGORIES.includes(temp.category) ? temp.category : '';
+        // Normalize free-text values to the enum by fuzzy matching; drop the rest.
+        temp.category = resolveGearCategory(temp.category);
         this.items.push(temp);
         this.idMap[temp.id] = temp;
     }

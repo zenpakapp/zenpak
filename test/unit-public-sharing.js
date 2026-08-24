@@ -1,6 +1,7 @@
 'use strict';
 
 const { buildPublicList, resolvePublicItemLink } = require('../server/public-sharing.js');
+const weightUtils = require('../client/utils/weight.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {
@@ -206,6 +207,46 @@ const implicitlyHiddenSourceListInfoPayload = buildPublicList({
 
 assert('source list info rules disabled on copied list with no explicit source info', implicitlyHiddenSourceListInfoPayload.categories[0].items[0].promoCode === '');
 assert('source list info codes hidden when copied list has no explicit source info', implicitlyHiddenSourceListInfoPayload.creatorCodes.length === 0);
+
+// Worn weight must be recalculated from the shared model — persisted totals
+// written under the old ×1 rule (worn weight counted once, not × qty) are stale.
+const wornRecalcPayload = buildPublicList({
+    username: 'bob',
+    library: {
+        version: '0.3',
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        optionalFields: { worn: true, consumable: true },
+        entitlements: {},
+        creator: {},
+        items: [{ id: 31, name: 'Jacket', price: 0, weight: 145000, authorUnit: 'g' }],
+        categories: [{
+            id: 32,
+            name: 'Clothing',
+            categoryItems: [{ itemId: 31, qty: 2, worn: 1, consumable: false }],
+            // Stale: worn weight counted once under the old rule.
+            subtotalWeight: 145000,
+            subtotalWornWeight: 145000,
+            subtotalConsumableWeight: 0,
+        }],
+        lists: [{
+            id: 33,
+            externalId: 'worn123',
+            name: 'Worn Trail',
+            visibility: 'shareable',
+            publicFields: {},
+            categoryIds: [32],
+            totalWeight: 145000,
+            totalWornWeight: 145000,
+            totalConsumableWeight: 0,
+            totalBaseWeight: 0,
+        }],
+    },
+}, 'worn123');
+
+assert('worn qty 2 recalculated to ×qty (old ×1 persisted)', wornRecalcPayload.list.totalWornWeight === 290000);
+assert('category subtotalWornWeight recalculated to ×qty', wornRecalcPayload.categories[0].subtotalWornWeight === 290000);
+assert('worn weight served as 0.29 kg', weightUtils.MgToWeight(wornRecalcPayload.list.totalWornWeight, 'kg') === 0.29);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
