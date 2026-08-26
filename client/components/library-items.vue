@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_library-items";
-</style>
-
 <template>
     <section class="libraryContainer">
         <div v-if="showTitle" class="libraryHeader">
@@ -63,25 +59,25 @@
         >
             <li v-if="virtualWindow.top" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.top}px` }" aria-hidden="true" />
             <li
-                v-for="(item, index) in virtualWindow.items"
-                :key="item.id"
+                v-for="(libraryItem, index) in virtualWindow.items"
+                :key="libraryItem.id"
                 class="lpLibraryItem"
-                :data-item-id="item.id"
+                :data-item-id="libraryItem.id"
                 :aria-setsize="filteredItems.length"
                 :aria-posinset="virtualWindow.start + index + 1"
-                @dblclick="openDetail(item)"
+                @dblclick="openDetail(libraryItem)"
             >
-                <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
-                <span v-if="!item.url" class="lpName">{{ item.name }}</span>
+                <a v-if="libraryItem.url" :href="libraryItem.url" target="_blank" class="lpName lpHref">{{ libraryItem.name }}</a>
+                <span v-if="!libraryItem.url" class="lpName">{{ libraryItem.name }}</span>
                 <span class="lpWeight">
-                    {{ displayWeight(item.weight, itemUnit) }}
+                    {{ displayWeight(libraryItem.weight, itemUnit) }}
                     {{ itemUnit }}
                 </span>
-                <span class="lpDescription">
-                    {{ item.description }}
+                <span class="lpLibraryItemMeta">
+                    {{ libraryItem.brand || libraryItem.description }}
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
-                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">
+                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
+                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
                     ⋯
                 </button>
                 <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
@@ -92,7 +88,7 @@
 </template>
 
 <script>
-import { useUtils } from '../composables/useUtils.js';
+import { useUtils } from '../composables/useUtils';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
@@ -265,15 +261,17 @@ export default {
                 this.drake.destroy();
             }
 
-            const self = this;
             const editorRoot = this.$root && this.$root.$el ? this.$root.$el : this.$el;
             const categoryItems = queryContainers(editorRoot, '.lpItems');
             const drake = await createDragDrop([this.$refs.library].concat(categoryItems), {
                 copy: true,
-                moves($el, $source, $handle, $sibling) {
+                moves(...args) {
+                    const $handle = args[2];
                     return $handle.classList.contains('lpLibraryItemHandle');
                 },
-                accepts($el, $target, $source, $sibling) {
+                accepts(...args) {
+                    const $target = args[1];
+                    const $sibling = args[3];
                     if ($target.classList.contains('library') || !$sibling || $sibling.classList.contains('lpItemsHeader')) {
                         return false; // header and footer are technically part of this list - exclude them both.
                     }
@@ -284,10 +282,10 @@ export default {
                 drake.destroy();
                 return;
             }
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            drake.on('drag', ($el) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el, $target) => {
                 if (!$target || $target.classList.contains('library')) {
                     return;
                 }
@@ -313,3 +311,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_library-items";
+</style>

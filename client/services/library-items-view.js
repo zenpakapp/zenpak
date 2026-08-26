@@ -7,6 +7,7 @@ function filterLibraryItems(items, filters = {}, activeItemIds = []) {
     return (items || []).filter((item) => {
         const matchesSearch = !search
             || String(item.name || '').toLowerCase().includes(search)
+            || String(item.brand || '').toLowerCase().includes(search)
             || String(item.description || '').toLowerCase().includes(search);
         const matchesCategory = !category || String(item.category || '').toLowerCase() === category;
         const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());

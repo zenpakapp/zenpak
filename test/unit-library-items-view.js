@@ -23,6 +23,7 @@ console.log('\n--- Library items view ---');
 const items = Array.from({ length: 100 }, (_, index) => ({
     id: index + 1,
     name: `Item ${index + 1}`,
+    brand: index === 49 ? 'Needle Brand' : '',
     description: index === 49 ? 'needle' : '',
     category: index % 2 ? 'Sleep' : 'Shelter',
     tags: index === 49 ? ['winter'] : [],
@@ -36,6 +37,11 @@ const filtered = filterLibraryItems(items, {
 assert('filters the complete collection', filtered.length === 1 && filtered[0].id === 50);
 assert('marks active-list membership', filtered[0].inCurrentList === true);
 assert('does not mutate source items', typeof items[49].inCurrentList === 'undefined');
+
+const brandFiltered = filterLibraryItems(items, {
+    searchText: 'needle brand',
+}, []);
+assert('filters by brand', brandFiltered.length === 1 && brandFiltered[0].id === 50);
 
 const windowed = calculateVirtualWindow({
     items,
