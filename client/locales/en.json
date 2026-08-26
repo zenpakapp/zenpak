@@ -782,6 +782,7 @@
     "editLabelWeight": "Weight",
     "editLabelPrice": "Price",
     "editLabelQty": "Qty",
+    "editLabelListOptions": "List options",
     "editLabelPurchaseUrl": "Purchase URL",
     "editLabelImage": "Image",
     "editLabelImageOptional": "(optional)",

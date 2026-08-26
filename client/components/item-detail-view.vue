@@ -1,7 +1,3 @@
-<style lang="scss" scoped>
-@import "../css/_item-detail-view";
-</style>
-
 <template>
     <div class="itemDetailView">
         <item-detail-header
@@ -39,7 +35,7 @@
                     {{ $t('item.viewLabelQty') }}
                 </div>
                 <div class="itemDetailStatValue">
-                    {{ categoryItem ? categoryItem.qty : 1 }}
+                    {{ categoryItem ? categoryItem.qty : '-' }}
                 </div>
             </div>
             <div class="itemDetailStat">
@@ -223,3 +219,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "../css/_item-detail-view";
+</style>

@@ -1,7 +1,3 @@
-<style lang="scss" scoped>
-@import "../css/_item-detail-edit";
-</style>
-
 <template>
     <div>
         <item-detail-header
@@ -67,7 +63,40 @@
                 </div>
                 <div class="itemDetailField">
                     <label>{{ $t('item.editLabelQty') }}</label>
-                    <input v-model="editQty" type="text" placeholder="1">
+                    <input v-model="editQty" type="text" placeholder="1" :disabled="!hasListContext">
+                </div>
+            </div>
+
+            <div v-if="hasListContext" class="itemDetailField itemDetailListOptions">
+                <label>{{ $t('item.editLabelListOptions') }}</label>
+                <div class="itemDetailToggleRow">
+                    <label v-if="showWornOption" class="itemDetailToggle">
+                        <input
+                            v-model="editWorn"
+                            type="checkbox"
+                            :title="$t('item.wornTitle')"
+                            @change="onWornChange"
+                        >
+                        <span>{{ $t('public.worn') }}</span>
+                    </label>
+                    <label v-if="showConsumableOption" class="itemDetailToggle">
+                        <input
+                            v-model="editConsumable"
+                            type="checkbox"
+                            :title="$t('item.consumableTitle')"
+                            @change="onConsumableChange"
+                        >
+                        <span>{{ $t('public.consumable') }}</span>
+                    </label>
+                    <label class="itemDetailToggle">
+                        <input
+                            v-model="editOptional"
+                            type="checkbox"
+                            :title="$t('item.optionalTitle')"
+                            @change="onOptionalChange"
+                        >
+                        <span>{{ $t('public.option') }}</span>
+                    </label>
                 </div>
             </div>
 
@@ -173,6 +202,9 @@ export default {
             editUnit: 'g',
             editPrice: '0.00',
             editQty: 1,
+            editWorn: false,
+            editConsumable: false,
+            editOptional: false,
             editUrl: '',
             editImageUrl: '',
             editImageUploading: false,
@@ -192,6 +224,15 @@ export default {
         },
         gearCategories() { return GEAR_CATEGORIES; },
         units() { return UNITS; },
+        hasListContext() {
+            return !!(this.categoryItem && this.category);
+        },
+        showWornOption() {
+            return !!(this.library && this.library.optionalFields && this.library.optionalFields.worn);
+        },
+        showConsumableOption() {
+            return !!(this.library && this.library.optionalFields && this.library.optionalFields.consumable);
+        },
         filteredGearCategories() {
             const q = (this.editCategory || '').toLowerCase();
             return q ? GEAR_CATEGORIES.filter((c) => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
@@ -214,7 +255,14 @@ export default {
         this.editUnit = (this.library && this.library.itemUnit) || 'g';
         this.editWeight = weightUtils.MgToWeight(this.item.weight, this.editUnit);
         this.editPrice = this.item.price != null ? this.item.price.toFixed(2) : '0.00';
-        this.editQty = this.categoryItem ? this.categoryItem.qty : 1;
+        if (this.categoryItem) {
+            this.editQty = this.categoryItem.qty === 0 ? (this.categoryItem.qtyBeforeOptional || 1) : this.categoryItem.qty;
+        } else {
+            this.editQty = '-';
+        }
+        this.editWorn = !!this.categoryItem?.worn;
+        this.editConsumable = !!this.categoryItem?.consumable;
+        this.editOptional = this.categoryItem ? this.categoryItem.qty === 0 : false;
         this.editUrl = this.item.url || '';
         this.editImageUrl = this.item.imageUrl || '';
         this.editTags = [...(this.item.tags || [])];
@@ -234,6 +282,17 @@ export default {
         },
         viewImage() {
             openDialog('itemViewImage', this.thumbnailImage);
+        },
+        onWornChange() {
+            if (this.editWorn) this.editConsumable = false;
+        },
+        onConsumableChange() {
+            if (this.editConsumable) this.editWorn = false;
+        },
+        onOptionalChange() {
+            if (!this.editOptional && (!parseFloat(this.editQty) || parseFloat(this.editQty) <= 0)) {
+                this.editQty = this.categoryItem?.qtyBeforeOptional || 1;
+            }
         },
         saveEdit() {
             const weightFloat = parseFloat(this.editWeight) || 0;
@@ -255,11 +314,38 @@ export default {
             let updatedCategoryItem = this.categoryItem;
             if (this.categoryItem && this.category) {
                 const qtyFloat = parseFloat(this.editQty);
-                updatedCategoryItem = { ...this.categoryItem, qty: Number.isNaN(qtyFloat) ? 1 : qtyFloat };
+                const desiredQty = Number.isNaN(qtyFloat) ? 1 : qtyFloat;
+                const wasOptional = this.categoryItem.qty === 0;
+
+                if (!this.editOptional && wasOptional) {
+                    this.$store.commit('toggleOptionalItem', {
+                        category: this.category,
+                        itemId: this.item.id,
+                    });
+                }
+
+                const liveCategoryItem = this.category.getCategoryItemById(this.item.id) || this.categoryItem;
+                updatedCategoryItem = {
+                    ...liveCategoryItem,
+                    qty: this.editOptional && wasOptional ? 0 : desiredQty,
+                    worn: this.editWorn,
+                    consumable: this.editConsumable,
+                };
+                if (this.editOptional && wasOptional) {
+                    updatedCategoryItem.qtyBeforeOptional = desiredQty;
+                }
                 this.$store.commit('updateCategoryItem', {
                     category: this.category,
                     categoryItem: updatedCategoryItem,
                 });
+
+                if (this.editOptional && !wasOptional) {
+                    this.$store.commit('toggleOptionalItem', {
+                        category: this.category,
+                        itemId: this.item.id,
+                    });
+                    updatedCategoryItem = this.category.getCategoryItemById(this.item.id);
+                }
             }
             this.$emit('saved', { item: updatedItem, categoryItem: updatedCategoryItem });
         },
@@ -350,3 +436,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "../css/_item-detail-edit";
+</style>
