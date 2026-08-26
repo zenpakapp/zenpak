@@ -819,6 +819,7 @@
     "viewButtonRemoveFromList": "Remove from list",
     "viewButtonDuplicate": "Duplicate",
     "viewButtonDelete": "Delete",
+    "deleteConfirm": "Delete \"{name}\" from your item library? It will be removed from all lists.",
     "imageDialogTitle": "Item image",
     "imageSectionCurrent": "Current image",
     "imageLabelAttached": "Image attached",

@@ -704,6 +704,7 @@
     "viewButtonRemoveFromList": "Entfernen",
     "viewButtonDuplicate": "Duplizieren",
     "viewButtonDelete": "Löschen",
+    "deleteConfirm": "\"{name}\" aus deiner Gegenstandsbibliothek löschen? Es wird aus allen Listen entfernt.",
     "imageDialogTitle": "Gegenstandsbild",
     "imageSectionCurrent": "Aktuelles Bild",
     "imageLabelAttached": "Bild angehängt",

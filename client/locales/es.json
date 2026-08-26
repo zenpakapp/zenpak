@@ -704,6 +704,7 @@
     "viewButtonRemoveFromList": "Quitar",
     "viewButtonDuplicate": "Duplicar",
     "viewButtonDelete": "Eliminar",
+    "deleteConfirm": "¿Eliminar \"{name}\" de tu biblioteca de artículos? Se quitará de todas las listas.",
     "imageDialogTitle": "Imagen del artículo",
     "imageSectionCurrent": "Imagen actual",
     "imageLabelAttached": "Imagen adjunta",

@@ -208,7 +208,7 @@ export default {
                 this.$emit('close');
             };
             openSpeedbump(callback, {
-                body: `Delete "${this.item.name || 'this item'}" from your item library? It will be removed from all lists.`,
+                body: this.$t('item.deleteConfirm', { name: this.item.name || this.$t('gearroom.unnamedItem') }),
             });
         },
         navigateToList(list) {
