@@ -3,7 +3,7 @@
   "totalUnit": "oz",
   "itemUnit": "oz",
   "defaultListId": 23,
-  "sequence": 23,
+  "sequence": 108,
   "showSidebar": true,
   "optionalFields": {
     "price": false,
@@ -16,7 +16,7 @@
       "id": 1,
       "name": "Tarp / bivy",
       "description": "Cuben or silnylon tarp",
-      "weight": 14.0,
+      "weight": 14,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -26,7 +26,7 @@
       "id": 2,
       "name": "Stakes (x6)",
       "description": "Titanium shepherd's hooks",
-      "weight": 2.0,
+      "weight": 2,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -34,9 +34,9 @@
     },
     {
       "id": 3,
-      "name": "Quilt (40\u00b0F)",
+      "name": "Quilt (40°F)",
       "description": "Down topquilt, no shell",
-      "weight": 16.0,
+      "weight": 16,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -46,7 +46,7 @@
       "id": 4,
       "name": "Inflatable pad (short)",
       "description": "Torso-length, R-value 2+",
-      "weight": 8.0,
+      "weight": 8,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -56,7 +56,7 @@
       "id": 5,
       "name": "Wind jacket",
       "description": "Ultralight wind shell",
-      "weight": 4.0,
+      "weight": 4,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -76,7 +76,7 @@
       "id": 7,
       "name": "Merino base layer",
       "description": "Top + bottom set",
-      "weight": 9.0,
+      "weight": 9,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -96,7 +96,7 @@
       "id": 9,
       "name": "Trail runners",
       "description": "Low-cut, zero drop",
-      "weight": 18.0,
+      "weight": 18,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -116,7 +116,7 @@
       "id": 11,
       "name": "Buff / neck gaiter",
       "description": "Sun + warmth protection",
-      "weight": 1.0,
+      "weight": 1,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -126,7 +126,7 @@
       "id": 12,
       "name": "Sawyer Squeeze",
       "description": "Inline or squeeze filter",
-      "weight": 3.0,
+      "weight": 3,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -146,7 +146,7 @@
       "id": 14,
       "name": "Alcohol stove + pot",
       "description": "Evernew Ti + homemade",
-      "weight": 3.0,
+      "weight": 3,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -156,7 +156,7 @@
       "id": 15,
       "name": "Fuel (alcohol, 2oz)",
       "description": "Denatured alcohol",
-      "weight": 2.0,
+      "weight": 2,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -166,7 +166,7 @@
       "id": 16,
       "name": "Food (2 days)",
       "description": "Cold-soak or cook meals",
-      "weight": 32.0,
+      "weight": 32,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -176,7 +176,7 @@
       "id": 17,
       "name": "Frameless pack (30-35L)",
       "description": "Sub-1kg ultralight pack",
-      "weight": 20.0,
+      "weight": 20,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -186,7 +186,7 @@
       "id": 18,
       "name": "Trekking poles",
       "description": "Doubles as tarp poles",
-      "weight": 10.0,
+      "weight": 10,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -216,7 +216,7 @@
       "id": 21,
       "name": "Phone (navigation)",
       "description": "CalTopo offline maps",
-      "weight": 6.0,
+      "weight": 6,
       "authorUnit": "oz",
       "price": 0,
       "image": "",
@@ -236,6 +236,25 @@
   "categories": [
     {
       "id": 101,
+      "name": "Pack",
+      "categoryItems": [
+        {
+          "itemId": 17,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 20,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 1
+    },
+    {
+      "id": 102,
       "name": "Shelter",
       "categoryItems": [
         {
@@ -251,11 +270,24 @@
           "worn": false,
           "consumable": false,
           "star": false
+        },
+        {
+          "itemId": 18,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 36,
+      "subtotalWornWeight": 10,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 8
     },
     {
-      "id": 102,
+      "id": 103,
       "name": "Sleep System",
       "categoryItems": [
         {
@@ -272,11 +304,17 @@
           "consumable": false,
           "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 24,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
     },
     {
-      "id": 103,
-      "name": "Clothing",
+      "id": 104,
+      "name": "Clothing & Footwear",
       "categoryItems": [
         {
           "itemId": 5,
@@ -327,10 +365,16 @@
           "consumable": false,
           "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 49,
+      "subtotalWornWeight": 44,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 8
     },
     {
-      "id": 104,
+      "id": 105,
       "name": "Water",
       "categoryItems": [
         {
@@ -347,11 +391,17 @@
           "consumable": false,
           "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 4.2,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
     },
     {
-      "id": 105,
-      "name": "Food & Cook",
+      "id": 106,
+      "name": "Cook & Food",
       "categoryItems": [
         {
           "itemId": 14,
@@ -374,35 +424,39 @@
           "consumable": true,
           "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 37,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 34,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 3
     },
     {
-      "id": 106,
-      "name": "Pack & Essentials",
+      "id": 107,
+      "name": "Hygiene & Health",
       "categoryItems": [
         {
-          "itemId": 17,
+          "itemId": 20,
           "qty": 1,
           "worn": false,
           "consumable": false,
           "star": false
-        },
-        {
-          "itemId": 18,
-          "qty": 1,
-          "worn": true,
-          "consumable": false,
-          "star": false
-        },
+        }
+      ],
+      "subtotalWeight": 1.5,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 1
+    },
+    {
+      "id": 108,
+      "name": "Electronics & Essentials",
+      "categoryItems": [
         {
           "itemId": 19,
-          "qty": 1,
-          "worn": false,
-          "consumable": false,
-          "star": false
-        },
-        {
-          "itemId": 20,
           "qty": 1,
           "worn": false,
           "consumable": false,
@@ -422,7 +476,13 @@
           "consumable": false,
           "star": false
         }
-      ]
+      ],
+      "subtotalWeight": 13.3,
+      "subtotalWornWeight": 6,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 3
     }
   ],
   "lists": [
@@ -435,8 +495,18 @@
         103,
         104,
         105,
-        106
-      ]
+        106,
+        107,
+        108
+      ],
+      "totalWeight": 185,
+      "totalWornWeight": 60,
+      "totalConsumableWeight": 34,
+      "totalBaseWeight": 91,
+      "totalPackWeight": 125,
+      "totalPrice": 0,
+      "totalConsumablePrice": 0,
+      "totalQty": 28
     }
   ]
 }

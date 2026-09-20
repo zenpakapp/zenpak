@@ -28,6 +28,18 @@ const { Library } = require('../client/models/library.js');
 
 const LOCALES = ['en', 'fr', 'es', 'de'];
 const knownListTypes = LIST_TYPE_VALUES.map((t) => t.value);
+const curatedCategoryOrder = [
+    'Pack',
+    'Shelter',
+    'Sleep System',
+    'Clothing & Footwear',
+    'Water',
+    'Cook & Food',
+    'Hygiene & Health',
+    'Safety & Navigation',
+    'Electronics & Essentials',
+];
+const knownCuratedCategories = [...curatedCategoryOrder, 'Bike & Repair'];
 
 console.log(`\n--- ${templates.length} templates load via Library.load() ---`);
 
@@ -40,6 +52,20 @@ for (const template of templates) {
         loaded = false;
     }
     assert(`${template.id}: data loads via Library.load() without error`, loaded);
+}
+
+console.log('\n--- every template follows curated category taxonomy ---');
+
+for (const template of templates) {
+    const categoryNames = template.data.categories.map((category) => category.name);
+    const unknown = categoryNames.filter((name) => !knownCuratedCategories.includes(name));
+    const orderedNames = [...categoryNames].sort((a, b) => knownCuratedCategories.indexOf(a) - knownCuratedCategories.indexOf(b));
+    const waterIndex = categoryNames.indexOf('Water');
+    const cookIndex = categoryNames.indexOf('Cook & Food');
+
+    assert(`${template.id}: category names are documented (${categoryNames.join(', ')})`, unknown.length === 0);
+    assert(`${template.id}: categories follow curated order`, JSON.stringify(categoryNames) === JSON.stringify(orderedNames));
+    assert(`${template.id}: Water appears before Cook & Food`, waterIndex !== -1 && cookIndex !== -1 && waterIndex < cookIndex);
 }
 
 console.log('\n--- every template.listTypes value is a known List Type ---');

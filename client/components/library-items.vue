@@ -73,8 +73,8 @@
                     {{ displayWeight(libraryItem.weight, itemUnit) }}
                     {{ itemUnit }}
                 </span>
-                <span class="lpLibraryItemMeta">
-                    {{ libraryItem.brand || libraryItem.description }}
+                <span v-if="libraryItem.brand" class="lpLibraryItemMeta">
+                    {{ libraryItem.brand }}
                 </span>
                 <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
