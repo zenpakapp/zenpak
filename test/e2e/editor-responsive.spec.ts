@@ -120,6 +120,20 @@ test("keeps quick add and existing-item cancellation unchanged", async ({
   await expect(rows.first().locator(".lpName")).toHaveValue("Fixture item 001");
 });
 
+test("commits a quick-add item when clicking outside the input", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 812 });
+  await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+  await page.goto(testRoot);
+
+  await page.locator(".lpAddItem").click();
+  await page.locator(".lpAddItemInput").fill("Blur mug");
+  await page.locator("#lpListName").click();
+
+  await expect(page.locator(".lpItem .lpName").last()).toHaveValue("Blur mug");
+});
+
 test("keeps existing-item suggestions on the quick-add path", async ({
   page,
 }) => {

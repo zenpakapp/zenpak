@@ -124,7 +124,7 @@
                         @keydown.ctrl.enter.prevent="createAndOpenEditor"
                         @keydown.tab.exact.prevent="createInlineItem('description')"
                         @keydown.escape="dismissSuggestions"
-                        @blur="dismissSuggestions"
+                        @blur="commitNewItemOnBlur"
                     >
                     <span v-else class="lpAddItemActions">
                         <a class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
@@ -163,8 +163,8 @@
 import item from './item.vue';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
-import { useUtils } from '../composables/useUtils.js';
-import { suggestItems } from '../composables/useGearMatcher.js';
+import { useUtils } from '../composables/useUtils';
+import { suggestItems } from '../composables/useGearMatcher';
 
 const { displayWeight, displayPrice } = useUtils();
 
@@ -187,8 +187,11 @@ export default {
             return this.$store.state.library;
         },
         itemContainers() {
-            void this.$store.state.itemVersion;
-            void this.$store.state.categoryItemVersion;
+            const itemVersion = this.$store.state.itemVersion;
+            const categoryItemVersion = this.$store.state.categoryItemVersion;
+
+            if (itemVersion < 0 || categoryItemVersion < 0) return [];
+
             return this.category.categoryItems
                 .map((categoryItem) => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }))
                 .filter((itemContainer) => itemContainer.item);
@@ -234,6 +237,7 @@ export default {
             this.showInput = false;
 
             this.$nextTick(() => {
+                if (!focusField) return;
                 const selector = focusField === 'description' ? '.lpDescription' : '.lpName';
                 const field = this.$el.querySelector(`[data-item-id="${newItem.id}"] ${selector}`);
                 if (field) {
@@ -268,7 +272,7 @@ export default {
                 initialFocus: name ? 'description' : 'name',
             });
         },
-        onNewItemInput(evt) {
+        onNewItemInput() {
             this.suggestions = suggestItems(
                 this.newItemName,
                 this.library.items,
@@ -282,6 +286,14 @@ export default {
             this.suggestions = [];
             this.showSuggestions = false;
             this.showInput = false;
+        },
+        commitNewItemOnBlur() {
+            if (this.newItemName.trim()) {
+                this.createInlineItem(null);
+                return;
+            }
+
+            this.dismissSuggestions();
         },
         dismissSuggestions() {
             setTimeout(() => {
