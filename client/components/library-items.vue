@@ -73,8 +73,9 @@
                     {{ displayWeight(libraryItem.weight, itemUnit) }}
                     {{ itemUnit }}
                 </span>
-                <span v-if="libraryItem.brand" class="lpLibraryItemMeta">
-                    {{ libraryItem.brand }}
+                <span v-if="hasLibraryItemMeta(libraryItem)" class="lpLibraryItemMeta">
+                    <span v-if="libraryItem.brand" class="lpLibraryItemBrand">{{ libraryItem.brand }}</span>
+                    <span v-for="tag in itemTags(libraryItem)" :key="tag" class="lpLibraryItemTag">{{ tag }}</span>
                 </span>
                 <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
@@ -246,6 +247,12 @@ export default {
                     this.$refs.searchInput.focus();
                 }
             });
+        },
+        itemTags(item) {
+            return Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
+        },
+        hasLibraryItemMeta(item) {
+            return !!(item.brand || item.category || this.itemTags(item).length);
         },
         createLibraryItem() {
             this.$store.commit('newItem', {

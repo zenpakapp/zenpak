@@ -77,6 +77,7 @@
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { normalizeTag, normalizeTags } from '../services/item-tags';
 
 export default {
     name: 'ItemMeta',
@@ -145,7 +146,7 @@ export default {
             this.brandActiveIndex = -1;
         },
         addTag() {
-            const tag = this.tagInput.trim().toLowerCase();
+            const tag = normalizeTag(this.tagInput);
             if (tag && !this.tags.includes(tag)) {
                 this.tags.push(tag);
             }
@@ -155,12 +156,15 @@ export default {
             this.tags = this.tags.filter((t) => t !== tag);
         },
         save() {
+            const tags = normalizeTags(this.tags, this.tagInput);
             this.$store.commit('updateItem', {
                 ...this.item,
                 brand: this.brand.trim(),
                 category: this.category,
-                tags: [...this.tags],
+                tags,
             });
+            this.tags = tags;
+            this.tagInput = '';
             this.shown = false;
         },
         cancel() {

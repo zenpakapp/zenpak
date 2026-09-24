@@ -195,13 +195,30 @@ input.lpCategoryName { /* specificity */
         color: $color-text-muted;
         display: flex;
         flex: 0 0 100%;
+        flex-wrap: wrap;
         font-size: $fontSize-sm;
         gap: 4px;
+        line-height: 1.25;
         padding-bottom: 2px;
     }
 
     .lpItemBrand {
         font-weight: $fontWeight-medium;
+    }
+
+    .lpItemTag {
+        background: rgba(var(--color-accent-rgb), 0.08);
+        border-radius: $radius-sm;
+        color: $color-accent;
+        display: inline-flex;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.4;
+        max-width: 90px;
+        overflow: hidden;
+        padding: 1px 5px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .lpActionsCell {

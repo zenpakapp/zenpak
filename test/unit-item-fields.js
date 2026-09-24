@@ -4,6 +4,7 @@
  */
 
 const { Item, Library } = require('../client/dataTypes.js');
+const { normalizeTag, normalizeTags } = require('../client/services/item-tags.js');
 
 let passed = 0;
 let failed = 0;
@@ -67,6 +68,20 @@ const updatedItem = library.getItemById(libraryItem.id);
 
 assert('updated item keeps save function', typeof updatedItem.save === 'function');
 assert('library save works after updating item with plain object', Boolean(library.save().items.find(i => i.name === 'Updated item')));
+
+console.log('\n--- Item tag normalization ---');
+
+assert('normalizes a single tag', normalizeTag(' Bikepacking ') === 'bikepacking');
+assert('adds pending tag on save', JSON.stringify(normalizeTags(['winter'], ' Bikepacking ')) === JSON.stringify(['winter', 'bikepacking']));
+assert('deduplicates pending tag on save', JSON.stringify(normalizeTags(['winter'], 'winter')) === JSON.stringify(['winter']));
+
+library.updateItem({ ...libraryItem, tags: normalizeTags(['winter'], ' Bikepacking ') });
+const serialized = library.save();
+const reloaded = new Library();
+reloaded.load(serialized);
+const reloadedItem = reloaded.getItemById(libraryItem.id);
+
+assert('library save/load preserves tags from item updates', JSON.stringify(reloadedItem.tags) === JSON.stringify(['winter', 'bikepacking']));
 
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

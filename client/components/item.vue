@@ -21,14 +21,15 @@
             <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @input="saveItem">
             <input v-model="item.description" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @input="saveItem">
             <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
-            <span v-if="item.brand" class="lpItemMeta">
-                <span class="lpItemBrand">{{ item.brand }}</span>
+            <span v-if="hasItemMeta" class="lpItemMeta">
+                <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
+                <span v-for="tag in itemTags" :key="tag" class="lpItemTag">{{ tag }}</span>
             </span>
         </span>
         <span v-if="!isPackingMode" class="lpActionsCell">
             <i class="lpSprite lpCamera" :title="$t('item.imageTitle')" @click="updateItemImage" />
             <i class="lpSprite lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" @click="updateItemLink" />
-            <i class="lpSprite lpTag" :class="{lpActive: item.brand}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
+            <i class="lpSprite lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
             <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" @click="toggleWorn" />
             <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" @click="toggleConsumable" />
             <i class="lpSprite lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" @click="toggleOptional" />
@@ -104,6 +105,12 @@ export default {
         isPacked() {
             return this.isPackingMode && this.packedItemIds && this.packedItemIds.has(this.item.id);
         },
+        itemTags() {
+            return Array.isArray(this.item.tags) ? this.item.tags.filter(Boolean) : [];
+        },
+        hasItemMeta() {
+            return !!(this.item.brand || this.item.category || this.itemTags.length);
+        },
         itemRowClasses() {
             return [
                 'lpItem',
@@ -144,7 +151,7 @@ export default {
         savePrice() {
             const priceFloat = parseFloat(this.displayPrice, 10);
 
-            if (!isNaN(priceFloat)) {
+            if (!Number.isNaN(priceFloat)) {
                 this.item.price = Math.round(priceFloat * 100) / 100;
                 this.saveItem();
                 this.priceError = false;
@@ -155,7 +162,7 @@ export default {
         saveQty() {
             const qtyFloat = parseFloat(this.displayQty, 10);
 
-            if (!isNaN(qtyFloat)) {
+            if (!Number.isNaN(qtyFloat)) {
                 this.categoryItem.qty = qtyFloat;
                 this.saveCategoryItem();
                 this.qtyError = false;
@@ -166,7 +173,7 @@ export default {
         saveWeight() {
             const weightFloat = parseFloat(this.displayWeight, 10);
 
-            if (!isNaN(weightFloat)) {
+            if (!Number.isNaN(weightFloat)) {
                 this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
                 this.saveItem();
                 this.weightError = false;
@@ -250,7 +257,7 @@ export default {
                 return;
             }
 
-            this.categoryItem.qty = this.categoryItem.qty + 1;
+            this.categoryItem.qty += 1;
             this.saveCategoryItem();
         },
         decrementQty(evt) {
@@ -260,7 +267,7 @@ export default {
                 return;
             }
 
-            this.categoryItem.qty = this.categoryItem.qty - 1;
+            this.categoryItem.qty -= 1;
 
             if (this.categoryItem.qty < 0) {
                 this.categoryItem.qty = 0;

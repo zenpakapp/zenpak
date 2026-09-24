@@ -131,13 +131,38 @@
     }
 
     .lpLibraryItemMeta {
+        align-items: center;
         clear: both;
         color: $color-text-muted;
-        display: block;
+        display: flex;
+        gap: 4px;
         font-size: $fontSize-sm;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 235px;
+    }
+
+    .lpLibraryItemBrand {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .lpLibraryItemTag {
+        background: rgba(var(--color-accent-rgb), 0.08);
+        border-radius: $radius-sm;
+        color: $color-accent;
+        flex: 0 0 auto;
+        font-size: 10px;
+        font-weight: 600;
+        line-height: 1.4;
+        max-width: 78px;
+        overflow: hidden;
+        padding: 1px 5px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .lpHandle {

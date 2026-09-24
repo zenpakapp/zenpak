@@ -176,6 +176,7 @@ import ItemDetailHeader from './item-detail-header.vue';
 import ItemBrandInput from './item-brand-input.vue';
 import { openDialog } from '../services/dialogs';
 import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { normalizeTag, normalizeTags } from '../services/item-tags';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -296,6 +297,7 @@ export default {
         },
         saveEdit() {
             const weightFloat = parseFloat(this.editWeight) || 0;
+            const tags = normalizeTags(this.editTags, this.tagInput);
             const updatedItem = {
                 ...this.item,
                 name: this.editName.trim(),
@@ -304,11 +306,13 @@ export default {
                 category: this.editCategory,
                 url: this.editUrl.trim(),
                 imageUrl: this.editImageUrl.trim() || undefined,
-                tags: [...this.editTags],
+                tags,
                 authorUnit: this.editUnit,
                 weight: weightUtils.WeightToMg(weightFloat, this.editUnit),
                 price: Math.round((parseFloat(this.editPrice) || 0) * 100) / 100,
             };
+            this.editTags = tags;
+            this.tagInput = '';
             this.$store.commit('updateItem', updatedItem);
 
             let updatedCategoryItem = this.categoryItem;
@@ -390,7 +394,7 @@ export default {
             this.showCategoryDropdown = false;
         },
         addTag() {
-            const tag = this.tagInput.trim().toLowerCase();
+            const tag = normalizeTag(this.tagInput);
             if (tag && !this.editTags.includes(tag)) this.editTags.push(tag);
             this.tagInput = '';
         },

@@ -43,6 +43,11 @@ const brandFiltered = filterLibraryItems(items, {
 }, []);
 assert('filters by brand', brandFiltered.length === 1 && brandFiltered[0].id === 50);
 
+const tagSearchFiltered = filterLibraryItems(items, {
+    searchText: 'winter',
+}, []);
+assert('filters by tag from search text', tagSearchFiltered.length === 1 && tagSearchFiltered[0].id === 50);
+
 const windowed = calculateVirtualWindow({
     items,
     scrollTop: 1000,

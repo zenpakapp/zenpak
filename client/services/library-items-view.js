@@ -5,12 +5,13 @@ function filterLibraryItems(items, filters = {}, activeItemIds = []) {
     const activeIds = new Set(activeItemIds.map(String));
 
     return (items || []).filter((item) => {
+        const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
         const matchesSearch = !search
             || String(item.name || '').toLowerCase().includes(search)
             || String(item.brand || '').toLowerCase().includes(search)
-            || String(item.description || '').toLowerCase().includes(search);
+            || String(item.description || '').toLowerCase().includes(search)
+            || itemTags.some((tag) => tag.includes(search));
         const matchesCategory = !category || String(item.category || '').toLowerCase() === category;
-        const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
         const matchesTags = tags.every((tag) => itemTags.includes(tag));
         return matchesSearch && matchesCategory && matchesTags;
     }).map((item) => ({
