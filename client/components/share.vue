@@ -230,6 +230,7 @@ export default {
             });
         },
         focusShare() {
+            this.ensureShareable();
             if (!this.list.externalId) {
                 this.shareReady = false;
                 return fetchJson('/externalId', {

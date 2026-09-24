@@ -57,7 +57,7 @@ test("saves an item created with the detailed editor", async ({ page }) => {
     "Detailed stove",
   );
   await expect(page.locator(".lpItem .lpWeight").last()).toHaveValue("320");
-  await dialog.locator(".lpModalClose").click();
+  await expect(dialog).toBeHidden();
   await expect(page.locator(".lpItem[data-item-id]")).toHaveCount(5);
 });
 

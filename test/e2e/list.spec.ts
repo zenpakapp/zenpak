@@ -20,7 +20,7 @@ test.describe('List tests', () => {
     await page.getByText('Share', { exact: true }).hover();
     await externalIdResponse;
 
-    const shareUrlLocator = page.getByLabel('Share your list');
+    const shareUrlLocator = page.locator('#shareUrl');
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
     const shareUrl = await shareUrlLocator.inputValue();
 
@@ -44,7 +44,7 @@ test.describe('List tests', () => {
     await page.getByText('Share', { exact: true }).hover();
     await externalIdResponse;
     
-    const shareUrlLocator = page.getByLabel('Share your list');
+    const shareUrlLocator = page.locator('#shareUrl');
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
     const shareUrl = await shareUrlLocator.inputValue();
 

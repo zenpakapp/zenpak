@@ -78,6 +78,10 @@
         border: 1px solid $color-border;
         box-shadow: $shadow-popover;
     }
+
+    &.lpCategorySuggestionsOpen {
+        content-visibility: visible;
+    }
 }
 
 #lpListDescription {

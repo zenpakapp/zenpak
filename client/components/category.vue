@@ -88,7 +88,7 @@
 </style>
 
 <template>
-    <li :id="category.id" class="lpCategory" :data-category-id="category.id">
+    <li :id="category.id" class="lpCategory" :class="{ lpCategorySuggestionsOpen: showSuggestions }" :data-category-id="category.id">
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
             <li class="lpHeader lpItemsHeader">
                 <span class="lpHandleCell">
