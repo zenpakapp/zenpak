@@ -133,6 +133,12 @@ export default {
         return {
             itemDrake: null,
             categoryDrake: null,
+            itemReorderFrame: null,
+            itemReorderIdle: null,
+            itemReorderToken: 0,
+            categoryReorderFrame: null,
+            categoryReorderIdle: null,
+            categoryReorderToken: 0,
             showCompletionModal: false,
             completionPhrase: '',
             communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
@@ -194,18 +200,20 @@ export default {
     },
     watch: {
         categories() {
-            this.$nextTick(() => {
-                this.handleItemReorder();
-            });
+            this.scheduleItemReorder();
         },
     },
     mounted() {
-        this.handleCategoryReorder();
-        this.handleItemReorder();
+        this.scheduleCategoryReorder();
+        this.scheduleItemReorder();
         registerShortcut('n', this.$t('shortcuts.newItem'), this.focusAddItem);
     },
     beforeUnmount() {
         unregisterShortcut('n');
+        if (this.itemReorderFrame) cancelAnimationFrame(this.itemReorderFrame);
+        if (this.categoryReorderFrame) cancelAnimationFrame(this.categoryReorderFrame);
+        this.cancelIdle(this.itemReorderIdle);
+        this.cancelIdle(this.categoryReorderIdle);
         if (this.itemDrake) {
             this.itemDrake.destroy();
             this.itemDrake = null;
@@ -256,9 +264,49 @@ export default {
             const phrases = lang.startsWith('fr') ? phrasesFr : phrasesEn;
             return phrases[Math.floor(Math.random() * phrases.length)];
         },
+        cancelIdle(id) {
+            if (!id) return;
+            if (typeof window !== 'undefined' && typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(id);
+            } else {
+                clearTimeout(id);
+            }
+        },
+        scheduleItemReorder() {
+            if (this.itemReorderFrame || this.itemReorderIdle) return;
+            this.itemReorderFrame = requestAnimationFrame(() => {
+                this.itemReorderFrame = null;
+                const run = () => {
+                    this.itemReorderIdle = null;
+                    this.handleItemReorder();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.itemReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.itemReorderIdle = setTimeout(run, 0);
+                }
+            });
+        },
+        scheduleCategoryReorder() {
+            if (this.categoryReorderFrame || this.categoryReorderIdle) return;
+            this.categoryReorderFrame = requestAnimationFrame(() => {
+                this.categoryReorderFrame = null;
+                const run = () => {
+                    this.categoryReorderIdle = null;
+                    this.handleCategoryReorder();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.categoryReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.categoryReorderIdle = setTimeout(run, 0);
+                }
+            });
+        },
         async handleItemReorder() {
+            const reorderToken = ++this.itemReorderToken;
             if (this.itemDrake) {
                 this.itemDrake.destroy();
+                this.itemDrake = null;
             }
             const categoryItems = queryContainers(this.$el, '.lpItems');
             const drake = await createDragDrop(categoryItems, {
@@ -272,7 +320,7 @@ export default {
                     return true;
                 },
             });
-            if (!this.$el) {
+            if (!this.$el || reorderToken !== this.itemReorderToken) {
                 drake.destroy();
                 return;
             }
@@ -293,8 +341,10 @@ export default {
             this.itemDrake = drake;
         },
         async handleCategoryReorder() {
+            const reorderToken = ++this.categoryReorderToken;
             if (this.categoryDrake) {
                 this.categoryDrake.destroy();
+                this.categoryDrake = null;
             }
 
             const drake = await createDragDrop([this.$refs.categories.$el], {
@@ -302,7 +352,7 @@ export default {
                     return $handle.classList.contains('lpCategoryHandle');
                 },
             });
-            if (!this.$el) {
+            if (!this.$el || reorderToken !== this.categoryReorderToken) {
                 drake.destroy();
                 return;
             }
