@@ -1,5 +1,18 @@
 const { arrayMove } = require('../utils/utils');
 
+function listContainsItem(library, list, itemId) {
+    return list.categoryIds.some((categoryId) => {
+        const category = library.getCategoryById(categoryId);
+        return category && category.categoryItems.some((categoryItem) => categoryItem.itemId === itemId);
+    });
+}
+
+function recalculateListsForItem(library, itemId) {
+    library.lists.forEach((list) => {
+        if (listContainsItem(library, list, itemId)) list.calculateTotals();
+    });
+}
+
 module.exports = {
     setDefaultList(state, list) {
         state.library.defaultListId = list.id;
@@ -204,7 +217,6 @@ module.exports = {
     updateCategoryName(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
         category.name = updatedCategory.name;
-        state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     updateCategoryColor(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
@@ -212,16 +224,20 @@ module.exports = {
     },
     updateItem(state, item) {
         state.library.updateItem(item);
-        state.library.lists.forEach((list) => list.calculateTotals());
+        recalculateListsForItem(state.library, item.id);
+        state.itemVersion += 1;
+    },
+    updateItemMetadata(state, item) {
+        state.library.updateItem(item);
         state.itemVersion += 1;
     },
     mergeItems(state, { keepId, removeId }) {
-        for (const list of state.library.lists) {
-            for (const categoryId of list.categoryIds) {
+        state.library.lists.forEach((list) => {
+            list.categoryIds.forEach((categoryId) => {
                 const category = state.library.getCategoryById(categoryId);
-                if (!category) continue;
+                if (!category) return;
                 const removeCI = category.getCategoryItemById(removeId);
-                if (!removeCI) continue;
+                if (!removeCI) return;
                 const keepCI = category.getCategoryItemById(keepId);
                 if (keepCI) {
                     keepCI.qty = (Number(keepCI.qty) || 0) + (Number(removeCI.qty) || 0);
@@ -232,8 +248,8 @@ module.exports = {
                 } else {
                     removeCI.itemId = keepId;
                 }
-            }
-        }
+            });
+        });
         const removeItem = state.library.getItemById(removeId);
         if (removeItem) {
             state.library.items.splice(state.library.items.indexOf(removeItem), 1);

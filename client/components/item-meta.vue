@@ -157,7 +157,7 @@ export default {
         },
         save() {
             const tags = normalizeTags(this.tags, this.tagInput);
-            this.$store.commit('updateItem', {
+            this.$store.commit('updateItemMetadata', {
                 ...this.item,
                 brand: this.brand.trim(),
                 category: this.category,

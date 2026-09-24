@@ -143,7 +143,7 @@ export default {
     },
     methods: {
         saveItem() {
-            this.$store.commit('updateItem', this.item);
+            this.$store.commit('updateItemMetadata', this.item);
         },
         saveCategoryItem() {
             this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: this.categoryItem });

@@ -192,8 +192,8 @@
 </template>
 <script>
 import { openDialog } from '../services/dialogs';
-import { useUtils } from '../composables/useUtils.js';
-import { useGearRoomFilters } from '../composables/useGearRoomFilters.js';
+import { useUtils } from '../composables/useUtils';
+import { useGearRoomFilters } from '../composables/useGearRoomFilters';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
 import GearRoomBatchBar from './gear-room-batch-bar.vue';
@@ -264,7 +264,7 @@ export default {
             this.allItems
                 .filter((i) => ids.has(i.id))
                 .forEach((item) => {
-                    this.$store.commit('updateItem', { ...item, name: item.description, description: item.name });
+                    this.$store.commit('updateItemMetadata', { ...item, name: item.description, description: item.name });
                 });
             this.selected.splice(0, this.selected.length);
         },
@@ -273,7 +273,7 @@ export default {
             this.allItems
                 .filter((i) => ids.has(i.id))
                 .forEach((item) => {
-                    this.$store.commit('updateItem', { ...item, category });
+                    this.$store.commit('updateItemMetadata', { ...item, category });
                 });
             this.selected.splice(0, this.selected.length);
         },
@@ -282,7 +282,7 @@ export default {
             this.allItems
                 .filter((i) => ids.has(i.id))
                 .forEach((item) => {
-                    this.$store.commit('updateItem', { ...item, brand });
+                    this.$store.commit('updateItemMetadata', { ...item, brand });
                 });
             this.selected.splice(0, this.selected.length);
         },
@@ -293,7 +293,7 @@ export default {
                 .forEach((item) => {
                     const tags = [...(item.tags || [])];
                     if (!tags.includes(tag)) tags.push(tag);
-                    this.$store.commit('updateItem', { ...item, tags });
+                    this.$store.commit('updateItemMetadata', { ...item, tags });
                 });
             this.selected.splice(0, this.selected.length);
         },

@@ -278,7 +278,7 @@ export default {
         },
         toggleStar() {
             const starred = !this.localStarred;
-            this.$store.commit('updateItem', { ...this.item, starred });
+            this.$store.commit('updateItemMetadata', { ...this.item, starred });
             this.localStarred = starred;
         },
         viewImage() {
