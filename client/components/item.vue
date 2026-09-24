@@ -18,8 +18,8 @@
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @input="saveItem">
-            <input v-model="item.description" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @input="saveItem">
+            <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
             <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
             <span v-if="hasItemMeta" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
@@ -73,6 +73,8 @@ export default {
             weightError: false,
             priceError: false,
             qtyError: false,
+            editName: '',
+            editDescription: '',
             numStars: 4,
         };
     },
@@ -135,15 +137,31 @@ export default {
         categoryItem() {
             this.setDisplayQty();
         },
+        'item.name': function (value) {
+            if (value !== this.editName) this.editName = value || '';
+        },
+        'item.description': function (value) {
+            if (value !== this.editDescription) this.editDescription = value || '';
+        },
     },
     created() {
+        this.editName = this.item.name || '';
+        this.editDescription = this.item.description || '';
         this.setDisplayWeight();
         this.setDisplayPrice();
         this.setDisplayQty();
     },
     methods: {
-        saveItem() {
-            this.$store.commit('updateItemMetadata', this.item);
+        saveItemText() {
+            if (this.editName === this.item.name && this.editDescription === this.item.description) return;
+            this.$store.commit('updateItemMetadata', {
+                ...this.item,
+                name: this.editName,
+                description: this.editDescription,
+            });
+        },
+        saveMeasuredItem() {
+            this.$store.commit('updateItem', this.item);
         },
         saveCategoryItem() {
             this.$store.commit('updateCategoryItem', { category: this.category, categoryItem: this.categoryItem });
@@ -153,7 +171,7 @@ export default {
 
             if (!Number.isNaN(priceFloat)) {
                 this.item.price = Math.round(priceFloat * 100) / 100;
-                this.saveItem();
+                this.saveMeasuredItem();
                 this.priceError = false;
             } else {
                 this.priceError = true;
@@ -175,7 +193,7 @@ export default {
 
             if (!Number.isNaN(weightFloat)) {
                 this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
-                this.saveItem();
+                this.saveMeasuredItem();
                 this.weightError = false;
             } else {
                 this.weightError = true;
@@ -285,7 +303,7 @@ export default {
             const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) + 1;
             this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
-            this.saveItem();
+            this.saveMeasuredItem();
         },
         decrementWeight(evt) {
             evt.stopImmediatePropagation();
@@ -301,7 +319,7 @@ export default {
                 this.item.weight = 0;
             }
 
-            this.saveItem();
+            this.saveMeasuredItem();
         },
         removeItem() {
             this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category: this.category });

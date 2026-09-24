@@ -59,6 +59,8 @@
     border: 1px solid $color-border;
     border-radius: $radius-md;
     box-shadow: $shadow-soft;
+    contain-intrinsic-size: auto 180px;
+    content-visibility: auto;
     list-style: none;
     margin: 0 0 14px;
     overflow: visible;

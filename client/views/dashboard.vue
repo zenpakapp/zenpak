@@ -216,6 +216,14 @@ const lazySpeedbump = {
 const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
 const legacySourceListInfoDismissedField = 'creator' + 'LinksActionDismissed';
 
+function scheduleIdle(callback) {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout: 4000 });
+        return;
+    }
+    setTimeout(callback, 1500);
+}
+
 export default {
     name: 'Dashboard',
     components: {
@@ -430,6 +438,7 @@ export default {
                 this.sidebarReady = true;
                 this.sidebarFrame = null;
             });
+            this.prefetchLikelyChunks();
         },
         openGearRoom() {
             this.$store.commit('setGearRoomOpen', true);
@@ -442,6 +451,20 @@ export default {
             const module = await loader();
             this.loadedDialogs.push({ name: componentName, component: markRaw(module.default || module) });
             await this.$nextTick();
+        },
+        prefetchLikelyChunks() {
+            scheduleIdle(() => {
+                [
+                    lazyDialogs.itemDetail.loader,
+                    lazyDialogs.itemMeta.loader,
+                    lazyDialogs.itemLink.loader,
+                    lazyDialogs.itemImage.loader,
+                    lazyDialogs.itemViewImage.loader,
+                    lazySpeedbump.loader,
+                ].forEach((loader) => {
+                    loader().catch(() => {});
+                });
+            });
         },
         handleSidebarBreakpoint(event) {
             if (event.matches) {

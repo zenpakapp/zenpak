@@ -109,11 +109,19 @@
 import { markRaw } from 'vue';
 import colorPicker from './colorpicker.vue';
 import { renderListChart } from '../services/list-chart';
-import { useUtils } from '../composables/useUtils.js';
+import { useUtils } from '../composables/useUtils';
 
 const colorUtils = require('../utils/color.js');
 
 const { displayWeight, displayPrice } = useUtils();
+
+function scheduleIdle(callback) {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout: 1500 });
+        return;
+    }
+    setTimeout(callback, 0);
+}
 
 export default {
     name: 'ListSummary',
@@ -125,6 +133,9 @@ export default {
         return {
             chart: null,
             hoveredCategoryId: null,
+            chartFrame: null,
+            chartScheduled: false,
+            themeObserver: null,
         };
     },
     computed: {
@@ -143,17 +154,18 @@ export default {
         },
     },
     watch: {
-        '$store.state.library.defaultListId': 'updateChart',
-        'list.totalWeight': 'updateChart',
-        'list.categoryIds': 'updateChart',
+        '$store.state.library.defaultListId': 'scheduleChartUpdate',
+        'list.totalWeight': 'scheduleChartUpdate',
+        'list.categoryIds': 'scheduleChartUpdate',
     },
     mounted() {
-        this.updateChart();
-        this._themeObserver = new MutationObserver(() => this.updateChart());
-        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        this.scheduleChartUpdate();
+        this.themeObserver = new MutationObserver(() => this.scheduleChartUpdate());
+        this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     beforeUnmount() {
-        if (this._themeObserver) this._themeObserver.disconnect();
+        if (this.chartFrame) cancelAnimationFrame(this.chartFrame);
+        if (this.themeObserver) this.themeObserver.disconnect();
         if (this.chart && typeof this.chart.destroy === 'function') {
             this.chart.destroy();
             this.chart = null;
@@ -162,6 +174,17 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
+        scheduleChartUpdate() {
+            if (this.chartScheduled) return;
+            this.chartScheduled = true;
+            this.chartFrame = requestAnimationFrame(() => {
+                this.chartFrame = null;
+                scheduleIdle(() => {
+                    this.chartScheduled = false;
+                    this.updateChart();
+                });
+            });
+        },
         async updateChart() {
             if (!this.library || typeof this.library.renderChart !== 'function') return;
             const chartData = this.library.renderChart();
