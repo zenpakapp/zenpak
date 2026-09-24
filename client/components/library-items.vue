@@ -128,6 +128,9 @@ export default {
             viewportHeight: 600,
             resizeObserver: null,
             scrollFrame: null,
+            dragFrame: null,
+            dragIdle: null,
+            dragSetupToken: 0,
         };
     },
     computed: {
@@ -146,7 +149,7 @@ export default {
                 searchText: this.searchText,
                 category: this.filterCategory,
                 tags: this.filterTags,
-            }, this.library.getItemsInCurrentList());
+            });
         },
         virtualWindow() {
             return calculateVirtualWindow({
@@ -180,14 +183,10 @@ export default {
             },
         },
         categories() {
-            this.$nextTick(() => {
-                this.handleItemDrag();
-            });
+            this.scheduleItemDrag();
         },
         filteredItems() {
-            this.$nextTick(() => {
-                this.handleItemDrag();
-            });
+            this.scheduleItemDrag();
         },
     },
     mounted() {
@@ -196,11 +195,19 @@ export default {
             this.resizeObserver = new ResizeObserver(() => this.measureViewport());
             this.resizeObserver.observe(this.$refs.library);
         }
-        this.handleItemDrag();
+        this.scheduleItemDrag();
     },
     beforeUnmount() {
         if (this.resizeObserver) this.resizeObserver.disconnect();
         if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+        if (this.dragFrame) cancelAnimationFrame(this.dragFrame);
+        if (this.dragIdle) {
+            if (typeof window !== 'undefined' && typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(this.dragIdle);
+            } else {
+                clearTimeout(this.dragIdle);
+            }
+        }
         if (this.drake) {
             this.drake.destroy();
             this.drake = null;
@@ -263,9 +270,26 @@ export default {
             const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null });
         },
+        scheduleItemDrag() {
+            if (this.dragFrame || this.dragIdle) return;
+            this.dragFrame = requestAnimationFrame(() => {
+                this.dragFrame = null;
+                const run = () => {
+                    this.dragIdle = null;
+                    this.handleItemDrag();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.dragIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.dragIdle = setTimeout(run, 0);
+                }
+            });
+        },
         async handleItemDrag() {
+            const setupToken = ++this.dragSetupToken;
             if (this.drake) {
                 this.drake.destroy();
+                this.drake = null;
             }
 
             const editorRoot = this.$root && this.$root.$el ? this.$root.$el : this.$el;
@@ -285,7 +309,7 @@ export default {
                     return true;
                 },
             });
-            if (!this.$el) {
+            if (!this.$el || setupToken !== this.dragSetupToken) {
                 drake.destroy();
                 return;
             }

@@ -33,10 +33,10 @@ const filtered = filterLibraryItems(items, {
     searchText: 'needle',
     category: 'Sleep',
     tags: ['winter'],
-}, [50]);
+});
 assert('filters the complete collection', filtered.length === 1 && filtered[0].id === 50);
-assert('marks active-list membership', filtered[0].inCurrentList === true);
-assert('does not mutate source items', typeof items[49].inCurrentList === 'undefined');
+assert('preserves source item references', filtered[0] === items[49]);
+assert('does not add active-list state to source items', typeof items[49].inCurrentList === 'undefined');
 
 const brandFiltered = filterLibraryItems(items, {
     searchText: 'needle brand',

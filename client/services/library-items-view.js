@@ -1,8 +1,7 @@
-function filterLibraryItems(items, filters = {}, activeItemIds = []) {
+function filterLibraryItems(items, filters = {}) {
     const search = String(filters.searchText || '').trim().toLowerCase();
     const category = String(filters.category || '').trim().toLowerCase();
     const tags = (filters.tags || []).map((tag) => String(tag).toLowerCase());
-    const activeIds = new Set(activeItemIds.map(String));
 
     return (items || []).filter((item) => {
         const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
@@ -14,10 +13,7 @@ function filterLibraryItems(items, filters = {}, activeItemIds = []) {
         const matchesCategory = !category || String(item.category || '').toLowerCase() === category;
         const matchesTags = tags.every((tag) => itemTags.includes(tag));
         return matchesSearch && matchesCategory && matchesTags;
-    }).map((item) => ({
-        ...item,
-        inCurrentList: activeIds.has(String(item.id)),
-    }));
+    });
 }
 
 function calculateVirtualWindow(options = {}) {
