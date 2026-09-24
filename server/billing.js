@@ -1,19 +1,28 @@
 const config = require('config');
+const createStripe = require('stripe');
 const db = require('./db.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const LEGAL_ENTITY_VERSION = 'ae-fxbenard-v1';
+const INVOICE_SELLER_FOOTER = 'FX Bénard AE - ZenPak · SIRET 75082412000026 · 4 impasse chez Huguet, 17150 Soubran';
+const VAT_MENTION_FRANCHISE = 'TVA non applicable, article 293 B du CGI';
+const VAT_MENTION_EU_REVERSE_CHARGE = 'Autoliquidation - article 283-2 du CGI';
+const VAT_MENTION_OUTSIDE_EU = 'TVA non applicable - article 259-1 du CGI';
+const EU_COUNTRY_CODES = new Set([
+    'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU',
+    'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+]);
 
 function stripeEnabled() {
     return config.has('stripeSecretKey') && !!config.get('stripeSecretKey');
 }
 
-let _stripe = null;
+let stripeClient = null;
 function getStripe() {
-    if (!_stripe) {
-        _stripe = require('stripe')(config.get('stripeSecretKey'));
+    if (!stripeClient) {
+        stripeClient = createStripe(config.get('stripeSecretKey'));
     }
-    return _stripe;
+    return stripeClient;
 }
 
 function getPlanFromPriceId(priceId) {
@@ -140,8 +149,91 @@ async function syncKofiBilling(user, { amount, donationDate }) {
     syncUserPublicLists(user).catch(() => {});
 }
 
+function normalizeCountry(country) {
+    return country ? String(country).trim().toUpperCase() : '';
+}
+
+function getInvoiceCountry(invoice, customer) {
+    return normalizeCountry(
+        (invoice.customer_address && invoice.customer_address.country)
+        || (invoice.customer_shipping && invoice.customer_shipping.address && invoice.customer_shipping.address.country)
+        || (customer && customer.address && customer.address.country),
+    );
+}
+
+function getTaxIdCountry(taxId) {
+    return normalizeCountry(taxId.country || String(taxId.value || '').slice(0, 2));
+}
+
+function isVerifiedEuVatId(taxId) {
+    if (!taxId || taxId.type !== 'eu_vat') return false;
+    const verification = taxId.verification || {};
+    return verification.status !== 'unverified';
+}
+
+function hasForeignEuVatId(taxIds, customerCountry) {
+    return (taxIds || []).some((taxId) => {
+        if (!isVerifiedEuVatId(taxId)) return false;
+        const taxCountry = getTaxIdCountry(taxId) || customerCountry;
+        return taxCountry && taxCountry !== 'FR' && EU_COUNTRY_CODES.has(taxCountry);
+    });
+}
+
+function getInvoiceVatMention(invoice, customer = null, taxIds = []) {
+    const country = getInvoiceCountry(invoice, customer);
+
+    if (hasForeignEuVatId(taxIds, country)) {
+        return VAT_MENTION_EU_REVERSE_CHARGE;
+    }
+
+    if (country && !EU_COUNTRY_CODES.has(country)) {
+        return VAT_MENTION_OUTSIDE_EU;
+    }
+
+    return VAT_MENTION_FRANCHISE;
+}
+
+function getInvoiceFooter(invoice, customer = null, taxIds = []) {
+    return `${INVOICE_SELLER_FOOTER} · ${getInvoiceVatMention(invoice, customer, taxIds)}`;
+}
+
+function getInvoiceTaxIds(invoice, customer, listedTaxIds) {
+    if (listedTaxIds && listedTaxIds.data) return listedTaxIds.data;
+    if (Array.isArray(listedTaxIds)) return listedTaxIds;
+    if (invoice && Array.isArray(invoice.customer_tax_ids)) return invoice.customer_tax_ids;
+    if (customer && customer.tax_ids && Array.isArray(customer.tax_ids.data)) return customer.tax_ids.data;
+    return [];
+}
+
+async function updateInvoiceFooter(invoice, stripe = getStripe()) {
+    if (!invoice || !invoice.id) return null;
+
+    let customer = null;
+    if (invoice.customer && typeof invoice.customer === 'string') {
+        customer = await stripe.customers.retrieve(invoice.customer);
+    } else if (invoice.customer && typeof invoice.customer === 'object') {
+        customer = invoice.customer;
+    }
+
+    let listedTaxIds = null;
+    if (invoice.customer && typeof invoice.customer === 'string' && stripe.customers.listTaxIds) {
+        listedTaxIds = await stripe.customers.listTaxIds(invoice.customer, { limit: 100 });
+    }
+
+    const taxIds = getInvoiceTaxIds(invoice, customer, listedTaxIds);
+    const footer = getInvoiceFooter(invoice, customer, taxIds);
+
+    if (invoice.footer === footer) return invoice;
+
+    return stripe.invoices.update(invoice.id, { footer });
+}
+
 module.exports = {
     LEGAL_ENTITY_VERSION,
+    INVOICE_SELLER_FOOTER,
+    VAT_MENTION_FRANCHISE,
+    VAT_MENTION_EU_REVERSE_CHARGE,
+    VAT_MENTION_OUTSIDE_EU,
     stripeEnabled,
     getStripe,
     getPlanFromPriceId,
@@ -149,4 +241,7 @@ module.exports = {
     getOrCreateCustomer,
     syncUserBilling,
     syncKofiBilling,
+    getInvoiceVatMention,
+    getInvoiceFooter,
+    updateInvoiceFooter,
 };

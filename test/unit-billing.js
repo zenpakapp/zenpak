@@ -87,6 +87,50 @@ async function run() {
     assert('currentPeriodEnd = donationDate+1yr', user3.billing.currentPeriodEnd === expectedExpiry.toISOString());
     assert('library.entitlements.plan=supporter', user3.library && user3.library.entitlements && user3.library.entitlements.plan === 'supporter');
 
+    console.log('\n--- invoice footer VAT mentions ---');
+    const frenchInvoice = { customer_address: { country: 'FR' } };
+    const frenchFooter = billing.getInvoiceFooter(frenchInvoice, null, []);
+    assert('France defaults to 293 B', frenchFooter.includes('TVA non applicable, article 293 B du CGI'));
+    assert('footer includes legal seller identity', frenchFooter.includes('FX Bénard AE - ZenPak') && frenchFooter.includes('SIRET 75082412000026'));
+
+    const euBusinessInvoice = { customer_address: { country: 'DE' } };
+    const euBusinessFooter = billing.getInvoiceFooter(euBusinessInvoice, null, [{
+        type: 'eu_vat',
+        country: 'DE',
+        value: 'DE123456789',
+        verification: { status: 'pending' },
+    }]);
+    assert('EU business with foreign VAT uses reverse charge unless explicitly unverified', euBusinessFooter.includes('Autoliquidation - article 283-2 du CGI'));
+
+    const unverifiedEuBusinessFooter = billing.getInvoiceFooter(euBusinessInvoice, null, [{
+        type: 'eu_vat',
+        country: 'DE',
+        value: 'DE123456789',
+        verification: { status: 'unverified' },
+    }]);
+    assert('unverified EU VAT does not use reverse charge', unverifiedEuBusinessFooter.includes('TVA non applicable, article 293 B du CGI'));
+
+    const usInvoice = { customer_address: { country: 'US' } };
+    assert('outside EU uses article 259-1', billing.getInvoiceFooter(usInvoice, null, []).includes('TVA non applicable - article 259-1 du CGI'));
+
+    console.log('\n--- updateInvoiceFooter ---');
+    const updateCalls = [];
+    const mockStripe = {
+        customers: {
+            retrieve: async () => ({ address: { country: 'US' } }),
+            listTaxIds: async () => ({ data: [] }),
+        },
+        invoices: {
+            update: async (invoiceId, params) => {
+                updateCalls.push({ invoiceId, params });
+                return { id: invoiceId, ...params };
+            },
+        },
+    };
+    await billing.updateInvoiceFooter({ id: 'in_123', customer: 'cus_123' }, mockStripe);
+    assert('updateInvoiceFooter updates invoice footer', updateCalls.length === 1 && updateCalls[0].invoiceId === 'in_123');
+    assert('updateInvoiceFooter uses retrieved customer country', updateCalls[0].params.footer.includes('article 259-1'));
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }

@@ -60,8 +60,11 @@ router.post('/checkout-session', billingRequired, (req, res) => {
                 customer_update: { name: 'auto', address: 'auto' },
                 consent_collection: { terms_of_service: 'required' },
                 custom_text: {
+                    submit: {
+                        message: 'Prices are final amounts payable. VAT is not applicable while FX Benard AE remains under the French VAT exemption regime.',
+                    },
                     terms_of_service_acceptance: {
-                        message: `I agree to the [Terms of Service](${deployUrl}/terms) and [Privacy Policy](${deployUrl}/privacy).`,
+                        message: `I agree to the [Terms of Service](${deployUrl}/terms) and [Privacy Policy](${deployUrl}/privacy), request immediate access to the digital service, and acknowledge the related withdrawal terms.`,
                     },
                 },
                 metadata: { username: user.username },

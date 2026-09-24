@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 const express = require('express');
 const config = require('config');
 
@@ -5,7 +6,7 @@ const router = express.Router();
 const { logger } = require('./log.js');
 const db = require('./db.js');
 const {
-    stripeEnabled, getStripe, syncUserBilling, syncKofiBilling,
+    stripeEnabled, getStripe, syncUserBilling, syncKofiBilling, updateInvoiceFooter,
 } = require('./billing.js');
 
 // Raw body parser — MUST be applied before express.json() in app.js
@@ -55,6 +56,11 @@ async function handleEvent(event) {
     const obj = data.object;
 
     switch (type) {
+    case 'invoice.created': {
+        await updateInvoiceFooter(obj, getStripe());
+        break;
+    }
+
     case 'checkout.session.completed': {
         // Store customerId on user — plan activated by subscription.created
         const username = obj.metadata && obj.metadata.username;
@@ -130,7 +136,7 @@ async function findUserByCustomerId(customerId) {
 function parseKofiPayload(rawData) {
     const parsed = JSON.parse(rawData);
     const rawAmount = parseFloat(parsed.amount || '0');
-    const amountCents = isNaN(rawAmount) ? 0 : Math.round(rawAmount * 100);
+    const amountCents = Number.isNaN(rawAmount) ? 0 : Math.round(rawAmount * 100);
     return {
         verificationToken: parsed.verification_token || '',
         email: (parsed.email || '').toLowerCase().trim(),
@@ -210,5 +216,6 @@ router.post(
 );
 
 module.exports = router;
+module.exports.handleEvent = handleEvent;
 module.exports.parseKofiPayload = parseKofiPayload;
 module.exports.validateKofiToken = validateKofiToken;
