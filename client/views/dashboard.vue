@@ -160,7 +160,6 @@
         </div>
 
         <globalAlerts />
-        <itemDetail />
         <component
             :is="dialog.component"
             v-for="dialog in loadedDialogs"
@@ -176,7 +175,6 @@ import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import list from '../components/list.vue';
-import itemDetail from '../components/item-detail.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
 import { planLabel as planTierLabel } from '../services/tier-labels.js';
@@ -203,6 +201,7 @@ const lazyDialogs = {
     importCSV: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
     importLP: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
     importText: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    itemDetail: { component: 'itemDetail', loader: () => import(/* webpackChunkName: "dialog-item-detail" */ '../components/item-detail.vue') },
     itemImage: { component: 'itemImage', loader: () => import(/* webpackChunkName: "dialog-item-image" */ '../components/item-image.vue') },
     itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
     itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
@@ -227,7 +226,6 @@ export default {
         accountDropdown,
         guestSettings,
         list,
-        itemDetail,
         globalAlerts,
         gearRoom,
         profileInsights,
