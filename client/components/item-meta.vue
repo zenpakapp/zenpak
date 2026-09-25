@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_item-meta";
-</style>
-
 <template>
     <modal id="itemMetaDialog" :shown="shown" @hide="cancel">
         <h2>{{ $t('item.metaDialogTitle') }}</h2>
@@ -101,14 +97,23 @@ export default {
         knownBrands() {
             const library = this.$store.state.library;
             if (!library || !library.items) return [];
-            return [...new Set(
-                library.items.map((i) => i.brand).filter(Boolean),
-            )].sort();
+            const brands = new Set();
+            library.items.forEach((item) => {
+                if (item.brand) brands.add(item.brand);
+            });
+            return [...brands].sort().map((brand) => ({
+                label: brand,
+                search: brand.toLowerCase(),
+            }));
         },
         brandSuggestionsFiltered() {
-            if (!this.brand) return this.knownBrands;
+            const brands = this.knownBrands;
+            if (!this.brand) return brands.map((brand) => brand.label);
             const q = this.brand.toLowerCase();
-            return this.knownBrands.filter((b) => b.toLowerCase().includes(q));
+            return brands.reduce((suggestions, brand) => {
+                if (brand.search.includes(q)) suggestions.push(brand.label);
+                return suggestions;
+            }, []);
         },
     },
     mounted() {
@@ -173,3 +178,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_item-meta";
+</style>
