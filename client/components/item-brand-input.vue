@@ -44,13 +44,23 @@ export default {
         knownBrands() {
             const library = this.$store.state.library;
             if (!library || !library.items) return [];
-            const brands = new Set(library.items.map((i) => i.brand).filter(Boolean));
-            return [...brands].sort();
+            const brands = new Set();
+            library.items.forEach((item) => {
+                if (item.brand) brands.add(item.brand);
+            });
+            return [...brands].sort().map((brand) => ({
+                label: brand,
+                search: brand.toLowerCase(),
+            }));
         },
         suggestionsFiltered() {
-            if (!this.modelValue) return this.knownBrands;
+            const brands = this.knownBrands;
+            if (!this.modelValue) return brands.map((brand) => brand.label);
             const q = this.modelValue.toLowerCase();
-            return this.knownBrands.filter((b) => b.toLowerCase().includes(q));
+            return brands.reduce((suggestions, brand) => {
+                if (brand.search.includes(q)) suggestions.push(brand.label);
+                return suggestions;
+            }, []);
         },
     },
     methods: {
