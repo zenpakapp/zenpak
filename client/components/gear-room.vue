@@ -1,6 +1,3 @@
-<style lang="scss">
-@import "../css/_gear-room";
-</style>
 <template>
     <div class="lpGearRoom">
         <div class="lpGearRoomHeader">
@@ -25,7 +22,7 @@
                     <div class="lpGearRoomFiltersLabel">
                         {{ $t('gearroom.search') }}
                     </div>
-                    <input v-model="search" class="lpGearRoomSearch" type="text" :placeholder="$t('gearroom.searchPlaceholder')">
+                    <input v-model="searchDraft" class="lpGearRoomSearch" type="text" :placeholder="$t('gearroom.searchPlaceholder')">
                 </div>
                 <div v-if="library.lists.length > 0">
                     <div class="lpGearRoomFiltersLabel">
@@ -193,7 +190,7 @@
 <script>
 import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils';
-import { useGearRoomFilters } from '../composables/useGearRoomFilters';
+import useGearRoomFilters from '../composables/useGearRoomFilters';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
 import GearRoomBatchBar from './gear-room-batch-bar.vue';
@@ -352,3 +349,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_gear-room";
+</style>

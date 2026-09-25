@@ -1,8 +1,33 @@
-import { ref, computed } from 'vue';
+import {
+    ref, computed, watch, onBeforeUnmount,
+} from 'vue';
 import store from '../store/store';
 
-export function useGearRoomFilters() {
+function itemDisplayName(item) {
+    return [item.brand, item.name].filter(Boolean).join(' ');
+}
+
+function buildListItemIds(library, list) {
+    const ids = new Set();
+    list.categoryIds.forEach((catId) => {
+        const cat = library.getCategoryById(catId);
+        if (!cat) return;
+        cat.categoryItems.forEach((ci) => ids.add(ci.itemId));
+    });
+    return ids;
+}
+
+function sortValue(item, key) {
+    if (key === 'weight') return item.weight || 0;
+    if (key === 'price') return item.price || 0;
+    if (key === 'starred') return item.starred ? 1 : 0;
+    if (key === 'category') return (item.category || '').toLowerCase();
+    return itemDisplayName(item).toLowerCase();
+}
+
+export default function useGearRoomFilters() {
     const search = ref('');
+    const searchDraft = ref('');
     const filterCategory = ref('');
     const filterOrphan = ref(false);
     const filterStarred = ref(false);
@@ -11,23 +36,21 @@ export function useGearRoomFilters() {
     const filterList = ref('');
     const sortKey = ref('name');
     const sortAsc = ref(true);
+    let searchFrame = null;
 
     const library = computed(() => store.state.library);
 
     const allItems = computed(() => {
-        void store.state.itemVersion;
+        const itemVersion = store.state.itemVersion;
+        if (itemVersion < 0) return [];
         return library.value.items;
     });
 
     const orphanItemIds = computed(() => {
         const usedIds = new Set();
-        for (const list of library.value.lists) {
-            for (const catId of list.categoryIds) {
-                const cat = library.value.getCategoryById(catId);
-                if (!cat) continue;
-                for (const ci of cat.categoryItems) usedIds.add(ci.itemId);
-            }
-        }
+        library.value.lists.forEach((list) => {
+            buildListItemIds(library.value, list).forEach((id) => usedIds.add(id));
+        });
         return new Set(allItems.value.filter((i) => !usedIds.has(i.id)).map((i) => i.id));
     });
 
@@ -47,12 +70,7 @@ export function useGearRoomFilters() {
         if (filterList.value) {
             const list = library.value.lists.find((l) => l.id === filterList.value);
             if (list) {
-                const ids = new Set();
-                for (const catId of list.categoryIds) {
-                    const cat = library.value.getCategoryById(catId);
-                    if (!cat) continue;
-                    for (const ci of cat.categoryItems) ids.add(ci.itemId);
-                }
+                const ids = buildListItemIds(library.value, list);
                 items = items.filter((i) => ids.has(i.id));
             }
         }
@@ -68,9 +86,8 @@ export function useGearRoomFilters() {
     const sortedItems = computed(() => {
         const items = [...filteredItems.value];
         items.sort((a, b) => {
-            let va; let
-                vb;
-            if (sortKey.value === 'weight') { va = a.weight || 0; vb = b.weight || 0; } else if (sortKey.value === 'price') { va = a.price || 0; vb = b.price || 0; } else if (sortKey.value === 'starred') { va = a.starred ? 1 : 0; vb = b.starred ? 1 : 0; } else if (sortKey.value === 'category') { va = (a.category || '').toLowerCase(); vb = (b.category || '').toLowerCase(); } else { va = itemDisplayName(a).toLowerCase(); vb = itemDisplayName(b).toLowerCase(); }
+            const va = sortValue(a, sortKey.value);
+            const vb = sortValue(b, sortKey.value);
             if (va < vb) return sortAsc.value ? -1 : 1;
             if (va > vb) return sortAsc.value ? 1 : -1;
             return 0;
@@ -95,12 +112,31 @@ export function useGearRoomFilters() {
         else { sortKey.value = key; sortAsc.value = true; }
     }
 
-    function itemDisplayName(item) {
-        return [item.brand, item.name].filter(Boolean).join(' ');
+    function flushSearch() {
+        searchFrame = null;
+        search.value = searchDraft.value;
     }
+
+    watch(searchDraft, () => {
+        if (searchFrame !== null && typeof window !== 'undefined') {
+            window.cancelAnimationFrame(searchFrame);
+        }
+        if (typeof window === 'undefined') {
+            flushSearch();
+            return;
+        }
+        searchFrame = window.requestAnimationFrame(flushSearch);
+    });
+
+    onBeforeUnmount(() => {
+        if (searchFrame !== null && typeof window !== 'undefined') {
+            window.cancelAnimationFrame(searchFrame);
+        }
+    });
 
     return {
         search,
+        searchDraft,
         filterCategory,
         filterOrphan,
         filterStarred,
