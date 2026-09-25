@@ -447,7 +447,18 @@ export default {
             const canvas = this.$refs.chartCanvas;
             const categories = this.chartCategories;
             if (!canvas || !categories.length) return;
-            const total = categories.reduce((sum, cat) => sum + cat.subtotalWeight, 0);
+            const labels = [];
+            const weights = [];
+            const colors = [];
+            let total = 0;
+
+            categories.forEach((cat) => {
+                labels.push(cat.name);
+                weights.push(cat.subtotalWeight);
+                colors.push(cat.color);
+                total += cat.subtotalWeight;
+            });
+
             if (!total) return;
             const Chart = await loadChart();
 
@@ -459,10 +470,10 @@ export default {
             this.chart = new Chart(canvas, {
                 type: 'doughnut',
                 data: {
-                    labels: categories.map((cat) => cat.name),
+                    labels,
                     datasets: [{
-                        data: categories.map((cat) => cat.subtotalWeight),
-                        backgroundColor: categories.map((cat) => cat.color),
+                        data: weights,
+                        backgroundColor: colors,
                         borderColor: this.getChartBg(),
                         borderWidth: 3,
                         hoverBorderColor: 'rgb(50,50,50)',
