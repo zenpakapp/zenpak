@@ -33,6 +33,16 @@ function assert(description, condition) {
     }
 }
 
+function countCalculateTotals(list) {
+    const original = list.calculateTotals.bind(list);
+    let count = 0;
+    list.calculateTotals = () => {
+        count++;
+        return original();
+    };
+    return () => count;
+}
+
 console.log('\n--- addItemToCategory: optional flag ---');
 
 {
@@ -60,6 +70,37 @@ console.log('\n--- addItemToCategory: no optional flag keeps default qty ---');
     const categoryItem = category.getCategoryItemById(item.id);
 
     assert('placed with default qty 1', categoryItem.qty === 1);
+}
+
+console.log('\n--- addItemToCategory: recalculates target list only ---');
+
+{
+    const library = new Library();
+    const state = { library, categoryItemVersion: 0 };
+    const item = library.newItem({});
+    const activeList = library.getListById(library.defaultListId);
+    const targetList = library.newList();
+    const targetCategory = library.newCategory({ list: targetList });
+    const getActiveRecalculateCount = countCalculateTotals(activeList);
+    const getTargetRecalculateCount = countCalculateTotals(targetList);
+
+    mutations.addItemToCategory(state, { itemId: item.id, categoryId: targetCategory.id, dropIndex: 0 });
+
+    assert('target list recalculated', getTargetRecalculateCount() === 1);
+    assert('active list not recalculated for another list', getActiveRecalculateCount() === 0);
+}
+
+console.log('\n--- newItem: library-only item skips list recalculation ---');
+
+{
+    const library = new Library();
+    const state = { library, categoryItemVersion: 0 };
+    const activeList = library.getListById(library.defaultListId);
+    const getActiveRecalculateCount = countCalculateTotals(activeList);
+
+    mutations.newItem(state, { _isNew: true, name: 'Loose item' });
+
+    assert('library-only item does not recalculate active list', getActiveRecalculateCount() === 0);
 }
 
 console.log('\n--- createCategoryAndAddItem: optional flag ---');

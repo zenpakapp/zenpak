@@ -19,6 +19,12 @@ function recalculateListsForItem(library, itemId) {
     });
 }
 
+function recalculateListForCategory(library, category) {
+    if (!category) return;
+    const list = library.findListWithCategoryById(category.id);
+    if (list) list.calculateTotals();
+}
+
 module.exports = {
     setDefaultList(state, list) {
         state.library.defaultListId = list.id;
@@ -37,11 +43,11 @@ module.exports = {
     newItem(state, { category, _isNew, name }) {
         const item = state.library.newItem({ category, _isNew });
         if (name) item.name = name;
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, category);
     },
     newCategory(state, list) {
         state.library.newCategory({ list, _isNew: true });
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        if (list) list.calculateTotals();
     },
     newList(state) {
         const list = state.library.newList();
@@ -87,7 +93,7 @@ module.exports = {
     reorderCategory(state, args) {
         const list = state.library.getListById(args.list.id);
         list.categoryIds = arrayMove(list.categoryIds, args.before, args.after);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        list.calculateTotals();
     },
     reorderItem(state, args) {
         const item = state.library.getItemById(args.itemId);
@@ -102,7 +108,7 @@ module.exports = {
             originalCategory.categoryItems.splice(oldIndex, 1);
             dropCategory.categoryItems.splice(args.dropIndex, 0, oldCategoryItem);
         }
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        list.calculateTotals();
     },
     addItemToCategory(state, args) {
         const item = state.library.getItemById(args.itemId);
@@ -114,7 +120,7 @@ module.exports = {
             if (categoryItem && categoryItemIndex !== -1) {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
             }
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            recalculateListForCategory(state.library, dropCategory);
             state.categoryItemVersion += 1;
         }
     },
@@ -285,17 +291,17 @@ module.exports = {
     },
     updateCategoryItem(state, args) {
         args.category.updateCategoryItem(args.categoryItem);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
     toggleOptionalItem(state, args) {
         args.category.toggleOptionalItem(args.itemId);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
     copyList(state, listId) {
