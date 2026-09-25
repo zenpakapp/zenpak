@@ -1,92 +1,3 @@
-<style lang="scss">
-@import "../css/_globals";
-
-.lpQtySubtotal {
-    padding-right: 25px;
-}
-
-.lpPriceSubtotal {
-    padding-right: 4px;
-}
-
-.lpAddItemInput {
-    border-radius: $radius-sm;
-    border: none;
-    border-bottom: 1px solid $color-border;
-    background: transparent;
-    color: $color-text;
-    font-size: $fontSize-base;
-    min-height: 42px;
-    padding: 8px 10px;
-    width: 100%;
-    max-width: 260px;
-    &:focus { outline: none; border-bottom-color: $color-accent; }
-}
-
-.lpAddItemCell {
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 56px;
-    overflow: visible;
-    position: relative;
-}
-
-.lpAddItemActions {
-    align-items: flex-start;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-left: 20px;
-
-    .lpAddItem {
-        margin-left: 0;
-    }
-}
-
-.lpAddItemWithDetails {
-    align-items: center;
-    display: inline-flex;
-    font-size: $fontSize-xs;
-    min-height: 24px;
-    opacity: 0.72;
-
-    &:hover,
-    &:focus-visible {
-        opacity: 1;
-    }
-}
-
-.lpSuggestions {
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-sm;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-    left: 0;
-    list-style: none;
-    margin: 0;
-    padding: 4px 0;
-    position: absolute;
-    top: calc(100% + 6px);
-    width: 260px;
-    z-index: 50;
-}
-
-.lpSuggestion {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    gap: 8px;
-    padding: 6px 10px;
-    &:hover { background: rgba(var(--color-accent-rgb), 0.07); }
-}
-
-.lpSuggestionName { flex: 1; font-size: $fontSize-sm; }
-.lpSuggestionBrand { color: $color-text-muted; font-size: $fontSize-sm; }
-.lpSuggestionWeight { color: $color-text-muted; font-size: $fontSize-sm; white-space: nowrap; }
-</style>
-
 <template>
     <li :id="category.id" class="lpCategory" :class="{ lpCategorySuggestionsOpen: showSuggestions }" :data-category-id="category.id">
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
@@ -173,7 +84,11 @@ export default {
     components: {
         item,
     },
-    props: ['category', 'isPackingMode', 'packedItemIds'],
+    props: {
+        category: { type: Object, required: true },
+        isPackingMode: { type: Boolean, default: false },
+        packedItemIds: { type: Object, default: null },
+    },
     data() {
         return {
             newItemName: '',
@@ -201,15 +116,19 @@ export default {
                 return this.library.totalUnit;
             }
 
-            const units = {};
-            this.itemContainers.forEach(({ item }) => {
+            let firstUnit = null;
+            for (let i = 0; i < this.itemContainers.length; i++) {
+                const { item } = this.itemContainers[i];
                 if (item && item.authorUnit) {
-                    units[item.authorUnit] = true;
+                    if (!firstUnit) {
+                        firstUnit = item.authorUnit;
+                    } else if (firstUnit !== item.authorUnit) {
+                        return this.library.totalUnit;
+                    }
                 }
-            });
+            }
 
-            const unitList = Object.keys(units);
-            return unitList.length === 1 ? unitList[0] : this.library.totalUnit;
+            return firstUnit || this.library.totalUnit;
         },
     },
     methods: {
@@ -326,3 +245,92 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_globals";
+
+.lpQtySubtotal {
+    padding-right: 25px;
+}
+
+.lpPriceSubtotal {
+    padding-right: 4px;
+}
+
+.lpAddItemInput {
+    border-radius: $radius-sm;
+    border: none;
+    border-bottom: 1px solid $color-border;
+    background: transparent;
+    color: $color-text;
+    font-size: $fontSize-base;
+    min-height: 42px;
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 260px;
+    &:focus { outline: none; border-bottom-color: $color-accent; }
+}
+
+.lpAddItemCell {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 56px;
+    overflow: visible;
+    position: relative;
+}
+
+.lpAddItemActions {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 20px;
+
+    .lpAddItem {
+        margin-left: 0;
+    }
+}
+
+.lpAddItemWithDetails {
+    align-items: center;
+    display: inline-flex;
+    font-size: $fontSize-xs;
+    min-height: 24px;
+    opacity: 0.72;
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+    }
+}
+
+.lpSuggestions {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    left: 0;
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    position: absolute;
+    top: calc(100% + 6px);
+    width: 260px;
+    z-index: 50;
+}
+
+.lpSuggestion {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    padding: 6px 10px;
+    &:hover { background: rgba(var(--color-accent-rgb), 0.07); }
+}
+
+.lpSuggestionName { flex: 1; font-size: $fontSize-sm; }
+.lpSuggestionBrand { color: $color-text-muted; font-size: $fontSize-sm; }
+.lpSuggestionWeight { color: $color-text-muted; font-size: $fontSize-sm; white-space: nowrap; }
+</style>
