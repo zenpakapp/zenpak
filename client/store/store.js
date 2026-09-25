@@ -6,6 +6,7 @@ import { fetchJson } from '../utils/utils';
 const sessionMutations = require('./mutations-session');
 const libraryMutations = require('./mutations-library');
 const importMutations = require('./mutations-import');
+const { getSaveData } = require('../services/save-data.js');
 
 const saveInterval = 10000;
 
@@ -59,20 +60,6 @@ const createInitialState = () => ({
     initializationStatus: 'loading',
 });
 
-function waitUntilNotSaving(context) {
-    if (!context.state.isSaving) return Promise.resolve();
-    return new Promise((resolve) => {
-        const unwatch = store.watch(
-            (nextState) => nextState.isSaving,
-            (isSaving) => {
-                if (isSaving) return;
-                unwatch();
-                resolve();
-            },
-        );
-    });
-}
-
 function postSave(context, saveData) {
     context.commit('setIsSaving', true);
     context.commit('setLastSaveData', saveData);
@@ -91,6 +78,20 @@ function postSave(context, saveData) {
             context.commit('setIsSaving', false);
             throw error;
         });
+}
+
+function waitUntilNotSaving(context) {
+    if (!context.state.isSaving) return Promise.resolve();
+    return new Promise((resolve) => {
+        const check = () => {
+            if (!context.state.isSaving) {
+                resolve();
+                return;
+            }
+            setTimeout(check, 50);
+        };
+        check();
+    });
 }
 
 const store = createStore({
@@ -168,10 +169,10 @@ const store = createStore({
             return waitUntilNotSaving(context)
                 .then(() => postSave(context, JSON.stringify(context.state.library.save())));
         },
-        saveNow(context) {
+        saveNow(context, preparedSaveData) {
             const state = context.state;
             if (!state.library) return Promise.resolve();
-            const saveData = JSON.stringify(state.library.save());
+            const saveData = getSaveData(state, preparedSaveData);
 
             if (saveData === state.lastSaveData) return Promise.resolve();
 
@@ -221,10 +222,10 @@ const store = createStore({
                 if (!state.library || ignore.indexOf(mutation.type) > -1) return;
 
                 const saveData = JSON.stringify(state.library.save());
-                if (saveData == state.lastSaveData) return;
+                if (saveData === state.lastSaveData) return;
 
                 if (state.saveType === 'remote') {
-                    store.dispatch('saveNow').catch((error) => {
+                    store.dispatch('saveNow', saveData).catch((error) => {
                         let errorMessage = 'An error occurred while attempting to save your data.';
                         if (error && error.message) errorMessage = error.message;
                         if (error && error.statusCode === 401) {
@@ -235,6 +236,7 @@ const store = createStore({
                     });
                 } else if (state.saveType === 'local') {
                     setLocalLibrary(saveData);
+                    store.commit('setLastSaveData', saveData);
                 }
             }, saveInterval, { maxWait: saveInterval * 3 }));
         },
