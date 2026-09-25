@@ -1,20 +1,3 @@
-<style lang="scss">
-@import "../css/_globals";
-
-.lpLegend {
-    &:hover {
-        border-color: $color-text-muted;
-        cursor: pointer;
-    }
-}
-
-.lpChart {
-    aspect-ratio: 1;
-    height: auto !important;
-    max-width: 100%;
-}
-</style>
-
 <template>
     <div class="lpListSummary">
         <div class="lpChartContainer">
@@ -34,7 +17,7 @@
                         {{ $t('public.weight') }}
                     </span>
                 </li>
-                <li v-for="category in categories" :key="category.id" :class="{'hover': category.activeHover, 'lpTotalCategory lpRow': true}">
+                <li v-for="category in categories" :key="category.id" :class="{'hover': hoveredCategoryId === category.id, 'lpTotalCategory lpRow': true}">
                     <span class="lpCell lpLegendCell">
                         <colorPicker v-if="category.displayColor" :color="colorToHex(category.displayColor)" @colorChange="updateColor(category, $event)" />
                     </span>
@@ -128,7 +111,9 @@ export default {
     components: {
         colorPicker,
     },
-    props: ['list'],
+    props: {
+        list: { type: Object, required: true },
+    },
     data() {
         return {
             chart: null,
@@ -143,11 +128,9 @@ export default {
             return this.$store.state.library;
         },
         categories() {
-            return this.list.categoryIds.map((id) => {
-                const category = this.library.getCategoryById(id);
-                category.activeHover = (this.hoveredCategoryId === category.id);
-                return category;
-            });
+            return this.list.categoryIds
+                .map((id) => this.library.getCategoryById(id))
+                .filter(Boolean);
         },
         displayUnit() {
             return this.library.totalUnit;
@@ -220,3 +203,20 @@ export default {
 };
 
 </script>
+
+<style lang="scss">
+@import "../css/_globals";
+
+.lpLegend {
+    &:hover {
+        border-color: $color-text-muted;
+        cursor: pointer;
+    }
+}
+
+.lpChart {
+    aspect-ratio: 1;
+    height: auto !important;
+    max-width: 100%;
+}
+</style>

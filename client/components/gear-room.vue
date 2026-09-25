@@ -215,11 +215,25 @@ export default {
         selectedIds() {
             return new Set(this.selected);
         },
+        selectionState() {
+            const total = this.filteredItems.length;
+            if (total === 0) return { all: false, some: false };
+
+            let selectedCount = 0;
+            this.filteredItems.forEach((item) => {
+                if (this.selectedIds.has(item.id)) selectedCount++;
+            });
+
+            return {
+                all: selectedCount === total,
+                some: selectedCount > 0 && selectedCount < total,
+            };
+        },
         allSelected() {
-            return this.filteredItems.length > 0 && this.filteredItems.every((i) => this.selectedIds.has(i.id));
+            return this.selectionState.all;
         },
         someSelected() {
-            return this.filteredItems.some((i) => this.selectedIds.has(i.id)) && !this.allSelected;
+            return this.selectionState.some;
         },
         compareItems() {
             return this.selected
