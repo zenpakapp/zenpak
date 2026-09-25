@@ -2,19 +2,10 @@ import {
     ref, computed, watch, onBeforeUnmount,
 } from 'vue';
 import store from '../store/store';
+import { buildItemUsageCounts, buildListItemIds } from '../services/gear-room-view';
 
 function itemDisplayName(item) {
     return [item.brand, item.name].filter(Boolean).join(' ');
-}
-
-function buildListItemIds(library, list) {
-    const ids = new Set();
-    list.categoryIds.forEach((catId) => {
-        const cat = library.getCategoryById(catId);
-        if (!cat) return;
-        cat.categoryItems.forEach((ci) => ids.add(ci.itemId));
-    });
-    return ids;
 }
 
 function sortValue(item, key) {
@@ -46,13 +37,13 @@ export default function useGearRoomFilters() {
         return library.value.items;
     });
 
-    const orphanItemIds = computed(() => {
-        const usedIds = new Set();
-        library.value.lists.forEach((list) => {
-            buildListItemIds(library.value, list).forEach((id) => usedIds.add(id));
-        });
-        return new Set(allItems.value.filter((i) => !usedIds.has(i.id)).map((i) => i.id));
-    });
+    const itemUsageCounts = computed(() => buildItemUsageCounts(library.value));
+
+    const orphanItemIds = computed(() => new Set(
+        allItems.value
+            .filter((i) => !itemUsageCounts.value.has(i.id))
+            .map((i) => i.id),
+    ));
 
     const availableCategories = computed(() => [...new Set(allItems.value.map((i) => i.category).filter(Boolean))].sort());
 
@@ -148,6 +139,7 @@ export default function useGearRoomFilters() {
         library,
         allItems,
         orphanItemIds,
+        itemUsageCounts,
         availableCategories,
         filteredItems,
         sortedItems,

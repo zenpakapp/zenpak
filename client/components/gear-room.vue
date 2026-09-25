@@ -223,7 +223,7 @@ export default {
                 .map((id) => {
                     const item = this.library.getItemById(id);
                     if (!item) return null;
-                    return { ...item, _usedInLists: this.itemUsedInLists(id) };
+                    return { ...item, _usedInLists: this.itemUsageCounts.get(id) || 0 };
                 })
                 .filter(Boolean);
         },
@@ -323,12 +323,6 @@ export default {
             const newList = this.library.lists[this.library.lists.length - 1];
             const categoryId = newList.categoryIds[0];
             this.applyBatchAddToList({ categoryId, itemIds });
-        },
-        itemUsedInLists(itemId) {
-            return this.library.lists.filter((list) => list.categoryIds.some((catId) => {
-                const cat = this.library.getCategoryById(catId);
-                return cat && cat.categoryItems.some((ci) => ci.itemId === itemId);
-            })).length;
         },
         applyMerge(keepId) {
             const removeIds = this.selected.filter((id) => id !== keepId);
