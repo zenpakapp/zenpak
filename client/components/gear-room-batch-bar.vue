@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_gear-room-batch-bar";
-</style>
-
 <template>
     <div v-if="selected.length > 0" class="lpGearRoomBatchBar">
         <!-- Panel: Set type -->
@@ -224,6 +220,26 @@
 </template>
 
 <script>
+function searchIndex(items, labelForItem) {
+    return (items || []).map((item) => {
+        const label = labelForItem(item);
+        return {
+            item,
+            label,
+            search: String(label || '').toLowerCase(),
+        };
+    });
+}
+
+function filterIndexed(indexedItems, query) {
+    const q = String(query || '').trim().toLowerCase();
+    if (!q) return indexedItems.map((entry) => entry.item);
+    return indexedItems.reduce((items, entry) => {
+        if (entry.search.includes(q)) items.push(entry.item);
+        return items;
+    }, []);
+}
+
 export default {
     name: 'GearRoomBatchBar',
     props: {
@@ -294,32 +310,39 @@ export default {
             (this.allItems || []).forEach((item) => { if (item.brand) brands.add(item.brand); });
             return [...brands].sort((a, b) => a.localeCompare(b));
         },
+        indexedTypes() {
+            return searchIndex(this.availableCategories, (category) => category);
+        },
         filteredTypes() {
-            const q = (this.batchCategory || '').toLowerCase();
-            return q
-                ? this.availableCategories.filter((c) => c.toLowerCase().includes(q))
-                : this.availableCategories;
+            return filterIndexed(this.indexedTypes, this.batchCategory);
+        },
+        indexedBrands() {
+            return searchIndex(this.existingBrands, (brand) => brand);
         },
         filteredBrands() {
-            const q = (this.batchBrand || '').toLowerCase();
-            return q ? this.existingBrands.filter((b) => b.toLowerCase().includes(q)) : this.existingBrands;
+            return filterIndexed(this.indexedBrands, this.batchBrand);
         },
         existingTags() {
             const tags = new Set();
             (this.allItems || []).forEach((item) => { (item.tags || []).forEach((t) => tags.add(t)); });
             return [...tags].sort((a, b) => a.localeCompare(b));
         },
+        indexedTags() {
+            return searchIndex(this.existingTags, (tag) => tag);
+        },
         filteredTags() {
-            const q = (this.batchTag || '').toLowerCase();
-            return q ? this.existingTags.filter((t) => t.toLowerCase().includes(q)) : this.existingTags;
+            return filterIndexed(this.indexedTags, this.batchTag);
+        },
+        indexedLists() {
+            return searchIndex(this.lists, (list) => list.name);
         },
         filteredLists() {
-            const q = (this.batchListName || '').toLowerCase();
-            return q ? this.lists.filter((l) => l.name.toLowerCase().includes(q)) : this.lists;
+            return filterIndexed(this.indexedLists, this.batchListName);
         },
         showCreateList() {
             const q = (this.batchListName || '').trim();
-            return q && !this.lists.some((l) => l.name.toLowerCase() === q.toLowerCase());
+            const search = q.toLowerCase();
+            return q && !this.indexedLists.some((entry) => entry.search === search);
         },
         listDropdownOptions() {
             const options = [];
@@ -382,7 +405,11 @@ export default {
                     category: 'inputCategory', brand: 'inputBrand', tag: 'inputTag', addToList: 'inputList',
                 };
                 const ref = refMap[panel];
-                if (ref) this.$nextTick(() => { this.$refs[ref] && this.$refs[ref].focus(); });
+                if (ref) {
+                    this.$nextTick(() => {
+                        if (this.$refs[ref]) this.$refs[ref].focus();
+                    });
+                }
             }
         },
         dropdownOptions(kind) {
@@ -544,3 +571,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_gear-room-batch-bar";
+</style>
