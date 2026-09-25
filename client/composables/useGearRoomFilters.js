@@ -3,18 +3,9 @@ import {
 } from 'vue';
 import store from '../store/store';
 import { buildItemUsageCounts, buildListItemIds } from '../services/gear-room-view';
-
-function itemDisplayName(item) {
-    return [item.brand, item.name].filter(Boolean).join(' ');
-}
-
-function sortValue(item, key) {
-    if (key === 'weight') return item.weight || 0;
-    if (key === 'price') return item.price || 0;
-    if (key === 'starred') return item.starred ? 1 : 0;
-    if (key === 'category') return (item.category || '').toLowerCase();
-    return itemDisplayName(item).toLowerCase();
-}
+import {
+    buildSearchableItems, filterSearchableItems, itemDisplayName, sortItems,
+} from '../services/gear-room-filters';
 
 export default function useGearRoomFilters() {
     const search = ref('');
@@ -37,6 +28,8 @@ export default function useGearRoomFilters() {
         return library.value.items;
     });
 
+    const searchableItems = computed(() => buildSearchableItems(allItems.value));
+
     const itemUsageCounts = computed(() => buildItemUsageCounts(library.value));
 
     const orphanItemIds = computed(() => new Set(
@@ -50,10 +43,7 @@ export default function useGearRoomFilters() {
     const filteredItems = computed(() => {
         let items = allItems.value;
         if (search.value) {
-            const q = search.value.toLowerCase();
-            items = items.filter((i) => (i.name || '').toLowerCase().includes(q)
-                || (i.description || '').toLowerCase().includes(q)
-                || (i.brand || '').toLowerCase().includes(q));
+            items = filterSearchableItems(searchableItems.value, search.value);
         }
         if (filterCategory.value) items = items.filter((i) => i.category === filterCategory.value);
         if (filterOrphan.value) items = items.filter((i) => orphanItemIds.value.has(i.id));
@@ -74,17 +64,7 @@ export default function useGearRoomFilters() {
         return items;
     });
 
-    const sortedItems = computed(() => {
-        const items = [...filteredItems.value];
-        items.sort((a, b) => {
-            const va = sortValue(a, sortKey.value);
-            const vb = sortValue(b, sortKey.value);
-            if (va < vb) return sortAsc.value ? -1 : 1;
-            if (va > vb) return sortAsc.value ? 1 : -1;
-            return 0;
-        });
-        return items;
-    });
+    const sortedItems = computed(() => sortItems(filteredItems.value, sortKey.value, sortAsc.value));
 
     const totalWeightDisplay = computed(() => {
         const totalMg = filteredItems.value.reduce((s, i) => s + (i.weight || 0), 0);
