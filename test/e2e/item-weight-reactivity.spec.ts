@@ -144,7 +144,7 @@ test("updates the summary and list row quantity after editing from the item summ
   const qtyInput = row.locator(".lpQty");
   await expect(qtyInput).toHaveValue("1");
 
-  await row.dblclick();
+  await row.locator(".lpName").dblclick();
 
   const dialog = page.locator("#itemDetailDialog");
   await expect(dialog).toBeVisible();
@@ -152,7 +152,7 @@ test("updates the summary and list row quantity after editing from the item summ
     .locator(".itemDetailStat")
     .filter({ hasText: "Qty" })
     .locator(".itemDetailStatValue");
-  await expect(summaryQtyValue).toHaveText("-");
+  await expect(summaryQtyValue).toHaveText("1");
 
   await dialog.getByRole("button", { name: "Edit gear" }).click();
 
@@ -257,7 +257,7 @@ test("updates the active list quantity when editing an item opened from gear roo
   await expect(qtyInput).toHaveValue("2");
 });
 
-test("shows default quantity but keeps it non-editable for gear room items outside the active list", async ({
+test("shows missing quantity and keeps it non-editable for gear room items outside the active list", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1024, height: 812 });
@@ -283,7 +283,7 @@ test("shows default quantity but keeps it non-editable for gear room items outsi
     .locator(".itemDetailStat")
     .filter({ hasText: /Qty|Qté/ })
     .locator(".itemDetailStatValue");
-  await expect(summaryQtyValue).toHaveText("1");
+  await expect(summaryQtyValue).toHaveText("-");
 
   await dialog.locator(".itemDetailEdit").click();
   const qtyField = dialog

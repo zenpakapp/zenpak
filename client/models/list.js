@@ -63,7 +63,6 @@ List.prototype.renderChart = function (type, linkParent) {
     for (const i in this.categoryIds) {
         const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
-            category.calculateSubtotal();
             totalBase += category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
 
             if (type === 'consumable') {
