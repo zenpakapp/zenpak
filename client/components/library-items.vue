@@ -20,13 +20,13 @@
             <div class="librarySearchWrap librarySearchInline">
                 <input
                     ref="searchInput"
-                    v-model="searchText"
+                    v-model="searchDraft"
                     class="librarySearch"
                     type="text"
                     :placeholder="$t('library.searchPlaceholder')"
                 >
                 <button
-                    v-if="searchText"
+                    v-if="searchDraft"
                     class="librarySearchClear"
                     type="button"
                     :aria-label="$t('library.clearSearchAria')"
@@ -118,6 +118,8 @@ export default {
     data() {
         return {
             searchText: '',
+            searchDraft: '',
+            searchFrame: null,
             filterCategory: '',
             filterTags: [],
             tagInput: '',
@@ -170,6 +172,9 @@ export default {
         },
     },
     watch: {
+        searchDraft() {
+            this.scheduleSearch();
+        },
         searchText() {
             this.resetVirtualScroll();
         },
@@ -197,6 +202,7 @@ export default {
     beforeUnmount() {
         if (this.resizeObserver) this.resizeObserver.disconnect();
         if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+        if (this.searchFrame) cancelAnimationFrame(this.searchFrame);
         if (this.dragFrame) cancelAnimationFrame(this.dragFrame);
         if (this.dragIdle) {
             if (typeof window !== 'undefined' && typeof window.cancelIdleCallback === 'function') {
@@ -229,6 +235,13 @@ export default {
                 this.scrollFrame = null;
             });
         },
+        scheduleSearch() {
+            if (this.searchFrame) cancelAnimationFrame(this.searchFrame);
+            this.searchFrame = requestAnimationFrame(() => {
+                this.searchFrame = null;
+                this.searchText = this.searchDraft;
+            });
+        },
         openDetail(item, startEditing = false) {
             openDialog('itemDetail', {
                 item, categoryItem: null, category: null, startEditing,
@@ -245,6 +258,11 @@ export default {
             this.filterTags = this.filterTags.filter((t) => t !== tag);
         },
         clearSearch() {
+            if (this.searchFrame) {
+                cancelAnimationFrame(this.searchFrame);
+                this.searchFrame = null;
+            }
+            this.searchDraft = '';
             this.searchText = '';
             this.$nextTick(() => {
                 if (this.$refs.searchInput) {
