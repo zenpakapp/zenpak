@@ -1,16 +1,12 @@
-<style lang="scss">
-@import "../css/_public-list";
-</style>
-
 <template>
-    <teleport to="head">
-        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
-    </teleport>
     <main class="lpPublicList">
+        <teleport to="head">
+            <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
+            <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
+            <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
+            <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
+            <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
+        </teleport>
         <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex">
 
         <p v-if="isLoading">
@@ -227,7 +223,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { fetchJson } from '../utils/utils';
-import { tierLabel } from '../services/tier-labels.js';
+import { tierLabel } from '../services/tier-labels';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
 
@@ -281,6 +277,7 @@ export default {
             copyError: null,
             copySuccess: false,
             hoveredCategoryIdx: null,
+            themeObserver: null,
         };
     },
     computed: {
@@ -334,13 +331,22 @@ export default {
             return forkedFrom;
         },
         chartCategories() {
-            return this.categoriesWithColors.filter((cat) => cat.subtotalWeight > 0);
+            return this.categoryViews.chartCategories;
         },
         categoriesWithColors() {
-            return this.categories.map((cat, i) => ({
-                ...cat,
-                color: colorUtils.rgbToString(colorUtils.getColor(i)),
-            }));
+            return this.categoryViews.categoriesWithColors;
+        },
+        categoryViews() {
+            const chartCategories = [];
+            const categoriesWithColors = this.categories.map((cat, i) => {
+                const category = {
+                    ...cat,
+                    color: colorUtils.rgbToString(colorUtils.getColor(i)),
+                };
+                if (category.subtotalWeight > 0) chartCategories.push(category);
+                return category;
+            });
+            return { categoriesWithColors, chartCategories };
         },
     },
     watch: {
@@ -356,11 +362,11 @@ export default {
         if (this.chartCategories.length) {
             this.$nextTick(this.renderChart);
         }
-        this._themeObserver = new MutationObserver(() => this.renderChart());
-        this._themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        this.themeObserver = new MutationObserver(() => this.renderChart());
+        this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     beforeUnmount() {
-        if (this._themeObserver) this._themeObserver.disconnect();
+        if (this.themeObserver) this.themeObserver.disconnect();
         if (this.chart && typeof this.chart.destroy === 'function') {
             this.chart.destroy();
         }
@@ -579,3 +585,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_public-list";
+</style>
