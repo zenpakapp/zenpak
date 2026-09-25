@@ -81,5 +81,21 @@ assert('shared item update recalculates first list', getFirstRecalculateCount() 
 assert('shared item update recalculates second list', getSecondRecalculateCount() === 1);
 assert('shared item update skips list without the item', getUnrelatedRecalculateCount() === 0);
 
+console.log('\n--- Bulk metadata update ---');
+
+const bulkLibrary = new Library();
+const bulkFirst = bulkLibrary.newItem({});
+const bulkSecond = bulkLibrary.newItem({});
+const bulkState = { library: bulkLibrary, itemVersion: 0 };
+
+mutations.updateItemsMetadata(bulkState, [
+    { ...bulkFirst, brand: 'Brand A' },
+    { ...bulkSecond, brand: 'Brand B' },
+]);
+
+assert('bulk metadata update bumps item version once', bulkState.itemVersion === 1);
+assert('bulk metadata update applies first item', bulkLibrary.getItemById(bulkFirst.id).brand === 'Brand A');
+assert('bulk metadata update applies second item', bulkLibrary.getItemById(bulkSecond.id).brand === 'Brand B');
+
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

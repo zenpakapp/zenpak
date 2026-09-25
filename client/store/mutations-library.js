@@ -243,6 +243,13 @@ module.exports = {
         state.library.updateItem(item);
         state.itemVersion += 1;
     },
+    updateItemsMetadata(state, items) {
+        if (!Array.isArray(items) || items.length === 0) return;
+        items.forEach((item) => {
+            state.library.updateItem(item);
+        });
+        state.itemVersion += 1;
+    },
     mergeItems(state, { keepId, removeId }) {
         state.library.lists.forEach((list) => {
             list.categoryIds.forEach((categoryId) => {

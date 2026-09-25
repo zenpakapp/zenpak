@@ -257,42 +257,53 @@ export default {
             });
         },
         batchSwapNameDesc() {
-            const ids = new Set(this.selected);
-            this.allItems
-                .filter((i) => ids.has(i.id))
-                .forEach((item) => {
-                    this.$store.commit('updateItemMetadata', { ...item, name: item.description, description: item.name });
-                });
+            const items = this.selectedItems()
+                .map((item) => ({ ...item, name: item.description, description: item.name }));
+            this.$store.commit('updateItemsMetadata', items);
             this.selected.splice(0, this.selected.length);
         },
-        applyBatchCategory(category) {
+        selectedItems() {
             const ids = new Set(this.selected);
-            this.allItems
+            return this.allItems
                 .filter((i) => ids.has(i.id))
-                .forEach((item) => {
-                    this.$store.commit('updateItemMetadata', { ...item, category });
-                });
+                .map((item) => item);
+        },
+        applyBatchCategory(category) {
+            const items = this.selectedItems()
+                .map((item) => ({ ...item, category }));
+            this.$store.commit('updateItemsMetadata', items);
             this.selected.splice(0, this.selected.length);
         },
         applyBatchBrand(brand) {
-            const ids = new Set(this.selected);
-            this.allItems
-                .filter((i) => ids.has(i.id))
-                .forEach((item) => {
-                    this.$store.commit('updateItemMetadata', { ...item, brand });
-                });
+            const items = this.selectedItems()
+                .map((item) => ({ ...item, brand }));
+            this.$store.commit('updateItemsMetadata', items);
             this.selected.splice(0, this.selected.length);
         },
         applyBatchTag(tag) {
-            const ids = new Set(this.selected);
-            this.allItems
-                .filter((i) => ids.has(i.id))
-                .forEach((item) => {
+            const items = this.selectedItems()
+                .map((item) => {
                     const tags = [...(item.tags || [])];
                     if (!tags.includes(tag)) tags.push(tag);
-                    this.$store.commit('updateItemMetadata', { ...item, tags });
+                    return { ...item, tags };
                 });
+            this.$store.commit('updateItemsMetadata', items);
             this.selected.splice(0, this.selected.length);
+        },
+        batchDelete() {
+            const count = this.selected.length;
+            const ids = new Set(this.selected);
+            openSpeedbump(
+                () => {
+                    this.allItems
+                        .filter((i) => ids.has(i.id))
+                        .forEach((item) => {
+                            this.$store.commit('removeItem', item);
+                        });
+                    this.selected.splice(0, this.selected.length);
+                },
+                { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
+            );
         },
         applyBatchAddToList({ categoryId, itemIds }) {
             const category = this.library.getCategoryById(categoryId);
@@ -312,21 +323,6 @@ export default {
             const newList = this.library.lists[this.library.lists.length - 1];
             const categoryId = newList.categoryIds[0];
             this.applyBatchAddToList({ categoryId, itemIds });
-        },
-        batchDelete() {
-            const count = this.selected.length;
-            const ids = new Set(this.selected);
-            openSpeedbump(
-                () => {
-                    this.allItems
-                        .filter((i) => ids.has(i.id))
-                        .forEach((item) => {
-                            this.$store.commit('removeItem', item);
-                        });
-                    this.selected.splice(0, this.selected.length);
-                },
-                { body: `Delete ${count} item${count > 1 ? 's' : ''}? This cannot be undone.` },
-            );
         },
         itemUsedInLists(itemId) {
             return this.library.lists.filter((list) => list.categoryIds.some((catId) => {
