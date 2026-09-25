@@ -185,9 +185,6 @@ export default {
         categories() {
             this.scheduleItemDrag();
         },
-        filteredItems() {
-            this.scheduleItemDrag();
-        },
     },
     mounted() {
         this.measureViewport();
