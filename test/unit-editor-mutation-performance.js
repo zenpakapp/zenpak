@@ -57,5 +57,29 @@ assert('weight update increments item version', state.itemVersion === 2);
 assert('weight update recalculates containing list', getWithItemRecalculateCount() === 1);
 assert('weight update skips unrelated list', getWithoutItemRecalculateCount() === 0);
 
+console.log('\n--- Shared item recalculation ---');
+
+const sharedLibrary = new Library();
+const sharedItem = sharedLibrary.newItem({});
+const firstList = sharedLibrary.getListById(sharedLibrary.defaultListId);
+const firstCategory = sharedLibrary.getCategoryById(firstList.categoryIds[0]);
+firstCategory.addItem({ itemId: sharedItem.id, qty: 1 });
+const secondList = sharedLibrary.newList();
+const secondCategory = sharedLibrary.newCategory({ list: secondList });
+secondCategory.addItem({ itemId: sharedItem.id, qty: 1 });
+const unrelatedList = sharedLibrary.newList();
+sharedLibrary.newCategory({ list: unrelatedList });
+
+const getFirstRecalculateCount = countCalculateTotals(firstList);
+const getSecondRecalculateCount = countCalculateTotals(secondList);
+const getUnrelatedRecalculateCount = countCalculateTotals(unrelatedList);
+const sharedState = { library: sharedLibrary, itemVersion: 0 };
+
+mutations.updateItem(sharedState, { ...sharedItem, weight: 250000 });
+
+assert('shared item update recalculates first list', getFirstRecalculateCount() === 1);
+assert('shared item update recalculates second list', getSecondRecalculateCount() === 1);
+assert('shared item update skips list without the item', getUnrelatedRecalculateCount() === 0);
+
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 process.exit(failed > 0 ? 1 : 0);

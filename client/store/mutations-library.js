@@ -1,15 +1,21 @@
 const { arrayMove } = require('../utils/utils');
 
-function listContainsItem(library, list, itemId) {
-    return list.categoryIds.some((categoryId) => {
-        const category = library.getCategoryById(categoryId);
-        return category && category.categoryItems.some((categoryItem) => categoryItem.itemId === itemId);
-    });
-}
-
 function recalculateListsForItem(library, itemId) {
+    const affectedCategoryIds = new Set();
+
+    library.categories.forEach((category) => {
+        if (!category) return;
+        if (category.categoryItems.some((categoryItem) => categoryItem.itemId === itemId)) {
+            affectedCategoryIds.add(category.id);
+        }
+    });
+
+    if (affectedCategoryIds.size === 0) return;
+
     library.lists.forEach((list) => {
-        if (listContainsItem(library, list, itemId)) list.calculateTotals();
+        if (list.categoryIds.some((categoryId) => affectedCategoryIds.has(categoryId))) {
+            list.calculateTotals();
+        }
     });
 }
 
