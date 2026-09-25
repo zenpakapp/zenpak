@@ -212,11 +212,14 @@ export default {
         };
     },
     computed: {
+        selectedIds() {
+            return new Set(this.selected);
+        },
         allSelected() {
-            return this.filteredItems.length > 0 && this.filteredItems.every((i) => this.selected.includes(i.id));
+            return this.filteredItems.length > 0 && this.filteredItems.every((i) => this.selectedIds.has(i.id));
         },
         someSelected() {
-            return this.filteredItems.some((i) => this.selected.includes(i.id)) && !this.allSelected;
+            return this.filteredItems.some((i) => this.selectedIds.has(i.id)) && !this.allSelected;
         },
         compareItems() {
             return this.selected
@@ -263,9 +266,8 @@ export default {
             this.selected.splice(0, this.selected.length);
         },
         selectedItems() {
-            const ids = new Set(this.selected);
             return this.allItems
-                .filter((i) => ids.has(i.id))
+                .filter((i) => this.selectedIds.has(i.id))
                 .map((item) => item);
         },
         applyBatchCategory(category) {
