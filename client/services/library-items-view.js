@@ -7,16 +7,20 @@ function filterLibraryItems(items, filters = {}) {
     if (!search && !category && tags.length === 0) return sourceItems;
 
     return sourceItems.filter((item) => {
-        const itemTags = (search || tags.length)
-            ? (item.tags || []).map((tag) => String(tag).toLowerCase())
-            : [];
-        const matchesSearch = !search
-            || String(item.name || '').toLowerCase().includes(search)
-            || String(item.brand || '').toLowerCase().includes(search)
-            || String(item.description || '').toLowerCase().includes(search)
-            || itemTags.some((tag) => tag.includes(search));
+        let itemTags = null;
+        const getItemTags = () => {
+            if (!itemTags) itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
+            return itemTags;
+        };
+        let matchesSearch = true;
+        if (search) {
+            matchesSearch = String(item.name || '').toLowerCase().includes(search)
+                || String(item.brand || '').toLowerCase().includes(search)
+                || String(item.description || '').toLowerCase().includes(search)
+                || getItemTags().some((tag) => tag.includes(search));
+        }
         const matchesCategory = !category || String(item.category || '').toLowerCase() === category;
-        const matchesTags = tags.every((tag) => itemTags.includes(tag));
+        const matchesTags = tags.length === 0 || tags.every((tag) => getItemTags().includes(tag));
         return matchesSearch && matchesCategory && matchesTags;
     });
 }

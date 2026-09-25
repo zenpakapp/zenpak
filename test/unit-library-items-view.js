@@ -51,6 +51,22 @@ const tagSearchFiltered = filterLibraryItems(items, {
 }, []);
 assert('filters by tag from search text', tagSearchFiltered.length === 1 && tagSearchFiltered[0].id === 50);
 
+let tagsReadCount = 0;
+const nameMatchItem = {
+    id: 1000,
+    name: 'Needle Match',
+    brand: '',
+    description: '',
+    category: '',
+    get tags() {
+        tagsReadCount++;
+        return ['slow'];
+    },
+};
+const lazyTagFiltered = filterLibraryItems([nameMatchItem], { searchText: 'needle' });
+assert('search keeps name matches', lazyTagFiltered.length === 1 && lazyTagFiltered[0] === nameMatchItem);
+assert('search does not read tags when text fields match', tagsReadCount === 0);
+
 const windowed = calculateVirtualWindow({
     items,
     scrollTop: 1000,
