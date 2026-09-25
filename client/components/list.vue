@@ -83,7 +83,7 @@
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
-        <TransitionGroup ref="categories" name="lp-list" tag="ul" class="lpCategories">
+        <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
             <category
                 v-for="category in categories"
                 :key="category.id"
@@ -139,6 +139,7 @@ export default {
             categoryReorderFrame: null,
             categoryReorderIdle: null,
             categoryReorderToken: 0,
+            isSwitchingList: false,
             showCompletionModal: false,
             completionPhrase: '',
             communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
@@ -199,6 +200,13 @@ export default {
         },
     },
     watch: {
+        'list.id': function (id, oldId) {
+            if (!oldId || id === oldId) return;
+            this.isSwitchingList = true;
+            requestAnimationFrame(() => {
+                this.isSwitchingList = false;
+            });
+        },
         categories() {
             this.scheduleItemReorder();
         },
