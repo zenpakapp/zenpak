@@ -29,6 +29,9 @@ const items = Array.from({ length: 100 }, (_, index) => ({
     tags: index === 49 ? ['winter'] : [],
 }));
 
+const unfiltered = filterLibraryItems(items);
+assert('returns the source collection when no filters are active', unfiltered === items);
+
 const filtered = filterLibraryItems(items, {
     searchText: 'needle',
     category: 'Sleep',

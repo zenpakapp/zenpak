@@ -1,10 +1,15 @@
 function filterLibraryItems(items, filters = {}) {
+    const sourceItems = items || [];
     const search = String(filters.searchText || '').trim().toLowerCase();
     const category = String(filters.category || '').trim().toLowerCase();
     const tags = (filters.tags || []).map((tag) => String(tag).toLowerCase());
 
-    return (items || []).filter((item) => {
-        const itemTags = (item.tags || []).map((tag) => String(tag).toLowerCase());
+    if (!search && !category && tags.length === 0) return sourceItems;
+
+    return sourceItems.filter((item) => {
+        const itemTags = (search || tags.length)
+            ? (item.tags || []).map((tag) => String(tag).toLowerCase())
+            : [];
         const matchesSearch = !search
             || String(item.name || '').toLowerCase().includes(search)
             || String(item.brand || '').toLowerCase().includes(search)
