@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_list";
-</style>
-
 <template>
     <div class="lpListBody">
         <!-- Packing mode bar -->
@@ -106,11 +102,11 @@ import listSummary from './list-summary.vue';
 import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
-import { usePackingMode } from '../composables/usePackingMode.js';
+import { usePackingMode } from '../composables/usePackingMode';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
-import phrasesEn from '../data/packing-phrases.en.js';
-import phrasesFr from '../data/packing-phrases.fr.js';
-import weightUtils from '../utils/weight.js';
+import phrasesEn from '../data/packing-phrases.en';
+import phrasesFr from '../data/packing-phrases.fr';
+import weightUtils from '../utils/weight';
 
 export default {
     name: 'List',
@@ -118,8 +114,6 @@ export default {
         listSummary,
         category,
         ZenpakBrandAsset,
-        categoryDragStartIndex: false,
-        itemDragId: false,
     },
     setup() {
         const {
@@ -133,6 +127,8 @@ export default {
         return {
             itemDrake: null,
             categoryDrake: null,
+            itemDragId: null,
+            categoryDragStartIndex: null,
             itemReorderFrame: null,
             itemReorderIdle: null,
             itemReorderToken: 0,
@@ -156,9 +152,6 @@ export default {
         categories() {
             return this.list.categoryIds.map((id) => this.library.getCategoryById(id)).filter(Boolean);
         },
-        isListNew() {
-            return this.list.totalWeight === 0 && this.categories.every((c) => c.categoryItems.length === 0);
-        },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
         },
@@ -179,8 +172,24 @@ export default {
             if (this.getStartedName) return this.$t('list.getStartedTitleNamed', { name: this.getStartedName });
             return this.$t('list.getStartedTitle');
         },
+        categoryItemStats() {
+            const itemIds = [];
+            let hasItems = false;
+
+            this.categories.forEach((category) => {
+                category.categoryItems.forEach((categoryItem) => {
+                    hasItems = true;
+                    itemIds.push(categoryItem.itemId);
+                });
+            });
+
+            return { hasItems, itemIds };
+        },
+        isListNew() {
+            return this.list.totalWeight === 0 && !this.categoryItemStats.hasItems;
+        },
         allItemIds() {
-            return this.categories.flatMap((cat) => cat.categoryItems.map((ci) => ci.itemId));
+            return this.categoryItemStats.itemIds;
         },
         packingProgress() {
             return {
@@ -318,7 +327,7 @@ export default {
             }
             const categoryItems = queryContainers(this.$el, '.lpItems');
             const drake = await createDragDrop(categoryItems, {
-                moves($el, $source, $handle, $sibling) {
+                moves($el, $source, $handle) {
                     return $handle.classList.contains('lpItemHandle');
                 },
                 accepts($el, $target, $source, $sibling) {
@@ -332,10 +341,10 @@ export default {
                 drake.destroy();
                 return;
             }
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            drake.on('drag', ($el) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el, $target) => {
                 const categoryId = getDatasetInt($target, 'categoryId');
                 if (this.itemDragId === null || categoryId === null) {
                     drake.cancel(true);
@@ -356,7 +365,7 @@ export default {
             }
 
             const drake = await createDragDrop([this.$refs.categories.$el], {
-                moves(el, $source, $handle, $sibling) {
+                moves(el, $source, $handle) {
                     return $handle.classList.contains('lpCategoryHandle');
                 },
             });
@@ -364,10 +373,10 @@ export default {
                 drake.destroy();
                 return;
             }
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            drake.on('drag', ($el) => {
                 this.categoryDragStartIndex = getElementIndex($el);
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el) => {
                 this.$store.commit('reorderCategory', { list: this.list, before: this.categoryDragStartIndex, after: getElementIndex($el) });
                 drake.cancel(true);
             });
@@ -376,3 +385,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_list";
+</style>
