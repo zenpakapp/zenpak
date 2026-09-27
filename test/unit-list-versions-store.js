@@ -56,7 +56,7 @@ async function run() {
             listVersionsDb.rows.push({
                 externalId: 'race1', version: 1, ownerId: racer._id, contentHash: 'other-writer', library: {}, totals: {},
             });
-            return Promise.resolve({ upsertedCount: 0 });
+            return Promise.reject(Object.assign(new Error('E11000 duplicate key'), { code: 11000 }));
         }
         return realUpdateOne(filter, update, options);
     };

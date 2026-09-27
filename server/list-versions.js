@@ -118,7 +118,8 @@ async function publishVersion(user, externalId, note) {
     const contentHash = hashFrozenLibrary(frozen);
     const ownerId = new ObjectId(user._id);
 
-    // The unique {externalId, version} index makes the insert-if-absent atomic; one retry covers a lost race.
+    // The unique {externalId, version} index prevents duplicate versions. On a race,
+    // MongoDB rejects with a duplicate key error; we catch that and retry with the next version.
     for (let attempt = 0; attempt < 2; attempt++) {
         const latest = await getLatest(externalId);
         if (latest && String(latest.ownerId) !== String(ownerId)) return { error: 'conflict' };
@@ -128,16 +129,21 @@ async function publishVersion(user, externalId, note) {
 
         const version = (latest ? latest.version : 0) + 1;
         const publishedAt = new Date();
-        const result = await db.listVersions.updateOne(
-            { externalId, version },
-            {
-                $setOnInsert: {
-                    ownerId, publishedAt, note: normalizeNote(note), contentHash, library: frozen, totals: computeTotals(frozen),
+        try {
+            const result = await db.listVersions.updateOne(
+                { externalId, version },
+                {
+                    $setOnInsert: {
+                        ownerId, publishedAt, note: normalizeNote(note), contentHash, library: frozen, totals: computeTotals(frozen),
+                    },
                 },
-            },
-            { upsert: true },
-        );
-        if (result.upsertedCount === 1) return { version, created: true, publishedAt };
+                { upsert: true },
+            );
+            if (result.upsertedCount === 1) return { version, created: true, publishedAt };
+        } catch (err) {
+            if (err.code !== 11000) throw err;
+            // lost the race on this version number — loop and retry with the next one
+        }
     }
     return { error: 'conflict' };
 }
