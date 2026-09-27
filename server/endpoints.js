@@ -23,6 +23,10 @@ const publicRouter = require('./public-endpoints.js');
 
 router.use(publicRouter);
 
+const listVersionRouter = require('./list-version-endpoints.js');
+
+router.use(listVersionRouter);
+
 // scrapeGear kept here — single route, no logical grouping
 router.post('/scrapeGear', async (req, res) => {
     const { url } = req.body;
