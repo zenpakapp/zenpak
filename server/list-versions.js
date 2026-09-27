@@ -160,6 +160,60 @@ async function getPublishStatus(user, externalId) {
     };
 }
 
+// Live identity + frozen content + live share settings. Null unless the list is currently
+// shared AND has a snapshot owned by this user. Public readers use this instead of the live library.
+async function getServedUser(user, externalId) {
+    const liveList = findLiveList(user, externalId);
+    if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
+
+    const version = await getLatestOwnedVersion(user, externalId);
+    if (!version) return null;
+
+    const library = clone(version.library);
+    const publishedList = library.lists[0];
+    SHARE_SETTING_FIELDS.forEach((field) => {
+        if (typeof liveList[field] === 'undefined') delete publishedList[field];
+        else publishedList[field] = liveList[field];
+    });
+    return { ...user, library, publishedVersion: version.version };
+}
+
+// library.lists.externalId is client-authored and not unique, so the owner comes from the snapshot,
+// never from a query on the library. First publisher wins (see publishVersion's conflict rule).
+async function getPublishedOwner(externalId) {
+    const version = await getLatest(externalId);
+    if (!version) return null;
+    return (await db.users.findOne({ _id: version.ownerId })) || null;
+}
+
+async function getServedByExternalId(externalId) {
+    const owner = await getPublishedOwner(externalId);
+    return owner ? getServedUser(owner, externalId) : null;
+}
+
+function hydrateServed(served) {
+    const library = new Library();
+    library.load(served.library);
+    const list = library.lists[0];
+    library.defaultListId = list.id;
+    return { library, list, served };
+}
+
+async function loadPublishedLibrary(user, externalId) {
+    const served = await getServedUser(user, externalId);
+    return served ? hydrateServed(served) : null;
+}
+
+async function loadPublishedLibraryByExternalId(externalId) {
+    const served = await getServedByExternalId(externalId);
+    return served ? hydrateServed(served) : null;
+}
+
+async function deleteVersionsForOwner(userId) {
+    if (!db.listVersions || !userId) return;
+    await db.listVersions.deleteMany({ ownerId: new ObjectId(userId) });
+}
+
 module.exports = {
     buildFrozenLibrary,
     hashFrozenLibrary,
@@ -169,4 +223,10 @@ module.exports = {
     getLatestOwnedVersion,
     publishVersion,
     getPublishStatus,
+    getServedUser,
+    getPublishedOwner,
+    getServedByExternalId,
+    loadPublishedLibrary,
+    loadPublishedLibraryByExternalId,
+    deleteVersionsForOwner,
 };
