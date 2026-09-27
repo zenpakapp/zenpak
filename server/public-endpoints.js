@@ -8,6 +8,7 @@ const {
     incrementPublicListStat,
     rememberPublicListViewer,
 } = require('./public-list-projections.js');
+const { getServedByExternalId } = require('./list-versions.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -70,53 +71,47 @@ router.get('/api/public/profile/:username', async (req, res) => {
     }
 });
 
-router.get('/api/public/list/:externalId', (req, res) => {
+router.get('/api/public/list/:externalId', async (req, res) => {
     const externalId = String(req.params.externalId || '').trim();
     if (!externalId) {
         return res.status(404).json({ message: 'List not found' });
     }
 
-    db.users.findOne({ 'library.lists.externalId': externalId }, (err, user) => {
-        if (err) {
-            logWithRequest(req, { message: 'Public list lookup error', externalId, error: err.message });
-            return res.status(500).json({ message: 'An error occurred' });
-        }
-
-        const payload = buildPublicList(user, externalId);
+    try {
+        const served = await getServedByExternalId(externalId);
+        const payload = served ? buildPublicList(served, externalId) : null;
         if (!payload) {
             return res.status(404).json({ message: 'List not found' });
         }
-
         return res.json(payload);
-    });
+    } catch (err) {
+        logWithRequest(req, { message: 'Public list snapshot error', externalId, error: err.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
 });
 
-router.post('/api/public/insight', (req, res) => {
+router.post('/api/public/insight', async (req, res) => {
     const externalId = String(req.body.externalId || '').trim();
-    const itemId = typeof req.body.itemId === 'undefined' ? '' : req.body.itemId;
+    const rawItemId = req.body.itemId;
+    const itemIdIsValid = typeof rawItemId === 'undefined' || typeof rawItemId === 'string' || typeof rawItemId === 'number';
+    const itemId = typeof rawItemId === 'undefined' ? '' : String(rawItemId);
     const type = String(req.body.type || '').trim();
     const allowedTypes = ['listView', 'listCopy', 'gearClick', 'promoClick'];
 
-    if (!externalId || !allowedTypes.includes(type) || typeof itemId !== 'string') {
+    if (!externalId || !allowedTypes.includes(type) || !itemIdIsValid) {
         return res.status(400).json({ message: 'Invalid insight event' });
     }
 
-    db.users.findOne({ 'library.lists.externalId': externalId }, async (err, user) => {
-        if (err || !user || !user.library) {
+    try {
+        const served = await getServedByExternalId(externalId);
+        if (!served || !buildPublicList(served, externalId)) {
             return res.status(200).json({ message: 'ok' });
         }
 
-        if (!buildPublicList(user, externalId)) {
-            return res.status(200).json({ message: 'ok' });
-        }
-
-        let shouldSave = true;
         if (type === 'listView') {
             const viewerKey = await resolveViewerKey(req);
             const isNewViewer = await rememberPublicListViewer(externalId, viewerKey);
-            if (!isNewViewer) {
-                shouldSave = false;
-            } else {
+            if (isNewViewer) {
                 await incrementPublicListStat(externalId, 'viewCount');
             }
         } else if (type === 'listCopy') {
@@ -126,9 +121,11 @@ router.post('/api/public/insight', (req, res) => {
         } else if (type === 'promoClick' && itemId) {
             await incrementPublicListStat(externalId, `promoClicks.${itemId}`);
         }
+    } catch (err) {
+        logWithRequest(req, { message: 'Public insight error', externalId, error: err.message });
+    }
 
-        return res.json({ message: 'ok' });
-    });
+    return res.json({ message: 'ok' });
 });
 
 module.exports = router;

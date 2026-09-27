@@ -2,11 +2,20 @@
 
 const { ObjectId } = require('mongodb');
 
+const { createListVersionsStub } = require('./fixtures/list-versions-fixtures.js');
+
+const listVersionsDb = createListVersionsStub();
+
 const ownerUser = {
     _id: new ObjectId(),
     username: 'alice',
     library: {
-        lists: [{ id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'discoverable' }],
+        version: '0.3',
+        items: [],
+        categories: [],
+        lists: [{
+            id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'discoverable', categoryIds: [],
+        }],
         insights: {},
     },
 };
@@ -15,13 +24,14 @@ const stats = {};
 const viewers = [];
 
 const dbStub = {
+    listVersions: listVersionsDb,
     users: {
         findOne(query, cb) {
             if (query.token === 'viewer-token') {
                 return Promise.resolve({ _id: new ObjectId('000000000000000000000002'), username: 'viewer' });
             }
-            cb(null, ownerUser);
-            return undefined;
+            if (cb) { cb(null, ownerUser); return undefined; }
+            return Promise.resolve(ownerUser);
         },
     },
     publicListStats: {
@@ -66,6 +76,15 @@ require.cache[require.resolve('../server/db.js')] = {
     exports: dbStub, id: require.resolve('../server/db.js'),
     filename: require.resolve('../server/db.js'), loaded: true, children: [], paths: [],
 };
+
+const { buildFrozenLibrary } = require('../server/list-versions.js');
+
+listVersionsDb.rows.push({
+    externalId: 'abc',
+    version: 1,
+    ownerId: ownerUser._id,
+    library: buildFrozenLibrary(ownerUser.library, 'abc'),
+});
 
 const router = require('../server/public-endpoints.js');
 
@@ -115,6 +134,13 @@ async function run() {
 
     assert('anonymous list view counted once per visitor fingerprint', stats.abc && stats.abc.viewCount === 2);
     assert('non-duplicate insight writes only when count changes', viewers.filter(v => v.externalId === 'abc').length === 2);
+
+    // The public page sends item.id as stored in the library (a number): it must be counted
+    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: 11 } });
+    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: '11' } });
+    assert('gearClick with a numeric or string item id is counted', stats.abc['gearClicks.11'] === 2);
+    const rejected = await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: { $gt: '' } } });
+    assert('object item ids are rejected with 400', rejected.status === 400);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
