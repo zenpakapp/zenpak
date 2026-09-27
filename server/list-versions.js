@@ -1,5 +1,8 @@
 const crypto = require('crypto');
+const { ObjectId } = require('mongodb');
 
+const db = require('./db.js');
+const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { Library } = require('../client/models/library.js');
 
 const LEGACY_HIDDEN_FIELD = 'creator' + 'LinksRemoved';
@@ -89,9 +92,75 @@ function normalizeNote(value) {
     return typeof value === 'string' ? value.trim().slice(0, NOTE_MAX_LENGTH) : '';
 }
 
+function findLiveList(user, externalId) {
+    const lists = (user && user.library && user.library.lists) || [];
+    return lists.find((list) => list.externalId && list.externalId === externalId) || null;
+}
+
+async function getLatest(externalId) {
+    if (!externalId || !db.listVersions) return null;
+    const rows = await db.listVersions.findSorted({ externalId }, { version: -1 }, 1);
+    return rows[0] || null;
+}
+
+async function getLatestOwnedVersion(user, externalId) {
+    const latest = await getLatest(externalId);
+    if (!latest || String(latest.ownerId) !== String(user._id)) return null;
+    return latest;
+}
+
+async function publishVersion(user, externalId, note) {
+    const liveList = findLiveList(user, externalId);
+    if (!liveList) return { error: 'not-found' };
+    if (!isPublicVisibility(liveList.visibility)) return { error: 'private' };
+
+    const frozen = buildFrozenLibrary(user.library, externalId);
+    const contentHash = hashFrozenLibrary(frozen);
+    const ownerId = new ObjectId(user._id);
+
+    // The unique {externalId, version} index makes the insert-if-absent atomic; one retry covers a lost race.
+    for (let attempt = 0; attempt < 2; attempt++) {
+        const latest = await getLatest(externalId);
+        if (latest && String(latest.ownerId) !== String(ownerId)) return { error: 'conflict' };
+        if (latest && latest.contentHash === contentHash) {
+            return { version: latest.version, created: false, publishedAt: latest.publishedAt };
+        }
+
+        const version = (latest ? latest.version : 0) + 1;
+        const publishedAt = new Date();
+        const result = await db.listVersions.updateOne(
+            { externalId, version },
+            {
+                $setOnInsert: {
+                    ownerId, publishedAt, note: normalizeNote(note), contentHash, library: frozen, totals: computeTotals(frozen),
+                },
+            },
+            { upsert: true },
+        );
+        if (result.upsertedCount === 1) return { version, created: true, publishedAt };
+    }
+    return { error: 'conflict' };
+}
+
+async function getPublishStatus(user, externalId) {
+    if (!findLiveList(user, externalId)) return null;
+    const latest = await getLatestOwnedVersion(user, externalId);
+    if (!latest) return { latestVersion: 0, publishedAt: null, hasUnpublishedChanges: false };
+    const frozen = buildFrozenLibrary(user.library, externalId);
+    return {
+        latestVersion: latest.version,
+        publishedAt: latest.publishedAt,
+        hasUnpublishedChanges: hashFrozenLibrary(frozen) !== latest.contentHash,
+    };
+}
+
 module.exports = {
     buildFrozenLibrary,
     hashFrozenLibrary,
     computeTotals,
     normalizeNote,
+    getLatest,
+    getLatestOwnedVersion,
+    publishVersion,
+    getPublishStatus,
 };

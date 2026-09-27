@@ -149,6 +149,7 @@ module.exports = {
     publicLists: collection('public_lists'),
     publicListStats: collection('public_list_stats'),
     publicListViewers: collection('public_list_viewers'),
+    listVersions: collection('list_versions'),
     reports: collection('reports'),
     billingEvents: collection('billing_events'),
     async ensureIndexes() {
@@ -196,6 +197,10 @@ module.exports = {
         const publicListViewers = _db.collection('public_list_viewers');
         await publicListViewers.createIndex({ externalId: 1, viewerKey: 1 }, { unique: true });
         await publicListViewers.createIndex({ externalId: 1, createdAt: -1 });
+
+        const listVersions = _db.collection('list_versions');
+        await listVersions.createIndex({ externalId: 1, version: 1 }, { unique: true });
+        await listVersions.createIndex({ ownerId: 1 });
 
         const reports = _db.collection('reports');
         await reports.createIndex({ reporterId: 1, targetType: 1, targetId: 1 }, { unique: true });
