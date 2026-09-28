@@ -25,6 +25,18 @@ const { escapeCsvField } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
 
 const db = require('./db.js');
+const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
+
+// Legacy handlers used a callback-style findOne; async work inside one becomes an unhandled
+// rejection if it throws. Run each view inside this guard so failures log and answer 500.
+async function runLegacyView(req, res, view) {
+    try {
+        await view();
+    } catch (error) {
+        logWithRequest(req, { message: 'legacy list view failed', path: req.path, error: error.message });
+        if (!res.headersSent) res.status(500).send('An error occurred.');
+    }
+}
 
 const weightUtils = require('../client/utils/weight.js');
 const { formatDisplayPrice } = require('../client/utils/currency.js');
@@ -33,7 +45,6 @@ const dataTypes = require('../client/dataTypes.js');
 const Item = dataTypes.Item;
 const Category = dataTypes.Category;
 const List = dataTypes.List;
-const Library = dataTypes.Library;
 
 function getDeployUrl(req) {
     return resolvePublicOrigin(req, {
@@ -147,31 +158,13 @@ router.get('/r/:id', (req, res) => {
         res.status(400).send('No list specified!');
         return;
     }
-    db.users.findOne({ 'library.lists.externalId': id }, (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(user.library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
+        const { library, list } = published;
 
         const chartData = escape(JSON.stringify(list.renderChart('total', false)));
         const renderedCategories = renderLibrary(library, {
@@ -210,33 +203,13 @@ router.get('/e/:id', (req, res) => {
         return;
     }
 
-    db.users.findOne({ 'library.lists.externalId': id }, (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
-
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(user.library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
+        const { library, list } = published;
 
         const chartData = escape(JSON.stringify(list.renderChart('total', false)));
 
@@ -279,33 +252,20 @@ router.get('/csv/:id', (req, res) => {
         return;
     }
 
-    db.users.findOne({ 'library.lists.externalId': id }, async (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
+        const { library, list, served } = published;
 
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        // Check download permission before loading library
-        const rawLists = (user.library && user.library.lists) || [];
-        const rawList = rawLists.find((l) => l.externalId === id);
-        const downloadable = rawList && rawList.publicFields && rawList.publicFields.downloadable;
+        // Check download permission against the published list settings
+        const downloadable = list.publicFields && list.publicFields.downloadable;
 
         if (!downloadable) {
             const token = req.cookies && req.cookies.lp;
-            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(user._id)).catch(() => false) : false;
+            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(served._id)).catch(() => false) : false;
             if (!isOwner) {
                 res.status(403).send(`<!DOCTYPE html>
 <html lang="en">
@@ -333,15 +293,6 @@ router.get('/csv/:id', (req, res) => {
 </body>
 </html>`);
                 return;
-            }
-        }
-
-        library.load(user.library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
             }
         }
 
