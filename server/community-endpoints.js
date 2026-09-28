@@ -11,6 +11,7 @@ const { authenticateUser } = auth;
 const { getFeedForUser } = require('./feed-events.js');
 const { createNotification } = require('./notifications.js');
 const { normalizeTier } = require('./tier-policy.js');
+const { getLatest } = require('./list-versions.js');
 const {
     incrementPublicListStat,
     normalizeTagArray,
@@ -269,7 +270,8 @@ router.post('/copy-list/:externalId', (req, res) => {
         }
 
         try {
-            const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+            const version = await getLatest(externalId);
+            const owner = version ? await db.users.findOne({ _id: version.ownerId }) : null;
             if (!owner) {
                 return res.status(404).json({ message: 'List not found' });
             }
@@ -288,6 +290,9 @@ router.post('/copy-list/:externalId', (req, res) => {
             if (user.banned) {
                 return res.status(403).json({ message: 'Account suspended' });
             }
+
+            const published = version.library;
+            const publishedList = (published.lists || [])[0] || {};
 
             // Increment copyCount once per user (dedup via copiedBy array)
             const userId = String(user._id);
@@ -321,14 +326,14 @@ router.post('/copy-list/:externalId', (req, res) => {
                 });
             }
 
-            // Return list data (categories + items) for client-side dedup import
-            const categoryIds = sourceList.categoryIds || [];
-            const categories = (owner.library.categories || [])
-                .filter((c) => categoryIds.includes(c.id) || categoryIds.map(String).includes(String(c.id)))
+            // Return the published list data (categories + items) for client-side dedup import
+            const categoryIds = (publishedList.categoryIds || []).map(String);
+            const categories = (published.categories || [])
+                .filter((c) => categoryIds.includes(String(c.id)))
                 .map((c) => ({
                     name: c.name,
                     categoryItems: (c.categoryItems || []).map((ci) => {
-                        const item = (owner.library.items || []).find((i) => String(i.id) === String(ci.itemId));
+                        const item = (published.items || []).find((i) => String(i.id) === String(ci.itemId));
                         if (!item) return null;
                         return {
                             name: item.name || '',
@@ -352,22 +357,24 @@ router.post('/copy-list/:externalId', (req, res) => {
                 }));
 
             const ownerName = (owner.library && owner.library.publicProfile && owner.library.publicProfile.displayName) || owner.username;
+            const sourceCurrencySymbol = published.currencySymbol || '$';
+            const listName = publishedList.name || sourceList.name;
             const forkedFrom = {
                 externalId: sourceList.externalId,
                 ownerId: String(owner._id),
                 ownerUsername: owner.username,
                 ownerName,
-                listName: sourceList.name,
-                sourceCurrencySymbol: owner.library.currencySymbol || '$',
+                listName,
+                sourceCurrencySymbol,
                 copiedAt: new Date().toISOString(),
             };
 
             return res.json({
-                listName: sourceList.name,
-                description: sourceList.description || '',
-                seasons: normalizeTagArray(sourceList.seasons),
-                listTypes: normalizeTagArray(sourceList.listTypes),
-                sourceCurrencySymbol: owner.library.currencySymbol || '$',
+                listName,
+                description: publishedList.description || '',
+                seasons: normalizeTagArray(publishedList.seasons),
+                listTypes: normalizeTagArray(publishedList.listTypes),
+                sourceCurrencySymbol,
                 categories,
                 forkedFrom,
             });

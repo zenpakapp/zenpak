@@ -48,11 +48,15 @@ const copyUser = {
     library: { lists: [] },
 };
 
+const { createListVersionsStub } = require('./fixtures/list-versions-fixtures.js');
+
+const listVersionsDb = createListVersionsStub();
+
 const savedUsers = [];
 const dbStub = {
     users: {
         findOne(query) {
-            if (query['library.lists.externalId']) return Promise.resolve(ownerUser);
+            if (query._id || query['library.lists.externalId']) return Promise.resolve(ownerUser);
             return Promise.resolve(null);
         },
         save(user) {
@@ -60,6 +64,7 @@ const dbStub = {
             return Promise.resolve(user);
         },
     },
+    listVersions: listVersionsDb,
 };
 
 require.cache[require.resolve('../server/db.js')] = {
@@ -80,6 +85,16 @@ require.cache[require.resolve('../server/feed-events.js')] = {
     exports: feedStub, id: require.resolve('../server/feed-events.js'),
     filename: require.resolve('../server/feed-events.js'), loaded: true, children: [], paths: [],
 };
+
+const { buildFrozenLibrary } = require('../server/list-versions.js');
+
+const publishedRow = {
+    externalId: 'abc123',
+    version: 1,
+    ownerId: ownerUser._id,
+    library: buildFrozenLibrary(ownerUser.library, 'abc123'),
+};
+listVersionsDb.rows.push(publishedRow);
 
 const router = require('../server/community-endpoints.js');
 
@@ -139,6 +154,35 @@ async function run() {
     assert('cannot copy own list (403)', ownStatus === 403);
     // Restore
     authStub.authenticateUser = (req, res, cb) => cb(req, res, copyUser);
+
+    // Copy serves the published snapshot, never unpublished live edits
+    ownerUser.library.items[1].name = 'LIVE EDITED NAME';
+    let liveResponse;
+    await new Promise((resolve) => {
+        const res = {
+            status(code) { this._status = code; return this; },
+            json(data) { liveResponse = data; resolve(); },
+        };
+        copyRoute.route.stack[0].handle({ params: { externalId: 'abc123' }, body: {} }, res);
+    });
+    const copiedNames = liveResponse.categories.flatMap((c) => c.categoryItems.map((i) => i.name));
+    assert('copy ignores unpublished live item edits', copiedNames.includes('Water bottle pair') && !copiedNames.includes('LIVE EDITED NAME'));
+    ownerUser.library.items[1].name = 'Water bottle pair';
+
+    // A shared list with no snapshot cannot be copied and must not bump counters
+    listVersionsDb.rows.length = 0;
+    const savesBefore = savedUsers.length;
+    let unpublishedResponse; let unpublishedStatus;
+    await new Promise((resolve) => {
+        const res = {
+            status(code) { unpublishedStatus = code; return this; },
+            json(data) { unpublishedResponse = data; resolve(); },
+        };
+        copyRoute.route.stack[0].handle({ params: { externalId: 'abc123' }, body: {} }, res);
+    });
+    assert('copy of an unpublished list is 404', unpublishedStatus === 404 && unpublishedResponse.message === 'List not found');
+    assert('a rejected copy saves nothing', savedUsers.length === savesBefore);
+    listVersionsDb.rows.push(publishedRow);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
