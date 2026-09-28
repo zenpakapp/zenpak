@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 
 const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
+const { getLatestOwnedVersion } = require('./list-versions.js');
 
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
@@ -21,12 +22,14 @@ function isDiscoverableVisibility(visibility) {
     return visibility === 'discoverable' || visibility === 'indexable';
 }
 
-function buildPublicListProjection(user, list, stats = {}) {
+function buildPublicListProjection(user, list, stats = {}, version = null) {
     const library = user.library || {};
     const profile = library.publicProfile || {};
     const plan = (library.entitlements && library.entitlements.plan) || 'free';
-    const forkedFrom = list.forkedFrom || null;
-    const updatedAt = list.updatedAt || list.dateUpdated || new Date(0);
+    const published = (version && version.library && version.library.lists && version.library.lists[0]) || list;
+    const totals = version && version.totals;
+    const forkedFrom = published.forkedFrom || null;
+    const updatedAt = version ? version.publishedAt : (list.updatedAt || list.dateUpdated || new Date(0));
 
     return {
         externalId: list.externalId,
@@ -34,13 +37,13 @@ function buildPublicListProjection(user, list, stats = {}) {
         ownerUsername: user.username || '',
         ownerDisplayName: profile.displayName || user.username || '',
         ownerTier: normalizeTier(plan),
-        name: list.name || '',
-        description: list.description || '',
+        name: published.name || '',
+        description: published.description || '',
         visibility: list.visibility || 'private',
-        totalBaseWeight: Number(list.totalBaseWeight) || 0,
-        totalQty: Number(list.totalQty) || 0,
-        seasons: normalizeTagArray(list.seasons),
-        listTypes: normalizeTagArray(list.listTypes),
+        totalBaseWeight: totals ? Number(totals.baseWeight) || 0 : Number(list.totalBaseWeight) || 0,
+        totalQty: totals ? Number(totals.qty) || 0 : Number(list.totalQty) || 0,
+        seasons: normalizeTagArray(published.seasons),
+        listTypes: normalizeTagArray(published.listTypes),
         copyCount: Number(stats.copyCount ?? list.copyCount) || 0,
         viewCount: Number(stats.viewCount ?? list.viewCount) || 0,
         featured: Boolean(list.featured),
@@ -96,28 +99,30 @@ async function syncUserPublicLists(user) {
     if (!user || !user._id || !user.library || !db.publicLists) return;
 
     const lists = Array.isArray(user.library.lists) ? user.library.lists : [];
-    const publicExternalIds = lists
-        .filter((list) => list.externalId && isDiscoverableVisibility(list.visibility))
-        .map((list) => list.externalId);
+    const projectedExternalIds = [];
 
     for (const list of lists) {
         if (!list.externalId) continue;
-        if (!isDiscoverableVisibility(list.visibility)) {
+        const version = isDiscoverableVisibility(list.visibility)
+            ? await getLatestOwnedVersion(user, list.externalId)
+            : null;
+        if (!version) {
             await db.publicLists.deleteOne({ externalId: list.externalId });
             continue;
         }
         const stats = await getListStats(list.externalId);
-        const projection = buildPublicListProjection(user, list, stats);
+        const projection = buildPublicListProjection(user, list, stats, version);
         await db.publicLists.updateOne(
             { externalId: list.externalId },
             { $set: projection },
             { upsert: true },
         );
+        projectedExternalIds.push(list.externalId);
     }
 
     await db.publicLists.deleteMany({
         ownerId: new ObjectId(user._id),
-        externalId: { $nin: publicExternalIds },
+        externalId: { $nin: projectedExternalIds },
     });
 }
 

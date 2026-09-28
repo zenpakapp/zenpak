@@ -4,6 +4,7 @@ const express = require('express');
 const { logWithRequest } = require('./log.js');
 const { authenticateUser, verifyPassword } = require('./auth.js');
 const { canonicalEmail, emailLookup } = require('./email-policy.js');
+const { deleteVersionsForOwner } = require('./list-versions.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -102,6 +103,10 @@ function deleteAccount(req, res, user) {
             }
 
             db.users.remove(user, true);
+
+            deleteVersionsForOwner(user._id).catch((err) => {
+                logWithRequest(req, { message: 'failed to delete list versions on account delete', username: user.username, error: err.message });
+            });
 
             logWithRequest(req, { message: 'Completed account delete', username: user.username });
 
