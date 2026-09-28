@@ -163,7 +163,18 @@
     "errorSavingSettings": "Ocurrió un error al guardar tu configuración de compartir. Por favor intenta más tarde.",
     "errorSavingSettingsDetail": "Ocurrió un error al intentar guardar tu configuración de compartir. Por favor intenta más tarde.",
     "errorSavingTags": "Ocurrió un error al guardar tus etiquetas de comunidad. Por favor intenta más tarde.",
-    "errorGettingId": "Ocurrió un error al intentar obtener un ID para tu lista. Por favor intenta más tarde."
+    "errorGettingId": "Ocurrió un error al intentar obtener un ID para tu lista. Por favor intenta más tarde.",
+    "publishTitle": "Publicar",
+    "publishHint": "Los visitantes solo ven la última versión que publicaste. Tus cambios se guardan, pero siguen siendo privados hasta que publiques.",
+    "publish": "Publicar",
+    "publishing": "Publicando…",
+    "publishNotePlaceholder": "¿Qué ha cambiado? (opcional)",
+    "publishedVersion": "Publicado v{version}",
+    "unpublishedChanges": "Cambios sin publicar",
+    "notPublished": "Aún no publicado",
+    "publishSuccess": "v{version} publicada.",
+    "publishNoChanges": "No hay nada nuevo que publicar.",
+    "errorPublishing": "Ocurrió un error al publicar tu lista. Por favor intenta más tarde."
   },
   "public": {
     "category": "Categoría",

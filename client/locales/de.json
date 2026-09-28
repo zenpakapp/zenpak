@@ -163,7 +163,18 @@
     "errorSavingSettings": "Beim Speichern deiner Freigabeeinstellungen ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
     "errorSavingSettingsDetail": "Beim Versuch, deine Freigabeeinstellungen zu speichern, ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
     "errorSavingTags": "Beim Speichern deiner Community-Tags ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
-    "errorGettingId": "Beim Versuch, eine ID für deine Liste zu erhalten, ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+    "errorGettingId": "Beim Versuch, eine ID für deine Liste zu erhalten, ist ein Fehler aufgetreten. Bitte versuche es später erneut.",
+    "publishTitle": "Veröffentlichen",
+    "publishHint": "Besucher sehen nur die letzte Version, die du veröffentlicht hast. Deine Änderungen werden gespeichert, bleiben aber privat, bis du veröffentlichst.",
+    "publish": "Veröffentlichen",
+    "publishing": "Wird veröffentlicht …",
+    "publishNotePlaceholder": "Was hat sich geändert? (optional)",
+    "publishedVersion": "Veröffentlicht v{version}",
+    "unpublishedChanges": "Nicht veröffentlichte Änderungen",
+    "notPublished": "Noch nicht veröffentlicht",
+    "publishSuccess": "v{version} veröffentlicht.",
+    "publishNoChanges": "Nichts Neues zum Veröffentlichen.",
+    "errorPublishing": "Beim Veröffentlichen deiner Liste ist ein Fehler aufgetreten. Bitte versuche es später erneut."
   },
   "public": {
     "category": "Kategorie",

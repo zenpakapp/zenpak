@@ -163,7 +163,18 @@
     "errorSavingSettings": "An error occurred while saving your sharing settings. Please try again later.",
     "errorSavingSettingsDetail": "An error occurred while attempting to save your sharing settings. Please try again later.",
     "errorSavingTags": "An error occurred while saving your community tags. Please try again later.",
-    "errorGettingId": "An error occurred while attempting to get an ID for your list. Please try again later."
+    "errorGettingId": "An error occurred while attempting to get an ID for your list. Please try again later.",
+    "publishTitle": "Publish",
+    "publishHint": "Viewers only see the last version you published. Your edits are saved, but they stay private until you publish.",
+    "publish": "Publish",
+    "publishing": "Publishing…",
+    "publishNotePlaceholder": "What changed? (optional)",
+    "publishedVersion": "Published v{version}",
+    "unpublishedChanges": "Unpublished changes",
+    "notPublished": "Not published yet",
+    "publishSuccess": "Published v{version}.",
+    "publishNoChanges": "Nothing new to publish.",
+    "errorPublishing": "An error occurred while publishing your list. Please try again later."
   },
   "public": {
     "category": "Category",

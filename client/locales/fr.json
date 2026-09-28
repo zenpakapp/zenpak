@@ -163,7 +163,18 @@
     "errorSavingSettings": "Une erreur est survenue lors de l'enregistrement de vos paramètres de partage. Veuillez réessayer plus tard.",
     "errorSavingSettingsDetail": "Une erreur est survenue lors de la tentative d'enregistrement de vos paramètres de partage. Veuillez réessayer plus tard.",
     "errorSavingTags": "Une erreur est survenue lors de l'enregistrement de vos tags communautaires. Veuillez réessayer plus tard.",
-    "errorGettingId": "Une erreur est survenue lors de la tentative d'obtention d'un identifiant pour votre liste. Veuillez réessayer plus tard."
+    "errorGettingId": "Une erreur est survenue lors de la tentative d'obtention d'un identifiant pour votre liste. Veuillez réessayer plus tard.",
+    "publishTitle": "Publier",
+    "publishHint": "Les visiteurs ne voient que la dernière version que vous avez publiée. Vos modifications sont enregistrées, mais restent privées tant que vous ne publiez pas.",
+    "publish": "Publier",
+    "publishing": "Publication…",
+    "publishNotePlaceholder": "Qu'est-ce qui a changé ? (facultatif)",
+    "publishedVersion": "Publié v{version}",
+    "unpublishedChanges": "Modifications non publiées",
+    "notPublished": "Pas encore publié",
+    "publishSuccess": "v{version} publiée.",
+    "publishNoChanges": "Rien de nouveau à publier.",
+    "errorPublishing": "Une erreur est survenue lors de la publication de votre liste. Veuillez réessayer plus tard."
   },
   "public": {
     "category": "Catégorie",
