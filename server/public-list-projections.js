@@ -107,7 +107,7 @@ async function syncUserPublicLists(user) {
             ? await getLatestOwnedVersion(user, list.externalId)
             : null;
         if (!version) {
-            await db.publicLists.deleteOne({ externalId: list.externalId });
+            await db.publicLists.deleteOne({ externalId: list.externalId, ownerId: new ObjectId(user._id) });
             continue;
         }
         const stats = await getListStats(list.externalId);

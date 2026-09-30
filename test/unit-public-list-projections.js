@@ -6,7 +6,8 @@ const listVersionsDb = createListVersionsStub();
 const projections = [];
 const publicListsDb = {
     deleteOne(filter) {
-        const i = projections.findIndex((p) => p.externalId === filter.externalId);
+        const i = projections.findIndex((p) => p.externalId === filter.externalId
+            && (!filter.ownerId || String(p.ownerId) === String(filter.ownerId)));
         if (i >= 0) projections.splice(i, 1);
         return Promise.resolve();
     },
@@ -58,10 +59,13 @@ async function run() {
     await syncUserPublicLists(owner);
     assert('a list that is no longer discoverable is removed from Discover', projections.length === 0);
     owner.library.lists[0].visibility = 'discoverable';
+    await syncUserPublicLists(owner);
+    assert('owner projection re-synced before the impostor test', projections.length === 1 && projections[0].ownerUsername === 'alice');
 
     const impostor = buildOwnerUser({ username: 'mallory' });
     await syncUserPublicLists(impostor);
     assert('a snapshot owned by another account is never projected for a claimant', projections.every((p) => p.ownerUsername !== 'mallory'));
+    assert('the real owner\'s projection survives an impostor syncing a colliding externalId', projections.some((p) => p.ownerUsername === 'alice' && p.externalId === 'abc123'));
 
     const live = buildPublicListProjection(buildOwnerUser(), buildOwnerUser().library.lists[0], {}, null);
     assert('without a version the projection still builds from the live list (backward compatible)', live.name === 'PCT' && live.externalId === 'abc123');
