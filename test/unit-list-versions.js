@@ -52,6 +52,18 @@ const publicFieldChanged = buildFrozenLibrary(owner.library, 'abc123');
 publicFieldChanged.lists[0].publicFields.price = false;
 assert('hash changes when a public field toggles', hashFrozenLibrary(publicFieldChanged) !== hashFrozenLibrary(fresh));
 
+const beforeUnrelatedEdit = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.sequence += 7; // simulates creating an item/category/list anywhere else in the account
+const afterUnrelatedEdit = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores the account-wide sequence counter', hashFrozenLibrary(afterUnrelatedEdit) === hashFrozenLibrary(beforeUnrelatedEdit));
+owner.library.sequence -= 7;
+
+const beforeUnitChange = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.itemUnit = 'oz';
+const afterUnitChange = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores a global itemUnit preference change', hashFrozenLibrary(afterUnitChange) === hashFrozenLibrary(beforeUnitChange));
+owner.library.itemUnit = 'g';
+
 console.log('\n--- computeTotals ---');
 const totals = computeTotals(fresh);
 assert('qty sums placement quantities', totals.qty === 3);

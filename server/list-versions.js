@@ -12,6 +12,10 @@ const PUBLISHED_LIST_FIELDS = [
     'publicFields', 'sourceListInfoHidden', LEGACY_HIDDEN_FIELD,
 ];
 const SHARE_SETTING_FIELDS = ['visibility', 'allowSearchIndexing', 'copyable'];
+// Library-wide fields that describe the account, not this list's content — excluded from the
+// content hash so an unrelated edit elsewhere in the account (or a global preference change)
+// doesn't flag this list as having unpublished changes or defeat publishVersion's dedupe.
+const NON_CONTENT_LIBRARY_FIELDS = ['sequence', 'totalUnit', 'itemUnit', 'optionalFields', 'entitlements', 'publicProfile'];
 const NOTE_MAX_LENGTH = 200;
 
 function clone(value) {
@@ -74,6 +78,7 @@ function hashFrozenLibrary(frozen) {
     forHash.lists.forEach((list) => {
         SHARE_SETTING_FIELDS.forEach((field) => { delete list[field]; });
     });
+    NON_CONTENT_LIBRARY_FIELDS.forEach((field) => { delete forHash[field]; });
     return crypto.createHash('sha256').update(stableStringify(forHash)).digest('hex');
 }
 
