@@ -44,6 +44,25 @@ async function run() {
     const publicFieldsOverlaid = await getServedUser(owner, 'abc123');
     assert('publicFields toggles are overlaid live without a new publish', publicFieldsOverlaid.library.lists[0].publicFields.downloadable === true);
 
+    owner.library.publicProfile.displayName = 'Alice B';
+    owner.library.entitlements.plan = 'creator';
+    owner.library.totalUnit = 'lb';
+    owner.library.itemUnit = 'oz';
+    owner.library.currencySymbol = '£';
+    owner.library.creator.disclosure = 'Updated disclosure';
+    const libraryFieldsOverlaid = await getServedUser(owner, 'abc123');
+    assert('profile display name is overlaid live without a new publish', libraryFieldsOverlaid.library.publicProfile.displayName === 'Alice B');
+    assert('entitlements plan is overlaid live without a new publish', libraryFieldsOverlaid.library.entitlements.plan === 'creator');
+    assert('totalUnit/itemUnit are overlaid live without a new publish', libraryFieldsOverlaid.library.totalUnit === 'lb' && libraryFieldsOverlaid.library.itemUnit === 'oz');
+    assert('currencySymbol is overlaid live without a new publish', libraryFieldsOverlaid.library.currencySymbol === '£');
+    assert('creator settings are overlaid live without a new publish', libraryFieldsOverlaid.library.creator.disclosure === 'Updated disclosure');
+    owner.library.publicProfile.displayName = 'Alice A';
+    owner.library.entitlements.plan = 'trail';
+    owner.library.totalUnit = 'g';
+    owner.library.itemUnit = 'g';
+    owner.library.currencySymbol = '€';
+    owner.library.creator.disclosure = 'Affiliate links inside';
+
     owner.library.lists[0].visibility = 'private';
     assert('unsharing takes effect immediately', (await getServedUser(owner, 'abc123')) === null);
     owner.library.lists[0].visibility = 'discoverable';

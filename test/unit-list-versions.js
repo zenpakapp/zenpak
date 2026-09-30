@@ -64,6 +64,30 @@ const afterUnitChange = buildFrozenLibrary(owner.library, 'abc123');
 assert('hash ignores a global itemUnit preference change', hashFrozenLibrary(afterUnitChange) === hashFrozenLibrary(beforeUnitChange));
 owner.library.itemUnit = 'g';
 
+const beforeProfileChange = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.publicProfile.displayName = 'Alice B';
+const afterProfileChange = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores a profile display name change', hashFrozenLibrary(afterProfileChange) === hashFrozenLibrary(beforeProfileChange));
+owner.library.publicProfile.displayName = 'Alice A';
+
+const beforePlanChange = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.entitlements.plan = 'creator';
+const afterPlanChange = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores an entitlements plan change', hashFrozenLibrary(afterPlanChange) === hashFrozenLibrary(beforePlanChange));
+owner.library.entitlements.plan = 'trail';
+
+const beforeCurrencyChange = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.currencySymbol = '£';
+const afterCurrencyChange = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores a currencySymbol preference change', hashFrozenLibrary(afterCurrencyChange) === hashFrozenLibrary(beforeCurrencyChange));
+owner.library.currencySymbol = '€';
+
+const beforeCreatorChange = buildFrozenLibrary(owner.library, 'abc123');
+owner.library.creator.disclosure = 'Updated affiliate disclosure';
+const afterCreatorChange = buildFrozenLibrary(owner.library, 'abc123');
+assert('hash ignores an unrelated creator affiliate-rule change', hashFrozenLibrary(afterCreatorChange) === hashFrozenLibrary(beforeCreatorChange));
+owner.library.creator.disclosure = 'Affiliate links inside';
+
 console.log('\n--- computeTotals ---');
 const totals = computeTotals(fresh);
 assert('qty sums placement quantities', totals.qty === 3);

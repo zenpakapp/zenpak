@@ -12,10 +12,15 @@ const PUBLISHED_LIST_FIELDS = [
     'publicFields', 'sourceListInfoHidden', LEGACY_HIDDEN_FIELD,
 ];
 const SHARE_SETTING_FIELDS = ['visibility', 'allowSearchIndexing', 'copyable', 'publicFields'];
-// Library-wide fields that describe the account, not this list's content — excluded from the
-// content hash so an unrelated edit elsewhere in the account (or a global preference change)
-// doesn't flag this list as having unpublished changes or defeat publishVersion's dedupe.
-const NON_CONTENT_LIBRARY_FIELDS = ['sequence', 'totalUnit', 'itemUnit', 'optionalFields', 'entitlements', 'publicProfile'];
+// Library-level fields that reflect live account state (profile display name, plan, unit/
+// currency preferences, affiliate rules) rather than this list's content — overlaid live in
+// getServedUser (the library-level analogue of SHARE_SETTING_FIELDS) and excluded from the
+// content hash, so an account-wide change doesn't flag every shared list as unpublished.
+const LIBRARY_LEVEL_LIVE_FIELDS = ['publicProfile', 'entitlements', 'totalUnit', 'itemUnit', 'currencySymbol', 'creator'];
+// Library-wide fields excluded from the hash but with no live-relevant rendering to overlay:
+// sequence is an internal id counter, optionalFields is a display preference already baked
+// into the frozen library's own rendering.
+const NON_CONTENT_LIBRARY_FIELDS = ['sequence', 'optionalFields', ...LIBRARY_LEVEL_LIVE_FIELDS];
 const NOTE_MAX_LENGTH = 200;
 
 function clone(value) {
@@ -179,6 +184,11 @@ async function getServedUser(user, externalId) {
     SHARE_SETTING_FIELDS.forEach((field) => {
         if (typeof liveList[field] === 'undefined') delete publishedList[field];
         else publishedList[field] = liveList[field];
+    });
+    const liveLibrary = user.library || {};
+    LIBRARY_LEVEL_LIVE_FIELDS.forEach((field) => {
+        if (typeof liveLibrary[field] === 'undefined') delete library[field];
+        else library[field] = liveLibrary[field];
     });
     return { ...user, library, publishedVersion: version.version };
 }
