@@ -2,6 +2,7 @@
 'use strict';
 
 const { ObjectId } = require('mongodb');
+const { createListVersionsStub, createUsersStub, buildOwnerUser } = require('./fixtures/list-versions-fixtures.js');
 
 // --- fixtures ---
 const reporterUser = {
@@ -39,8 +40,12 @@ const resolvedReport = {
 // --- stubs ---
 let reportsStore = [];
 let savedDoc = null;
+const usersStore = [];
+const listVersionsStub = createListVersionsStub();
 
 const dbStub = {
+    users: createUsersStub(usersStore),
+    listVersions: listVersionsStub,
     reports: {
         findOne(query) {
             if (query._id) {
@@ -81,6 +86,7 @@ require.cache[require.resolve('../server/auth.js')] = {
 };
 
 const router = require('../server/report-endpoints.js');
+const { publishVersion } = require('../server/list-versions.js');
 
 // --- helpers ---
 let passed = 0; let failed = 0;
@@ -109,7 +115,13 @@ async function run() {
     const patchRoute = router.stack.find(l => l.route && l.route.path === '/:id' && l.route.methods.patch);
     assert('PATCH /:id route exists', Boolean(patchRoute));
 
-    if (!postRoute || !getRoute || !patchRoute) {
+    const featureRoute = router.stack.find(l => l.route && l.route.path === '/feature/:externalId' && l.route.methods.post);
+    assert('POST /feature/:externalId route exists', Boolean(featureRoute));
+
+    const unpublishRoute = router.stack.find(l => l.route && l.route.path === '/unpublish/:externalId' && l.route.methods.post);
+    assert('POST /unpublish/:externalId route exists', Boolean(unpublishRoute));
+
+    if (!postRoute || !getRoute || !patchRoute || !featureRoute || !unpublishRoute) {
         console.error('Skipping functional tests — routes missing');
         console.log(`\n${passed} passed, ${failed} failed`);
         process.exit(1);
@@ -303,6 +315,61 @@ async function run() {
 
         assert('PATCH /:id not found returns 404', statusCode === 404);
         assert('PATCH /:id not found returns message', data && typeof data.message === 'string');
+    }
+
+    // --- POST /feature/:externalId : resolves owner via published snapshot, impostor immune ---
+    {
+        usersStore.length = 0;
+        const owner = buildOwnerUser({ username: 'owner1' });
+        const impostor = buildOwnerUser({ username: 'mallory' }); // same externalId 'abc123', never published
+        usersStore.push(impostor, owner); // impostor listed first — a naive findOne on externalId would hit it first
+        await publishVersion(owner, 'abc123', '');
+
+        const req = { params: { externalId: 'abc123' } };
+        const { statusCode, data } = await new Promise(resolve => {
+            const res = makeRes(resolve);
+            featureRoute.route.stack[0].handle(req, res, () => {});
+        });
+
+        assert('POST /feature toggles the real published owner\'s list', statusCode === 200 && data.ok === true && data.featured === true);
+        const ownerList = owner.library.lists.find(l => l.externalId === 'abc123');
+        const impostorList = impostor.library.lists.find(l => l.externalId === 'abc123');
+        assert('POST /feature featured the real owner\'s list', ownerList.featured === true);
+        assert('POST /feature does not touch the impostor\'s colliding list', impostorList.featured !== true);
+    }
+
+    // --- POST /feature/:externalId : unpublished/unknown externalId is 404 ---
+    {
+        usersStore.length = 0;
+        const req = { params: { externalId: 'ghost' } };
+        const { statusCode, data } = await new Promise(resolve => {
+            const res = makeRes(resolve);
+            featureRoute.route.stack[0].handle(req, res, () => {});
+        });
+
+        assert('POST /feature unknown externalId returns 404', statusCode === 404);
+        assert('POST /feature unknown externalId returns message', data && typeof data.message === 'string');
+    }
+
+    // --- POST /unpublish/:externalId : resolves owner via published snapshot, impostor immune ---
+    {
+        usersStore.length = 0;
+        const owner = buildOwnerUser({ username: 'owner2', externalId: 'unpub1' });
+        const impostor = buildOwnerUser({ username: 'eve', externalId: 'unpub1' }); // never published
+        usersStore.push(impostor, owner); // impostor listed first
+        await publishVersion(owner, 'unpub1', '');
+
+        const req = { params: { externalId: 'unpub1' } };
+        const { statusCode, data } = await new Promise(resolve => {
+            const res = makeRes(resolve);
+            unpublishRoute.route.stack[0].handle(req, res, () => {});
+        });
+
+        assert('POST /unpublish returns ok', statusCode === 200 && data.ok === true);
+        const ownerList = owner.library.lists.find(l => l.externalId === 'unpub1');
+        const impostorList = impostor.library.lists.find(l => l.externalId === 'unpub1');
+        assert('POST /unpublish sets the real owner\'s list private', ownerList.visibility === 'private');
+        assert('POST /unpublish does not touch the impostor\'s colliding list', impostorList.visibility !== 'private');
     }
 
     // --- summary ---
