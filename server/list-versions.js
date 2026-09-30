@@ -11,7 +11,7 @@ const PUBLISHED_LIST_FIELDS = [
     'visibility', 'allowSearchIndexing', 'copyable', 'categoryIds', 'forkedFrom',
     'publicFields', 'sourceListInfoHidden', LEGACY_HIDDEN_FIELD,
 ];
-const SHARE_SETTING_FIELDS = ['visibility', 'allowSearchIndexing', 'copyable'];
+const SHARE_SETTING_FIELDS = ['visibility', 'allowSearchIndexing', 'copyable', 'publicFields'];
 // Library-wide fields that describe the account, not this list's content — excluded from the
 // content hash so an unrelated edit elsewhere in the account (or a global preference change)
 // doesn't flag this list as having unpublished changes or defeat publishVersion's dedupe.

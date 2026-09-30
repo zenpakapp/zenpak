@@ -40,6 +40,10 @@ async function run() {
     const overlaid = await getServedUser(owner, 'abc123');
     assert('share settings are overlaid live', overlaid.library.lists[0].copyable === true && overlaid.library.lists[0].visibility === 'shareable');
 
+    owner.library.lists[0].publicFields = { ...owner.library.lists[0].publicFields, downloadable: true };
+    const publicFieldsOverlaid = await getServedUser(owner, 'abc123');
+    assert('publicFields toggles are overlaid live without a new publish', publicFieldsOverlaid.library.lists[0].publicFields.downloadable === true);
+
     owner.library.lists[0].visibility = 'private';
     assert('unsharing takes effect immediately', (await getServedUser(owner, 'abc123')) === null);
     owner.library.lists[0].visibility = 'discoverable';

@@ -50,7 +50,7 @@ renamed.lists[0].name = 'PCT v2';
 assert('hash changes when the list name changes', hashFrozenLibrary(renamed) !== hashFrozenLibrary(fresh));
 const publicFieldChanged = buildFrozenLibrary(owner.library, 'abc123');
 publicFieldChanged.lists[0].publicFields.price = false;
-assert('hash changes when a public field toggles', hashFrozenLibrary(publicFieldChanged) !== hashFrozenLibrary(fresh));
+assert('hash ignores publicFields toggles (applies live, like visibility)', hashFrozenLibrary(publicFieldChanged) === hashFrozenLibrary(fresh));
 
 const beforeUnrelatedEdit = buildFrozenLibrary(owner.library, 'abc123');
 owner.library.sequence += 7; // simulates creating an item/category/list anywhere else in the account
