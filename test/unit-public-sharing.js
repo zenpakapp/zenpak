@@ -1,6 +1,12 @@
 'use strict';
 
-const { buildPublicList, resolvePublicItemLink } = require('../server/public-sharing.js');
+const { ObjectId } = require('mongodb');
+const { createListVersionsStub, stubServerModule } = require('./fixtures/list-versions-fixtures.js');
+
+stubServerModule('db.js', { listVersions: createListVersionsStub() });
+
+const { buildPublicList, buildPublicProfile, resolvePublicItemLink } = require('../server/public-sharing.js');
+const { publishVersion } = require('../server/list-versions.js');
 const weightUtils = require('../client/utils/weight.js');
 
 let passed = 0; let failed = 0;
@@ -248,5 +254,54 @@ assert('worn qty 2 recalculated to ×qty (old ×1 persisted)', wornRecalcPayload
 assert('category subtotalWornWeight recalculated to ×qty', wornRecalcPayload.categories[0].subtotalWornWeight === 290000);
 assert('worn weight served as 0.29 kg', weightUtils.MgToWeight(wornRecalcPayload.list.totalWornWeight, 'kg') === 0.29);
 
-console.log(`\n${passed} passed, ${failed} failed`);
-process.exit(failed > 0 ? 1 : 0);
+const profileTestUser = {
+    _id: new ObjectId(),
+    username: 'trailblazer',
+    library: {
+        version: '0.3',
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        publicProfile: { displayName: 'Trail Blazer', visibility: 'discoverable' },
+        entitlements: {},
+        creator: {},
+        items: [
+            {
+                id: 1, name: 'Tent', weight: 900000, authorUnit: 'g', price: 500,
+            },
+        ],
+        categories: [
+            { id: 2, name: 'Shelter', categoryItems: [{ itemId: 1, qty: 1 }] },
+        ],
+        lists: [
+            {
+                id: 10, externalId: 'published-list', name: 'Published Trail', visibility: 'shareable', categoryIds: [2], seasons: ['summer'], listTypes: ['trek'],
+            },
+            {
+                id: 11, externalId: 'unpublished-list', name: 'Unpublished Trail', visibility: 'shareable', categoryIds: [2], seasons: [], listTypes: [],
+            },
+        ],
+    },
+};
+
+async function runProfileTests() {
+    console.log('\n--- buildPublicProfile (snapshot-only content) ---');
+    let profilePayload = await buildPublicProfile(profileTestUser);
+    assert('no list is served on the profile before anything is published', profilePayload.lists.length === 0);
+
+    await publishVersion(profileTestUser, 'published-list', '');
+    profilePayload = await buildPublicProfile(profileTestUser);
+    assert('the published list appears on the profile', profilePayload.lists.length === 1 && profilePayload.lists[0].externalId === 'published-list');
+    assert('a shared but never-published list is excluded from the profile', !profilePayload.lists.some((l) => l.externalId === 'unpublished-list'));
+
+    profileTestUser.library.lists[0].name = 'LIVE EDIT AFTER PUBLISH';
+    const afterLiveEdit = await buildPublicProfile(profileTestUser);
+    assert('unpublished live edits to a published list are not served on the profile', afterLiveEdit.lists[0].name === 'Published Trail');
+}
+
+runProfileTests().then(() => {
+    console.log(`\n${passed} passed, ${failed} failed`);
+    process.exit(failed > 0 ? 1 : 0);
+}).catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

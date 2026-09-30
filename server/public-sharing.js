@@ -4,6 +4,7 @@ const {
 } = require('../client/services/public-visibility.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { Library } = require('../client/models/library.js');
+const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -89,7 +90,27 @@ function sanitizeListSummary(list, options = {}) {
     };
 }
 
-function publicListsForProfile(library) {
+// Nothing not-yet-published is served anywhere: build the summary from the list's latest
+// OWNED published snapshot, not the live list. Share settings (visibility, copyable, ...)
+// still come from the live list, mirroring how getServedUser overlays them at read time.
+async function buildProfileListSummary(user, list) {
+    if (!list.externalId) return null;
+    const version = await getLatestOwnedVersion(user, list.externalId);
+    if (!version) return null;
+
+    const frozen = JSON.parse(JSON.stringify(version.library));
+    const publishedListRaw = frozen.lists[0];
+    SHARE_SETTING_FIELDS.forEach((field) => {
+        if (typeof list[field] === 'undefined') delete publishedListRaw[field];
+        else publishedListRaw[field] = list[field];
+    });
+
+    const publishedLibrary = new Library();
+    publishedLibrary.load(frozen);
+    return sanitizeListSummary(publishedLibrary.lists[0]);
+}
+
+async function publicListsForProfile(user, library) {
     const profile = library.publicProfile || {};
     const featuredListIds = Array.isArray(profile.featuredListIds) ? profile.featuredListIds : [];
     const featuredOnly = featuredListIds.length > 0;
@@ -98,10 +119,12 @@ function publicListsForProfile(library) {
         return lookup;
     }, {});
 
-    return (library.lists || [])
+    const candidates = (library.lists || [])
         .filter((list) => isPublicVisibility(list.visibility))
-        .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)])
-        .map(sanitizeListSummary);
+        .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)]);
+
+    const summaries = await Promise.all(candidates.map((list) => buildProfileListSummary(user, list)));
+    return summaries.filter(Boolean);
 }
 
 function findListByExternalId(library, externalId) {
@@ -229,7 +252,7 @@ function listHasExplicitSourceListInfo(library, list) {
 }
 const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
 
-function buildPublicProfile(user) {
+async function buildPublicProfile(user) {
     const library = getLibrary(user);
     const profile = library && library.publicProfile;
 
@@ -258,7 +281,7 @@ function buildPublicProfile(user) {
         username: user.username || '',
         profile: sanitizeProfile(profile),
         entitlements: sanitizeEntitlements(library.entitlements),
-        lists: publicListsForProfile(library),
+        lists: await publicListsForProfile(user, library),
         affiliateDisclosure: library.creator && library.creator.disclosure ? library.creator.disclosure : '',
         hasAffiliateDisclosure: Boolean(library.creator && library.creator.disclosure),
         creatorCodes,

@@ -220,6 +220,7 @@ async function deleteVersionsForOwner(userId) {
 }
 
 module.exports = {
+    SHARE_SETTING_FIELDS,
     buildFrozenLibrary,
     hashFrozenLibrary,
     computeTotals,
