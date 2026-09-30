@@ -51,10 +51,26 @@ function fixtureUser() {
 
 console.log('\n--- CSV export (server/views.js GET /csv/:id) omits qtyBeforeOptional ---');
 
+// server/views.js's /csv/:id now serves the published snapshot (list-versions.js),
+// not the live library — seed one so loadPublishedLibraryByExternalId resolves.
+// The db.js stub must be installed BEFORE list-versions.js is first required below,
+// since list-versions.js captures `db` in a module-level const at require time —
+// patching require.cache afterwards would not reach an already-loaded module.
+let publishedSnapshot = null;
+
 require.cache[require.resolve('../server/db.js')] = {
     exports: {
         users: {
-            findOne(query, callback) { callback(null, fixtureUser()); },
+            findOne(query, callback) {
+                const user = fixtureUser();
+                if (callback) { callback(null, user); return undefined; }
+                return Promise.resolve(user);
+            },
+        },
+        listVersions: {
+            findSorted(query) {
+                return Promise.resolve(query.externalId === 'ext-1' && publishedSnapshot ? [publishedSnapshot] : []);
+            },
         },
     },
     id: require.resolve('../server/db.js'),
@@ -62,6 +78,16 @@ require.cache[require.resolve('../server/db.js')] = {
     loaded: true,
     children: [],
     paths: [],
+};
+
+const { buildFrozenLibrary } = require('../server/list-versions.js');
+
+const fixtureOwner = fixtureUser();
+publishedSnapshot = {
+    externalId: 'ext-1',
+    version: 1,
+    ownerId: fixtureOwner._id,
+    library: buildFrozenLibrary(fixtureOwner.library, 'ext-1'),
 };
 
 async function runCsvTest() {
