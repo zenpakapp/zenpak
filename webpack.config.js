@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const VueI18nPlugin = require('@intlify/unplugin-vue-i18n/webpack');
 
 const vueFeatureFlags = {
     __VUE_OPTIONS_API__: JSON.stringify(true),
@@ -120,6 +121,12 @@ module.exports = {
     devtool: false,
     plugins: [
         new VueLoaderPlugin(),
+        VueI18nPlugin({
+            include: [path.resolve(__dirname, './client/locales/**')],
+            compositionOnly: false,
+            jitCompilation: false,
+            strictMessage: false,
+        }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
         }),
