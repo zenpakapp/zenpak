@@ -40,6 +40,13 @@ export default {
                 clearTimeout(this.hideTimeout);
                 this.hideTimeout = null;
             }
+            // mouseenter fires on the whole popover (target + content), so moving the
+            // mouse while interacting with a control inside an already-open popover
+            // re-triggers this. Only emit 'shown' on the genuine closed->open transition,
+            // so a one-time-setup listener (e.g. share.vue's focusShare) doesn't re-run
+            // and silently redo side effects (it previously re-promoted a list the user
+            // had just set back to private).
+            if (this.shown) return;
             this.shown = true;
             this.$emit('shown');
         },
