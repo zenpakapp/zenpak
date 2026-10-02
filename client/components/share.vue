@@ -354,7 +354,7 @@ export default {
         },
         // Publish what the server already has. Callers must have saved first (focusShare and
         // setVisibility do), so the auto-publish path adds no extra save round trip.
-        publishSnapshot() {
+        publishSnapshot({ silent = false } = {}) {
             return fetchJson(`/api/lists/${this.list.externalId}/publish`, {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -362,20 +362,24 @@ export default {
             })
                 .then((result) => {
                     this.publishNote = '';
-                    showGlobalAlert(result.created
-                        ? this.$t('share.publishSuccess', { version: result.version })
-                        : this.$t('share.publishNoChanges'));
+                    if (!silent) {
+                        showGlobalAlert(result.created
+                            ? this.$t('share.publishSuccess', { version: result.version })
+                            : this.$t('share.publishNoChanges'));
+                    }
                     return this.refreshPublishStatus();
                 })
                 .catch((err) => {
-                    showGlobalAlert((err && err.message) || this.$t('share.errorPublishing'));
+                    if (!silent) showGlobalAlert((err && err.message) || this.$t('share.errorPublishing'));
                 });
         },
+        // Auto-publish v1 the first time a list becomes shared. This is implicit
+        // bookkeeping, not a user-initiated action, so it stays silent.
         ensurePublished() {
             return this.refreshPublishStatus().then(() => {
                 if (this.isShared && this.list.externalId && !this.publishStatus.latestVersion) {
                     this.publishing = true;
-                    return this.publishSnapshot().finally(() => {
+                    return this.publishSnapshot({ silent: true }).finally(() => {
                         this.publishing = false;
                     });
                 }
