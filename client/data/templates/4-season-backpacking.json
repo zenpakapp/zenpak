@@ -14,7 +14,8 @@
   "items": [
     {
       "id": 1,
-      "name": "MSR Access 2 tent",
+      "name": "Access 2 tent",
+      "brand": "MSR",
       "description": "4-season, 2P, 56oz",
       "weight": 56,
       "authorUnit": "oz",
@@ -24,7 +25,8 @@
     },
     {
       "id": 2,
-      "name": "MSR Access 2 footprint",
+      "name": "Access 2 footprint",
+      "brand": "MSR",
       "description": "Custom fit, 9oz",
       "weight": 9,
       "authorUnit": "oz",
@@ -34,8 +36,9 @@
     },
     {
       "id": 3,
-      "name": "WM Kodiak 0°F sleeping bag",
-      "description": "Western Mountaineering, 850-fill",
+      "name": "Kodiak 0°F sleeping bag",
+      "brand": "Western Mountaineering",
+      "description": "850-fill down",
       "weight": 38,
       "authorUnit": "oz",
       "price": 0,
@@ -45,6 +48,7 @@
     {
       "id": 4,
       "name": "NeoAir XTherm sleeping pad",
+      "brand": "Therm-a-Rest",
       "description": "R-value 7.3, 15oz",
       "weight": 15,
       "authorUnit": "oz",
@@ -54,7 +58,8 @@
     },
     {
       "id": 5,
-      "name": "Sea to Summit Aeros pillow",
+      "name": "Aeros pillow",
+      "brand": "Sea to Summit",
       "description": "Ultralight inflatable",
       "weight": 2.4,
       "authorUnit": "oz",
@@ -64,7 +69,8 @@
     },
     {
       "id": 6,
-      "name": "Arc'teryx Beta AR jacket",
+      "name": "Beta AR jacket",
+      "brand": "Arc'teryx",
       "description": "Gore-Tex Pro hardshell",
       "weight": 16.8,
       "authorUnit": "oz",
@@ -74,7 +80,8 @@
     },
     {
       "id": 7,
-      "name": "Arc'teryx Cerium LT Hoody",
+      "name": "Cerium LT Hoody",
+      "brand": "Arc'teryx",
       "description": "850-fill down mid-layer",
       "weight": 9.5,
       "authorUnit": "oz",
@@ -84,7 +91,8 @@
     },
     {
       "id": 8,
-      "name": "Smartwool 250 base top",
+      "name": "250 base top",
+      "brand": "Smartwool",
       "description": "Merino mid-weight base",
       "weight": 7.8,
       "authorUnit": "oz",
@@ -94,7 +102,8 @@
     },
     {
       "id": 9,
-      "name": "Smartwool 250 base pants",
+      "name": "250 base pants",
+      "brand": "Smartwool",
       "description": "Merino mid-weight base",
       "weight": 7,
       "authorUnit": "oz",
@@ -104,7 +113,8 @@
     },
     {
       "id": 10,
-      "name": "Arc'teryx Beta AR bib pants",
+      "name": "Beta AR bib pants",
+      "brand": "Arc'teryx",
       "description": "Gore-Tex Pro, full-zip legs",
       "weight": 21.2,
       "authorUnit": "oz",
@@ -114,7 +124,8 @@
     },
     {
       "id": 11,
-      "name": "Darn Tough Mountaineering (x3)",
+      "name": "Mountaineering socks",
+      "brand": "Darn Tough",
       "description": "Full cushion, over-the-calf",
       "weight": 6,
       "authorUnit": "oz",
@@ -124,7 +135,8 @@
     },
     {
       "id": 12,
-      "name": "Rab Borealis balaclava",
+      "name": "Borealis balaclava",
+      "brand": "Rab",
       "description": "Powerstretch Pro, 2.1oz",
       "weight": 2.1,
       "authorUnit": "oz",
@@ -134,7 +146,8 @@
     },
     {
       "id": 13,
-      "name": "OR Alti mitts",
+      "name": "Alti mitts",
+      "brand": "Outdoor Research",
       "description": "Down + shell, -40°F rated",
       "weight": 7.8,
       "authorUnit": "oz",
@@ -154,7 +167,8 @@
     },
     {
       "id": 15,
-      "name": "Salomon Quest 4D GTX boots",
+      "name": "Quest 4D GTX boots",
+      "brand": "Salomon",
       "description": "Mid-cut, waterproof, stiff sole",
       "weight": 48,
       "authorUnit": "oz",
@@ -164,7 +178,8 @@
     },
     {
       "id": 16,
-      "name": "OR Crocodile gaiters",
+      "name": "Crocodile gaiters",
+      "brand": "Outdoor Research",
       "description": "Waterproof, full coverage",
       "weight": 10.6,
       "authorUnit": "oz",
@@ -174,7 +189,8 @@
     },
     {
       "id": 17,
-      "name": "BD Alpine Carbon Cork poles",
+      "name": "Alpine Carbon Cork poles",
+      "brand": "Black Diamond",
       "description": "4-section, cork grip",
       "weight": 18,
       "authorUnit": "oz",
@@ -184,7 +200,8 @@
     },
     {
       "id": 18,
-      "name": "Kahtoola MICROspikes",
+      "name": "MICROspikes",
+      "brand": "Kahtoola",
       "description": "Chain + spike traction system",
       "weight": 18,
       "authorUnit": "oz",
@@ -194,7 +211,8 @@
     },
     {
       "id": 19,
-      "name": "Garmin inReach Mini 2",
+      "name": "inReach Mini 2",
+      "brand": "Garmin",
       "description": "Satellite SOS + 2-way messaging",
       "weight": 3.5,
       "authorUnit": "oz",
@@ -204,7 +222,8 @@
     },
     {
       "id": 20,
-      "name": "Black Diamond Spot 400",
+      "name": "Spot 400",
+      "brand": "Black Diamond",
       "description": "400 lm, IPX8 waterproof",
       "weight": 3.3,
       "authorUnit": "oz",
@@ -224,7 +243,8 @@
     },
     {
       "id": 22,
-      "name": "Adventure Medical Mountain kit",
+      "name": "Mountain kit",
+      "brand": "Adventure Medical Kits",
       "description": "Wound, meds, SAM splint, tape",
       "weight": 5,
       "authorUnit": "oz",
@@ -234,7 +254,8 @@
     },
     {
       "id": 23,
-      "name": "Emergency bivy (OR SOL)",
+      "name": "Emergency bivy",
+      "brand": "SOL",
       "description": "Reflective emergency shelter",
       "weight": 3.8,
       "authorUnit": "oz",
@@ -244,7 +265,8 @@
     },
     {
       "id": 24,
-      "name": "MSR TrailShot filter",
+      "name": "TrailShot filter",
+      "brand": "MSR",
       "description": "Squeeze works in cold conditions",
       "weight": 2.3,
       "authorUnit": "oz",
@@ -254,7 +276,8 @@
     },
     {
       "id": 25,
-      "name": "Nalgene 32oz Wide Mouth (x2)",
+      "name": "32oz Wide Mouth bottle",
+      "brand": "Nalgene",
       "description": "Wide mouth for gloved hands",
       "weight": 10,
       "authorUnit": "oz",
@@ -264,7 +287,8 @@
     },
     {
       "id": 26,
-      "name": "BRS-3000T canister stove",
+      "name": "3000T canister stove",
+      "brand": "BRS",
       "description": "Titanium, 25g ultralight",
       "weight": 1,
       "authorUnit": "oz",
@@ -274,7 +298,8 @@
     },
     {
       "id": 27,
-      "name": "MSR IsoPro 227g canister",
+      "name": "IsoPro 227g canister",
+      "brand": "MSR",
       "description": "Extra fuel for cold temps",
       "weight": 13,
       "authorUnit": "oz",
@@ -284,7 +309,8 @@
     },
     {
       "id": 28,
-      "name": "Snow Peak Trek 900 pot",
+      "name": "Trek 900 pot",
+      "brand": "Snow Peak",
       "description": "900ml titanium, foldable handles",
       "weight": 6.9,
       "authorUnit": "oz",
@@ -294,7 +320,8 @@
     },
     {
       "id": 29,
-      "name": "Mountain House Pro-Pak (x3)",
+      "name": "Pro-Pak meal",
+      "brand": "Mountain House",
       "description": "Freeze-dried hot meals",
       "weight": 13,
       "authorUnit": "oz",
@@ -304,7 +331,8 @@
     },
     {
       "id": 30,
-      "name": "Osprey Aether 65",
+      "name": "Aether 65",
+      "brand": "Osprey",
       "description": "Framed 65L for heavy winter loads",
       "weight": 74,
       "authorUnit": "oz",
@@ -434,7 +462,7 @@
         {
           "itemId": 11,
           "qty": 3,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },
@@ -469,7 +497,7 @@
         {
           "itemId": 16,
           "qty": 1,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         }

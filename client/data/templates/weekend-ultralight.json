@@ -24,7 +24,7 @@
     },
     {
       "id": 2,
-      "name": "Stakes (x6)",
+      "name": "Stakes",
       "description": "Titanium shepherd's hooks",
       "weight": 2,
       "authorUnit": "oz",
@@ -104,8 +104,9 @@
     },
     {
       "id": 10,
-      "name": "Socks (x2)",
-      "description": "Injinji toe socks",
+      "name": "Toe socks",
+      "brand": "Injinji",
+      "description": "Quick-dry, blister prevention",
       "weight": 2.5,
       "authorUnit": "oz",
       "price": 0,
@@ -124,7 +125,8 @@
     },
     {
       "id": 12,
-      "name": "Sawyer Squeeze",
+      "name": "Squeeze",
+      "brand": "Sawyer",
       "description": "Inline or squeeze filter",
       "weight": 3,
       "authorUnit": "oz",
@@ -354,7 +356,7 @@
         {
           "itemId": 10,
           "qty": 2,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },

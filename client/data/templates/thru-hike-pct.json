@@ -14,7 +14,8 @@
   "items": [
     {
       "id": 1,
-      "name": "Zpacks Duplex tent",
+      "name": "Duplex tent",
+      "brand": "Zpacks",
       "description": "DCF, freestanding 2P, 17.3oz",
       "weight": 17.3,
       "authorUnit": "oz",
@@ -34,7 +35,8 @@
     },
     {
       "id": 3,
-      "name": "EE Enigma 20F quilt",
+      "name": "Enigma 20F quilt",
+      "brand": "Enlightened Equipment",
       "description": "850-fill, no-draft collar",
       "weight": 17,
       "authorUnit": "oz",
@@ -44,7 +46,8 @@
     },
     {
       "id": 4,
-      "name": "Nemo Tensor Insulated pad",
+      "name": "Tensor Insulated pad",
+      "brand": "Nemo",
       "description": "R-value 4.2, 15.5oz",
       "weight": 15.5,
       "authorUnit": "oz",
@@ -54,7 +57,8 @@
     },
     {
       "id": 5,
-      "name": "Patagonia Houdini jacket",
+      "name": "Houdini jacket",
+      "brand": "Patagonia",
       "description": "Wind/light rain shell, 3.4oz",
       "weight": 3.4,
       "authorUnit": "oz",
@@ -64,7 +68,8 @@
     },
     {
       "id": 6,
-      "name": "Arc'teryx Atom SL Hoody",
+      "name": "Atom SL Hoody",
+      "brand": "Arc'teryx",
       "description": "Coreloft 60 insulation",
       "weight": 7.2,
       "authorUnit": "oz",
@@ -74,7 +79,8 @@
     },
     {
       "id": 7,
-      "name": "Smartwool 150 base top",
+      "name": "150 base top",
+      "brand": "Smartwool",
       "description": "17.5 micron merino",
       "weight": 5.1,
       "authorUnit": "oz",
@@ -84,7 +90,8 @@
     },
     {
       "id": 8,
-      "name": "Patagonia Strider Pro shorts",
+      "name": "Strider Pro shorts",
+      "brand": "Patagonia",
       "description": "4-way stretch, liner",
       "weight": 4.2,
       "authorUnit": "oz",
@@ -94,7 +101,8 @@
     },
     {
       "id": 9,
-      "name": "Darn Tough Hiker Crew (x3)",
+      "name": "Hiker Crew socks",
+      "brand": "Darn Tough",
       "description": "Lifetime warranty merino",
       "weight": 4.5,
       "authorUnit": "oz",
@@ -104,7 +112,8 @@
     },
     {
       "id": 10,
-      "name": "Enlightened Equipment wind pants",
+      "name": "Wind pants",
+      "brand": "Enlightened Equipment",
       "description": "Argon 67 nylon, 4.0oz",
       "weight": 4,
       "authorUnit": "oz",
@@ -114,7 +123,8 @@
     },
     {
       "id": 11,
-      "name": "Outdoor Research Helios Sun Hat",
+      "name": "Helios Sun Hat",
+      "brand": "Outdoor Research",
       "description": "UPF 50+, vented, packable",
       "weight": 2.2,
       "authorUnit": "oz",
@@ -124,7 +134,8 @@
     },
     {
       "id": 12,
-      "name": "Buff neck gaiter",
+      "name": "Neck gaiter",
+      "brand": "Buff",
       "description": "UV protection",
       "weight": 1.2,
       "authorUnit": "oz",
@@ -134,7 +145,8 @@
     },
     {
       "id": 13,
-      "name": "BD Lightweight Screentap gloves",
+      "name": "Lightweight Screentap gloves",
+      "brand": "Black Diamond",
       "description": "Liner gloves, touchscreen tips",
       "weight": 1.6,
       "authorUnit": "oz",
@@ -144,7 +156,8 @@
     },
     {
       "id": 14,
-      "name": "Altra Lone Peak 7",
+      "name": "Lone Peak 7",
+      "brand": "Altra",
       "description": "Zero drop trail shoe, 25mm",
       "weight": 22.4,
       "authorUnit": "oz",
@@ -154,7 +167,8 @@
     },
     {
       "id": 15,
-      "name": "Dirty Girl Gaiters",
+      "name": "Gaiters",
+      "brand": "Dirty Girl",
       "description": "Lycra trail gaiters",
       "weight": 1.4,
       "authorUnit": "oz",
@@ -164,7 +178,8 @@
     },
     {
       "id": 16,
-      "name": "BD Distance Carbon Z poles",
+      "name": "Distance Carbon Z poles",
+      "brand": "Black Diamond",
       "description": "Z-fold 3-section, 245g/pair",
       "weight": 8.6,
       "authorUnit": "oz",
@@ -184,7 +199,8 @@
     },
     {
       "id": 18,
-      "name": "Garmin inReach Mini 2",
+      "name": "inReach Mini 2",
+      "brand": "Garmin",
       "description": "Satellite SOS + 2-way messaging",
       "weight": 3.5,
       "authorUnit": "oz",
@@ -194,7 +210,8 @@
     },
     {
       "id": 19,
-      "name": "Black Diamond Spot 400",
+      "name": "Spot 400",
+      "brand": "Black Diamond",
       "description": "400 lm, IPX8 waterproof",
       "weight": 3.3,
       "authorUnit": "oz",
@@ -204,7 +221,8 @@
     },
     {
       "id": 20,
-      "name": "Anker PowerCore 10000",
+      "name": "PowerCore 10000",
+      "brand": "Anker",
       "description": "10,000mAh, charges phone 2.5x",
       "weight": 6.6,
       "authorUnit": "oz",
@@ -224,7 +242,8 @@
     },
     {
       "id": 22,
-      "name": "Sawyer Squeeze filter",
+      "name": "Squeeze filter",
+      "brand": "Sawyer",
       "description": "0.1 micron, inline compatible",
       "weight": 3,
       "authorUnit": "oz",
@@ -234,7 +253,8 @@
     },
     {
       "id": 23,
-      "name": "Smartwater 1L (x2)",
+      "name": "1L bottle",
+      "brand": "Smartwater",
       "description": "Compatible with Sawyer threads",
       "weight": 2.8,
       "authorUnit": "oz",
@@ -244,7 +264,8 @@
     },
     {
       "id": 24,
-      "name": "Soto Windmaster stove",
+      "name": "Windmaster stove",
+      "brand": "Soto",
       "description": "4-flex, 67g, winds to 15 mph",
       "weight": 2.4,
       "authorUnit": "oz",
@@ -254,7 +275,8 @@
     },
     {
       "id": 25,
-      "name": "MSR IsoPro 110g canister",
+      "name": "IsoPro 110g canister",
+      "brand": "MSR",
       "description": "Isobutane/propane blend",
       "weight": 5.7,
       "authorUnit": "oz",
@@ -264,7 +286,8 @@
     },
     {
       "id": 26,
-      "name": "Toaks 550ml titanium pot",
+      "name": "550ml titanium pot",
+      "brand": "Toaks",
       "description": "Ultralight, 82g, foldable bail",
       "weight": 2.9,
       "authorUnit": "oz",
@@ -274,7 +297,8 @@
     },
     {
       "id": 27,
-      "name": "Toaks titanium long spork",
+      "name": "Titanium long spork",
+      "brand": "Toaks",
       "description": "19g, long handle",
       "weight": 0.6,
       "authorUnit": "oz",
@@ -285,6 +309,7 @@
     {
       "id": 28,
       "name": "Opsak food bag",
+      "brand": "Loksak",
       "description": "Odor-proof, bear area requirement",
       "weight": 1,
       "authorUnit": "oz",
@@ -294,7 +319,8 @@
     },
     {
       "id": 29,
-      "name": "Hyperlite Southwest 3400",
+      "name": "Southwest 3400",
+      "brand": "Hyperlite Mountain Gear",
       "description": "DCF frameless 55L, 595g",
       "weight": 21,
       "authorUnit": "oz",
@@ -417,7 +443,7 @@
         {
           "itemId": 9,
           "qty": 3,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },
@@ -459,7 +485,7 @@
         {
           "itemId": 15,
           "qty": 1,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         }

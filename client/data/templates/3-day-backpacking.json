@@ -15,6 +15,7 @@
     {
       "id": 1,
       "name": "Copper Spur HV UL2",
+      "brand": "Big Agnes",
       "description": "3-season freestanding 2P tent",
       "weight": 42.2,
       "authorUnit": "oz",
@@ -34,7 +35,8 @@
     },
     {
       "id": 3,
-      "name": "EE Revelation 20F quilt",
+      "name": "Revelation 20F quilt",
+      "brand": "Enlightened Equipment",
       "description": "850-fill down, differential cut",
       "weight": 21.1,
       "authorUnit": "oz",
@@ -45,6 +47,7 @@
     {
       "id": 4,
       "name": "NeoAir XLite sleeping pad",
+      "brand": "Therm-a-Rest",
       "description": "Inflatable, R-value 4.5",
       "weight": 12,
       "authorUnit": "oz",
@@ -55,6 +58,7 @@
     {
       "id": 5,
       "name": "Torrentshell 3L jacket",
+      "brand": "Patagonia",
       "description": "H2No waterproof rain jacket",
       "weight": 11.7,
       "authorUnit": "oz",
@@ -65,6 +69,7 @@
     {
       "id": 6,
       "name": "R1 Regulator fleece hoody",
+      "brand": "Patagonia",
       "description": "Grid fleece mid-layer",
       "weight": 9.7,
       "authorUnit": "oz",
@@ -75,7 +80,8 @@
     {
       "id": 7,
       "name": "Merino 150 base layer top",
-      "description": "Smartwool, 18.5 micron",
+      "brand": "Smartwool",
+      "description": "18.5 micron merino",
       "weight": 5.1,
       "authorUnit": "oz",
       "price": 0,
@@ -85,7 +91,8 @@
     {
       "id": 8,
       "name": "Merino 150 base layer pants",
-      "description": "Smartwool, 18.5 micron",
+      "brand": "Smartwool",
+      "description": "18.5 micron merino",
       "weight": 4.9,
       "authorUnit": "oz",
       "price": 0,
@@ -95,7 +102,8 @@
     {
       "id": 9,
       "name": "Ferrosi hiking pants",
-      "description": "Outdoor Research, softshell",
+      "brand": "Outdoor Research",
+      "description": "Softshell, stretch",
       "weight": 9.2,
       "authorUnit": "oz",
       "price": 0,
@@ -105,7 +113,8 @@
     {
       "id": 10,
       "name": "Capilene Cool Trail shirt",
-      "description": "Patagonia, recycled poly",
+      "brand": "Patagonia",
+      "description": "Recycled poly",
       "weight": 4.6,
       "authorUnit": "oz",
       "price": 0,
@@ -114,7 +123,8 @@
     },
     {
       "id": 11,
-      "name": "Darn Tough Hiker Crew (x3)",
+      "name": "Hiker Crew socks",
+      "brand": "Darn Tough",
       "description": "Merino wool, lifetime warranty",
       "weight": 4.5,
       "authorUnit": "oz",
@@ -124,7 +134,8 @@
     },
     {
       "id": 12,
-      "name": "ExOfficio Give-N-Go (x2)",
+      "name": "Give-N-Go boxer",
+      "brand": "ExOfficio",
       "description": "Quick-dry synthetic",
       "weight": 2.8,
       "authorUnit": "oz",
@@ -134,7 +145,8 @@
     },
     {
       "id": 13,
-      "name": "Altra Lone Peak 7",
+      "name": "Lone Peak 7",
+      "brand": "Altra",
       "description": "Zero drop, 25mm stack height",
       "weight": 22.4,
       "authorUnit": "oz",
@@ -144,7 +156,8 @@
     },
     {
       "id": 14,
-      "name": "Dirty Girl Gaiters",
+      "name": "Gaiters",
+      "brand": "Dirty Girl",
       "description": "Trail gaiters, lycra",
       "weight": 1.4,
       "authorUnit": "oz",
@@ -154,7 +167,8 @@
     },
     {
       "id": 15,
-      "name": "OR Sun Runner cap",
+      "name": "Sun Runner cap",
+      "brand": "Outdoor Research",
       "description": "UPF 50+, vented sun hat",
       "weight": 2,
       "authorUnit": "oz",
@@ -164,8 +178,9 @@
     },
     {
       "id": 16,
-      "name": "BD Lightweight Screentap gloves",
-      "description": "Black Diamond liner gloves",
+      "name": "Lightweight Screentap gloves",
+      "brand": "Black Diamond",
+      "description": "Liner gloves, touchscreen tips",
       "weight": 1.6,
       "authorUnit": "oz",
       "price": 0,
@@ -174,7 +189,8 @@
     },
     {
       "id": 17,
-      "name": "Sawyer Squeeze filter",
+      "name": "Squeeze filter",
+      "brand": "Sawyer",
       "description": "0.1 micron, inline-compatible",
       "weight": 3,
       "authorUnit": "oz",
@@ -184,7 +200,8 @@
     },
     {
       "id": 18,
-      "name": "CNOC Vecto 2L (x2)",
+      "name": "Vecto 2L",
+      "brand": "CNOC",
       "description": "Soft flask, wide-mouth fill",
       "weight": 2.4,
       "authorUnit": "oz",
@@ -194,7 +211,8 @@
     },
     {
       "id": 19,
-      "name": "BRS-3000T canister stove",
+      "name": "3000T canister stove",
+      "brand": "BRS",
       "description": "Titanium, 25g, ultra compact",
       "weight": 1,
       "authorUnit": "oz",
@@ -204,7 +222,8 @@
     },
     {
       "id": 20,
-      "name": "MSR IsoPro 110g canister",
+      "name": "IsoPro 110g canister",
+      "brand": "MSR",
       "description": "Isobutane/propane blend",
       "weight": 7.6,
       "authorUnit": "oz",
@@ -214,7 +233,8 @@
     },
     {
       "id": 21,
-      "name": "Snow Peak Trek 700 pot",
+      "name": "Trek 700 pot",
+      "brand": "Snow Peak",
       "description": "Titanium, 700ml, foldable handles",
       "weight": 4.9,
       "authorUnit": "oz",
@@ -224,7 +244,8 @@
     },
     {
       "id": 22,
-      "name": "Toaks titanium long spork",
+      "name": "Titanium long spork",
+      "brand": "Toaks",
       "description": "19g, long handle",
       "weight": 0.6,
       "authorUnit": "oz",
@@ -244,7 +265,8 @@
     },
     {
       "id": 24,
-      "name": "Mountain House Pro-Pak (x3)",
+      "name": "Pro-Pak meal",
+      "brand": "Mountain House",
       "description": "Freeze-dried, just-add-water",
       "weight": 13,
       "authorUnit": "oz",
@@ -254,7 +276,8 @@
     },
     {
       "id": 25,
-      "name": "Backpacker's Pantry oats (x2)",
+      "name": "Instant oats",
+      "brand": "Backpacker's Pantry",
       "description": "Instant oats + coffee",
       "weight": 7.2,
       "authorUnit": "oz",
@@ -264,7 +287,8 @@
     },
     {
       "id": 26,
-      "name": "Osprey Exos 58",
+      "name": "Exos 58",
+      "brand": "Osprey",
       "description": "Ultralight 58L, hipbelt pockets",
       "weight": 40.2,
       "authorUnit": "oz",
@@ -274,8 +298,9 @@
     },
     {
       "id": 27,
-      "name": "BD Trail Ergo Cork poles",
-      "description": "Black Diamond 4-section cork",
+      "name": "Trail Ergo Cork poles",
+      "brand": "Black Diamond",
+      "description": "4-section, cork grip",
       "weight": 17.6,
       "authorUnit": "oz",
       "price": 0,
@@ -284,7 +309,8 @@
     },
     {
       "id": 28,
-      "name": "Black Diamond Spot 400",
+      "name": "Spot 400",
+      "brand": "Black Diamond",
       "description": "400 lm, waterproof IPX8",
       "weight": 3.3,
       "authorUnit": "oz",
@@ -294,7 +320,8 @@
     },
     {
       "id": 29,
-      "name": "Adventure Medical Mountain kit",
+      "name": "Mountain kit",
+      "brand": "Adventure Medical Kits",
       "description": "Blister, meds, splint, tape",
       "weight": 3.5,
       "authorUnit": "oz",
@@ -434,14 +461,14 @@
         {
           "itemId": 11,
           "qty": 3,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },
         {
           "itemId": 12,
           "qty": 2,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },
@@ -455,7 +482,7 @@
         {
           "itemId": 14,
           "qty": 1,
-          "worn": false,
+          "worn": true,
           "consumable": false,
           "star": false
         },
