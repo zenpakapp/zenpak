@@ -315,6 +315,7 @@
     flex-direction: column;
     gap: 16px;
     max-height: calc(100dvh - 96px);
+    max-width: min(380px, calc(100vw - 32px));
     min-width: 280px;
     overflow-y: auto;
     padding: 8px 0 12px;
@@ -390,10 +391,14 @@
     }
 }
 
-.shareVisibilityHint {
+// .lpContent (popover.vue) sets white-space: nowrap for short popover content; this hint
+// text is a full sentence, so it must be able to wrap. Scoped under .sharePopover for
+// specificity over .lpContent's same-specificity rule, regardless of CSS load order.
+.sharePopover .shareVisibilityHint {
     color: $color-text-muted;
     font-size: $fontSize-sm;
     margin: 4px 0 0;
+    white-space: normal;
 }
 
 .shareCheckbox {
