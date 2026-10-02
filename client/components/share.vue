@@ -274,8 +274,11 @@ export default {
                 });
         },
         focusShare() {
-            this.ensureShareable();
             if (!this.list.externalId) {
+                // Only auto-promote on the very first share ever (no externalId yet).
+                // Once a list has been shared, reopening the popover must not override
+                // a visibility the user deliberately set back to private.
+                this.ensureShareable();
                 this.shareReady = false;
                 return fetchJson('/externalId', {
                     method: 'POST',
