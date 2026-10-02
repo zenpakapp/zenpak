@@ -185,11 +185,16 @@ export default {
         publishStateLabel() {
             if (!this.isShared || !this.list.externalId) return '';
             if (!this.publishStatus.latestVersion) return this.$t('share.notPublished');
-            if (this.publishStatus.hasUnpublishedChanges) return this.$t('share.unpublishedChanges');
+            if (this.hasUnpublishedChanges) return this.$t('share.unpublishedChanges');
             return this.$t('share.publishedVersion', { version: this.publishStatus.latestVersion });
         },
         publishStateDirty() {
-            return !this.publishStatus.latestVersion || this.publishStatus.hasUnpublishedChanges;
+            return !this.publishStatus.latestVersion || this.hasUnpublishedChanges;
+        },
+        // A local edit not yet autosaved can't be seen by the server's status check,
+        // so flag it right away; the next status refresh confirms or clears it.
+        hasUnpublishedChanges() {
+            return this.publishStatus.hasUnpublishedChanges || this.$store.state.hasPendingSave;
         },
     },
     watch: {

@@ -8,7 +8,15 @@ const libraryMutations = require('./mutations-library');
 const importMutations = require('./mutations-import');
 const { getSaveData } = require('../services/save-data.js');
 
-const saveInterval = 10000;
+const saveInterval = 2000;
+// Keepalive request bodies are capped at 64 KB by browsers; larger libraries use a normal fetch.
+const KEEPALIVE_MAX_BYTES = 60000;
+
+const SAVE_IGNORED_MUTATIONS = [
+    'setIsSaving', 'setSaveType', 'setSyncToken', 'setLastSaveData',
+    'signout', 'setLoggedIn', 'loadLibraryData', 'clearLibraryData',
+    'markPendingSave', 'clearPendingSave',
+];
 
 function debounce(fn, wait, options = {}) {
     let timeout = null;
@@ -49,6 +57,8 @@ const createInitialState = () => ({
     syncToken: false,
     saveType: null,
     lastSaveData: null,
+    hasPendingSave: false,
+    pendingChangeSeq: 0,
     loggedIn: false,
     emailVerified: null,
     globalAlerts: [],
@@ -60,7 +70,8 @@ const createInitialState = () => ({
     initializationStatus: 'loading',
 });
 
-function postSave(context, saveData) {
+function postSave(context, saveData, { keepalive = false } = {}) {
+    const seq = context.state.pendingChangeSeq;
     context.commit('setIsSaving', true);
     context.commit('setLastSaveData', saveData);
 
@@ -69,10 +80,12 @@ function postSave(context, saveData) {
         body: JSON.stringify({ syncToken: context.state.syncToken, username: context.state.loggedIn, data: saveData }),
         headers: { 'Content-Type': 'application/json' },
         credentials: 'same-origin',
+        keepalive: keepalive && saveData.length < KEEPALIVE_MAX_BYTES,
     })
         .then((response) => {
             context.commit('setSyncToken', response.syncToken);
             context.commit('setIsSaving', false);
+            context.commit('clearPendingSave', seq);
         })
         .catch((error) => {
             context.commit('setIsSaving', false);
@@ -174,11 +187,15 @@ const store = createStore({
             if (!state.library) return Promise.resolve();
             const saveData = getSaveData(state, preparedSaveData);
 
-            if (saveData === state.lastSaveData) return Promise.resolve();
+            if (saveData === state.lastSaveData) {
+                context.commit('clearPendingSave', state.pendingChangeSeq);
+                return Promise.resolve();
+            }
 
             if (state.saveType === 'local') {
                 setLocalLibrary(saveData);
                 context.commit('setLastSaveData', saveData);
+                context.commit('clearPendingSave', state.pendingChangeSeq);
                 return Promise.resolve();
             }
 
@@ -189,6 +206,20 @@ const store = createStore({
             }
 
             return postSave(context, saveData);
+        },
+        // Save immediately when the page is being hidden or left, so an edit made
+        // just before a reload or tab close is not lost to the autosave debounce.
+        flushSave(context) {
+            const state = context.state;
+            if (!state.hasPendingSave || !state.library) return Promise.resolve();
+            if (state.saveType !== 'remote' || !state.loggedIn) return context.dispatch('saveNow');
+
+            const saveData = getSaveData(state);
+            if (saveData === state.lastSaveData) {
+                context.commit('clearPendingSave', state.pendingChangeSeq);
+                return Promise.resolve();
+            }
+            return waitUntilNotSaving(context).then(() => postSave(context, saveData, { keepalive: true }));
         },
         async loadRemote(context) {
             try {
@@ -214,15 +245,27 @@ const store = createStore({
     },
     plugins: [
         function save(store) {
+            store.subscribe((mutation, state) => {
+                if (!state.library || SAVE_IGNORED_MUTATIONS.includes(mutation.type)) return;
+                store.commit('markPendingSave');
+            });
+
+            if (typeof window !== 'undefined') {
+                const flush = () => { store.dispatch('flushSave').catch(() => {}); };
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'hidden') flush();
+                });
+                window.addEventListener('pagehide', flush);
+            }
+
             store.subscribe(debounce((mutation, state) => {
-                const ignore = [
-                    'setIsSaving', 'setSaveType', 'setSyncToken', 'setLastSaveData',
-                    'signout', 'setLoggedIn', 'loadLibraryData', 'clearLibraryData',
-                ];
-                if (!state.library || ignore.indexOf(mutation.type) > -1) return;
+                if (!state.library || SAVE_IGNORED_MUTATIONS.includes(mutation.type)) return;
 
                 const saveData = JSON.stringify(state.library.save());
-                if (saveData === state.lastSaveData) return;
+                if (saveData === state.lastSaveData) {
+                    store.commit('clearPendingSave', state.pendingChangeSeq);
+                    return;
+                }
 
                 if (state.saveType === 'remote') {
                     store.dispatch('saveNow', saveData).catch((error) => {
@@ -237,6 +280,7 @@ const store = createStore({
                 } else if (state.saveType === 'local') {
                     setLocalLibrary(saveData);
                     store.commit('setLastSaveData', saveData);
+                    store.commit('clearPendingSave', state.pendingChangeSeq);
                 }
             }, saveInterval, { maxWait: saveInterval * 3 }));
         },

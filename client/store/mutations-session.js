@@ -35,6 +35,14 @@ module.exports = {
     setSyncToken(state, syncToken) { state.syncToken = syncToken; },
     setLastSaveData(state, lastSaveData) { state.lastSaveData = lastSaveData; },
     setIsSaving(state, isSaving) { state.isSaving = isSaving; },
+    markPendingSave(state) {
+        state.pendingChangeSeq += 1;
+        state.hasPendingSave = true;
+    },
+    // Only clear when no newer edit landed while the save was in flight.
+    clearPendingSave(state, seq) {
+        if (state.pendingChangeSeq === seq) state.hasPendingSave = false;
+    },
     signout(state) {
         clearCookie('lp');
         if (navigator.sendBeacon) {
