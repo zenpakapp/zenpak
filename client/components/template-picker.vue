@@ -279,7 +279,7 @@
                                 {{ templateName(template) }}
                             </p>
                             <p class="lpTemplatePickerCardDesc">
-                                {{ templateDescription(template) }}
+                                {{ templateDescription(template) }} — {{ templateWeight(template) }}
                             </p>
                         </div>
                         <button class="lpButton" @click="onSelect(template)">
@@ -293,8 +293,9 @@
 </template>
 
 <script>
-import { templates } from '../composables/useTemplatePicker.js';
+import { templates, templateWeightMg } from '../composables/useTemplatePicker.js';
 import { isReservedDisplayName } from '../utils/reserved-names';
+import weightUtils from '../utils/weight.js';
 
 export default {
     name: 'TemplatePicker',
@@ -365,6 +366,11 @@ export default {
         },
         templateDescription(template) {
             return this.$t(`library.templatePickerTemplates.${template.id}.description`);
+        },
+        templateWeight(template) {
+            const unit = this.setup.units === 'metric' ? 'kg' : 'lb';
+            const value = weightUtils.MgToWeight(templateWeightMg(template.data), unit);
+            return `${value} ${unit}`;
         },
         templateName(template) {
             return this.$t(`library.templatePickerTemplates.${template.id}.name`);
