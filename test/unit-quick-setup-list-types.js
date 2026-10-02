@@ -66,6 +66,28 @@ assert(
     JSON.stringify(selectedTemplateOverridesExistingTags.lists[0].listTypes) === JSON.stringify(['business']),
 );
 
+console.log('\n--- applyQuickSetup sets seasons on the seeded List ---');
+
+const withSeasons = applyQuickSetup(fixtureLibraryData(), { seasons: ['4-season', 'winter'] });
+assert('firstList.seasons is set from setup.seasons', JSON.stringify(withSeasons.lists[0].seasons) === JSON.stringify(['4-season', 'winter']));
+
+const withoutSeasons = applyQuickSetup(fixtureLibraryData(), {});
+assert('firstList.seasons defaults to [] when absent', Array.isArray(withoutSeasons.lists[0].seasons) && withoutSeasons.lists[0].seasons.length === 0);
+
+const keepsExistingSeasons = applyQuickSetup({ defaultListId: 1, lists: [{ id: 1, name: 'L', categoryIds: [], seasons: ['summer'] }] }, {});
+assert('firstList.seasons is NOT wiped when setup.seasons is absent', JSON.stringify(keepsExistingSeasons.lists[0].seasons) === JSON.stringify(['summer']));
+
+console.log('\n--- every Template carries valid List Types and Seasons ---');
+
+const { templates } = require('../client/composables/useTemplatePicker.js');
+const { LIST_TYPE_VALUES, SEASON_VALUES } = require('../client/data/list-type-options.js');
+const validTypes = LIST_TYPE_VALUES.map((o) => o.value);
+const validSeasons = SEASON_VALUES.map((o) => o.value);
+templates.forEach((template) => {
+    assert(`${template.id} has at least one valid List Type`, template.listTypes.length > 0 && template.listTypes.every((v) => validTypes.includes(v)));
+    assert(`${template.id} has at least one valid Season`, Array.isArray(template.seasons) && template.seasons.length > 0 && template.seasons.every((v) => validSeasons.includes(v)));
+});
+
 console.log('\n--- applyQuickSetup still sets listName as before (no regression) ---');
 
 const nameStillWorks = applyQuickSetup(fixtureLibraryData(), { listName: 'Renamed', listTypes: ['weekend'] });

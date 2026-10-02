@@ -38,21 +38,25 @@ const templates = [
         id: 'weekend-ultralight',
         data: toLibraryData(ultralightData),
         listTypes: ['weekend'],
+        seasons: ['3-season', 'summer'],
     },
     {
         id: '3-day-backpacking',
         data: toLibraryData(backpackingData),
         listTypes: ['weekend'],
+        seasons: ['3-season'],
     },
     {
         id: 'thru-hike-pct',
         data: toLibraryData(thruHikeData),
         listTypes: ['trek'],
+        seasons: ['3-season', 'summer'],
     },
     {
         id: '4-season-backpacking',
         data: toLibraryData(fourSeasonData),
         listTypes: ['trek'],
+        seasons: ['4-season', 'winter'],
     },
 ];
 
