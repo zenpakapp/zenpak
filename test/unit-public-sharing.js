@@ -215,7 +215,8 @@ assert('source list info rules disabled on copied list with no explicit source i
 assert('source list info codes hidden when copied list has no explicit source info', implicitlyHiddenSourceListInfoPayload.creatorCodes.length === 0);
 
 // Worn weight must be recalculated from the shared model — persisted totals
-// written under the old ×1 rule (worn weight counted once, not × qty) are stale.
+// written under the old ×qty rule (every unit counted worn) are stale. Only one
+// unit of a worn Placement is on the body; the spares stay in the pack.
 const wornRecalcPayload = buildPublicList({
     username: 'bob',
     library: {
@@ -230,9 +231,9 @@ const wornRecalcPayload = buildPublicList({
             id: 32,
             name: 'Clothing',
             categoryItems: [{ itemId: 31, qty: 2, worn: 1, consumable: false }],
-            // Stale: worn weight counted once under the old rule.
-            subtotalWeight: 145000,
-            subtotalWornWeight: 145000,
+            // Stale: worn weight counted × qty under the old rule.
+            subtotalWeight: 290000,
+            subtotalWornWeight: 290000,
             subtotalConsumableWeight: 0,
         }],
         lists: [{
@@ -242,17 +243,18 @@ const wornRecalcPayload = buildPublicList({
             visibility: 'shareable',
             publicFields: {},
             categoryIds: [32],
-            totalWeight: 145000,
-            totalWornWeight: 145000,
+            totalWeight: 290000,
+            totalWornWeight: 290000,
             totalConsumableWeight: 0,
             totalBaseWeight: 0,
         }],
     },
 }, 'worn123');
 
-assert('worn qty 2 recalculated to ×qty (old ×1 persisted)', wornRecalcPayload.list.totalWornWeight === 290000);
-assert('category subtotalWornWeight recalculated to ×qty', wornRecalcPayload.categories[0].subtotalWornWeight === 290000);
-assert('worn weight served as 0.29 kg', weightUtils.MgToWeight(wornRecalcPayload.list.totalWornWeight, 'kg') === 0.29);
+assert('worn qty 2 recalculated to one unit (old ×qty persisted)', wornRecalcPayload.list.totalWornWeight === 145000);
+assert('category subtotalWornWeight recalculated to one unit', wornRecalcPayload.categories[0].subtotalWornWeight === 145000);
+assert('worn qty 2: spare unit stays in base weight', wornRecalcPayload.list.totalBaseWeight === 145000);
+assert('worn weight served as 0.15 kg', weightUtils.MgToWeight(wornRecalcPayload.list.totalWornWeight, 'kg') === 0.15);
 
 const profileTestUser = {
     _id: new ObjectId(),

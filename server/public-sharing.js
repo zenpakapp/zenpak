@@ -13,7 +13,7 @@ function getLibrary(user) {
 
     // Hydrate through the shared client model so list/category totals are
     // recalculated (List.load → calculateTotals) instead of trusting persisted
-    // values that may predate the ×qty worn/consumable rule.
+    // values that may predate the current worn/consumable rules.
     const library = new Library();
     library.load(user.library);
     return library;

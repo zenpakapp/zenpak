@@ -87,7 +87,8 @@ Category.prototype.calculateSubtotal = function () {
         this.subtotalPrice += price * qty;
 
         if (this.library.optionalFields.worn && categoryItem.worn) {
-            this.subtotalWornWeight += weight * qty;
+            // One unit is on the body; any spares (qty > 1) stay in the pack.
+            this.subtotalWornWeight += weight * ((qty > 0) ? 1 : 0);
         }
         if (this.library.optionalFields.consumable && categoryItem.consumable) {
             this.subtotalConsumableWeight += weight * qty;
