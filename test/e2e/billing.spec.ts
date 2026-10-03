@@ -44,11 +44,8 @@ async function completeStripeCheckout(page: Page, email: string) {
 
   await page.getByTestId("hosted-payment-submit-button").click();
 
-  // Stripe's success_url is built server-side from config/local.json's deployUrl
-  // (hardcoded to http://localhost:8080), which is independent of Playwright's
-  // webServer port (3101). This test passes only because a separate app instance
-  // is already listening on 8080; in a clean CI environment without it, this wait
-  // would timeout rather than fail fast.
+  // Stripe's success_url is built server-side from DEPLOY_URL, which Playwright's
+  // webServer sets to its own origin (falls back to config deployUrl otherwise).
   await page.waitForURL(/billing=success/, { timeout: 20000 });
   expect(page.url()).toContain("billing=success");
 }
@@ -142,6 +139,8 @@ test.describe("Billing — past_due banner", () => {
       "testtest",
       `${username}@lighterpack.com`,
     );
+    // registerUser returns before /register completes; the webhooks below need the user.
+    await page.locator(".accountDropdownName").waitFor();
 
     // Seed a fake Stripe customerId on this user via a checkout.session.completed event,
     // then flip them to past_due via invoice.payment_failed — both signed the same way
@@ -211,6 +210,8 @@ test.describe("Billing — portal redirect", () => {
       "testtest",
       `${username}@lighterpack.com`,
     );
+    // registerUser returns before /register completes; the webhooks below need the user.
+    await page.locator(".accountDropdownName").waitFor();
 
     // Unlike the past_due test above, the webhook handler's customer.subscription.created
     // case calls the REAL stripe.subscriptions.retrieve(obj.id) against Stripe's API (not a

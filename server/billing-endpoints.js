@@ -46,7 +46,7 @@ router.post('/checkout-session', billingRequired, (req, res) => {
         try {
             const stripe = getStripe();
             const customerId = await getOrCreateCustomer(user);
-            const deployUrl = config.get('deployUrl');
+            const deployUrl = process.env.DEPLOY_URL || config.get('deployUrl');
 
             const session = await stripe.checkout.sessions.create({
                 customer: customerId,
@@ -88,7 +88,7 @@ router.post('/portal-session', billingRequired, (req, res) => {
 
         try {
             const stripe = getStripe();
-            const deployUrl = config.get('deployUrl');
+            const deployUrl = process.env.DEPLOY_URL || config.get('deployUrl');
             const returnUrl = `${deployUrl}/?billing=managed`;
             const portalConfigId = config.get('stripePortalConfigurationId');
             const { subscriptionId } = req.body || {};
