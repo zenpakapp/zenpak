@@ -46,6 +46,16 @@ function createListVersionsStub() {
             }
             return Promise.resolve({ deletedCount });
         },
+        // Supports only the $match/$sort/$group "latest version per externalId" shape used by getLatestVersions.
+        aggregate(pipeline) {
+            const matchStage = pipeline.find((stage) => stage.$match);
+            const latest = new Map();
+            rows.filter((row) => matchesFilter(row, matchStage ? matchStage.$match : {})).forEach((row) => {
+                const current = latest.get(row.externalId);
+                if (!current || row.version > current.version) latest.set(row.externalId, row);
+            });
+            return Promise.resolve([...latest.values()].map((row) => ({ _id: row.externalId, version: row.version, ownerId: row.ownerId })));
+        },
     };
 }
 

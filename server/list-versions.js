@@ -128,6 +128,47 @@ async function getLatestOwnedVersion(user, externalId) {
     return latest;
 }
 
+// Latest version number and owner per externalId, in one query.
+async function getLatestVersions(externalIds) {
+    const ids = [...new Set((externalIds || []).filter(Boolean))];
+    if (!ids.length || !db.listVersions) return new Map();
+    const rows = await db.listVersions.aggregate([
+        { $match: { externalId: { $in: ids } } },
+        { $sort: { version: -1 } },
+        { $group: { _id: '$externalId', version: { $first: '$version' }, ownerId: { $first: '$ownerId' } } },
+    ]);
+    return new Map(rows.map((row) => [row._id, { version: row.version, ownerId: row.ownerId }]));
+}
+
+function isTrackedFork(list) {
+    const forkedFrom = list && list.forkedFrom;
+    return Boolean(forkedFrom && forkedFrom.externalId && Number.isInteger(forkedFrom.version) && forkedFrom.version > 0);
+}
+
+// Computed on read, never stored: forks whose source has published a newer version and is
+// still public. A source that is private or gone yields no entry, so nothing leaks.
+async function getForkUpdates(user) {
+    const forks = ((user && user.library && user.library.lists) || []).filter(isTrackedFork);
+    if (!forks.length) return [];
+
+    const latest = await getLatestVersions(forks.map((list) => list.forkedFrom.externalId));
+    const ownerIds = [...new Set([...latest.values()].map((row) => String(row.ownerId)))];
+    if (!ownerIds.length) return [];
+    const owners = await db.users.findMany({ _id: { $in: ownerIds.map((id) => new ObjectId(id)) } });
+    const ownersById = new Map(owners.map((owner) => [String(owner._id), owner]));
+
+    return forks.reduce((updates, list) => {
+        const { externalId, version: forkedVersion } = list.forkedFrom;
+        const row = latest.get(externalId);
+        if (!row || row.version <= forkedVersion) return updates;
+        const owner = ownersById.get(String(row.ownerId));
+        const sourceList = owner ? findLiveList(owner, externalId) : null;
+        if (!sourceList || !isPublicVisibility(sourceList.visibility)) return updates;
+        updates.push({ listId: list.id, sourceExternalId: externalId, forkedVersion, latestVersion: row.version });
+        return updates;
+    }, []);
+}
+
 async function publishVersion(user, externalId, note) {
     const liveList = findLiveList(user, externalId);
     if (!liveList) return { error: 'not-found' };
@@ -246,6 +287,8 @@ module.exports = {
     normalizeNote,
     getLatest,
     getLatestOwnedVersion,
+    getLatestVersions,
+    getForkUpdates,
     publishVersion,
     getPublishStatus,
     getServedUser,
