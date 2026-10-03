@@ -11,6 +11,11 @@ const PUBLISHED_LIST_FIELDS = [
     'visibility', 'allowSearchIndexing', 'copyable', 'categoryIds', 'forkedFrom',
     'publicFields', 'sourceListInfoHidden', LEGACY_HIDDEN_FIELD,
 ];
+// Fork provenance that is safe to publish. The fork owner's sync state (version, itemLinks,
+// categoryLinks, dismissedVersion) is private and must not churn the content hash.
+const PUBLISHED_FORKED_FROM_FIELDS = [
+    'externalId', 'ownerId', 'ownerUsername', 'ownerName', 'listName', 'sourceCurrencySymbol', 'copiedAt',
+];
 const SHARE_SETTING_FIELDS = ['visibility', 'allowSearchIndexing', 'copyable', 'publicFields'];
 // Library-level fields that reflect live account state (profile display name, plan, unit/
 // currency preferences, affiliate rules) rather than this list's content — overlaid live in
@@ -59,6 +64,10 @@ function buildFrozenLibrary(rawLibrary, externalId) {
     const items = (rawLibrary.items || []).filter((item) => itemIds.has(String(item.id)));
     const profile = rawLibrary.publicProfile || {};
     const entitlements = rawLibrary.entitlements || {};
+    const publishedList = pickFields(list, PUBLISHED_LIST_FIELDS);
+    if (publishedList.forkedFrom && typeof publishedList.forkedFrom === 'object') {
+        publishedList.forkedFrom = pickFields(publishedList.forkedFrom, PUBLISHED_FORKED_FROM_FIELDS);
+    }
 
     return clone({
         version: rawLibrary.version,
@@ -73,7 +82,7 @@ function buildFrozenLibrary(rawLibrary, externalId) {
         creator: rawLibrary.creator || {},
         items,
         categories,
-        lists: [pickFields(list, PUBLISHED_LIST_FIELDS)],
+        lists: [publishedList],
     });
 }
 

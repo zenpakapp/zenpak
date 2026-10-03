@@ -88,6 +88,35 @@ const afterCreatorChange = buildFrozenLibrary(owner.library, 'abc123');
 assert('hash ignores an unrelated creator affiliate-rule change', hashFrozenLibrary(afterCreatorChange) === hashFrozenLibrary(beforeCreatorChange));
 owner.library.creator.disclosure = 'Affiliate links inside';
 
+console.log('\n--- forkedFrom in snapshots ---');
+const forkOwner = buildOwnerUser({ externalId: 'fork1', username: 'forky' });
+forkOwner.library.lists[0].forkedFrom = {
+    externalId: 'src1',
+    ownerId: 'abc',
+    ownerUsername: 'alice',
+    ownerName: 'Alice A',
+    listName: 'PCT',
+    sourceCurrencySymbol: '€',
+    copiedAt: '2026-10-01T10:00:00.000Z',
+    version: 2,
+    itemLinks: [{ categoryId: 5, itemId: 11, sourceItemId: 101 }],
+    categoryLinks: [{ categoryId: 5, sourceCategoryId: 50 }],
+    dismissedVersion: 3,
+};
+const frozenFork = buildFrozenLibrary(forkOwner.library, 'fork1');
+const frozenForkedFrom = frozenFork.lists[0].forkedFrom;
+assert('keeps public provenance fields', frozenForkedFrom.externalId === 'src1' && frozenForkedFrom.ownerUsername === 'alice' && frozenForkedFrom.listName === 'PCT' && frozenForkedFrom.copiedAt === '2026-10-01T10:00:00.000Z');
+assert('does not freeze the forked version', !('version' in frozenForkedFrom));
+assert('does not freeze itemLinks', !('itemLinks' in frozenForkedFrom));
+assert('does not freeze categoryLinks', !('categoryLinks' in frozenForkedFrom));
+assert('does not freeze dismissedVersion', !('dismissedVersion' in frozenForkedFrom));
+const hashBeforeDismiss = hashFrozenLibrary(frozenFork);
+forkOwner.library.lists[0].forkedFrom.dismissedVersion = 4;
+forkOwner.library.lists[0].forkedFrom.itemLinks.push({ categoryId: 6, itemId: 12, sourceItemId: 102 });
+assert('fork sync state changes do not change the content hash', hashFrozenLibrary(buildFrozenLibrary(forkOwner.library, 'fork1')) === hashBeforeDismiss);
+forkOwner.library.lists[0].forkedFrom = null;
+assert('a null forkedFrom stays null', buildFrozenLibrary(forkOwner.library, 'fork1').lists[0].forkedFrom === null);
+
 console.log('\n--- computeTotals ---');
 const totals = computeTotals(fresh);
 assert('qty sums placement quantities', totals.qty === 3);
