@@ -136,7 +136,13 @@
     "communityHint": "Looking for inspiration? Discover gear lists from the community.",
     "communityHintCta": "Explore community →",
     "guestHint": "Save your list and discover the community — it's free.",
-    "guestHintCta": "Create an account →"
+    "guestHintCta": "Create an account →",
+    "versioning": {
+      "updateBadge": "v{version} available",
+      "bannerText": "The original list has a newer version (v{version}).",
+      "viewOriginal": "View original",
+      "dismiss": "Dismiss"
+    }
   },
   "share": {
     "share": "Share",

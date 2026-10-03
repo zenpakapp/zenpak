@@ -126,6 +126,16 @@
                 </button>
             </div>
 
+            <div v-if="activeForkUpdate" class="lpVerifyBanner lpForkUpdateBanner">
+                <span>{{ $t('list.versioning.bannerText', { version: activeForkUpdate.latestVersion }) }}</span>
+                <router-link class="lpVerifyBannerBtn" :to="`/p/${activeForkUpdate.sourceExternalId}`">
+                    {{ $t('list.versioning.viewOriginal') }}
+                </router-link>
+                <button class="lpVerifyBannerDismiss" type="button" :title="$t('list.versioning.dismiss')" :aria-label="$t('list.versioning.dismiss')" @click="dismissForkUpdate">
+                    ✕
+                </button>
+            </div>
+
             <list />
 
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
@@ -169,8 +179,9 @@
 </template>
 
 <script>
-import { defineAsyncComponent, markRaw } from 'vue';
+import { computed, defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
+import { findForkUpdate } from '../utils/fork-updates.js';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
@@ -240,6 +251,9 @@ export default {
         upgradePrompt,
         notifications,
     },
+    provide() {
+        return { forkUpdates: computed(() => this.forkUpdates) };
+    },
     data() {
         return {
             isLoaded: false,
@@ -258,6 +272,7 @@ export default {
             dialogLoaders: [],
             speedbumpLoader: null,
             currencyNoticeListId: null,
+            forkUpdates: [],
         };
     },
     computed: {
@@ -282,6 +297,9 @@ export default {
             const currentCurrency = this.library && this.library.currencySymbol;
             if (!sourceCurrency || !currentCurrency || sourceCurrency === currentCurrency) return '';
             return this.$t('dash.sourceCurrencyNote', { source: sourceCurrency, current: currentCurrency });
+        },
+        activeForkUpdate() {
+            return findForkUpdate(this.list, this.forkUpdates);
         },
         canHideSourceListInfo() {
             return !!(
@@ -439,6 +457,21 @@ export default {
                 this.sidebarFrame = null;
             });
             this.prefetchLikelyChunks();
+            this.loadForkUpdates();
+        },
+        loadForkUpdates() {
+            if (!this.isSignedIn || !this.library || !Array.isArray(this.library.lists)) return;
+            const hasTrackedFork = this.library.lists.some((l) => l.forkedFrom && Number.isInteger(l.forkedFrom.version));
+            if (!hasTrackedFork) return;
+            fetchJson('/api/lists/fork-updates', { credentials: 'same-origin' })
+                .then((response) => {
+                    this.forkUpdates = Array.isArray(response.updates) ? response.updates : [];
+                })
+                .catch(() => {});
+        },
+        dismissForkUpdate() {
+            if (!this.list || !this.activeForkUpdate) return;
+            this.$store.commit('dismissForkUpdate', { listId: this.list.id, version: this.activeForkUpdate.latestVersion });
         },
         openGearRoom() {
             this.$store.commit('setGearRoomOpen', true);

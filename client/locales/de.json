@@ -136,7 +136,13 @@
     "communityHint": "Auf der Suche nach Inspiration? Entdecke Community-Listen.",
     "communityHintCta": "Community entdecken →",
     "guestHint": "Liste speichern und Community entdecken — kostenlos.",
-    "guestHintCta": "Konto erstellen →"
+    "guestHintCta": "Konto erstellen →",
+    "versioning": {
+      "updateBadge": "v{version} verfügbar",
+      "bannerText": "Die Originalliste hat eine neue Version (v{version}).",
+      "viewOriginal": "Original ansehen",
+      "dismiss": "Ausblenden"
+    }
   },
   "share": {
     "share": "Teilen",

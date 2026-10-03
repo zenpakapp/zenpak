@@ -136,7 +136,13 @@
     "communityHint": "Besoin d'inspiration ? Découvrez les listes de la communauté.",
     "communityHintCta": "Explorer la communauté →",
     "guestHint": "Sauvegardez votre liste et découvrez la communauté — c'est gratuit.",
-    "guestHintCta": "Créer un compte →"
+    "guestHintCta": "Créer un compte →",
+    "versioning": {
+      "updateBadge": "v{version} dispo",
+      "bannerText": "La liste d'origine a une nouvelle version (v{version}).",
+      "viewOriginal": "Voir l'original",
+      "dismiss": "Masquer"
+    }
   },
   "share": {
     "share": "Partager",

@@ -122,6 +122,7 @@
                 <div class="lpHandle" :title="$t('library.reorderItemTitle')" />
                 <span class="lpLibraryListSwitch lpListName" @click="setDefaultList(list)">
                     {{ listName(list) }}
+                    <span v-if="forkUpdateFor(list)" class="lpForkUpdateBadge">{{ $t('list.versioning.updateBadge', { version: forkUpdateFor(list).latestVersion }) }}</span>
                 </span>
                 <a class="lpRemove" role="button" tabindex="0" :title="$t('library.removeListTitle')" @click="removeList(list)" @keydown.enter="removeList(list)" @keydown.space.prevent="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
             </li>
@@ -135,6 +136,7 @@ import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop } from '../services/drag-drop';
+import { findForkUpdate } from '../utils/fork-updates.js';
 
 export default {
     name: 'LibraryList',
@@ -142,6 +144,9 @@ export default {
         PopoverHover,
     },
     props: ['list'],
+    inject: {
+        forkUpdates: { from: 'forkUpdates', default: () => [] },
+    },
     data() {
         return {
             dragStartIndex: null,
@@ -168,6 +173,9 @@ export default {
         },
         listName(list) {
             return list.name || this.$t('library.newListDefault');
+        },
+        forkUpdateFor(list) {
+            return findForkUpdate(list, this.forkUpdates);
         },
         newList() {
             this.$store.commit('newList');

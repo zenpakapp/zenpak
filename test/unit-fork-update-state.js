@@ -40,5 +40,14 @@ assert('no-op on a list without forkedFrom', plainList.forkedFrom === null);
 libraryMutations.dismissForkUpdate(state, { listId: 999999, version: 2 });
 assert('no-op on an unknown list id', true);
 
+console.log('\n--- list.versioning i18n ---');
+const versioningKeys = ['updateBadge', 'bannerText', 'viewOriginal', 'dismiss'];
+['en', 'fr', 'de', 'es'].forEach((locale) => {
+    const messages = require(`../client/locales/${locale}.json`);
+    const block = messages.list && messages.list.versioning;
+    assert(`${locale} has every list.versioning key`, Boolean(block) && versioningKeys.every((key) => typeof block[key] === 'string' && block[key].length > 0));
+    assert(`${locale} keeps the {version} placeholder`, Boolean(block) && block.updateBadge.includes('{version}') && block.bannerText.includes('{version}'));
+});
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
