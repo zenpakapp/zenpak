@@ -11,29 +11,30 @@
                 class="lpPackCheckbox"
                 :checked="isPacked"
                 @change="onPackCheckbox"
-            />
-            <div v-else class="lpItemHandle lpHandle" title="Reorder this item" />
+            >
+            <div v-else class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <input v-model="item.name" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" placeholder="Name" @input="saveItem">
-            <input v-model="item.description" type="text" class="lpDescription lpSilent" placeholder="Description" @input="saveItem">
-            <span v-if="item.brand || item.category" class="lpItemMeta">
+            <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
+            <span v-if="hasItemMeta" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
-                <span v-if="item.brand && item.category" class="lpItemMetaSep">·</span>
-                <span v-if="item.category" class="lpItemCategory">{{ item.category }}</span>
+                <span v-for="tag in itemTags" :key="tag" class="lpItemTag">{{ tag }}</span>
             </span>
         </span>
         <span v-if="!isPackingMode" class="lpActionsCell">
-            <i class="lpSprite lpCamera" title="Upload a photo or use a photo from the web" @click="updateItemImage" />
-            <i class="lpSprite lpLink" :class="{lpActive: item.url}" title="Add a link for this item" @click="updateItemLink" />
-            <i class="lpSprite lpTag" :class="{lpActive: item.brand}" title="Edit brand, type and tags" @click="updateItemMeta" />
-            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" title="Mark this item as worn" @click="toggleWorn" />
-            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" title="Mark this item as a consumable" @click="toggleConsumable" />
-            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" title="Rate this item" @click="cycleStar" />
-            <i class="lpSprite lpEdit" title="Edit item details" @click="openDetailEdit" />
+            <i class="lpSprite lpCamera" :title="$t('item.imageTitle')" @click="updateItemImage" />
+            <i class="lpSprite lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" @click="updateItemLink" />
+            <i class="lpSprite lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
+            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" @click="toggleWorn" />
+            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" @click="toggleConsumable" />
+            <i class="lpSprite lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" @click="toggleOptional" />
+            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" @click="cycleStar" />
+            <i class="lpSprite lpEdit" :title="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
             <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
@@ -43,20 +44,21 @@
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
-            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span class="lpArrows">
                 <span class="lpSprite lpUp" @click="incrementQty($event)" />
                 <span class="lpSprite lpDown" @click="decrementQty($event)" />
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" title="Remove this item" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" :title="$t('item.removeTitle')" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
         </span>
     </li>
 </template>
 
 <script>
 import { openDialog } from '../services/dialogs';
+import { showGlobalAlert } from '../services/user-feedback';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -71,6 +73,8 @@ export default {
             weightError: false,
             priceError: false,
             qtyError: false,
+            editName: '',
+            editDescription: '',
             numStars: 4,
         };
     },
@@ -103,6 +107,12 @@ export default {
         isPacked() {
             return this.isPackingMode && this.packedItemIds && this.packedItemIds.has(this.item.id);
         },
+        itemTags() {
+            return Array.isArray(this.item.tags) ? this.item.tags.filter(Boolean) : [];
+        },
+        hasItemMeta() {
+            return !!(this.item.brand || this.item.category || this.itemTags.length);
+        },
         itemRowClasses() {
             return [
                 'lpItem',
@@ -115,24 +125,42 @@ export default {
         },
     },
     watch: {
-        item() {
+        'item.weight': function () {
             this.setDisplayWeight();
+        },
+        'item.price': function () {
             this.setDisplayPrice();
         },
-        'library.itemUnit'() {
+        'library.itemUnit': function () {
             this.setDisplayWeight();
         },
         categoryItem() {
             this.setDisplayQty();
         },
+        'item.name': function (value) {
+            if (value !== this.editName) this.editName = value || '';
+        },
+        'item.description': function (value) {
+            if (value !== this.editDescription) this.editDescription = value || '';
+        },
     },
     created() {
+        this.editName = this.item.name || '';
+        this.editDescription = this.item.description || '';
         this.setDisplayWeight();
         this.setDisplayPrice();
         this.setDisplayQty();
     },
     methods: {
-        saveItem() {
+        saveItemText() {
+            if (this.editName === this.item.name && this.editDescription === this.item.description) return;
+            this.$store.commit('updateItemMetadata', {
+                ...this.item,
+                name: this.editName,
+                description: this.editDescription,
+            });
+        },
+        saveMeasuredItem() {
             this.$store.commit('updateItem', this.item);
         },
         saveCategoryItem() {
@@ -141,9 +169,9 @@ export default {
         savePrice() {
             const priceFloat = parseFloat(this.displayPrice, 10);
 
-            if (!isNaN(priceFloat)) {
+            if (!Number.isNaN(priceFloat)) {
                 this.item.price = Math.round(priceFloat * 100) / 100;
-                this.saveItem();
+                this.saveMeasuredItem();
                 this.priceError = false;
             } else {
                 this.priceError = true;
@@ -152,7 +180,7 @@ export default {
         saveQty() {
             const qtyFloat = parseFloat(this.displayQty, 10);
 
-            if (!isNaN(qtyFloat)) {
+            if (!Number.isNaN(qtyFloat)) {
                 this.categoryItem.qty = qtyFloat;
                 this.saveCategoryItem();
                 this.qtyError = false;
@@ -163,9 +191,9 @@ export default {
         saveWeight() {
             const weightFloat = parseFloat(this.displayWeight, 10);
 
-            if (!isNaN(weightFloat)) {
+            if (!Number.isNaN(weightFloat)) {
                 this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
-                this.saveItem();
+                this.saveMeasuredItem();
                 this.weightError = false;
             } else {
                 this.weightError = true;
@@ -185,18 +213,23 @@ export default {
             this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit);
         },
         openDetail() {
-            openDialog('itemDetail', {
+            this.openItemDetail({
                 item: this.item,
                 categoryItem: this.categoryItem,
                 category: this.category,
             });
         },
         openDetailEdit() {
-            openDialog('itemDetail', {
+            this.openItemDetail({
                 item: this.item,
                 categoryItem: this.categoryItem,
                 category: this.category,
                 startEditing: true,
+            });
+        },
+        openItemDetail(payload) {
+            openDialog('itemDetail', payload).catch(() => {
+                showGlobalAlert(this.$t('item.detailOpenError'));
             });
         },
         updateItemLink() {
@@ -225,6 +258,9 @@ export default {
             this.categoryItem.consumable = !this.categoryItem.consumable;
             this.saveCategoryItem();
         },
+        toggleOptional() {
+            this.$store.commit('toggleOptionalItem', { category: this.category, itemId: this.item.id });
+        },
         cycleStar() {
             if (!this.categoryItem.star) {
                 this.categoryItem.star = 0;
@@ -239,7 +275,7 @@ export default {
                 return;
             }
 
-            this.categoryItem.qty = this.categoryItem.qty + 1;
+            this.categoryItem.qty += 1;
             this.saveCategoryItem();
         },
         decrementQty(evt) {
@@ -249,7 +285,7 @@ export default {
                 return;
             }
 
-            this.categoryItem.qty = this.categoryItem.qty - 1;
+            this.categoryItem.qty -= 1;
 
             if (this.categoryItem.qty < 0) {
                 this.categoryItem.qty = 0;
@@ -267,7 +303,7 @@ export default {
             const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) + 1;
             this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
-            this.saveItem();
+            this.saveMeasuredItem();
         },
         decrementWeight(evt) {
             evt.stopImmediatePropagation();
@@ -283,7 +319,7 @@ export default {
                 this.item.weight = 0;
             }
 
-            this.saveItem();
+            this.saveMeasuredItem();
         },
         removeItem() {
             this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category: this.category });

@@ -5,7 +5,9 @@
 <template>
     <main class="lpCommunity">
         <nav class="lpCommunityNav">
-            <router-link to="/">← Back to ZenPak</router-link>
+            <router-link to="/">
+                {{ $t('public.backToZenPak') }}
+            </router-link>
         </nav>
 
         <div class="lpCommunityHeader">
@@ -75,7 +77,7 @@
                     class="lpCommunitySearchInput"
                     :placeholder="$t('community.searchListsPlaceholder')"
                     @input="onSearchInput"
-                />
+                >
             </div>
 
             <div class="lpCommunityFilters">
@@ -98,7 +100,7 @@
                     :placeholder="$t('community.filterMinKgPlaceholder')"
                     :aria-label="$t('community.ariaMinWeight')"
                     @input="onFilterInput"
-                />
+                >
                 <input
                     v-model="filterMaxWeight"
                     type="number"
@@ -108,12 +110,18 @@
                     :placeholder="$t('community.filterMaxKgPlaceholder')"
                     :aria-label="$t('community.ariaMaxWeight')"
                     @input="onFilterInput"
-                />
-                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">{{ $t('community.filterReset') }}</button>
+                >
+                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">
+                    {{ $t('community.filterReset') }}
+                </button>
             </div>
 
-            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
-            <p v-else-if="discoverError" class="lpCommunityEmpty">{{ discoverError }}</p>
+            <p v-if="discoverLoading && discoverLists.length === 0" class="lpCommunityEmpty">
+                {{ $t('community.loading') }}
+            </p>
+            <p v-else-if="discoverError" class="lpCommunityEmpty">
+                {{ discoverError }}
+            </p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
                 {{ $t('community.emptyDiscoverNone') }}
             </p>
@@ -121,19 +129,30 @@
                 <div class="lpCommunityDiscoverLayout">
                     <section class="lpCommunityResults">
                         <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
-                            <div class="lpCommunityFeaturedLabel">{{ $t('community.featuredLabel') }}</div>
+                            <div class="lpCommunityFeaturedLabel">
+                                {{ $t('community.featuredLabel') }}
+                            </div>
                             <div
                                 v-for="list in featuredLists"
                                 :key="'f-' + list.externalId"
                                 class="lpCommunityCard lpCommunityCardFeatured"
                                 style="cursor:pointer"
-                                @click="$router.push(`/p/${list.externalId}`)"
+                                @click="$router.push(communityListTo(list))"
                             >
-                                <div class="lpCommunityCardName">{{ list.name }}</div>
+                                <div class="lpCommunityCardName">
+                                    {{ list.name }}
+                                </div>
                                 <div class="lpCommunityCardAuthor">
-                                    by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                                    <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                                    <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                    {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                        {{ listAuthorName(list) }}
+                                    </router-link>
+                                    <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                                    <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
+                                </div>
+                                <div v-if="listSourceName(list)" class="lpCommunityCardSource">
+                                    {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>
+                                        {{ listSourceName(list) }}
+                                    </router-link>
                                 </div>
                                 <div class="lpCommunityCardMeta">
                                     <span class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -151,13 +170,22 @@
                             :key="list.externalId"
                             class="lpCommunityCard"
                             style="cursor:pointer"
-                            @click="$router.push(`/p/${list.externalId}`)"
+                            @click="$router.push(communityListTo(list))"
                         >
-                            <div class="lpCommunityCardName">{{ list.name }}</div>
+                            <div class="lpCommunityCardName">
+                                {{ list.name }}
+                            </div>
                             <div class="lpCommunityCardAuthor">
-                                by <router-link :to="`/u/${list.author}`" @click.stop>{{ list.author }}</router-link>
-                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                                {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                    {{ listAuthorName(list) }}
+                                </router-link>
+                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
+                            </div>
+                            <div v-if="listSourceName(list)" class="lpCommunityCardSource">
+                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>
+                                    {{ listSourceName(list) }}
+                                </router-link>
                             </div>
                             <div class="lpCommunityCardMeta">
                                 <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
@@ -178,17 +206,27 @@
                         </button>
                     </section>
                     <aside class="lpCommunityPopular" :aria-label="$t('community.ariaPopularPacks')">
-                        <div class="lpCommunityPopularTitle">{{ $t('community.popularPacksTitle') }}</div>
-                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">{{ $t('community.loading') }}</p>
-                        <router-link
+                        <div class="lpCommunityPopularTitle">
+                            {{ $t('community.popularPacksTitle') }}
+                        </div>
+                        <p v-if="popularLoading" class="lpCommunityPopularEmpty">
+                            {{ $t('community.loading') }}
+                        </p>
+                        <div
                             v-for="list in popularLists"
                             :key="'popular-' + list.externalId"
-                            :to="`/p/${list.externalId}`"
                             class="lpCommunityPopularItem"
+                            @click="$router.push(communityListTo(list))"
                         >
                             <span class="lpCommunityPopularName">{{ list.name }}</span>
+                            <router-link class="lpCommunityPopularAuthor" :to="communityProfileTo(list.author)" @click.stop>
+                                {{ listAuthorName(list) }}
+                            </router-link>
+                            <span v-if="listSourceName(list)" class="lpCommunityPopularSource">
+                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
+                            </span>
                             <span class="lpCommunityPopularMeta">{{ list.viewCount }} views · {{ formatWeight(list.totalBaseWeight) }} base</span>
-                        </router-link>
+                        </div>
                     </aside>
                 </div>
             </template>
@@ -199,22 +237,28 @@
 
         <!-- My Feed tab -->
         <div v-if="activeTab === 'feed'">
-            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
-            <p v-else-if="feedError" class="lpCommunityEmpty">{{ feedError }}</p>
+            <p v-if="feedLoading && feedEvents.length === 0" class="lpCommunityEmpty">
+                {{ $t('community.loading') }}
+            </p>
+            <p v-else-if="feedError" class="lpCommunityEmpty">
+                {{ feedError }}
+            </p>
             <p v-else-if="feedEvents.length === 0" class="lpCommunityEmpty">
                 {{ $t('community.emptyFeedNone') }}
             </p>
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
                     <div class="lpCommunityEventAvatar">
-                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author" />
+                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author">
                         <span v-else>{{ event.author.charAt(0).toUpperCase() }}</span>
                     </div>
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
-                            <router-link :to="`/u/${event.author}`">{{ event.author }}</router-link>
-                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">Wayfarer</span>
-                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">Kin</span>
+                            <router-link :to="communityProfileTo(event.author)">
+                                {{ event.author }}
+                            </router-link>
+                            <span v-if="event.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
+                            <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             <span> {{ eventLabel(event.type) }}</span>
                         </div>
                         <div v-if="event.listName" class="lpCommunityEventList">
@@ -223,7 +267,9 @@
                         <div v-else-if="event.listDeleted" class="lpCommunityEventList lpCommunityEventListDeleted">
                             {{ $t('community.listNoLongerAvailable') }}
                         </div>
-                        <div class="lpCommunityEventTime">{{ timeAgo(event.createdAt) }}</div>
+                        <div class="lpCommunityEventTime">
+                            {{ timeAgo(event.createdAt) }}
+                        </div>
                     </div>
                 </article>
                 <button v-if="feedHasMore" class="lpCommunityLoadMore" :disabled="feedLoading" @click="feedLoadMore">
@@ -233,6 +279,9 @@
         </div>
 
         <!-- Moderation tab -->
+        <p v-if="moderationError" class="lpCommunityEmpty">
+            {{ moderationError }}
+        </p>
         <community-moderation
             v-if="activeTab === 'moderation' && isModerator"
             @feature-list="featureList"
@@ -241,18 +290,24 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
-import CommunityModeration from '../components/community-moderation.vue';
-import CommunityPeople from '../components/community-people.vue';
-import reportButton from '../components/report-button.vue';
+import { tierLabel } from '../services/tier-labels.js';
 import LpSelect from '../components/lp-select.vue';
+import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
+
+const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
+const CommunityPeople = defineAsyncComponent(() => import(/* webpackChunkName: "community-people" */ '../components/community-people.vue'));
+const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "community-report" */ '../components/report-button.vue'));
 
 export default {
     name: 'CommunityView',
-    components: { CommunityModeration, CommunityPeople, reportButton, LpSelect },
+    components: {
+        CommunityModeration, CommunityPeople, reportButton, LpSelect,
+    },
     setup() {
         useTheme();
         const {
@@ -287,10 +342,23 @@ export default {
         popularLoad();
 
         return {
-            discoverLists, discoverLoading, discoverError, discoverHasMore,
-            discoverSort, setDiscoverSort, setDiscoverQuery, setDiscoverFilters, discoverLoadMore,
-            popularLists, popularLoading,
-            feedEvents, feedLoading, feedError, feedHasMore, feedLoad, feedLoadMore,
+            discoverLists,
+            discoverLoading,
+            discoverError,
+            discoverHasMore,
+            discoverSort,
+            setDiscoverSort,
+            setDiscoverQuery,
+            setDiscoverFilters,
+            discoverLoadMore,
+            popularLists,
+            popularLoading,
+            feedEvents,
+            feedLoading,
+            feedError,
+            feedHasMore,
+            feedLoad,
+            feedLoadMore,
         };
     },
     data() {
@@ -304,37 +372,30 @@ export default {
             filterMinWeight: '',
             filterMaxWeight: '',
             isModerator: false,
+            moderationError: null,
         };
     },
     computed: {
         seasonOptions() {
             return [
                 { value: '', label: this.$t('community.filterSeasonAny') },
-                { value: '3-season', label: this.$t('list.season3') },
-                { value: '4-season', label: this.$t('list.season4') },
-                { value: 'spring', label: this.$t('list.seasonSpring') },
-                { value: 'summer', label: this.$t('list.seasonSummer') },
-                { value: 'fall', label: this.$t('list.seasonFall') },
-                { value: 'winter', label: this.$t('list.seasonWinter') },
+                ...toI18nOptions(SEASON_VALUES, (key) => this.$t(key)),
             ];
         },
         listTypeOptions() {
             return [
                 { value: '', label: this.$t('community.filterTypeAny') },
-                { value: 'day-hike', label: this.$t('list.typeDay') },
-                { value: 'weekend', label: this.$t('list.typeWeekend') },
-                { value: 'trek', label: this.$t('list.typeThru') },
-                { value: 'bikepacking', label: this.$t('list.typeBike') },
+                ...toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key)),
             ];
         },
         canSeeFeed() {
             return Boolean(this.$store.state.loggedIn);
         },
         featuredLists() {
-            return this.discoverLists.filter(l => l.featured);
+            return this.discoverLists.filter((l) => l.featured);
         },
         nonFeaturedLists() {
-            return this.discoverLists.filter(l => !l.featured);
+            return this.discoverLists.filter((l) => !l.featured);
         },
         filtersActive() {
             return Boolean(this.filterSeason || this.filterType || this.filterMinWeight || this.filterMaxWeight);
@@ -345,6 +406,7 @@ export default {
         if (this.canSeeFeed) this.fetchModeratorFlag();
     },
     methods: {
+        tierLabel,
         setTab(tab) {
             this.activeTab = tab;
             const path = tab === 'feed' ? '/community/feed' : '/community';
@@ -381,10 +443,23 @@ export default {
             this.setDiscoverSort(value);
         },
         eventLabel(type) {
-            if (type === 'list.published') return 'published a new list';
-            if (type === 'list.made-public') return 'made a list public';
-            if (type === 'list.updated') return 'updated a list';
-            return 'updated their gear';
+            if (type === 'list.published') return this.$t('community.eventPublished');
+            if (type === 'list.made-public') return this.$t('community.eventMadePublic');
+            if (type === 'list.updated') return this.$t('community.eventUpdated');
+            return this.$t('community.eventGearUpdated');
+        },
+        communityListTo(list) {
+            return { path: `/p/${list.externalId}`, query: { from: 'community' } };
+        },
+        communityProfileTo(username) {
+            return { path: `/u/${username}`, query: { from: 'community' } };
+        },
+        listAuthorName(list) {
+            return list.authorDisplayName || list.author;
+        },
+        listSourceName(list) {
+            if (!list.sourceOwnerUsername || list.sourceOwnerUsername === list.author) return '';
+            return list.sourceOwnerName || list.sourceOwnerUsername;
         },
         formatWeight(mg) {
             if (!mg) return '';
@@ -398,7 +473,7 @@ export default {
             ];
         },
         formatTag(value) {
-            const label = [...this.seasonOptions, ...this.listTypeOptions].find(option => option.value === value);
+            const label = [...this.seasonOptions, ...this.listTypeOptions].find((option) => option.value === value);
             return label ? label.label : value;
         },
         timeAgo(dateStr) {
@@ -413,11 +488,14 @@ export default {
             return new Date(dateStr).toLocaleDateString();
         },
         async featureList(externalId) {
+            this.moderationError = null;
             try {
                 const data = await fetchJson(`/api/reports/feature/${externalId}`, { method: 'POST' });
-                const list = this.discoverLists.find(l => l.externalId === externalId);
+                const list = this.discoverLists.find((l) => l.externalId === externalId);
                 if (list) list.featured = data.featured;
-            } catch { alert('Failed.'); }
+            } catch {
+                this.moderationError = 'Unable to update featured list.';
+            }
         },
         async fetchModeratorFlag() {
             try {

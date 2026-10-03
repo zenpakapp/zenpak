@@ -101,20 +101,28 @@
     <main class="lpFeed">
         <h1>{{ $t('community.feedActivityTitle') }}</h1>
 
-        <p v-if="loading && events.length === 0">{{ $t('community.loading') }}</p>
-        <p v-else-if="error" class="lpFeedEmpty">{{ error }}</p>
+        <p v-if="loading && events.length === 0">
+            {{ $t('community.loading') }}
+        </p>
+        <p v-else-if="error" class="lpFeedEmpty">
+            {{ error }}
+        </p>
         <p v-else-if="events.length === 0" class="lpFeedEmpty">
             {{ $t('community.feedEmptyNone') }}
         </p>
 
         <template v-else>
             <article v-for="event in events" :key="String(event._id)" class="lpFeedEvent">
-                <div class="lpFeedAvatar">{{ event.author.charAt(0).toUpperCase() }}</div>
+                <div class="lpFeedAvatar">
+                    {{ event.author.charAt(0).toUpperCase() }}
+                </div>
                 <div class="lpFeedEventBody">
                     <div>
-                        <router-link :to="`/u/${event.author}`"><strong>{{ event.author }}</strong></router-link>
-                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">Wayfarer</span>
-                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">Kin</span>
+                        <router-link :to="`/u/${event.author}`">
+                            <strong>{{ event.author }}</strong>
+                        </router-link>
+                        <span v-if="event.authorTier === 'guide'" class="lpFeedBadge">{{ tierLabel('guide') }}</span>
+                        <span v-else-if="event.authorTier === 'trail'" class="lpFeedBadge">{{ tierLabel('trail') }}</span>
                         <span> {{ eventLabel(event.type) }}</span>
                     </div>
                     <div v-if="event.listName" class="lpFeedListCard">
@@ -123,7 +131,9 @@
                     <div v-else-if="event.listDeleted" class="lpFeedListCard lpFeedListDeleted">
                         {{ $t('community.listNoLongerAvailable') }}
                     </div>
-                    <div class="lpFeedEventMeta">{{ timeAgo(event.createdAt) }}</div>
+                    <div class="lpFeedEventMeta">
+                        {{ timeAgo(event.createdAt) }}
+                    </div>
                 </div>
             </article>
 
@@ -136,20 +146,26 @@
 
 <script>
 import { useFeed } from '../composables/useFeed';
+import { tierLabel } from '../services/tier-labels.js';
 
 export default {
     name: 'FeedView',
     setup() {
-        const { events, loading, error, hasMore, load, loadMore } = useFeed();
+        const {
+            events, loading, error, hasMore, load, loadMore,
+        } = useFeed();
         load();
-        return { events, loading, error, hasMore, loadMore };
+        return {
+            events, loading, error, hasMore, loadMore,
+        };
     },
     methods: {
+        tierLabel,
         eventLabel(type) {
-            if (type === 'list.published') return 'published a new list';
-            if (type === 'list.made-public') return 'made a list public';
-            if (type === 'list.updated') return 'updated a list';
-            return 'updated their gear';
+            if (type === 'list.published') return this.$t('community.eventPublished');
+            if (type === 'list.made-public') return this.$t('community.eventMadePublic');
+            if (type === 'list.updated') return this.$t('community.eventUpdated');
+            return this.$t('community.eventGearUpdated');
         },
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();

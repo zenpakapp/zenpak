@@ -4,6 +4,11 @@ const crypto = require('crypto');
 
 const { logWithRequest } = require('./log.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
+const {
+    incrementPublicListStat,
+    rememberPublicListViewer,
+} = require('./public-list-projections.js');
+const { getServedByExternalId } = require('./list-versions.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -20,7 +25,7 @@ async function resolveViewerKey(req) {
             if (viewer && viewer._id) {
                 return `user:${String(viewer._id)}`;
             }
-        } catch (_) {}
+        } catch (_) { /* ignore */ }
     }
 
     const forwardedFor = typeof req.get === 'function' ? req.get('x-forwarded-for') : '';
@@ -40,7 +45,7 @@ router.get('/api/public/profile/:username', async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'Profile not found' });
         }
-        const payload = buildPublicProfile(user);
+        const payload = await buildPublicProfile(user);
         if (!payload) {
             return res.status(404).json({ message: 'Profile not found' });
         }
@@ -66,90 +71,61 @@ router.get('/api/public/profile/:username', async (req, res) => {
     }
 });
 
-router.get('/api/public/list/:externalId', (req, res) => {
+router.get('/api/public/list/:externalId', async (req, res) => {
     const externalId = String(req.params.externalId || '').trim();
     if (!externalId) {
         return res.status(404).json({ message: 'List not found' });
     }
 
-    db.users.findOne({ 'library.lists.externalId': externalId }, (err, user) => {
-        if (err) {
-            logWithRequest(req, { message: 'Public list lookup error', externalId, error: err.message });
-            return res.status(500).json({ message: 'An error occurred' });
-        }
-
-        const payload = buildPublicList(user, externalId);
+    try {
+        const served = await getServedByExternalId(externalId);
+        const payload = served ? buildPublicList(served, externalId) : null;
         if (!payload) {
             return res.status(404).json({ message: 'List not found' });
         }
-
         return res.json(payload);
-    });
+    } catch (err) {
+        logWithRequest(req, { message: 'Public list snapshot error', externalId, error: err.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
 });
 
-router.post('/api/public/insight', (req, res) => {
+router.post('/api/public/insight', async (req, res) => {
     const externalId = String(req.body.externalId || '').trim();
-    const itemId = typeof req.body.itemId === 'undefined' ? '' : req.body.itemId;
+    const rawItemId = req.body.itemId;
+    const itemIdIsValid = typeof rawItemId === 'undefined' || typeof rawItemId === 'string' || typeof rawItemId === 'number';
+    const itemId = typeof rawItemId === 'undefined' ? '' : String(rawItemId);
     const type = String(req.body.type || '').trim();
     const allowedTypes = ['listView', 'listCopy', 'gearClick', 'promoClick'];
 
-    if (!externalId || !allowedTypes.includes(type) || typeof itemId !== 'string') {
+    if (!externalId || !allowedTypes.includes(type) || !itemIdIsValid) {
         return res.status(400).json({ message: 'Invalid insight event' });
     }
 
-    db.users.findOne({ 'library.lists.externalId': externalId }, async (err, user) => {
-        if (err || !user || !user.library) {
+    try {
+        const served = await getServedByExternalId(externalId);
+        if (!served || !buildPublicList(served, externalId)) {
             return res.status(200).json({ message: 'ok' });
         }
 
-        if (!buildPublicList(user, externalId)) {
-            return res.status(200).json({ message: 'ok' });
-        }
-
-        if (!user.library.insights) {
-            user.library.insights = {};
-        }
-
-        const insights = user.library.insights;
-        if (typeof insights.profileViews !== 'number') insights.profileViews = 0;
-        if (!insights.listViews || typeof insights.listViews !== 'object') insights.listViews = {};
-        if (!insights.listViewers || typeof insights.listViewers !== 'object') insights.listViewers = {};
-        if (!insights.listCopies || typeof insights.listCopies !== 'object') insights.listCopies = {};
-        if (!insights.gearClicks || typeof insights.gearClicks !== 'object') insights.gearClicks = {};
-        if (!insights.promoClicks || typeof insights.promoClicks !== 'object') insights.promoClicks = {};
-
-        let shouldSave = true;
         if (type === 'listView') {
             const viewerKey = await resolveViewerKey(req);
-            const viewers = Array.isArray(insights.listViewers[externalId]) ? insights.listViewers[externalId] : [];
-            if (viewers.includes(viewerKey)) {
-                shouldSave = false;
-            } else {
-                viewers.push(viewerKey);
-                if (viewers.length > 500) viewers.splice(0, viewers.length - 500);
-                insights.listViewers[externalId] = viewers;
-                insights.listViews[externalId] = (insights.listViews[externalId] || 0) + 1;
+            const isNewViewer = await rememberPublicListViewer(externalId, viewerKey);
+            if (isNewViewer) {
+                await incrementPublicListStat(externalId, 'viewCount');
             }
         } else if (type === 'listCopy') {
-            insights.listCopies[externalId] = (insights.listCopies[externalId] || 0) + 1;
+            await incrementPublicListStat(externalId, 'copyCount');
         } else if (type === 'gearClick' && itemId) {
-            insights.gearClicks[itemId] = (insights.gearClicks[itemId] || 0) + 1;
+            await incrementPublicListStat(externalId, `gearClicks.${itemId}`);
         } else if (type === 'promoClick' && itemId) {
-            insights.promoClicks[itemId] = (insights.promoClicks[itemId] || 0) + 1;
+            await incrementPublicListStat(externalId, `promoClicks.${itemId}`);
         }
+    } catch (err) {
+        logWithRequest(req, { message: 'Public insight error', externalId, error: err.message });
+    }
 
-        if (!shouldSave) {
-            return res.json({ message: 'ok' });
-        }
-
-        db.users.save(user, (saveErr) => {
-            if (saveErr) {
-                logWithRequest(req, { message: 'Public insight save error', externalId, error: saveErr.message });
-                return res.status(500).json({ message: 'An error occurred' });
-            }
-            return res.json({ message: 'ok' });
-        });
-    });
+    return res.json({ message: 'ok' });
 });
 
 module.exports = router;

@@ -4,6 +4,7 @@ const express = require('express');
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
 const { detectVisibilityChanges } = require('./save-library-feed.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
@@ -88,10 +89,7 @@ function saveLibrary(req, res, user) {
     if (serverEntitlements) user.library.entitlements = serverEntitlements;
     if (serverInsights) user.library.insights = serverInsights;
     if (serverProfile) {
-        if (!user.library.publicProfile) user.library.publicProfile = {};
-        user.library.publicProfile.bio = serverProfile.bio || '';
-        user.library.publicProfile.links = serverProfile.links || [];
-        user.library.publicProfile.gearPhilosophy = serverProfile.gearPhilosophy || [];
+        user.library.publicProfile = { ...serverProfile };
     }
     if (user.library.items) {
         for (const item of user.library.items) {
@@ -109,6 +107,9 @@ function saveLibrary(req, res, user) {
 
         const newLists = (library && library.lists) || [];
         detectVisibilityChanges(user._id, oldLists, newLists).catch(() => {});
+        syncUserPublicLists(user).catch((err) => {
+            logWithRequest(req, { message: 'public list projection sync failed', username: user.username, error: err.message });
+        });
 
         return res.status(200).json({ message: 'success', syncToken: user.syncToken });
     });
@@ -160,11 +161,54 @@ router.post('/api/restore', (req, res) => {
         }
         try {
             await db.users.updateOne({ _id: user._id }, { $set: { library } });
+            syncUserPublicLists({ ...user, library }).catch((err) => {
+                logWithRequest(req, { message: 'public list projection sync failed after restore', username: user.username, error: err.message });
+            });
             return res.json({ ok: true });
         } catch (err) {
             logWithRequest(req, 'restore error', err);
             return res.status(500).json({ error: 'Restore failed.' });
         }
+    });
+});
+
+router.post('/api/lists/:listId/hide-source-list-info', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '');
+        const library = user.library || {};
+        const list = (library.lists || []).find((l) => String(l.id) === listId);
+        if (!list) {
+            return res.status(404).json({ message: 'List not found' });
+        }
+
+        const categoryIds = (list.categoryIds || []).map(String);
+        const itemIds = new Set();
+        (library.categories || []).forEach((category) => {
+            if (!categoryIds.includes(String(category.id))) return;
+            (category.categoryItems || []).forEach((categoryItem) => {
+                itemIds.add(String(categoryItem.itemId));
+            });
+        });
+
+        let count = 0;
+        (library.items || []).forEach((item) => {
+            if (!itemIds.has(String(item.id))) return;
+            if (!(item.affiliateUrl || item.promoCode || item.promoLabel)) return;
+            item.affiliateUrl = '';
+            item.promoCode = '';
+            item.promoLabel = '';
+            count++;
+        });
+
+        list.sourceListInfoHidden = true;
+        user.syncToken = (Number(user.syncToken) || 0) + 1;
+
+        db.users.save(user, () => {
+            syncUserPublicLists(user).catch((err) => {
+                logWithRequest(req, { message: 'public list projection sync failed after source list info hide', username: user.username, error: err.message });
+            });
+            return res.json({ ok: true, count, syncToken: user.syncToken });
+        });
     });
 });
 

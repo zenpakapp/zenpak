@@ -103,14 +103,18 @@
         <div class="listContainerHeader">
             <h2>{{ $t('library.listsTitle') }}</h2>
             <PopoverHover id="addListFlyout" placement="right">
-                <template #target><span><a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span></template>
-                <template #content><div style="display:flex;flex-direction:column;gap:8px;">
-                    <a class="lpAdd" @click="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
-                    <a class="lpAdd" @click="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
-                    <a class="lpAdd" @click="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
-                    <a class="lpAdd" @click="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
-                    <a class="lpCopy" @click="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
-                </div></template>
+                <template #target>
+                    <span><a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span>
+                </template>
+                <template #content>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
+                        <a class="lpCopy" role="button" tabindex="0" @click="copyList" @keydown.enter="copyList" @keydown.space.prevent="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
+                    </div>
+                </template>
             </PopoverHover>
         </div>
         <ul id="lists" ref="lists">
@@ -118,8 +122,9 @@
                 <div class="lpHandle" :title="$t('library.reorderItemTitle')" />
                 <span class="lpLibraryListSwitch lpListName" @click="setDefaultList(list)">
                     {{ listName(list) }}
+                    <span v-if="forkUpdateFor(list)" class="lpForkUpdateBadge">{{ $t('list.versioning.updateBadge', { version: forkUpdateFor(list).latestVersion }) }}</span>
                 </span>
-                <a class="lpRemove" :title="$t('library.removeListTitle')" @click="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a class="lpRemove" role="button" tabindex="0" :title="$t('library.removeListTitle')" @click="removeList(list)" @keydown.enter="removeList(list)" @keydown.space.prevent="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
             </li>
         </ul>
     </section>
@@ -131,23 +136,27 @@ import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop } from '../services/drag-drop';
+import { findForkUpdate } from '../utils/fork-updates';
 
 export default {
     name: 'LibraryList',
     components: {
         PopoverHover,
     },
-    props: ['list'],
-    computed: {
-        library() {
-            return this.$store.state.library;
-        },
+    inject: {
+        forkUpdates: { from: 'forkUpdates', default: () => [] },
     },
+    props: ['list'],
     data() {
         return {
             dragStartIndex: null,
             drake: null,
         };
+    },
+    computed: {
+        library() {
+            return this.$store.state.library;
+        },
     },
     mounted() {
         this.handleListReorder();
@@ -165,6 +174,9 @@ export default {
         listName(list) {
             return list.name || this.$t('library.newListDefault');
         },
+        forkUpdateFor(list) {
+            return findForkUpdate(list, this.forkUpdates);
+        },
         newList() {
             this.$store.commit('newList');
         },
@@ -180,16 +192,20 @@ export default {
         importLP() {
             openDialog('importLP');
         },
-        handleListReorder() {
+        async handleListReorder() {
             if (this.drake) {
                 this.drake.destroy();
             }
 
-            const drake = createDragDrop([this.$refs.lists], {
+            const drake = await createDragDrop([this.$refs.lists], {
                 moves($el, $source, $handle, $sibling) {
                     return $handle.classList.contains('lpHandle');
                 },
             });
+            if (!this.$el) {
+                drake.destroy();
+                return;
+            }
             drake.on('drag', ($el, $target, $source, $sibling) => {
                 this.dragStartIndex = getElementIndex($el);
             });

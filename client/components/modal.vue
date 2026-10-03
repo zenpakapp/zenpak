@@ -173,6 +173,35 @@
         max-height: 400px;
         overflow-y: scroll;
     }
+
+    .lpModalClose {
+        align-items: center;
+        background: transparent;
+        border: none;
+        border-radius: $radius-md;
+        color: $color-text-muted;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 22px;
+        height: 32px;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        transition:
+            background-color $transitionDurationFast ease,
+            color $transitionDurationFast ease;
+        width: 32px;
+        z-index: 1;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(var(--color-accent-rgb), 0.08);
+            color: $color-accent;
+        }
+    }
 }
 
 .lpModalHeader {
@@ -232,7 +261,24 @@
 <template>
     <div class="lpModalContainer">
         <transition name="lpModal">
-            <div v-if="shown" :id="id" class="lpModal">
+            <div
+                v-if="shown"
+                :id="id"
+                ref="modalEl"
+                class="lpModal"
+                role="dialog"
+                aria-modal="true"
+                :aria-labelledby="id ? `${id}Label` : undefined"
+            >
+                <button
+                    type="button"
+                    class="lpModalClose"
+                    :aria-label="$t('misc.close')"
+                    :title="$t('misc.close')"
+                    @click="hide"
+                >
+                    ×
+                </button>
                 <slot />
             </div>
         </transition>
@@ -267,11 +313,32 @@ export default {
             default: false,
         },
     },
+    watch: {
+        shown(val) {
+            if (val) {
+                this._returnFocus = document.activeElement;
+                this.$nextTick(() => {
+                    const first = this.$refs.modalEl?.querySelector(
+                        'button:not([disabled]),input:not([disabled]),select,textarea,a[href],[tabindex]:not([tabindex="-1"])',
+                    );
+                    if (first) first.focus();
+                });
+                addWindowListener('keydown', this.trapFocus);
+            } else {
+                removeWindowListener('keydown', this.trapFocus);
+                if (this._returnFocus) {
+                    this._returnFocus.focus();
+                    this._returnFocus = null;
+                }
+            }
+        },
+    },
     mounted() {
         this.bindEscape();
     },
     beforeUnmount() {
         this.unbindEscape();
+        removeWindowListener('keydown', this.trapFocus);
     },
     methods: {
         hide() {
@@ -284,8 +351,24 @@ export default {
             removeWindowListener('keyup', this.closeOnEscape);
         },
         closeOnEscape(evt) {
-            if (this.shown && evt.keyCode === 27) {
+            if (this.shown && evt.key === 'Escape') {
                 this.hide();
+            }
+        },
+        trapFocus(e) {
+            if (!this.shown || e.key !== 'Tab') return;
+            const focusable = this.$refs.modalEl?.querySelectorAll(
+                'a[href],button:not([disabled]),input:not([disabled]),select,textarea,[tabindex]:not([tabindex="-1"])',
+            );
+            if (!focusable || focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
             }
         },
     },

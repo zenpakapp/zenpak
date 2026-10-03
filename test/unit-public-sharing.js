@@ -1,6 +1,13 @@
 'use strict';
 
-const { resolvePublicItemLink } = require('../server/public-sharing.js');
+const { ObjectId } = require('mongodb');
+const { createListVersionsStub, stubServerModule } = require('./fixtures/list-versions-fixtures.js');
+
+stubServerModule('db.js', { listVersions: createListVersionsStub() });
+
+const { buildPublicList, buildPublicProfile, resolvePublicItemLink } = require('../server/public-sharing.js');
+const { publishVersion } = require('../server/list-versions.js');
+const weightUtils = require('../client/utils/weight.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {
@@ -87,5 +94,216 @@ assert('javascript: item.url blocked', r14.url === '');
 const r15 = resolvePublicItemLink({ url: 'ftp://files.example.com/gear.zip', affiliateUrl: '', brand: '', shop: '', promoCode: '', promoLabel: '' }, null);
 assert('ftp: item.url blocked', r15.url === '');
 
-console.log(`\n${passed} passed, ${failed} failed`);
-process.exit(failed > 0 ? 1 : 0);
+const hiddenPricePayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator: {},
+        items: [{ id: 1, name: 'Pack', price: 250, weight: 1000, authorUnit: 'g' }],
+        categories: [{
+            id: 2,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 1, qty: 1 }],
+        }],
+        lists: [{
+            id: 3,
+            externalId: 'abc123',
+            name: 'Trail',
+            visibility: 'shareable',
+            publicFields: { price: false },
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
+            categoryIds: [2],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'abc123');
+
+assert('hidden prices zero list total', hiddenPricePayload.list.totalPrice === 0);
+assert('hidden prices zero category subtotal', hiddenPricePayload.categories[0].subtotalPrice === 0);
+assert('hidden prices zero item price', hiddenPricePayload.categories[0].items[0].price === 0);
+assert('public payload exposes fork source', hiddenPricePayload.forkedFrom && hiddenPricePayload.forkedFrom.externalId === 'source123');
+
+const hiddenSourceListInfoPayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator,
+        items: [{ id: 11, name: 'Pack', brand: 'Zpacks', price: 250, weight: 1000, authorUnit: 'g', url: 'https://zpacks.com/pack' }],
+        categories: [{
+            id: 12,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 11, qty: 1 }],
+        }],
+        lists: [{
+            id: 13,
+            externalId: 'copy123',
+            name: 'Copied Trail',
+            visibility: 'shareable',
+            publicFields: { links: true },
+            sourceListInfoHidden: true,
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
+            categoryIds: [12],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'copy123');
+
+assert('source list info hidden disables rules on copied list', hiddenSourceListInfoPayload.categories[0].items[0].promoCode === '');
+assert('main URL still exposed when source list info is hidden', hiddenSourceListInfoPayload.categories[0].items[0].publicUrl === 'https://zpacks.com/pack');
+
+const implicitlyHiddenSourceListInfoPayload = buildPublicList({
+    username: 'alice',
+    library: {
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        entitlements: {},
+        creator,
+        items: [{ id: 21, name: 'Pack', brand: 'Zpacks', price: 250, weight: 1000, authorUnit: 'g', url: 'https://zpacks.com/pack' }],
+        categories: [{
+            id: 22,
+            name: 'Carry',
+            subtotalPrice: 250,
+            subtotalConsumablePrice: 10,
+            subtotalWeight: 1000,
+            categoryItems: [{ itemId: 21, qty: 1 }],
+        }],
+        lists: [{
+            id: 23,
+            externalId: 'copy456',
+            name: 'Copied Trail',
+            visibility: 'shareable',
+            publicFields: { links: true },
+            forkedFrom: {
+                externalId: 'source123',
+                ownerUsername: 'fx',
+                ownerName: 'FX',
+                listName: 'Source Trail',
+            },
+            categoryIds: [22],
+            totalPrice: 250,
+            totalConsumablePrice: 10,
+            totalWeight: 1000,
+        }],
+    },
+}, 'copy456');
+
+assert('source list info rules disabled on copied list with no explicit source info', implicitlyHiddenSourceListInfoPayload.categories[0].items[0].promoCode === '');
+assert('source list info codes hidden when copied list has no explicit source info', implicitlyHiddenSourceListInfoPayload.creatorCodes.length === 0);
+
+// Worn weight must be recalculated from the shared model — persisted totals
+// written under the old ×qty rule (every unit counted worn) are stale. Only one
+// unit of a worn Placement is on the body; the spares stay in the pack.
+const wornRecalcPayload = buildPublicList({
+    username: 'bob',
+    library: {
+        version: '0.3',
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        optionalFields: { worn: true, consumable: true },
+        entitlements: {},
+        creator: {},
+        items: [{ id: 31, name: 'Jacket', price: 0, weight: 145000, authorUnit: 'g' }],
+        categories: [{
+            id: 32,
+            name: 'Clothing',
+            categoryItems: [{ itemId: 31, qty: 2, worn: 1, consumable: false }],
+            // Stale: worn weight counted × qty under the old rule.
+            subtotalWeight: 290000,
+            subtotalWornWeight: 290000,
+            subtotalConsumableWeight: 0,
+        }],
+        lists: [{
+            id: 33,
+            externalId: 'worn123',
+            name: 'Worn Trail',
+            visibility: 'shareable',
+            publicFields: {},
+            categoryIds: [32],
+            totalWeight: 290000,
+            totalWornWeight: 290000,
+            totalConsumableWeight: 0,
+            totalBaseWeight: 0,
+        }],
+    },
+}, 'worn123');
+
+assert('worn qty 2 recalculated to one unit (old ×qty persisted)', wornRecalcPayload.list.totalWornWeight === 145000);
+assert('category subtotalWornWeight recalculated to one unit', wornRecalcPayload.categories[0].subtotalWornWeight === 145000);
+assert('worn qty 2: spare unit stays in base weight', wornRecalcPayload.list.totalBaseWeight === 145000);
+assert('worn weight served as 0.15 kg', weightUtils.MgToWeight(wornRecalcPayload.list.totalWornWeight, 'kg') === 0.15);
+
+const profileTestUser = {
+    _id: new ObjectId(),
+    username: 'trailblazer',
+    library: {
+        version: '0.3',
+        itemUnit: 'g',
+        totalUnit: 'kg',
+        publicProfile: { displayName: 'Trail Blazer', visibility: 'discoverable' },
+        entitlements: {},
+        creator: {},
+        items: [
+            {
+                id: 1, name: 'Tent', weight: 900000, authorUnit: 'g', price: 500,
+            },
+        ],
+        categories: [
+            { id: 2, name: 'Shelter', categoryItems: [{ itemId: 1, qty: 1 }] },
+        ],
+        lists: [
+            {
+                id: 10, externalId: 'published-list', name: 'Published Trail', visibility: 'shareable', categoryIds: [2], seasons: ['summer'], listTypes: ['trek'],
+            },
+            {
+                id: 11, externalId: 'unpublished-list', name: 'Unpublished Trail', visibility: 'shareable', categoryIds: [2], seasons: [], listTypes: [],
+            },
+        ],
+    },
+};
+
+async function runProfileTests() {
+    console.log('\n--- buildPublicProfile (snapshot-only content) ---');
+    let profilePayload = await buildPublicProfile(profileTestUser);
+    assert('no list is served on the profile before anything is published', profilePayload.lists.length === 0);
+
+    await publishVersion(profileTestUser, 'published-list', '');
+    profilePayload = await buildPublicProfile(profileTestUser);
+    assert('the published list appears on the profile', profilePayload.lists.length === 1 && profilePayload.lists[0].externalId === 'published-list');
+    assert('a shared but never-published list is excluded from the profile', !profilePayload.lists.some((l) => l.externalId === 'unpublished-list'));
+
+    profileTestUser.library.lists[0].name = 'LIVE EDIT AFTER PUBLISH';
+    const afterLiveEdit = await buildPublicProfile(profileTestUser);
+    assert('unpublished live edits to a published list are not served on the profile', afterLiveEdit.lists[0].name === 'Published Trail');
+}
+
+runProfileTests().then(() => {
+    console.log(`\n${passed} passed, ${failed} failed`);
+    process.exit(failed > 0 ? 1 : 0);
+}).catch((err) => {
+    console.error(err);
+    process.exit(1);
+});

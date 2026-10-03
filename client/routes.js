@@ -1,17 +1,15 @@
-import dashboard from './views/dashboard.vue';
-import welcome from './views/welcome.vue';
-import signin from './views/signin.vue';
-import register from './views/register.vue';
-import forgotPassword from './views/forgot-password.vue';
-import resetPassword from './views/reset-password.vue';
-import moderation from './views/moderation.vue';
-import publicProfile from './views/public-profile.vue';
-import publicList from './views/public-list.vue';
-import communityView from './views/community.vue';
-import guideView from './views/guide.vue';
-import aboutView from './views/about.vue';
-import notFound from './views/not-found.vue';
-import verifyEmail from './views/verify-email.vue';
+const dashboard = () => import(/* webpackChunkName: "view-dashboard" */ './views/dashboard.vue');
+const welcome = () => import(/* webpackChunkName: "view-welcome" */ './views/welcome.vue');
+const forgotPassword = () => import(/* webpackChunkName: "view-forgot-password" */ './views/forgot-password.vue');
+const resetPassword = () => import(/* webpackChunkName: "view-reset-password" */ './views/reset-password.vue');
+const moderation = () => import(/* webpackChunkName: "view-moderation" */ './views/moderation.vue');
+const publicProfile = () => import(/* webpackChunkName: "view-public-profile" */ './views/public-profile.vue');
+const publicList = () => import(/* webpackChunkName: "view-public-list" */ './views/public-list.vue');
+const communityView = () => import(/* webpackChunkName: "view-community" */ './views/community.vue');
+const guideView = () => import(/* webpackChunkName: "view-guide" */ './views/guide.vue');
+const aboutView = () => import(/* webpackChunkName: "view-about" */ './views/about.vue');
+const notFound = () => import(/* webpackChunkName: "view-not-found" */ './views/not-found.vue');
+const verifyEmail = () => import(/* webpackChunkName: "view-verify-email" */ './views/verify-email.vue');
 
 export default [
     { path: '/', component: dashboard },

@@ -1,30 +1,32 @@
-<style lang="scss">
-@import "../css/_library-items";
-</style>
-
 <template>
     <section class="libraryContainer">
         <div v-if="showTitle" class="libraryHeader">
             <h2>{{ $t('library.itemsTitle') }}</h2>
-            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">{{ $t('library.newGearButton') }}</button>
+            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">
+                {{ $t('library.newGearButton') }}
+            </button>
         </div>
         <div class="lpLibraryFilters">
             <div class="lpLibraryFilterSelectWrap">
                 <select v-model="filterCategory" class="lpLibraryFilterSelect">
-                    <option value="">{{ $t('library.allCategories') }}</option>
-                    <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                    <option value="">
+                        {{ $t('library.allCategories') }}
+                    </option>
+                    <option v-for="cat in gearCategories" :key="cat" :value="cat">
+                        {{ cat }}
+                    </option>
                 </select>
             </div>
             <div class="librarySearchWrap librarySearchInline">
                 <input
                     ref="searchInput"
+                    v-model="searchDraft"
                     class="librarySearch"
-                    v-model="searchText"
                     type="text"
                     :placeholder="$t('library.searchPlaceholder')"
                 >
                 <button
-                    v-if="searchText"
+                    v-if="searchDraft"
                     class="librarySearchClear"
                     type="button"
                     :aria-label="$t('library.clearSearchAria')"
@@ -46,40 +48,59 @@
                 @keydown.enter.prevent="addFilterTag"
                 @focus="tagInputFocused = true"
                 @blur="tagInputFocused = false"
-            />
+            >
         </div>
-        <ul class="library" ref="library">
-            <li v-for="item in filteredItems" :key="item.id" class="lpLibraryItem" :data-item-id="item.id" @dblclick="openDetail(item)">
-                <a v-if="item.url" :href="item.url" target="_blank" class="lpName lpHref">{{ item.name }}</a>
-                <span v-if="!item.url" class="lpName">{{ item.name }}</span>
+        <ul
+            ref="library"
+            class="library"
+            tabindex="0"
+            :aria-label="$t('library.itemsTitle')"
+            @scroll.passive="handleScroll"
+        >
+            <li v-if="virtualWindow.top" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.top}px` }" aria-hidden="true" />
+            <li
+                v-for="(libraryItem, index) in virtualWindow.items"
+                :key="libraryItem.id"
+                class="lpLibraryItem"
+                :data-item-id="libraryItem.id"
+                :aria-setsize="filteredItems.length"
+                :aria-posinset="virtualWindow.start + index + 1"
+                @dblclick="openDetail(libraryItem)"
+            >
+                <a v-if="libraryItem.url" :href="libraryItem.url" target="_blank" class="lpName lpHref">{{ libraryItem.name }}</a>
+                <span v-if="!libraryItem.url" class="lpName">{{ libraryItem.name }}</span>
                 <span class="lpWeight">
-                    {{ displayWeight(item.weight, item.authorUnit) }}
-                    {{ item.authorUnit }}
+                    {{ displayWeight(libraryItem.weight, itemUnit) }}
+                    {{ itemUnit }}
                 </span>
-                <span class="lpDescription">
-                    {{ item.description }}
+                <span v-if="hasLibraryItemMeta(libraryItem)" class="lpLibraryItemMeta">
+                    <span v-if="libraryItem.brand" class="lpLibraryItemBrand">{{ libraryItem.brand }}</span>
+                    <span v-for="tag in itemTags(libraryItem)" :key="tag" class="lpLibraryItemTag">{{ tag }}</span>
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(item)"><i class="lpSprite lpSpriteRemove" /></a>
-                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(item)">⋯</button>
+                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
+                <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
+                    ⋯
+                </button>
                 <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
             </li>
+            <li v-if="virtualWindow.bottom" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.bottom}px` }" aria-hidden="true" />
         </ul>
     </section>
 </template>
 
 <script>
-import { useUtils } from '../composables/useUtils.js';
+import { useUtils } from '../composables/useUtils';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
+import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
+import { GEAR_CATEGORIES } from '../data/gear-categories';
 
-const { displayWeight, displayPrice } = useUtils();
+const { displayWeight } = useUtils();
 
-const GEAR_CATEGORIES = [
-    'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
-    'Navigation', 'Safety', 'Hygiene', 'Electronics', 'Essentials', 'Other',
-];
+const LIBRARY_ROW_HEIGHT = 52;
+const LIBRARY_OVERSCAN = 6;
 
 export default {
     name: 'LibraryItem',
@@ -97,62 +118,49 @@ export default {
     data() {
         return {
             searchText: '',
+            searchDraft: '',
+            searchFrame: null,
             filterCategory: '',
             filterTags: [],
             tagInput: '',
             tagInputFocused: false,
             itemDragId: false,
             drake: null,
+            scrollTop: 0,
+            viewportHeight: 600,
+            resizeObserver: null,
+            scrollFrame: null,
+            dragFrame: null,
+            dragIdle: null,
+            dragSetupToken: 0,
         };
     },
     computed: {
         library() {
             return this.$store.state.library;
         },
+        itemUnit() {
+            return (this.library && this.library.itemUnit) || 'g';
+        },
         gearCategories() {
             return GEAR_CATEGORIES;
         },
         filteredItems() {
             if (!this.library || !this.library.items) return [];
-            let i;
-            let item;
-            let filteredItems = [];
-            if (!this.searchText) {
-                filteredItems = this.library.items.map(item => ({ ...item }));
-            } else {
-                const lowerCaseSearchText = this.searchText.toLowerCase();
-
-                for (i = 0; i < this.library.items.length; i++) {
-                    item = this.library.items[i];
-                    if (item.name.toLowerCase().indexOf(lowerCaseSearchText) > -1 || item.description.toLowerCase().indexOf(lowerCaseSearchText) > -1) {
-                        filteredItems.push({ ...item });
-                    }
-                }
-            }
-
-            if (this.filterCategory) {
-                filteredItems = filteredItems.filter(item =>
-                    (item.category || '').toLowerCase() === this.filterCategory.toLowerCase()
-                );
-            }
-            if (this.filterTags.length) {
-                filteredItems = filteredItems.filter(item =>
-                    this.filterTags.every(tag =>
-                        (item.tags || []).map(t => t.toLowerCase()).includes(tag.toLowerCase())
-                    )
-                );
-            }
-
-            const currentListItems = this.library.getItemsInCurrentList();
-
-            for (i = 0; i < filteredItems.length; i++) {
-                item = filteredItems[i];
-                if (currentListItems.indexOf(item.id) > -1) {
-                    item.inCurrentList = true;
-                }
-            }
-
-            return filteredItems;
+            return filterLibraryItems(this.library.items, {
+                searchText: this.searchText,
+                category: this.filterCategory,
+                tags: this.filterTags,
+            });
+        },
+        virtualWindow() {
+            return calculateVirtualWindow({
+                items: this.filteredItems,
+                rowHeight: LIBRARY_ROW_HEIGHT,
+                viewportHeight: this.viewportHeight,
+                scrollTop: this.scrollTop,
+                overscan: LIBRARY_OVERSCAN,
+            });
         },
         list() {
             if (!this.library || typeof this.library.getListById !== 'function') return null;
@@ -160,25 +168,49 @@ export default {
         },
         categories() {
             if (!this.list) return [];
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id));
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id));
         },
     },
     watch: {
-        categories() {
-            this.$nextTick(() => {
-                this.handleItemDrag();
-            });
+        searchDraft() {
+            this.scheduleSearch();
         },
-        filteredItems() {
-            this.$nextTick(() => {
-                this.handleItemDrag();
-            });
+        searchText() {
+            this.resetVirtualScroll();
+        },
+        filterCategory() {
+            this.resetVirtualScroll();
+        },
+        filterTags: {
+            deep: true,
+            handler() {
+                this.resetVirtualScroll();
+            },
+        },
+        categories() {
+            this.scheduleItemDrag();
         },
     },
     mounted() {
-        this.handleItemDrag();
+        this.measureViewport();
+        if (typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.measureViewport());
+            this.resizeObserver.observe(this.$refs.library);
+        }
+        this.scheduleItemDrag();
     },
     beforeUnmount() {
+        if (this.resizeObserver) this.resizeObserver.disconnect();
+        if (this.scrollFrame) cancelAnimationFrame(this.scrollFrame);
+        if (this.searchFrame) cancelAnimationFrame(this.searchFrame);
+        if (this.dragFrame) cancelAnimationFrame(this.dragFrame);
+        if (this.dragIdle) {
+            if (typeof window !== 'undefined' && typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(this.dragIdle);
+            } else {
+                clearTimeout(this.dragIdle);
+            }
+        }
         if (this.drake) {
             this.drake.destroy();
             this.drake = null;
@@ -186,9 +218,34 @@ export default {
     },
     methods: {
         displayWeight,
-        displayPrice,
+        measureViewport() {
+            if (this.$refs.library) {
+                this.viewportHeight = this.$refs.library.clientHeight;
+            }
+        },
+        resetVirtualScroll() {
+            this.scrollTop = 0;
+            if (this.$refs.library) this.$refs.library.scrollTop = 0;
+        },
+        handleScroll(event) {
+            if (this.scrollFrame) return;
+            const scrollElement = event.currentTarget;
+            this.scrollFrame = requestAnimationFrame(() => {
+                this.scrollTop = scrollElement.scrollTop;
+                this.scrollFrame = null;
+            });
+        },
+        scheduleSearch() {
+            if (this.searchFrame) cancelAnimationFrame(this.searchFrame);
+            this.searchFrame = requestAnimationFrame(() => {
+                this.searchFrame = null;
+                this.searchText = this.searchDraft;
+            });
+        },
         openDetail(item, startEditing = false) {
-            openDialog('itemDetail', { item, categoryItem: null, category: null, startEditing });
+            openDialog('itemDetail', {
+                item, categoryItem: null, category: null, startEditing,
+            });
         },
         addFilterTag() {
             const tag = this.tagInput.trim().toLowerCase();
@@ -198,15 +255,26 @@ export default {
             this.tagInput = '';
         },
         removeFilterTag(tag) {
-            this.filterTags = this.filterTags.filter(t => t !== tag);
+            this.filterTags = this.filterTags.filter((t) => t !== tag);
         },
         clearSearch() {
+            if (this.searchFrame) {
+                cancelAnimationFrame(this.searchFrame);
+                this.searchFrame = null;
+            }
+            this.searchDraft = '';
             this.searchText = '';
             this.$nextTick(() => {
                 if (this.$refs.searchInput) {
                     this.$refs.searchInput.focus();
                 }
             });
+        },
+        itemTags(item) {
+            return Array.isArray(item.tags) ? item.tags.filter(Boolean) : [];
+        },
+        hasLibraryItemMeta(item) {
+            return !!(item.brand || item.category || this.itemTags(item).length);
         },
         createLibraryItem() {
             this.$store.commit('newItem', {
@@ -217,30 +285,53 @@ export default {
             const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null });
         },
-        handleItemDrag() {
+        scheduleItemDrag() {
+            if (this.dragFrame || this.dragIdle) return;
+            this.dragFrame = requestAnimationFrame(() => {
+                this.dragFrame = null;
+                const run = () => {
+                    this.dragIdle = null;
+                    this.handleItemDrag();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.dragIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.dragIdle = setTimeout(run, 0);
+                }
+            });
+        },
+        async handleItemDrag() {
+            const setupToken = ++this.dragSetupToken;
             if (this.drake) {
                 this.drake.destroy();
+                this.drake = null;
             }
 
-            const self = this;
             const editorRoot = this.$root && this.$root.$el ? this.$root.$el : this.$el;
             const categoryItems = queryContainers(editorRoot, '.lpItems');
-            const drake = createDragDrop([this.$refs.library].concat(categoryItems), {
+            const drake = await createDragDrop([this.$refs.library].concat(categoryItems), {
                 copy: true,
-                moves($el, $source, $handle, $sibling) {
+                moves(...args) {
+                    const $handle = args[2];
                     return $handle.classList.contains('lpLibraryItemHandle');
                 },
-                accepts($el, $target, $source, $sibling) {
+                accepts(...args) {
+                    const $target = args[1];
+                    const $sibling = args[3];
                     if ($target.classList.contains('library') || !$sibling || $sibling.classList.contains('lpItemsHeader')) {
                         return false; // header and footer are technically part of this list - exclude them both.
                     }
                     return true;
                 },
             });
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            if (!this.$el || setupToken !== this.dragSetupToken) {
+                drake.destroy();
+                return;
+            }
+            drake.on('drag', ($el) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el, $target) => {
                 if (!$target || $target.classList.contains('library')) {
                     return;
                 }
@@ -266,3 +357,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_library-items";
+</style>

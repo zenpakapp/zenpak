@@ -32,7 +32,7 @@ library.creator.affiliateRules.push({
     affiliateUrl: 'https://example.com/shop-zpacks',
 });
 
-const firstItem = library.items[0];
+const firstItem = library.newItem({ category: library.categories[0] });
 firstItem.name = 'Duplex';
 firstItem.brand = 'Zpacks';
 firstItem.shop = 'Zpacks';
@@ -57,16 +57,17 @@ assert.strictEqual(publicLink.hasAffiliateLink, true);
 
 loaded.items[0].affiliateUrl = '';
 publicLink = resolvePublicItemLink(loaded.items[0], loaded.creator);
-assert.strictEqual(publicLink.url, 'https://example.com/shop-zpacks');
+assert.strictEqual(publicLink.url, 'https://www.zpacks.com/products/duplex-tent');
 assert.strictEqual(publicLink.hasAffiliateLink, true);
 
 loaded.items[0].shop = '';
 publicLink = resolvePublicItemLink(loaded.items[0], loaded.creator);
-assert.strictEqual(publicLink.url, 'https://example.com/domain-zpacks');
+assert.strictEqual(publicLink.url, 'https://www.zpacks.com/products/duplex-tent');
 
 loaded.items[0].url = '';
+loaded.items[0].promoCode = '';
 publicLink = resolvePublicItemLink(loaded.items[0], loaded.creator);
-assert.strictEqual(publicLink.url, 'https://example.com/zpacks');
+assert.strictEqual(publicLink.url, '');
 assert.strictEqual(publicLink.promoCode, 'LIGHT10');
 
 console.log('LighterPack+ model verification passed');

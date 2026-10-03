@@ -6,6 +6,8 @@ const config = require('config');
 
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
+const { isReservedDisplayName } = require('./username-policy.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -19,7 +21,7 @@ async function cloudinaryUpload(imageFile, { folder, transformation } = {}) {
     // params sorted alphabetically before apiSecret
     const params = { folder, timestamp };
     if (transformation) params.transformation = transformation;
-    const signatureStr = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join('&') + apiSecret;
+    const signatureStr = Object.keys(params).sort().map((k) => `${k}=${params[k]}`).join('&') + apiSecret;
     const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
 
     const imageBuffer = await readFile(imageFile.filepath);
@@ -82,7 +84,13 @@ router.put('/api/profile', (req, res) => {
         if (!user.library.publicProfile) user.library.publicProfile = {};
         const p = user.library.publicProfile;
 
-        if (typeof req.body.displayName === 'string') p.displayName = req.body.displayName.slice(0, 100);
+        if (typeof req.body.displayName === 'string') {
+            const displayName = req.body.displayName.slice(0, 100).trim();
+            if (isReservedDisplayName(displayName)) {
+                return res.status(400).json({ message: 'This display name is reserved for the ZenPak team.' });
+            }
+            p.displayName = displayName;
+        }
         if (typeof req.body.trailName === 'string') p.trailName = req.body.trailName.slice(0, 100);
         if (typeof req.body.bio === 'string') p.bio = req.body.bio.slice(0, 500);
         const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];
@@ -91,6 +99,7 @@ router.put('/api/profile', (req, res) => {
 
         try {
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -105,6 +114,7 @@ router.delete('/api/profile/avatar', (req, res) => {
             if (!user.library.publicProfile) user.library.publicProfile = {};
             user.library.publicProfile.avatarUrl = '';
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -130,6 +140,7 @@ router.post('/api/profile/avatar', (req, res) => {
                 if (!user.library.publicProfile) user.library.publicProfile = {};
                 user.library.publicProfile.avatarUrl = data.secure_url;
                 await db.users.save(user);
+                syncUserPublicLists(user).catch(() => {});
 
                 return res.json({ avatarUrl: data.secure_url });
             } catch (e) {

@@ -1,14 +1,3 @@
-<style lang="scss">
-@import "../css/_globals";
-
-.lpLegend {
-    &:hover {
-        border-color: $color-text-muted;
-        cursor: pointer;
-    }
-}
-</style>
-
 <template>
     <div class="lpListSummary">
         <div class="lpChartContainer">
@@ -28,7 +17,7 @@
                         {{ $t('public.weight') }}
                     </span>
                 </li>
-                <li v-for="category in categories" :key="category.id" :class="{'hover': category.activeHover, 'lpTotalCategory lpRow': true}">
+                <li v-for="category in categories" :key="category.id" :class="{'hover': hoveredCategoryId === category.id, 'lpTotalCategory lpRow': true}">
                     <span class="lpCell lpLegendCell">
                         <colorPicker v-if="category.displayColor" :color="colorToHex(category.displayColor)" @colorChange="updateColor(category, $event)" />
                     </span>
@@ -100,24 +89,38 @@
 </template>
 
 <script>
-import colorPicker from './colorpicker.vue';
 import { markRaw } from 'vue';
+import colorPicker from './colorpicker.vue';
 import { renderListChart } from '../services/list-chart';
-import { useUtils } from '../composables/useUtils.js';
+import { useUtils } from '../composables/useUtils';
+
 const colorUtils = require('../utils/color.js');
 
 const { displayWeight, displayPrice } = useUtils();
+
+function scheduleIdle(callback) {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout: 1500 });
+        return;
+    }
+    setTimeout(callback, 0);
+}
 
 export default {
     name: 'ListSummary',
     components: {
         colorPicker,
     },
-    props: ['list'],
+    props: {
+        list: { type: Object, required: true },
+    },
     data() {
         return {
             chart: null,
             hoveredCategoryId: null,
+            chartFrame: null,
+            chartScheduled: false,
+            themeObserver: null,
         };
     },
     computed: {
@@ -125,25 +128,27 @@ export default {
             return this.$store.state.library;
         },
         categories() {
-            return this.list.categoryIds.map((id) => {
-                const category = this.library.getCategoryById(id);
-                category.activeHover = (this.hoveredCategoryId === category.id);
-                return category;
-            });
+            return this.list.categoryIds
+                .map((id) => this.library.getCategoryById(id))
+                .filter(Boolean);
         },
         displayUnit() {
             return this.library.totalUnit;
         },
     },
     watch: {
-        '$store.state.library.defaultListId': 'updateChart',
-        'list.totalWeight': 'updateChart',
-        'list.categoryIds': 'updateChart',
+        '$store.state.library.defaultListId': 'scheduleChartUpdate',
+        'list.totalWeight': 'scheduleChartUpdate',
+        'list.categoryIds': 'scheduleChartUpdate',
     },
     mounted() {
-        this.updateChart();
+        this.scheduleChartUpdate();
+        this.themeObserver = new MutationObserver(() => this.scheduleChartUpdate());
+        this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     },
     beforeUnmount() {
+        if (this.chartFrame) cancelAnimationFrame(this.chartFrame);
+        if (this.themeObserver) this.themeObserver.disconnect();
         if (this.chart && typeof this.chart.destroy === 'function') {
             this.chart.destroy();
             this.chart = null;
@@ -152,16 +157,28 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
-        updateChart(type) {
+        scheduleChartUpdate() {
+            if (this.chartScheduled) return;
+            this.chartScheduled = true;
+            this.chartFrame = requestAnimationFrame(() => {
+                this.chartFrame = null;
+                scheduleIdle(() => {
+                    this.chartScheduled = false;
+                    this.updateChart();
+                });
+            });
+        },
+        async updateChart() {
             if (!this.library || typeof this.library.renderChart !== 'function') return;
-            const chartData = this.library.renderChart(type);
+            const chartData = this.library.renderChart();
 
             if (chartData) {
-                this.chart = markRaw(renderListChart({
+                this.chart = markRaw(await renderListChart({
                     chart: this.chart,
                     canvas: this.$refs.chartCanvas,
                     processedData: chartData,
                     hoverCallback: this.chartHover,
+                    unit: this.displayUnit,
                 }));
             }
             return chartData;
@@ -186,3 +203,20 @@ export default {
 };
 
 </script>
+
+<style lang="scss">
+@import "../css/_globals";
+
+.lpLegend {
+    &:hover {
+        border-color: $color-text-muted;
+        cursor: pointer;
+    }
+}
+
+.lpChart {
+    aspect-ratio: 1;
+    height: auto !important;
+    max-width: 100%;
+}
+</style>

@@ -4,7 +4,9 @@
 
 <template>
     <modal id="accountSettings" :shown="shown" @hide="shown = false">
-        <h2 class="accountSettingsTitle">{{ $t('acct.accountSettings') }}</h2>
+        <h2 class="accountSettingsTitle">
+            {{ $t('acct.accountSettings') }}
+        </h2>
 
         <section class="accountSection">
             <form id="accountForm" @submit.prevent="updateAccount()">
@@ -45,59 +47,79 @@
                         <spinner v-if="saving" />
                     </button>
                     <div class="accountActionsRight">
-                        <a class="accountCancelLink" @click="shown = false">{{ $t('acct.cancel') }}</a>
-                        <a class="accountDangerLink" @click="showDeleteAccount">{{ $t('acct.deleteAccount') }}</a>
+                        <a class="accountCancelLink" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('acct.cancel') }}</a>
+                        <a class="accountDangerLink" role="button" tabindex="0" @click="showDeleteAccount" @keydown.enter="showDeleteAccount" @keydown.space.prevent="showDeleteAccount">{{ $t('acct.deleteAccount') }}</a>
                     </div>
                 </div>
             </form>
         </section>
 
         <section class="accountSection">
-            <h3 class="accountSectionTitle">{{ $t('acct.libraryBackup') }}</h3>
+            <h3 class="accountSectionTitle">
+                {{ $t('acct.libraryBackup') }}
+            </h3>
             <template v-if="hasBackup">
-                <p class="accountSectionText">{{ $t('acct.libraryBackupDesc') }}</p>
+                <p class="accountSectionText">
+                    {{ $t('acct.libraryBackupDesc') }}
+                </p>
                 <div class="accountBackupActions">
-                    <button class="lpButton" @click="downloadBackup" :disabled="backupLoading">
+                    <button class="lpButton" :disabled="backupLoading" @click="downloadBackup">
                         {{ backupLoading ? $t('acct.preparing') : $t('acct.downloadBackup') }}
                     </button>
-                    <button class="lpButton lpButtonSecondary" @click="triggerRestoreFile" :disabled="restoreLoading">
+                    <button class="lpButton lpButtonSecondary" :disabled="restoreLoading" @click="triggerRestoreFile">
                         {{ restoreLoading ? $t('acct.restoring') : $t('acct.restoreFromBackup') }}
                     </button>
                 </div>
                 <div v-if="restoreConfirm" class="accountRestoreConfirm">
-                    <p class="accountRestoreConfirmText">{{ $t('acct.restoreWarning') }}</p>
+                    <p class="accountRestoreConfirmText">
+                        {{ $t('acct.restoreWarning') }}
+                    </p>
                     <div class="accountRestoreConfirmActions">
-                        <button class="lpButton lpButtonDanger" @click="confirmRestore">{{ $t('acct.yesRestore') }}</button>
-                        <a class="accountCancelLink" @click="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
+                        <button class="lpButton lpButtonDanger" @click="confirmRestore">
+                            {{ $t('acct.yesRestore') }}
+                        </button>
+                        <a class="accountCancelLink" role="button" tabindex="0" @click="restoreConfirm = false; restoreFile = null" @keydown.enter="restoreConfirm = false; restoreFile = null" @keydown.space.prevent="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
                     </div>
                 </div>
-                <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile" />
+                <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile">
             </template>
         </section>
 
         <section v-if="billing && billing.stripeEnabled" class="accountSection">
-            <h3 class="accountSectionTitle">{{ $t('acct.subscription') }}</h3>
+            <h3 class="accountSectionTitle">
+                {{ $t('acct.subscription') }}
+            </h3>
 
             <div v-if="billing.status === 'past_due'" class="accountBillingAlert">
                 {{ $t('acct.paymentFailed') }}
                 <div class="accountActions">
-                    <button class="lpButton lpButtonDanger" @click="openPortal()">{{ $t('acct.updatePayment') }}</button>
+                    <button class="lpButton lpButtonDanger" @click="openPortal()">
+                        {{ $t('acct.updatePayment') }}
+                    </button>
                 </div>
             </div>
 
-            <div v-if="billingError" class="accountBillingError">{{ billingError }}</div>
+            <div v-if="billingError" class="accountBillingError">
+                {{ billingError }}
+            </div>
 
             <div v-if="billing.plan === 'free'" class="accountBillingUpgrade">
-                <p class="accountSectionText">{{ $t('acct.upgradePrompt') }}</p>
+                <p class="accountSectionText">
+                    {{ $t('acct.upgradePrompt') }}
+                </p>
                 <div class="accountBillingActions">
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Kin</strong> — {{ $t('acct.kinPrice') }}</p>
-                        <button @click="openCheckout('trail')" class="lpButton accountBillingKinBtn">
+                        <p class="accountSectionText">
+                            <strong>{{ tierLabel('trail') }}</strong> — {{ $t('acct.kinPrice') }}
+                        </p>
+                        <button class="lpButton accountBillingKinBtn" @click="openCheckout('trail')">
                             {{ $t('acct.upgradeToKin') }}
                         </button>
                     </div>
                     <div class="accountBillingOption">
-                        <p class="accountSectionText"><strong>Wayfarer</strong></p>
+                        <p class="accountSectionText">
+                            <strong>{{ tierLabel('guide') }}</strong>
+                        </p>
                         <div class="accountIntervalToggle">
                             <button
                                 :class="['lpButton', selectedGuideInterval === 'month' ? 'lpButtonPrimary' : 'lpButtonSecondary']"
@@ -113,8 +135,8 @@
                             </button>
                         </div>
                         <button
-                            @click="openCheckout('guide', selectedGuideInterval)"
                             class="lpButton lpButtonPrimary"
+                            @click="openCheckout('guide', selectedGuideInterval)"
                         >
                             {{ $t('acct.upgradeToWayfarer') }}
                         </button>
@@ -124,28 +146,36 @@
 
             <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    {{ $t('acct.currentPlan') }}<strong>Kin</strong>
+                    {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonPrimary" @click="openPortal(billing.subscriptionId)">{{ $t('acct.upgradeToWayfarer') }}</button>
-                    <button class="lpButton lpButtonSecondary" @click="openPortal()">{{ $t('acct.manageSubscription') }}</button>
+                    <button class="lpButton lpButtonPrimary" @click="openPortal(billing.subscriptionId)">
+                        {{ $t('acct.upgradeToWayfarer') }}
+                    </button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal()">
+                        {{ $t('acct.manageSubscription') }}
+                    </button>
                 </div>
             </div>
 
             <div v-if="billing.plan === 'creator'" class="accountBillingManage">
                 <p class="accountSectionText">
-                    {{ $t('acct.currentPlan') }}<strong>Wayfarer</strong>
+                    {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
                 </p>
                 <div class="accountActions">
-                    <button class="lpButton lpButtonSecondary" @click="openPortal()">{{ $t('acct.manageSubscription') }}</button>
+                    <button class="lpButton lpButtonSecondary" @click="openPortal()">
+                        {{ $t('acct.manageSubscription') }}
+                    </button>
                 </div>
             </div>
         </section>
 
         <section class="accountSection">
-            <h3 class="accountSectionTitle">{{ $t('acct.language') }}</h3>
+            <h3 class="accountSectionTitle">
+                {{ $t('acct.language') }}
+            </h3>
             <div class="accountField">
                 <lp-select :value="selectedLocale" :options="localeOptions" @change="selectLocale" />
             </div>
@@ -157,17 +187,19 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import errors from './errors.vue';
 import modal from './modal.vue';
 import spinner from './spinner.vue';
-import profileSettings from './profile-settings.vue';
-import creatorLinks from './creator-links.vue';
-import upgradePrompt from './upgrade-prompt.vue';
 import LpSelect from './lp-select.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
+import { planLabel as planTierLabel, tierLabel } from '../services/tier-labels.js';
 import { setLocale } from '../i18n';
+
+const profileSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-profile" */ './profile-settings.vue'));
+const creatorLinks = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-creator" */ './creator-links.vue'));
 
 export default {
     name: 'Account',
@@ -177,7 +209,6 @@ export default {
         spinner,
         profileSettings,
         creatorLinks,
-        upgradePrompt,
         LpSelect,
     },
     data() {
@@ -212,8 +243,7 @@ export default {
             return this.$store.state.billing;
         },
         planLabel() {
-            const map = { supporter: 'Kin', creator: 'Wayfarer', free: 'Base' };
-            return map[this.billing && this.billing.plan] || 'Base';
+            return planTierLabel(this.billing && this.billing.plan);
         },
         localeOptions() {
             return [
@@ -229,8 +259,8 @@ export default {
         registerDialogOpener('account', () => {
             this.shown = true;
             fetch('/api/billing/me', { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
         });
     },
@@ -238,12 +268,13 @@ export default {
         unregisterDialogOpener('account');
     },
     methods: {
+        tierLabel,
         selectLocale(val) {
             this.selectedLocale = val;
             this.changeLocale();
         },
-        changeLocale() {
-            setLocale(this.selectedLocale);
+        async changeLocale() {
+            await setLocale(this.selectedLocale);
         },
         async downloadBackup() {
             this.backupLoading = true;

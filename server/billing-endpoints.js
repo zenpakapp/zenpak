@@ -1,7 +1,6 @@
-'use strict';
-
 const express = require('express');
 const config = require('config');
+
 const router = express.Router();
 const auth = require('./auth.js');
 const { stripeEnabled, getStripe, getOrCreateCustomer } = require('./billing.js');
@@ -17,7 +16,9 @@ function billingRequired(req, res, next) {
 // Body: { priceId: string, successUrl?: string, cancelUrl?: string }
 router.post('/checkout-session', billingRequired, (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
-        const { priceId: bodyPriceId, plan, successUrl, cancelUrl } = req.body || {};
+        const {
+            priceId: bodyPriceId, plan, successUrl, cancelUrl,
+        } = req.body || {};
 
         let priceId = bodyPriceId;
         if (!priceId && plan) {
@@ -59,8 +60,11 @@ router.post('/checkout-session', billingRequired, (req, res) => {
                 customer_update: { name: 'auto', address: 'auto' },
                 consent_collection: { terms_of_service: 'required' },
                 custom_text: {
+                    submit: {
+                        message: 'Prices are final amounts payable. VAT is not applicable while FX Benard AE remains under the French VAT exemption regime.',
+                    },
                     terms_of_service_acceptance: {
-                        message: `I agree to the [Terms of Service](${deployUrl}/terms) and [Privacy Policy](${deployUrl}/privacy).`,
+                        message: `I agree to the [Terms of Service](${deployUrl}/terms) and [Privacy Policy](${deployUrl}/privacy), request immediate access to the digital service, and acknowledge the related withdrawal terms.`,
                     },
                 },
                 metadata: { username: user.username },
@@ -114,9 +118,7 @@ router.post('/portal-session', billingRequired, (req, res) => {
 });
 
 // GET /config (public — server-level feature flags)
-router.get('/config', (req, res) => {
-    return res.json({ stripeEnabled: stripeEnabled() });
-});
+router.get('/config', (req, res) => res.json({ stripeEnabled: stripeEnabled() }));
 
 // GET /me
 router.get('/me', (req, res) => {

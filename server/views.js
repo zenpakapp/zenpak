@@ -6,7 +6,7 @@ const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es'];
 const serverLocales = {};
 SUPPORTED_LOCALES.forEach((lang) => {
     serverLocales[lang] = JSON.parse(
-        fs.readFileSync(path.join(__dirname, `locales/${lang}.json`), 'utf8')
+        fs.readFileSync(path.join(__dirname, `locales/${lang}.json`), 'utf8'),
     );
 });
 
@@ -25,6 +25,18 @@ const { escapeCsvField } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
 
 const db = require('./db.js');
+const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
+
+// Legacy handlers used a callback-style findOne; async work inside one becomes an unhandled
+// rejection if it throws. Run each view inside this guard so failures log and answer 500.
+async function runLegacyView(req, res, view) {
+    try {
+        await view();
+    } catch (error) {
+        logWithRequest(req, { message: 'legacy list view failed', path: req.path, error: error.message });
+        if (!res.headersSent) res.status(500).send('An error occurred.');
+    }
+}
 
 const weightUtils = require('../client/utils/weight.js');
 const { formatDisplayPrice } = require('../client/utils/currency.js');
@@ -33,7 +45,6 @@ const dataTypes = require('../client/dataTypes.js');
 const Item = dataTypes.Item;
 const Category = dataTypes.Category;
 const List = dataTypes.List;
-const Library = dataTypes.Library;
 
 function getDeployUrl(req) {
     return resolvePublicOrigin(req, {
@@ -48,6 +59,9 @@ function getRuntimeEnvironment() {
 
 const templates = {};
 
+let shareTemplate = '';
+let embedTemplate = '';
+let embedJTemplate = '';
 let privacyTemplate = '';
 let termsTemplate = '';
 let legalTemplate = '';
@@ -82,8 +96,9 @@ const shareScriptsLinks = [];
 let appScriptsHtml = '';
 let appStylesHtml = '';
 
+const assetManifestPath = path.join(__dirname, '../public/dist/assets.json');
 if (getRuntimeEnvironment() === 'production') {
-    assetData = JSON.parse(fs.readFileSync(path.join(__dirname, '../public/dist/assets.json'), 'utf8'));
+    assetData = JSON.parse(fs.readFileSync(assetManifestPath, 'utf8'));
     const appAssetFiles = assetData.files.app;
 
     appAssetFiles.forEach((assetName) => {
@@ -136,10 +151,6 @@ router.get('/pricing', (req, res) => {
     res.send(pricingTemplate || '<h1>Plans</h1><p>Loading...</p>');
 });
 
-router.get('*', (req, res) => {
-    res.status(404).send(index);
-});
-
 router.get('/r/:id', (req, res) => {
     const id = req.params.id;
 
@@ -147,31 +158,13 @@ router.get('/r/:id', (req, res) => {
         res.status(400).send('No list specified!');
         return;
     }
-    db.users.findOne({ 'library.lists.externalId': id }, (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(user.library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
+        const { library, list } = published;
 
         const chartData = escape(JSON.stringify(list.renderChart('total', false)));
         const renderedCategories = renderLibrary(library, {
@@ -210,33 +203,13 @@ router.get('/e/:id', (req, res) => {
         return;
     }
 
-    db.users.findOne({ 'library.lists.externalId': id }, (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
-
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        library.load(user.library);
-        for (const i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
+        const { library, list } = published;
 
         const chartData = escape(JSON.stringify(list.renderChart('total', false)));
 
@@ -279,33 +252,20 @@ router.get('/csv/:id', (req, res) => {
         return;
     }
 
-    db.users.findOne({ 'library.lists.externalId': id }, async (err, user) => {
-        if (err) {
-            res.status(500).send('An error occurred.');
-            return;
-        }
-
-        if (!user) {
+    runLegacyView(req, res, async () => {
+        const published = await loadPublishedLibraryByExternalId(id);
+        if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
         }
+        const { library, list, served } = published;
 
-        const library = new Library();
-        let list;
-
-        if (!user || typeof (user.library) === 'undefined') {
-            logWithRequest(req, `Undefined users[0] for library with list ID ${id}`);
-            res.status(500).send('Unknown error.');
-        }
-
-        // Check download permission before loading library
-        const rawLists = (user.library && user.library.lists) || [];
-        const rawList = rawLists.find((l) => l.externalId === id);
-        const downloadable = rawList && rawList.publicFields && rawList.publicFields.downloadable;
+        // Check download permission against the published list settings
+        const downloadable = list.publicFields && list.publicFields.downloadable;
 
         if (!downloadable) {
             const token = req.cookies && req.cookies.lp;
-            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(user._id)).catch(() => false) : false;
+            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(served._id)).catch(() => false) : false;
             if (!isOwner) {
                 res.status(403).send(`<!DOCTYPE html>
 <html lang="en">
@@ -336,25 +296,17 @@ router.get('/csv/:id', (req, res) => {
             }
         }
 
-        library.load(user.library);
-        for (var i in library.lists) {
-            if (library.lists[i].externalId && library.lists[i].externalId == id) {
-                library.defaultListId = library.lists[i].id;
-                list = library.lists[i];
-                break;
-            }
-        }
-
         const fullUnits = {
             oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
         };
+        const itemUnit = library.itemUnit || 'oz';
         let out = '';
         if (list.description && list.description.trim()) {
             out += `# List description: ${list.description.replace(/\r?\n/g, ' ')}\n`;
         }
-        out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,image_url\n';
+        out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,brand,image_url\n';
 
-        for (var i in list.categoryIds) {
+        for (const i in list.categoryIds) {
             const category = library.getCategoryById(list.categoryIds[i]);
             if (category) {
                 for (const j in category.categoryItems) {
@@ -367,12 +319,14 @@ router.get('/csv/:id', (req, res) => {
                         itemRow.push(category.name);
                         itemRow.push(item.description);
                         itemRow.push(`${categoryItem.qty}`);
-                        itemRow.push(`${weightUtils.MgToWeight(item.weight, item.authorUnit)}`);
-                        itemRow.push(fullUnits[item.authorUnit]);
+                        const exportUnit = itemUnit || item.authorUnit;
+                        itemRow.push(`${weightUtils.MgToWeight(item.weight, exportUnit)}`);
+                        itemRow.push(fullUnits[exportUnit]);
                         itemRow.push(item.url);
                         itemRow.push(`${item.price}`);
                         itemRow.push(categoryItem.worn ? 'Worn' : '');
                         itemRow.push(categoryItem.consumable ? 'Consumable' : '');
+                        itemRow.push(item.brand || '');
                         const imageUrl = item.image
                             ? `https://i.imgur.com/${item.image}.jpg`
                             : (item.imageUrl || '');
@@ -391,8 +345,12 @@ router.get('/csv/:id', (req, res) => {
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
-        res.send('﻿' + out);
+        res.send(`﻿${out}`);
     });
+});
+
+router.get('*', (req, res) => {
+    res.status(404).send(index);
 });
 
 function init() {
@@ -475,7 +433,7 @@ const renderItem = function (item, args) {
     if (args.classes) classes = args.classes;
     if (item.deleteIfEmpty) classes += ' deleteIfEmpty';
 
-    let unit = item.authorUnit;
+    let unit = args.itemUnit || item.authorUnit;
     if (args.unit) unit = args.unit;
 
     const displayWeight = weightUtils.MgToWeight(item.weight, unit);
@@ -485,7 +443,8 @@ const renderItem = function (item, args) {
     const unitSelect = renderUnitSelect(unit, args.unitSelectTemplate, item.weight);
 
     const starClass = item.star ? `lpStar${item.star}` : '';
-    const out = Object.assign({}, item, {
+    const out = {
+        ...item,
         classes,
         unit,
         displayWeight,
@@ -494,7 +453,7 @@ const renderItem = function (item, args) {
         showPrices: args.showPrices,
         starClass,
         displayPrice,
-    });
+    };
 
     return Mustache.render(args.itemTemplate, out);
 };
@@ -508,7 +467,7 @@ const renderCategory = function (category, args) {
         const rowClasses = [];
         if (args.classes) rowClasses.push(args.classes);
         if (parseFloat(categoryItem.qty) <= 0) rowClasses.push('lpQtyZero');
-        const renderArgs = Object.assign({}, args);
+        const renderArgs = { ...args };
         renderArgs.classes = rowClasses.join(' ').trim();
         items += renderItem(item, renderArgs);
     }
@@ -516,9 +475,9 @@ const renderCategory = function (category, args) {
     category.calculateSubtotal();
     category.subtotalWeightDisplay = weightUtils.MgToWeight(category.subtotalWeight, args.totalUnit);
     category.subtotalPriceDisplay = formatDisplayPrice(category.subtotalPrice || 0, args.currencySymbol);
-    const temp = Object.assign({}, category, {
-        items, subtotalUnit: args.totalUnit, showPrices: args.showPrices,
-    });
+    const temp = {
+        ...category, items, subtotalUnit: args.totalUnit, showPrices: args.showPrices,
+    };
 
     return Mustache.render(args.categoryTemplate, temp);
 };
@@ -535,7 +494,7 @@ const renderList = function (list, args) {
 };
 
 var renderLibrary = function (library, args) {
-    const renderArgs = Object.assign({}, args, { itemUnit: library.itemUnit, totalUnit: library.totalUnit });
+    const renderArgs = { ...args, itemUnit: library.itemUnit, totalUnit: library.totalUnit };
     return renderList(library.getListById(library.defaultListId), renderArgs);
 };
 
@@ -543,7 +502,7 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     let totalWeight = 0;
     let totalWornWeight = 0;
     let totalConsumableWeight = 0;
-    let totalPackWeight = 0;
+    let totalBaseWeight = 0;
     let totalQty = 0;
     let totalPrice = 0;
     let totalConsumablePrice = 0;
@@ -567,7 +526,7 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
         }
     }
 
-    totalPackWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
+    totalBaseWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
 
     out.totalWeight = totalWeight;
     out.totalWeightDisplay = weightUtils.MgToWeight(totalWeight, unit);
@@ -577,9 +536,9 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     out.totalWornWeightDisplay = weightUtils.MgToWeight(totalWornWeight, unit);
     out.totalConsumableWeight = totalConsumableWeight;
     out.totalConsumableWeightDisplay = weightUtils.MgToWeight(totalConsumableWeight, unit);
-    out.totalPackWeight = totalPackWeight;
-    out.totalPackWeightDisplay = weightUtils.MgToWeight(totalPackWeight, unit);
-    out.shouldDisplayPackWeight = totalPackWeight !== totalWeight;
+    out.totalBaseWeight = totalBaseWeight;
+    out.totalBaseWeightDisplay = weightUtils.MgToWeight(totalBaseWeight, unit);
+    out.shouldDisplayBaseWeight = totalBaseWeight !== totalWeight;
     out.totalQty = totalQty;
     out.totalPrice = totalPrice;
     out.totalPriceDisplay = formatDisplayPrice(totalPrice || 0, list.library.currencySymbol);

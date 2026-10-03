@@ -12,7 +12,7 @@
             <p class="lpWarning">
                 <strong>{{ $t('acct.deleteAccountPermanent') }}</strong>
             </p>
-            <p v-html="$t('acct.deleteAccountInstructions')"></p>
+            <p v-html="$t('acct.deleteAccountInstructions')" />
             <div class="lpFields">
                 <input v-model="currentPassword" type="password" :placeholder="$t('acct.currentPassword')" name="currentPassword" class="currentPassword">
 
@@ -23,7 +23,7 @@
 
             <div class="lpButtons">
                 <input type="submit" :value="$t('acct.permanentlyDelete')" :class="{'lpButton': true, 'lpButtonDisabled': !isConfirmationComplete}">
-                <a class="lpHref" @click="shown = false">{{ $t('acct.cancel') }}</a>
+                <a class="lpHref" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('acct.cancel') }}</a>
             </div>
         </form>
     </modal>
@@ -34,6 +34,7 @@ import errors from './errors.vue';
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
+import { redirect } from '../services/navigation';
 
 export default {
     name: 'Account',
@@ -90,7 +91,7 @@ export default {
                 .then((response) => {
                     this.deleting = false;
                     this.$store.commit('signout');
-                    this.$router.push('/welcome');
+                    redirect('/welcome');
                 })
                 .catch((err) => {
                     this.errors = err;

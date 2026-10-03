@@ -2,7 +2,7 @@
 @import "../css/_globals";
 
 .lpTemplatePicker {
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(12, 35, 27, 0.62);
     bottom: 0;
     left: 0;
     position: fixed;
@@ -18,17 +18,17 @@
     left: 50%;
     max-height: calc(90vh - #{$spacingLarge} * 2);
     overflow-y: auto;
-    padding: $spacingLarge;
+    padding: 28px;
     position: fixed;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    width: 540px;
+    width: 640px;
     max-width: calc(100vw - #{$spacingLarge} * 2);
     z-index: $dialog + 1;
 }
 
 .lpTemplatePickerTitle {
-    font-size: $fontSize-md;
+    font-size: 28px;
     font-weight: $fontWeight-bold;
     margin: 0 0 $spacingSmaller;
 }
@@ -36,7 +36,17 @@
 .lpTemplatePickerSubtitle {
     color: $color-text-muted;
     font-size: $fontSize-base;
+    font-style: italic;
     margin: 0 0 $spacingLarge;
+}
+
+.lpTemplatePickerSectionTitle {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    margin: 0 0 $spacingSmall;
+    text-transform: uppercase;
 }
 
 .lpTemplatePickerCards {
@@ -44,6 +54,96 @@
     flex-direction: column;
     gap: $spacingSmall;
     margin-bottom: $spacingLarge;
+}
+
+.lpTemplatePickerField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+        color: $color-text-muted;
+        font-size: $fontSize-sm;
+        font-weight: $fontWeight-bold;
+    }
+
+    input,
+    select {
+        background: $color-surface;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        color: $color-text;
+        font: inherit;
+        min-height: 42px;
+        padding: 8px 10px;
+        width: 100%;
+    }
+}
+
+.lpTemplatePickerError {
+    color: #dc3545;
+    font-size: $fontSize-xs;
+    margin: 0;
+}
+
+.lpTemplatePickerHint {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    margin: -2px 0 0;
+}
+
+.lpTemplatePickerSetup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacingSmall;
+    margin-bottom: $spacingLarge;
+}
+
+.lpTemplatePickerSetupCard {
+    background: $color-bg;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: $spacingMedium;
+}
+
+.lpTemplatePickerSetupTitle {
+    color: $color-text;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin: 0 0 $spacingSmall;
+}
+
+.lpTemplatePickerSettingsGrid {
+    display: grid;
+    gap: $spacingMedium;
+    grid-template-columns: 1fr 1fr;
+}
+
+.lpTemplatePickerSegments {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    display: grid;
+    gap: 4px;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 4px;
+}
+
+.lpTemplatePickerSegment {
+    background: transparent;
+    border: 0;
+    border-radius: $radius-sm;
+    color: $color-text-muted;
+    cursor: pointer;
+    font: inherit;
+    font-weight: $fontWeight-bold;
+    min-height: 34px;
+    padding: 6px 10px;
+}
+
+.lpTemplatePickerSegmentActive {
+    background: $color-accent;
+    color: #fff;
 }
 
 .lpTemplatePickerCard {
@@ -54,7 +154,7 @@
     display: flex;
     gap: $spacingMedium;
     justify-content: space-between;
-    padding: $spacingMedium;
+    padding: $spacingMedium $spacingMedium $spacingMedium $spacingLarge;
     transition: border-color $transitionDurationFast;
 
     &:hover {
@@ -62,11 +162,16 @@
     }
 }
 
+.lpTemplatePickerCardBlank {
+    border-color: rgba(var(--color-accent-rgb), 0.35);
+}
+
 .lpTemplatePickerCardBody {
     flex: 1;
 }
 
 .lpTemplatePickerCardName {
+    font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
     margin: 0 0 4px;
 }
@@ -77,58 +182,198 @@
     margin: 0;
 }
 
-.lpTemplatePickerBlank {
-    color: $color-text-muted;
-    cursor: pointer;
-    display: block;
-    font-size: $fontSize-sm;
-    text-align: center;
-    text-decoration: underline;
-
-    &:hover {
-        color: $color-text;
+@media (max-width: 640px) {
+    .lpTemplatePickerSettingsGrid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
 
 <template>
     <teleport to="body">
-        <div class="lpTemplatePicker" @click.self="onDismiss">
+        <div class="lpTemplatePicker">
             <div class="lpTemplatePickerModal">
-                <p class="lpTemplatePickerTitle">{{ $t('library.templatePickerTitle') }}</p>
-                <p class="lpTemplatePickerSubtitle">{{ $t('library.templatePickerSubtitle') }}</p>
-                <div class="lpTemplatePickerCards">
-                    <div v-for="template in templates" :key="template.id" class="lpTemplatePickerCard">
-                        <div class="lpTemplatePickerCardBody">
-                            <p class="lpTemplatePickerCardName">{{ template.name }}</p>
-                            <p class="lpTemplatePickerCardDesc">{{ template.description }}</p>
+                <p class="lpTemplatePickerTitle">
+                    {{ $t('library.templatePickerTitle') }}
+                </p>
+                <p class="lpTemplatePickerSubtitle">
+                    {{ $t('library.templatePickerSubtitle') }}
+                </p>
+                <div class="lpTemplatePickerSetup">
+                    <div class="lpTemplatePickerSetupCard">
+                        <div class="lpTemplatePickerField">
+                            <label for="template-list-name">{{ $t('library.templatePickerListName') }}</label>
+                            <input id="template-list-name" v-model.trim="setup.listName" type="text" :placeholder="$t('library.templatePickerListNamePlaceholder')">
                         </div>
-                        <button class="lpButton" @click="onSelect(template)">{{ $t('library.templatePickerSelectButton') }}</button>
+                    </div>
+                    <div v-if="showDisplayName" class="lpTemplatePickerSetupCard">
+                        <div class="lpTemplatePickerField">
+                            <label for="template-display-name">{{ $t('library.templatePickerDisplayName') }}</label>
+                            <input id="template-display-name" v-model.trim="setup.displayName" type="text" :placeholder="$t('library.templatePickerDisplayNamePlaceholder')">
+                            <p class="lpTemplatePickerHint">
+                                {{ $t('library.templatePickerDisplayNameHint') }}
+                            </p>
+                            <p v-if="displayNameError" class="lpTemplatePickerError">
+                                {{ displayNameError }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lpTemplatePickerSetupCard">
+                        <p class="lpTemplatePickerSetupTitle">
+                            {{ $t('library.templatePickerSettingsSection') }}
+                        </p>
+                        <div class="lpTemplatePickerSettingsGrid">
+                            <div class="lpTemplatePickerField">
+                                <label>{{ $t('library.templatePickerUnits') }}</label>
+                                <div class="lpTemplatePickerSegments">
+                                    <button
+                                        v-for="option in unitOptions"
+                                        :key="option.value"
+                                        class="lpTemplatePickerSegment"
+                                        :class="{ lpTemplatePickerSegmentActive: setup.units === option.value }"
+                                        type="button"
+                                        @click="setup.units = option.value"
+                                    >
+                                        {{ option.label }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="lpTemplatePickerField">
+                                <label>{{ $t('library.templatePickerCurrency') }}</label>
+                                <div class="lpTemplatePickerSegments lpTemplatePickerSegmentsCurrency">
+                                    <button
+                                        v-for="option in currencyOptions"
+                                        :key="option"
+                                        class="lpTemplatePickerSegment"
+                                        :class="{ lpTemplatePickerSegmentActive: setup.currencySymbol === option }"
+                                        type="button"
+                                        @click="setup.currencySymbol = option"
+                                    >
+                                        {{ option }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <a class="lpHref lpTemplatePickerBlank" @click="onDismiss">{{ $t('library.templatePickerBlankLink') }}</a>
+                <p class="lpTemplatePickerSectionTitle">
+                    {{ $t('library.templatePickerStartWith') }}
+                </p>
+                <div class="lpTemplatePickerCards">
+                    <div class="lpTemplatePickerCard lpTemplatePickerCardBlank">
+                        <div class="lpTemplatePickerCardBody">
+                            <p class="lpTemplatePickerCardName">
+                                {{ $t('library.templatePickerBlankTitle') }}
+                            </p>
+                            <p class="lpTemplatePickerCardDesc">
+                                {{ $t('library.templatePickerBlankDesc') }}
+                            </p>
+                        </div>
+                        <button class="lpButton" @click="onDismiss">
+                            {{ $t('library.templatePickerBlankButton') }}
+                        </button>
+                    </div>
+                    <div v-for="template in templates" :key="template.id" class="lpTemplatePickerCard">
+                        <div class="lpTemplatePickerCardBody">
+                            <p class="lpTemplatePickerCardName">
+                                {{ templateName(template) }}
+                            </p>
+                            <p class="lpTemplatePickerCardDesc">
+                                {{ templateDescription(template) }} — {{ templateWeight(template) }}
+                            </p>
+                        </div>
+                        <button class="lpButton" @click="onSelect(template)">
+                            {{ $t('library.templatePickerSelectButton') }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </teleport>
 </template>
 
 <script>
-import { templates } from '../composables/useTemplatePicker.js';
+import { templates, templateWeightMg } from '../composables/useTemplatePicker.js';
+import { isReservedDisplayName } from '../utils/reserved-names';
+import weightUtils from '../utils/weight.js';
 
 export default {
     name: 'TemplatePicker',
+    props: {
+        requestDisplayName: {
+            type: Boolean,
+            default: false,
+        },
+    },
     emits: ['select', 'dismiss'],
     data() {
         return {
             templates,
+            displayNameError: '',
+            setup: this.createInitialSetup(),
         };
     },
+    computed: {
+        currencyOptions() {
+            return ['€', '$'];
+        },
+        showDisplayName() {
+            const profile = this.$store.state.library && this.$store.state.library.publicProfile;
+            return this.requestDisplayName || (this.$store.state.loggedIn && (!profile || !profile.displayName));
+        },
+        unitOptions() {
+            return [
+                { value: 'metric', label: this.$t('library.templatePickerMetricUnits') },
+                { value: 'imperial', label: this.$t('library.templatePickerImperialUnits') },
+            ];
+        },
+    },
     methods: {
+        createInitialSetup() {
+            const library = this.$store.state.library;
+            const locale = String(this.$i18n?.locale || navigator.language || 'en');
+            const metricLocale = !locale.toLowerCase().startsWith('en');
+            const profile = library && library.publicProfile;
+
+            return {
+                currencySymbol: library?.currencySymbol || (metricLocale ? '€' : '$'),
+                displayName: profile?.displayName || '',
+                listName: '',
+                units: library?.itemUnit === 'g' || metricLocale ? 'metric' : 'imperial',
+            };
+        },
+        getSetup() {
+            return {
+                ...this.setup,
+                defaultListName: this.$t('library.newListDefault'),
+            };
+        },
         onSelect(template) {
-            this.$emit('select', template.data);
+            if (!this.validateSetup()) return;
+            this.$emit('select', template.data, { ...this.getSetup(), listTypes: [...(template.listTypes || [])], seasons: [...(template.seasons || [])] });
         },
         onDismiss() {
-            this.$emit('dismiss');
+            if (!this.validateSetup()) return;
+            this.$emit('dismiss', this.getSetup());
+        },
+        validateSetup() {
+            this.displayNameError = '';
+            if (this.showDisplayName && isReservedDisplayName(this.setup.displayName)) {
+                this.displayNameError = this.$t('auth.displayNameReserved');
+                return false;
+            }
+            return true;
+        },
+        templateDescription(template) {
+            return this.$t(`library.templatePickerTemplates.${template.id}.description`);
+        },
+        templateWeight(template) {
+            const unit = this.setup.units === 'metric' ? 'kg' : 'lb';
+            const value = weightUtils.MgToWeight(templateWeightMg(template.data), unit);
+            return `${value} ${unit}`;
+        },
+        templateName(template) {
+            return this.$t(`library.templatePickerTemplates.${template.id}.name`);
         },
     },
 };

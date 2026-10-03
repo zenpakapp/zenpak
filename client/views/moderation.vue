@@ -7,32 +7,41 @@
         <h1>{{ $t('community.moderationTitle') }}</h1>
 
         <form @submit.prevent="searchUsers">
-            <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')" />
+            <input v-model="searchQuery" type="text" :placeholder="$t('community.moderationSearchUserPlaceholder')">
             <button>{{ $t('community.moderationSearchButton') }}</button>
         </form>
+        <p v-if="error" class="lp-moderation-error">
+            {{ error }}
+        </p>
         <ul v-if="resultsLoaded" class="lp-moderation-search-results">
-            <li v-for="result in searchResults" @click="setUser(result)" :key="result.username">
-                {{result.username}}
+            <li v-for="result in searchResults" :key="result.username" @click="setUser(result)">
+                {{ result.username }}
             </li>
         </ul>
 
         <div v-if="userToInspect" class="lp-moderation-user-to-inspect">
-            <h2>{{userToInspect.username}}</h2>
+            <h2>{{ userToInspect.username }}</h2>
             <section>
-                <button @click="clearSession(userToInspect)">{{ $t('community.moderationClearSession') }}</button>
-                <button @click="resetPassword(userToInspect)">{{ $t('community.moderationResetPassword') }}</button>
+                <button @click="clearSession(userToInspect)">
+                    {{ $t('community.moderationClearSession') }}
+                </button>
+                <button @click="resetPassword(userToInspect)">
+                    {{ $t('community.moderationResetPassword') }}
+                </button>
                 <template v-if="newPassword">
                     <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
                 </template>
             </section>
             <section>
-                <textarea id="lp-moderation-user-library-json" v-model="editableLibrary"></textarea>
+                <textarea id="lp-moderation-user-library-json" v-model="editableLibrary" />
             </section>
         </div>
 
         <div class="lp-moderation-reports">
             <h2>{{ $t('community.moderationReports') }} ({{ reports.length }} pending)</h2>
-            <p v-if="reports.length === 0" style="color:#888">{{ $t('community.moderationNoPendingReports') }}</p>
+            <p v-if="reports.length === 0" style="color:#888">
+                {{ $t('community.moderationNoPendingReports') }}
+            </p>
             <table v-else class="lp-reports-table">
                 <thead>
                     <tr>
@@ -56,10 +65,18 @@
                         <td>{{ formatDate(r.createdAt) }}</td>
                         <td>
                             <div class="lp-report-actions">
-                                <button class="lp-btn-resolve" @click="resolveReport(r, 'resolved')">✓ Resolve</button>
-                                <button class="lp-btn-dismiss" @click="resolveReport(r, 'dismissed')">✕ Dismiss</button>
-                                <button v-if="r.targetType === 'list'" class="lp-btn-danger" @click="unpublishList(r)">Unpublish</button>
-                                <button class="lp-btn-danger" @click="banUser(r)">Ban{{ r.targetType === 'user' ? ` ${r.targetId}` : '' }}</button>
+                                <button class="lp-btn-resolve" @click="resolveReport(r, 'resolved')">
+                                    ✓ Resolve
+                                </button>
+                                <button class="lp-btn-dismiss" @click="resolveReport(r, 'dismissed')">
+                                    ✕ Dismiss
+                                </button>
+                                <button v-if="r.targetType === 'list'" class="lp-btn-danger" @click="unpublishList(r)">
+                                    Unpublish
+                                </button>
+                                <button class="lp-btn-danger" @click="banUser(r)">
+                                    Ban{{ r.targetType === 'user' ? ` ${r.targetId}` : '' }}
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -70,46 +87,42 @@
 </template>
 
 <script>
-import { push } from '../services/navigation';
 import { fetchJson } from '../utils/utils';
 
 export default {
     name: 'Admin',
-    components: {
-    },
     data() {
         return {
-            searchQuery: "",
+            searchQuery: '',
             searchResults: null,
             userToInspect: null,
             editableLibrary: null,
             newPassword: null,
             reports: [],
+            error: null,
         };
     },
     computed: {
         resultsLoaded() {
             return !!this.searchResults;
-        }
+        },
     },
     created() {
-        if (false) {
-            push('/welcome');
-        }
         this.loadReports();
     },
     methods: {
         searchUsers() {
+            this.error = null;
             fetchJson(`/moderation/search?q=${this.searchQuery}`, {
                 method: 'GET',
                 credentials: 'same-origin',
             })
-            .then((response) => {
-                this.searchResults = response.results;
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                .then((response) => {
+                    this.searchResults = response.results;
+                })
+                .catch(() => {
+                    this.error = 'Unable to search users.';
+                });
         },
         setUser(user) {
             this.userToInspect = user;
@@ -117,36 +130,35 @@ export default {
             this.newPassword = null;
         },
         clearSession(user) {
-            fetchJson(`/moderation/clear-session`, {
+            this.error = null;
+            fetchJson('/moderation/clear-session', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
-            .then((response) => {
-                console.log("clear session success");
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                .catch(() => {
+                    this.error = 'Unable to clear session.';
+                });
         },
         resetPassword(user) {
-            fetchJson(`/moderation/reset-password`, {
+            this.error = null;
+            fetchJson('/moderation/reset-password', {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({username: user.username}),
+                body: JSON.stringify({ username: user.username }),
             })
-            .then((response) => {
-                this.newPassword = response.newPassword;
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                .then((response) => {
+                    this.newPassword = response.newPassword;
+                })
+                .catch(() => {
+                    this.error = 'Unable to reset password.';
+                });
         },
         async loadReports() {
             try {
@@ -162,23 +174,29 @@ export default {
                     method: 'PATCH',
                     body: JSON.stringify({ status }),
                 });
-                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
-            } catch {}
+                this.reports = this.reports.filter((r) => String(r._id) !== String(report._id));
+            } catch { /* ignore */ }
         },
         async banUser(report) {
             const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
             if (!username || !confirm(`Ban user "${username}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
                 await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed to ban user.'); }
+            } catch {
+                this.error = 'Failed to ban user.';
+            }
         },
         async unpublishList(report) {
             if (!confirm(`Unpublish list "${report.targetId}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
                 await this.resolveReport(report, 'resolved');
-            } catch { alert('Failed to unpublish list.'); }
+            } catch {
+                this.error = 'Failed to unpublish list.';
+            }
         },
         formatDate(d) {
             return new Date(d).toLocaleDateString();

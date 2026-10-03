@@ -171,8 +171,10 @@
 <template>
     <div :class="['lpGearRoomComparePanel', { 'lpGearRoomComparePanel--open': open }]">
         <div class="lpGearRoomCompareHeader">
-            <span class="lpGearRoomCompareTitle">{{ $t('gearroom.batchCompare') }} {{ items.length }} items</span>
-            <button class="lpGearRoomCompareClose" @click="$emit('close')">{{ $t('gearroom.compareClose') }}</button>
+            <span class="lpGearRoomCompareTitle">{{ compareTitle }}</span>
+            <button class="lpGearRoomCompareClose" @click="$emit('close')">
+                {{ $t('gearroom.compareClose') }}
+            </button>
         </div>
         <div class="lpGearRoomCompareScroll">
             <table class="lpGearRoomCompareTable">
@@ -182,72 +184,92 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th class="lpGearRoomCompareAttrCell lpGearRoomCompareAttrHeader"></th>
+                        <th class="lpGearRoomCompareAttrCell lpGearRoomCompareAttrHeader" />
                         <th v-for="item in items" :key="item.id" class="lpGearRoomCompareItemHeader">
                             <span class="lpGearRoomCompareItemName">{{ itemDisplayName(item) }}</span>
-                            <button class="lpGearRoomCompareRemove" @click="$emit('remove-item', item.id)">✕</button>
+                            <button class="lpGearRoomCompareRemove" @click="$emit('remove-item', item.id)">
+                                ✕
+                            </button>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareImage') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareImage') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             <img v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomCompareThumb" :alt="item.name">
-                            <div v-else class="lpGearRoomCompareThumbPlaceholder"></div>
+                            <div v-else class="lpGearRoomCompareThumbPlaceholder" />
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareName') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareName') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareNameCell">
                             {{ itemDisplayName(item) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareBrand') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareBrand') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             {{ item.brand || '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareDescription') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareDescription') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareDescCell">
                             {{ item.description || '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareType') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareType') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
                             <span v-else class="lpGearRoomCompareMuted">—</span>
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareTags') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareTags') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell lpGearRoomCompareDescCell">
                             {{ item.tags && item.tags.length ? item.tags.join(', ') : '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareWeight') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareWeight') }}
+                        </td>
                         <td
                             v-for="item in items"
                             :key="item.id"
                             :class="['lpGearRoomCompareValueCell', { 'lpGearRoomCompareLowest': compareMinWeight !== null && item.weight === compareMinWeight }]"
                         >
-                            {{ displayWeight(item.weight, item.authorUnit) }} {{ item.authorUnit }}
+                            {{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.comparePrice') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.comparePrice') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
                             {{ item.price > 0 ? '€' + item.price : '—' }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="lpGearRoomCompareAttrCell">{{ $t('gearroom.compareUsedInLists') }}</td>
+                        <td class="lpGearRoomCompareAttrCell">
+                            {{ $t('gearroom.compareUsedInLists') }}
+                        </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
-                            {{ item._usedInLists }} list{{ item._usedInLists !== 1 ? 's' : '' }}
+                            {{ usedInListsLabel(item._usedInLists) }}
                         </td>
                     </tr>
                 </tbody>
@@ -276,14 +298,30 @@ export default {
     emits: ['close', 'remove-item'],
     computed: {
         compareMinWeight() {
-            const weights = this.items.map(i => i.weight || 0).filter(w => w > 0);
+            const weights = this.items.map((i) => i.weight || 0).filter((w) => w > 0);
             return weights.length ? Math.min(...weights) : null;
+        },
+        compareTitle() {
+            return this.$t('gearroom.compareTitle', {
+                count: this.items.length,
+                itemLabel: this.itemCountLabel(this.items.length),
+            });
+        },
+        itemUnit() {
+            const library = this.$store.state.library;
+            return (library && library.itemUnit) || 'g';
         },
     },
     methods: {
         displayWeight,
+        itemCountLabel(count) {
+            return this.$t(count === 1 ? 'gearroom.compareItemCountOne' : 'gearroom.compareItemCountOther', { count });
+        },
+        usedInListsLabel(count) {
+            return this.$t(count === 1 ? 'gearroom.compareUsedInListCountOne' : 'gearroom.compareUsedInListCountOther', { count });
+        },
         itemDisplayName(item) {
-            return [item.brand, item.name].filter(Boolean).join(' ');
+            return [item.brand, item.name].filter(Boolean).join(' ') || this.$t('gearroom.unnamedItem');
         },
         itemThumb(item) {
             if (item.image) return `https://i.imgur.com/${item.image}s.jpg`;

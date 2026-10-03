@@ -112,6 +112,36 @@
         }
     }
 
+    .itemDetailListOptions {
+        .itemDetailToggleRow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .itemDetailToggle {
+            align-items: center;
+            background: $color-surface;
+            border: 1px solid $color-border;
+            border-radius: $radius-sm;
+            color: $color-text;
+            cursor: pointer;
+            display: inline-flex;
+            font-size: $fontSize-sm;
+            gap: 6px;
+            min-height: 34px;
+            padding: 6px 10px;
+
+            input {
+                margin: 0;
+            }
+
+            &:hover {
+                border-color: $color-accent;
+            }
+        }
+    }
+
     .itemDetailTagsEdit {
         display: flex;
         flex-wrap: wrap;

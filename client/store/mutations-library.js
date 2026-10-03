@@ -1,5 +1,30 @@
 const { arrayMove } = require('../utils/utils');
 
+function recalculateListsForItem(library, itemId) {
+    const affectedCategoryIds = new Set();
+
+    library.categories.forEach((category) => {
+        if (!category) return;
+        if (category.categoryItems.some((categoryItem) => categoryItem.itemId === itemId)) {
+            affectedCategoryIds.add(category.id);
+        }
+    });
+
+    if (affectedCategoryIds.size === 0) return;
+
+    library.lists.forEach((list) => {
+        if (list.categoryIds.some((categoryId) => affectedCategoryIds.has(categoryId))) {
+            list.calculateTotals();
+        }
+    });
+}
+
+function recalculateListForCategory(library, category) {
+    if (!category) return;
+    const list = library.findListWithCategoryById(category.id);
+    if (list) list.calculateTotals();
+}
+
 module.exports = {
     setDefaultList(state, list) {
         state.library.defaultListId = list.id;
@@ -18,13 +43,11 @@ module.exports = {
     newItem(state, { category, _isNew, name }) {
         const item = state.library.newItem({ category, _isNew });
         if (name) item.name = name;
-        if (category && category.name && !item.category) item.category = category.name;
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, category);
     },
     newCategory(state, list) {
-        const category = state.library.newCategory({ list, _isNew: true });
-        state.library.newItem({ category });
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        state.library.newCategory({ list, _isNew: true });
+        if (list) list.calculateTotals();
     },
     newList(state) {
         const list = state.library.newList();
@@ -42,14 +65,17 @@ module.exports = {
     duplicateItem(state, item) {
         const copy = state.library.newItem({});
         const fields = ['name', 'description', 'weight', 'authorUnit', 'price', 'image', 'imageUrl', 'url', 'shop', 'affiliateUrl', 'promoCode', 'promoLabel', 'brand', 'category', 'tags', 'starred'];
-        fields.forEach(f => {
+        fields.forEach((f) => {
             if (item[f] !== undefined) copy[f] = Array.isArray(item[f]) ? [...item[f]] : item[f];
         });
         state.library.updateItem(copy);
     },
     removeItem(state, item) {
-        state.library.removeItem(item.id);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        if (state.library.removeItem(item.id)) {
+            state.library.lists.forEach((list) => list.calculateTotals());
+            state.itemVersion += 1;
+            state.categoryItemVersion += 1;
+        }
     },
     removeCategory(state, category) {
         const removed = state.library.removeCategory(category.id);
@@ -67,7 +93,7 @@ module.exports = {
     reorderCategory(state, args) {
         const list = state.library.getListById(args.list.id);
         list.categoryIds = arrayMove(list.categoryIds, args.before, args.after);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        list.calculateTotals();
     },
     reorderItem(state, args) {
         const item = state.library.getItemById(args.itemId);
@@ -82,19 +108,19 @@ module.exports = {
             originalCategory.categoryItems.splice(oldIndex, 1);
             dropCategory.categoryItems.splice(args.dropIndex, 0, oldCategoryItem);
         }
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        list.calculateTotals();
     },
     addItemToCategory(state, args) {
         const item = state.library.getItemById(args.itemId);
         const dropCategory = state.library.getCategoryById(args.categoryId);
         if (item && dropCategory) {
-            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id });
+            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
             const categoryItem = dropCategory.getCategoryItemById(item.id);
             const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
             if (categoryItem && categoryItemIndex !== -1) {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
             }
-            state.library.getListById(state.library.defaultListId).calculateTotals();
+            recalculateListForCategory(state.library, dropCategory);
             state.categoryItemVersion += 1;
         }
     },
@@ -109,7 +135,7 @@ module.exports = {
             .find((category) => category && String(category.name || '').trim().toLowerCase() === name.toLowerCase());
         const category = existingCategory || state.library.newCategory({ list });
         category.name = existingCategory ? existingCategory.name : name;
-        if (!category.getCategoryItemById(item.id)) category.addItem({ itemId: item.id });
+        if (!category.getCategoryItemById(item.id)) category.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
         list.calculateTotals();
     },
     updateListName(state, updatedList) {
@@ -150,6 +176,7 @@ module.exports = {
             if (typeof args.price !== 'undefined') list.publicFields.price = args.price;
             if (typeof args.links !== 'undefined') list.publicFields.links = args.links;
             if (typeof args.images !== 'undefined') list.publicFields.images = args.images;
+            if (typeof args.downloadable !== 'undefined') list.publicFields.downloadable = args.downloadable;
         }
     },
     updateItemCreatorLink(state, args) {
@@ -161,6 +188,37 @@ module.exports = {
             item.shop = args.shop || item.shop || '';
         }
     },
+    hideSourceListInfo(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (!list) return 0;
+        list.sourceListInfoHidden = true;
+        list.sourceListInfoActionDismissed = true;
+
+        let count = 0;
+        list.categoryIds.forEach((categoryId) => {
+            const category = state.library.getCategoryById(categoryId);
+            if (!category) return;
+
+            category.categoryItems.forEach((categoryItem) => {
+                const item = state.library.getItemById(categoryItem.itemId);
+                if (!item || !(item.affiliateUrl || item.promoCode || item.promoLabel)) return;
+
+                item.affiliateUrl = '';
+                item.promoCode = '';
+                item.promoLabel = '';
+                state.library.updateItem(item);
+                count++;
+            });
+        });
+
+        state.itemVersion += 1;
+        return count;
+    },
+    dismissSourceListInfoAction(state, args) {
+        const list = state.library.getListById(args.listId);
+        if (!list) return;
+        list.sourceListInfoActionDismissed = true;
+    },
     updateCreatorSettings(state, creator) {
         state.library.creator = { ...state.library.creator, ...creator };
     },
@@ -168,10 +226,14 @@ module.exports = {
         const list = state.library.getListById(args.list.id);
         list.externalId = args.externalId;
     },
+    dismissForkUpdate(state, { listId, version }) {
+        const list = state.library.getListById(listId);
+        if (!list || !list.forkedFrom) return;
+        list.forkedFrom = { ...list.forkedFrom, dismissedVersion: version };
+    },
     updateCategoryName(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
         category.name = updatedCategory.name;
-        state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     updateCategoryColor(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
@@ -179,30 +241,46 @@ module.exports = {
     },
     updateItem(state, item) {
         state.library.updateItem(item);
-        state.library.lists.forEach(list => list.calculateTotals());
+        recalculateListsForItem(state.library, item.id);
+        state.itemVersion += 1;
+    },
+    updateItemMetadata(state, item) {
+        state.library.updateItem(item);
+        state.itemVersion += 1;
+    },
+    updateItemsMetadata(state, items) {
+        if (!Array.isArray(items) || items.length === 0) return;
+        items.forEach((item) => {
+            state.library.updateItem(item);
+        });
         state.itemVersion += 1;
     },
     mergeItems(state, { keepId, removeId }) {
-        for (const list of state.library.lists) {
-            for (const categoryId of list.categoryIds) {
+        state.library.lists.forEach((list) => {
+            list.categoryIds.forEach((categoryId) => {
                 const category = state.library.getCategoryById(categoryId);
-                if (!category) continue;
+                if (!category) return;
                 const removeCI = category.getCategoryItemById(removeId);
-                if (!removeCI) continue;
+                if (!removeCI) return;
                 const keepCI = category.getCategoryItemById(keepId);
                 if (keepCI) {
+                    keepCI.qty = (Number(keepCI.qty) || 0) + (Number(removeCI.qty) || 0);
+                    keepCI.worn = keepCI.worn || removeCI.worn;
+                    keepCI.consumable = keepCI.consumable || removeCI.consumable;
+                    keepCI.star = Math.max(Number(keepCI.star) || 0, Number(removeCI.star) || 0);
                     category.removeItem(removeId);
                 } else {
                     removeCI.itemId = keepId;
                 }
-            }
-        }
+            });
+        });
         const removeItem = state.library.getItemById(removeId);
         if (removeItem) {
             state.library.items.splice(state.library.items.indexOf(removeItem), 1);
             delete state.library.idMap[removeId];
         }
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        state.library.lists.forEach((list) => list.calculateTotals());
+        state.itemVersion += 1;
     },
     updateItemLink(state, args) {
         const item = state.library.getItemById(args.item.id);
@@ -213,11 +291,6 @@ module.exports = {
         item.imageUrl = args.imageUrl;
         state.library.optionalFields.images = true;
     },
-    updateItemImage(state, args) {
-        const item = state.library.getItemById(args.item.id);
-        item.image = args.image;
-        state.library.optionalFields.images = true;
-    },
     updateItemUnit(state, unit) {
         const previousItemUnit = state.library.itemUnit;
         state.library.itemUnit = unit;
@@ -226,15 +299,21 @@ module.exports = {
     removeItemImage(state, updateItem) {
         const item = state.library.getItemById(updateItem.id);
         item.image = '';
+        item.imageUrl = '';
     },
     updateCategoryItem(state, args) {
         args.category.updateCategoryItem(args.categoryItem);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, args.category);
+        state.categoryItemVersion += 1;
+    },
+    toggleOptionalItem(state, args) {
+        args.category.toggleOptionalItem(args.itemId);
+        recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
-        state.library.getListById(state.library.defaultListId).calculateTotals();
+        recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
     copyList(state, listId) {

@@ -1,5 +1,3 @@
-'use strict';
-
 // Creates the Stripe Customer Portal configuration for ZenPak.
 // Run once per environment (sandbox + live) from the project root:
 //   node scripts/stripe-portal-setup.js
@@ -36,7 +34,7 @@ async function main() {
     const uniquePriceIds = [...new Set(priceIds)];
 
     console.log(`Fetching ${uniquePriceIds.length} price(s) from Stripe...`);
-    const prices = await Promise.all(uniquePriceIds.map(id => stripe.prices.retrieve(id)));
+    const prices = await Promise.all(uniquePriceIds.map((id) => stripe.prices.retrieve(id)));
 
     // Group prices by product
     const productMap = new Map();
@@ -51,7 +49,7 @@ async function main() {
         prices: pricesList,
     }));
 
-    console.log(`Found ${products.length} product(s):`, products.map(p => p.product).join(', '));
+    console.log(`Found ${products.length} product(s):`, products.map((p) => p.product).join(', '));
 
     const portalConfig = await stripe.billingPortal.configurations.create({
         business_profile: {
@@ -86,7 +84,7 @@ async function main() {
     console.log(`  "stripePortalConfigurationId": "${portalConfig.id}"`);
 }
 
-main().catch(err => {
+main().catch((err) => {
     console.error('Error:', err.message);
     process.exit(1);
 });

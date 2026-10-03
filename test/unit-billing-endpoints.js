@@ -26,13 +26,18 @@ require.cache[require.resolve('../server/auth.js')] = {
     filename: require.resolve('../server/auth.js'), loaded: true, children: [], paths: [],
 };
 
+let lastCheckoutSessionParams = null;
+
 // Stub billing.js — stripeEnabled returns true, stripe operations are stubbed
 const billingStub = {
     stripeEnabled: () => true,
     getStripe: () => ({
         checkout: {
             sessions: {
-                create: async ({ line_items }) => ({ url: `https://checkout.stripe.com/pay/session_${line_items[0].price}` }),
+                create: async (params) => {
+                    lastCheckoutSessionParams = params;
+                    return { url: `https://checkout.stripe.com/pay/session_${params.line_items[0].price}` };
+                },
             },
         },
     }),
@@ -136,6 +141,12 @@ async function run() {
 
     const trailMonth = await callRoute('post', '/checkout-session', { plan: 'trail', interval: 'month' });
     assert('trail+month still uses stripePriceIdTrail (annual-only)', trailMonth && trailMonth.data.url && trailMonth.data.url.includes('price_trail_annual'));
+    assert('checkout requires terms checkbox',
+        lastCheckoutSessionParams && lastCheckoutSessionParams.consent_collection
+        && lastCheckoutSessionParams.consent_collection.terms_of_service === 'required');
+    assert('checkout consent text requests immediate digital service access',
+        lastCheckoutSessionParams && lastCheckoutSessionParams.custom_text
+        && lastCheckoutSessionParams.custom_text.terms_of_service_acceptance.message.includes('request immediate access to the digital service'));
 
     // invalid plan → 400
     const badPlan = await callRoute('post', '/checkout-session', { plan: 'premium' });

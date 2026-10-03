@@ -7,8 +7,15 @@ const rateLimit = require('express-rate-limit');
 const config = require('config');
 
 const { logWithRequest } = require('./log.js');
-const { sendMail } = require('./mailgun.js');
+const { sendMail } = require('./email-provider.js');
 const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
+const { canonicalEmail, emailLookup } = require('./email-policy.js');
+const {
+    canonicalUsername,
+    isReservedDisplayName,
+    isReservedUsername,
+    isValidUsername,
+} = require('./username-policy.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 
@@ -17,9 +24,51 @@ const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
 const router = express.Router();
 
+function verificationEmail({ username, verifyUrl }) {
+    const title = 'Verify your ZenPak email';
+    const text = `Hi ${username},
+
+Confirm this email address to publish your gear lists and protect your ZenPak account:
+
+${verifyUrl}
+
+If you didn't create a ZenPak account, ignore this email.
+
+— The ZenPak team`;
+    const html = `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
+        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Verify your email</td></tr>
+        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Confirm this address to publish your gear lists and protect your ZenPak account.</td></tr>
+        <tr><td align="center" style="padding-bottom:28px;">
+          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
+        </td></tr>
+        <tr><td style="font-size:13px;color:#666;padding-bottom:20px;">If the button does not work, copy this link:<br><a href="${verifyUrl}" style="color:#2d6a4f;word-break:break-all;">${verifyUrl}</a></td></tr>
+        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+    return { subject: title, text, html };
+}
+
+function isSessionRestoreSignin(req) {
+    return req.method === 'POST'
+        && req.path === '/signin'
+        && !(req.body && req.body.username)
+        && !(req.body && req.body.password);
+}
+
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
+    skip: isSessionRestoreSignin,
     standardHeaders: true,
     legacyHeaders: false,
     message: { errors: [{ message: 'Too many attempts. Try again in 15 minutes.' }] },
@@ -37,9 +86,9 @@ const forgotLimiter = rateLimit({
 eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 
 router.post('/register', authLimiter, (req, res) => {
-    const username = String(req.body.username).toLowerCase().trim();
+    const username = canonicalUsername(req.body.username);
     const password = String(req.body.password);
-    let email = String(req.body.email);
+    const email = canonicalEmail(req.body.email);
 
     const errors = [];
 
@@ -47,15 +96,17 @@ router.post('/register', authLimiter, (req, res) => {
         errors.push({ field: 'username', message: 'Please enter a username.' });
     }
 
-    if (username && (username.length < 3 || username.length > 32)) {
+    if (username && !isValidUsername(username, { maxLength: 32 })) {
         errors.push({ field: 'username', message: 'Please enter a username between 3 and 32 characters.' });
+    }
+
+    if (username && isReservedUsername(username)) {
+        errors.push({ field: 'username', message: 'This username is reserved.' });
     }
 
     if (!email) {
         errors.push({ field: 'email', message: 'Please enter an email.' });
     }
-
-    email = email.trim();
 
     if (!password) {
         errors.push({ field: 'password', message: 'Please enter a password.' });
@@ -81,7 +132,7 @@ router.post('/register', authLimiter, (req, res) => {
             return res.status(400).json({ errors: [{ field: 'username', message: 'That username already exists, please pick a different username.' }] });
         }
 
-        db.users.find({ email }, (err, users) => {
+        db.users.find(emailLookup(email), (err, users) => {
             if (err) {
                 logWithRequest(req, { message: 'DB error on email lookup', email, error: err.message });
                 return res.status(500).json({ errors: [{ message: 'An error occurred, please try again later.' }] });
@@ -107,6 +158,11 @@ router.post('/register', authLimiter, (req, res) => {
                             library = new Library().save();
                         }
 
+                        const displayName = library && library.publicProfile && library.publicProfile.displayName;
+                        if (isReservedDisplayName(displayName)) {
+                            return res.status(400).json({ errors: [{ field: 'displayName', message: 'This display name is reserved for the ZenPak team.' }] });
+                        }
+
                         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
                         const newUser = {
                             username,
@@ -119,41 +175,37 @@ router.post('/register', authLimiter, (req, res) => {
                             emailVerifyToken,
                         };
                         logWithRequest(req, { message: 'Saving new user', username });
-                        db.users.save(newUser);
+                        db.users.save(newUser, (err) => {
+                            if (err) {
+                                logWithRequest(req, {
+                                    message: 'DB error on user save', username, email, error: err.message,
+                                });
+                                if (err.code === 11000 && err.message.includes('email')) {
+                                    return res.status(400).json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
+                                }
+                                return res.status(500).json({ errors: [{ message: 'An error occurred, please try again later.' }] });
+                            }
 
-                        const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
-                        const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
-                        const textBody = `Almost ready, ${username}!\n\nVerify your email to share your lists with the world:\n\n${verifyUrl}\n\n— The ZenPak team`;
-                        const htmlBody = `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
-        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Almost ready, ${username}!</td></tr>
-        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">Verify your email to share your lists with the world.</td></tr>
-        <tr><td align="center" style="padding-bottom:28px;">
-          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
-        </td></tr>
-        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-                        sendMail({
-                            from: 'ZenPak <noreply@zenpak.app>',
-                            to: email,
-                            'h:Reply-To': 'ZenPak <support@zenpak.app>',
-                            subject: 'Verify your ZenPak email',
-                            text: textBody,
-                            html: htmlBody,
-                        }).catch((e) => logWithRequest(req, e));
+                            const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
+                            const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
+                            const emailMessage = verificationEmail({ username, verifyUrl });
+                            sendMail({
+                                from: 'ZenPak <noreply@zenpak.app>',
+                                to: email,
+                                'h:Reply-To': 'ZenPak <support@zenpak.app>',
+                                subject: emailMessage.subject,
+                                text: emailMessage.text,
+                                html: emailMessage.html,
+                            }).catch((e) => logWithRequest(req, e));
 
-                        const out = { username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false };
-                        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
-                        return res.status(200).json(out);
+                            const out = {
+                                username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false,
+                            };
+                            res.cookie('lp', token, {
+                                path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie,
+                            });
+                            return res.status(200).json(out);
+                        });
                     });
                 });
             });
@@ -171,7 +223,9 @@ function returnLibrary(req, res, user) {
         user.syncToken = 0;
         db.users.updateOne({ _id: user._id }, { $set: { syncToken: 0 } });
     }
-    return res.json({ username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified });
+    return res.json({
+        username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified,
+    });
 }
 
 router.post('/forgotPassword', forgotLimiter, (req, res) => {
@@ -268,13 +322,13 @@ router.post('/resetPassword', authLimiter, (req, res) => {
 
 router.post('/forgotUsername', forgotLimiter, (req, res) => {
     logWithRequest(req);
-    const email = String(req.body.email).toLowerCase().trim();
+    const email = canonicalEmail(req.body.email);
     if (!email || email.length < 1) {
         logWithRequest(req, { message: 'Bad forgot username', email });
         return res.status(400).json({ errors: [{ message: 'Please enter a valid email.' }] });
     }
 
-    db.users.findOne({ email }, (err, user) => {
+    db.users.findOne(emailLookup(email), (err, user) => {
         if (err) {
             logWithRequest(req, { message: 'Forgot email lookup error', email });
             return res.status(500).json({ message: 'An error occurred' });
@@ -341,9 +395,11 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
 });
 
 router.get('/api/auth/me', (req, res) => {
-    authenticateUser(req, res, (req, res, user) => {
-        return res.json({ isModerator: isModerator(user.username) });
-    });
+    authenticateUser(req, res, (req, res, user) => res.json({
+        username: user.username,
+        emailVerified: !!user.emailVerified,
+        isModerator: isModerator(user.username),
+    }));
 });
 
 router.get('/verify-email', (req, res, next) => {
@@ -372,40 +428,30 @@ router.post('/resendVerification', forgotLimiter, (req, res) => {
 
         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
         user.emailVerifyToken = emailVerifyToken;
-        user.verifyEmailSentAt = Date.now();
-        db.users.save(user);
 
         const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
         const verifyUrl = `${deployUrl}/verify-email?token=${emailVerifyToken}`;
-        const textBody = `Hi ${user.username},\n\nVerify your ZenPak email:\n\n${verifyUrl}\n\n— The ZenPak team`;
-        const htmlBody = `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
-    <tr><td align="center">
-      <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;padding:40px;box-shadow:0 1px 4px rgba(0,0,0,.08);">
-        <tr><td style="font-size:22px;font-weight:700;color:#1a1a1a;padding-bottom:8px;">Verify your email</td></tr>
-        <tr><td style="font-size:15px;color:#444;padding-bottom:24px;">One click and your ZenPak pack is ready to share with the world.</td></tr>
-        <tr><td align="center" style="padding-bottom:28px;">
-          <a href="${verifyUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Verify my email →</a>
-        </td></tr>
-        <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Ignore it.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+        const emailMessage = verificationEmail({ username: user.username, verifyUrl });
         sendMail({
             from: 'ZenPak <noreply@zenpak.app>',
             to: user.email,
             'h:Reply-To': 'ZenPak <support@zenpak.app>',
-            subject: 'Verify your ZenPak email',
-            text: textBody,
-            html: htmlBody,
-        }).catch((e) => logWithRequest(req, e));
-
-        return res.status(200).json({ message: 'Verification email sent.' });
+            subject: emailMessage.subject,
+            text: emailMessage.text,
+            html: emailMessage.html,
+        }).then(() => {
+            user.verifyEmailSentAt = Date.now();
+            db.users.save(user, (saveErr) => {
+                if (saveErr) {
+                    logWithRequest(req, saveErr);
+                    return res.status(500).json({ message: 'An error occurred, please try again later.' });
+                }
+                return res.status(200).json({ message: 'Verification email sent.' });
+            });
+        }).catch((e) => {
+            logWithRequest(req, e);
+            return res.status(500).json({ message: 'Verification email could not be sent. Please try again later.' });
+        });
     });
 });
 

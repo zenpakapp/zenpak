@@ -70,8 +70,8 @@
             </span>
         </li>
     {{/totalWornWeight}}
-    {{#shouldDisplayPackWeight}}
-        <li data-weight-type="base" class="lpRow lpFooter lpBreakdown lpPackWeight">
+    {{#shouldDisplayBaseWeight}}
+        <li data-weight-type="base" class="lpRow lpFooter lpBreakdown lpBaseWeight">
             <span class="lpCell"></span>
             <span class="lpCell lpSubtotal">
                 {{t.baseWeight}}
@@ -80,9 +80,9 @@
             <span class="lpCell"></span>
             {{/showPrices}}
             <span class="lpCell lpNumber lpSubtotal">
-                <span class="lpDisplaySubtotal" mg="{{totalPackWeight}}">{{totalPackWeightDisplay}}</span>
+                <span class="lpDisplaySubtotal" mg="{{totalBaseWeight}}">{{totalBaseWeightDisplay}}</span>
                 <span class="lpSubtotalUnit">{{subtotalUnit}}</span>
             </span>
         </li>
-    {{/shouldDisplayPackWeight}}
+    {{/shouldDisplayBaseWeight}}
 </ul>

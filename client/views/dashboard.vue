@@ -3,26 +3,82 @@
 </style>
 
 <template>
-    <div v-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
-        <sidebar @open-gear-room="$store.commit('setGearRoomOpen', true)" />
+    <div v-if="isInitializing" class="lpEditorLoading" role="status" aria-live="polite">
+        <span class="lpEditorLoadingText">{{ $t('dash.loadingEditor') }}</span>
+        <div class="lpEditorLoadingSidebar" aria-hidden="true">
+            <span class="lpEditorLoadingBone lpEditorLoadingBrand" />
+            <span v-for="index in 6" :key="`loading-nav-${index}`" class="lpEditorLoadingBone lpEditorLoadingNav" />
+        </div>
+        <div class="lpEditorLoadingContent" aria-hidden="true">
+            <div class="lpEditorLoadingToolbar">
+                <span class="lpEditorLoadingBone lpEditorLoadingTitle" />
+                <span class="lpEditorLoadingBone lpEditorLoadingTitleMeta" />
+                <span class="lpEditorLoadingBone lpEditorLoadingAction" />
+            </div>
+            <div class="lpEditorLoadingWorkspace">
+                <div class="lpEditorLoadingSummary">
+                    <span class="lpEditorLoadingBone lpEditorLoadingChart" />
+                    <div class="lpEditorLoadingTotals">
+                        <span v-for="index in 6" :key="`loading-total-${index}`" class="lpEditorLoadingBone" />
+                    </div>
+                </div>
+                <div class="lpEditorLoadingList">
+                    <span class="lpEditorLoadingBone lpEditorLoadingListTitle" />
+                    <div class="lpEditorLoadingRows">
+                        <div v-for="index in 7" :key="`loading-row-${index}`" class="lpEditorLoadingRow">
+                            <span class="lpEditorLoadingBone" />
+                            <span class="lpEditorLoadingBone" />
+                            <span class="lpEditorLoadingBone" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
+        <sidebar v-if="sidebarReady" @open-gear-room="openGearRoom" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
             <div id="header" class="clearfix">
                 <span class="headerItem">
-                    <a id="hamburger" class="lpTransition" @click="toggleSidebar">
+                    <a id="hamburger" class="lpTransition" role="button" tabindex="0" :aria-label="$t('dash.toggleSidebar')" @click="toggleSidebar" @keydown.enter="toggleSidebar" @keydown.space.prevent="toggleSidebar">
                         <span class="lpHamburgerLine" />
                         <span class="lpHamburgerLine" />
                         <span class="lpHamburgerLine" />
                     </a>
                 </span>
-                <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent headerItem" value="New List" placeholder="List Name" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                <span class="lpListTitleBlock headerItem">
+                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" value="New List" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                    <span v-if="forkSource" class="lpForkSource" :title="forkCurrencyNote || null">
+                        {{ $t('dash.source') }}
+                        <router-link v-if="forkSource.externalId" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
+                            {{ forkSource.listName }}
+                        </router-link>
+                        <span v-else>{{ forkSource.listName }}</span>
+                        <span v-if="forkSource.ownerName" class="lpForkSourceOwner">
+                            ·
+                            <router-link v-if="forkSource.ownerUsername" class="lpForkSourceLink" :to="`/u/${forkSource.ownerUsername}`">
+                                {{ forkSource.ownerName }}
+                            </router-link>
+                            <span v-else>{{ forkSource.ownerName }}</span>
+                        </span>
+                        <button v-if="forkCurrencyNote" class="lpForkSourceInfo" type="button" :title="forkCurrencyNote" @click="showForkCurrencyNotice">?</button>
+                    </span>
+                    <span v-if="canHideSourceListInfo" class="lpForkSourceActions">
+                        <button class="lpForkSourceAction" type="button" @click="hideSourceListInfo">
+                            {{ $t('dash.hideSourceListInfo') }}
+                        </button>
+                        <span class="lpForkSourceHelp" :title="$t('dash.hideSourceListInfoHelp')">?</span>
+                        <button class="lpForkSourceDismiss" type="button" :title="$t('dash.hideSourceListInfoAction')" @click="dismissSourceListInfoAction">×</button>
+                    </span>
+                </span>
                 <span class="headerItem headerIconItem">
                     <themeToggle />
                 </span>
                 <span v-if="isSignedIn" class="headerItem headerIconItem">
                     <notifications />
                 </span>
-                <span v-if="isSignedIn" class="headerItem">
+                <span v-if="isSignedIn" class="headerItem headerCommunityItem">
                     <router-link to="/community" class="lpTarget">{{ $t('dash.community') }}</router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">
@@ -44,10 +100,14 @@
                 <span v-if="verifyResendSent">{{ $t('dash.verificationEmailSent') }}</span>
                 <template v-else>
                     <span>{{ $t('dash.verifyEmailPrompt') }}</span>
-                    <button class="lpVerifyBannerBtn" @click="resendVerification">{{ $t('dash.resendEmail') }}</button>
+                    <button class="lpVerifyBannerBtn" @click="resendVerification">
+                        {{ $t('dash.resendEmail') }}
+                    </button>
                     <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
                 </template>
-                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">✕</button>
+                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">
+                    ✕
+                </button>
             </div>
 
             <div v-if="billingSuccess" class="lpBillingSuccessBanner">
@@ -59,9 +119,21 @@
             <div v-if="billingManaged" class="lpBillingSuccessBanner">
                 ✓ {{ $t('dash.billingManaged') }}
             </div>
-<div v-if="isPastDue" class="lpPastDueBanner">
+            <div v-if="isPastDue" class="lpPastDueBanner">
                 <span>⚠ {{ $t('dash.paymentFailed') }} {{ planLabel }} {{ $t('dash.plan') }}.</span>
-                <button @click="openPortal" class="lpButton lpButtonDanger lpButtonSmall">{{ $t('dash.fixPayment') }}</button>
+                <button class="lpButton lpButtonDanger lpButtonSmall" @click="openPortal">
+                    {{ $t('dash.fixPayment') }}
+                </button>
+            </div>
+
+            <div v-if="activeForkUpdate" class="lpVerifyBanner lpForkUpdateBanner">
+                <span>{{ $t('list.versioning.bannerText', { version: activeForkUpdate.latestVersion }) }}</span>
+                <router-link class="lpVerifyBannerBtn" :to="`/p/${activeForkUpdate.sourceExternalId}`">
+                    {{ $t('list.versioning.viewOriginal') }}
+                </router-link>
+                <button class="lpVerifyBannerDismiss" type="button" :title="$t('list.versioning.dismiss')" :aria-label="$t('list.versioning.dismiss')" @click="dismissForkUpdate">
+                    ✕
+                </button>
             </div>
 
             <list />
@@ -73,7 +145,9 @@
                 <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
                 <template v-else>
                     <p>{{ $t('dash.enjoyingApp') }}</p>
-                    <router-link to="/about" class="lpHref">{{ $t('dash.learnMore') }}</router-link>
+                    <router-link to="/about" class="lpHref">
+                        {{ $t('dash.learnMore') }}
+                    </router-link>
                 </template>
             </div>
 
@@ -96,51 +170,70 @@
         </div>
 
         <globalAlerts />
-        <speedbump />
-        <copyList />
-        <importCSV />
-        <itemImage />
-        <itemViewImage />
-        <itemLink />
-        <itemMeta />
-        <itemDetail />
-        <gearPicker />
-        <help />
-        <account />
-        <accountDelete />
+        <component
+            :is="dialog.component"
+            v-for="dialog in loadedDialogs"
+            :key="dialog.name"
+        />
     </div>
 </template>
 
 <script>
+import { computed, defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
+import { findForkUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
-import share from '../components/share.vue';
 import listSettings from '../components/list-settings.vue';
-import accountDropdown from '../components/account-dropdown.vue';
-import forgotPassword from './forgot-password.vue';
-import account from '../components/account.vue';
-import accountDelete from '../components/account-delete.vue';
-import help from '../components/help.vue';
 import list from '../components/list.vue';
-
-import itemImage from '../components/item-image.vue';
-import itemViewImage from '../components/item-view-image.vue';
-import itemLink from '../components/item-link.vue';
-import itemMeta from '../components/item-meta.vue';
-import itemDetail from '../components/item-detail.vue';
-import gearPicker from '../components/gear-picker.vue';
-import importCSV from '../components/import-csv.vue';
-import copyList from '../components/copy-list.vue';
-import speedbump from '../components/speedbump.vue';
-import gearRoom from '../components/gear-room.vue';
-import profileInsights from '../components/profile-insights.vue';
-import upgradePrompt from '../components/upgrade-prompt.vue';
 import { push } from '../services/navigation';
 import { isBase } from '../services/entitlements.js';
+import { planLabel as planTierLabel } from '../services/tier-labels.js';
 import themeToggle from '../components/theme-toggle.vue';
-import notifications from '../components/notifications.vue';
-import guestSettings from '../components/guest-settings.vue';
+import { registerDialogLoader, unregisterDialogLoader, openDialog } from '../services/dialogs';
+
+import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
+import { clearSpeedbumpLoader, setSpeedbumpLoader } from '../services/speedbump';
+
+const accountDropdown = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-account-dropdown" */ '../components/account-dropdown.vue'));
+const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
+const notifications = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-notifications" */ '../components/notifications.vue'));
+const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
+const profileInsights = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue'));
+const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue'));
+const guestSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-guest-settings" */ '../components/guest-settings.vue'));
+
+const lazyDialogs = {
+    account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
+    copyList: { component: 'copyList', loader: () => import(/* webpackChunkName: "dialog-copy-list" */ '../components/copy-list.vue') },
+    deleteAccount: { component: 'accountDelete', loader: () => import(/* webpackChunkName: "dialog-account-delete" */ '../components/account-delete.vue') },
+    gearPicker: { component: 'gearPicker', loader: () => import(/* webpackChunkName: "dialog-gear-picker" */ '../components/gear-picker.vue') },
+    help: { component: 'help', loader: () => import(/* webpackChunkName: "dialog-help" */ '../components/help.vue') },
+    importCSV: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    importLP: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    importText: { component: 'importCSV', loader: () => import(/* webpackChunkName: "dialog-import-csv" */ '../components/import-csv.vue') },
+    itemDetail: { component: 'itemDetail', loader: () => import(/* webpackChunkName: "dialog-item-detail" */ '../components/item-detail.vue') },
+    itemImage: { component: 'itemImage', loader: () => import(/* webpackChunkName: "dialog-item-image" */ '../components/item-image.vue') },
+    itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
+    itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
+    itemViewImage: { component: 'itemViewImage', loader: () => import(/* webpackChunkName: "dialog-item-view-image" */ '../components/item-view-image.vue') },
+    shortcutsHelp: { component: 'shortcutsHelp', loader: () => import(/* webpackChunkName: "dialog-shortcuts-help" */ '../components/shortcuts-help.vue') },
+};
+
+const lazySpeedbump = {
+    component: 'speedbump',
+    loader: () => import(/* webpackChunkName: "dialog-speedbump" */ '../components/speedbump.vue'),
+};
+const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
+const legacySourceListInfoDismissedField = 'creator' + 'LinksActionDismissed';
+
+function scheduleIdle(callback) {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(callback, { timeout: 4000 });
+        return;
+    }
+    setTimeout(callback, 1500);
+}
 
 export default {
     name: 'Dashboard',
@@ -151,29 +244,22 @@ export default {
         listSettings,
         accountDropdown,
         guestSettings,
-        forgotPassword,
-        account,
-        accountDelete,
-        help,
         list,
-        itemLink,
-        itemMeta,
-        itemDetail,
-        gearPicker,
-        copyList,
-        importCSV,
-        itemImage,
-        itemViewImage,
-        speedbump,
         globalAlerts,
         gearRoom,
         profileInsights,
         upgradePrompt,
         notifications,
     },
+    provide() {
+        return { forkUpdates: computed(() => this.forkUpdates) };
+    },
     data() {
         return {
             isLoaded: false,
+            sidebarReady: false,
+            sidebarFrame: null,
+            sidebarMediaQuery: null,
             showGuideUpgrade: false,
             verifyResendSent: false,
             verifyResendError: null,
@@ -181,6 +267,12 @@ export default {
             billingSuccess: false,
             billingCancelled: false,
             billingManaged: false,
+            loadingPrivateLibrary: false,
+            loadedDialogs: [],
+            dialogLoaders: [],
+            speedbumpLoader: null,
+            currencyNoticeListId: null,
+            forkUpdates: [],
         };
     },
     computed: {
@@ -194,8 +286,39 @@ export default {
             if (!this.library || typeof this.library.getListById !== 'function') return null;
             return this.library.getListById(this.library.defaultListId);
         },
+        forkSource() {
+            const forkedFrom = this.list && this.list.forkedFrom;
+            if (!forkedFrom || !forkedFrom.listName) return null;
+            if (forkedFrom.ownerUsername && forkedFrom.ownerUsername === this.$store.state.loggedIn) return null;
+            return forkedFrom;
+        },
+        forkCurrencyNote() {
+            const sourceCurrency = this.forkSource && this.forkSource.sourceCurrencySymbol;
+            const currentCurrency = this.library && this.library.currencySymbol;
+            if (!sourceCurrency || !currentCurrency || sourceCurrency === currentCurrency) return '';
+            return this.$t('dash.sourceCurrencyNote', { source: sourceCurrency, current: currentCurrency });
+        },
+        activeForkUpdate() {
+            return findForkUpdate(this.list, this.forkUpdates);
+        },
+        canHideSourceListInfo() {
+            return !!(
+                this.forkSource
+                && this.list
+                && this.list.sourceListInfoHidden !== true
+                && this.list[legacySourceListInfoHiddenField] !== true
+                && this.list.sourceListInfoActionDismissed !== true
+                && this.list[legacySourceListInfoDismissedField] !== true
+            );
+        },
         isSignedIn() {
             return this.$store.state.loggedIn;
+        },
+        initializationStatus() {
+            return this.$store.state.initializationStatus;
+        },
+        isInitializing() {
+            return this.initializationStatus === 'loading';
         },
         isGuide() {
             const lib = this.$store.state.library;
@@ -217,32 +340,76 @@ export default {
             return billing && billing.status === 'past_due';
         },
         planLabel() {
-            const map = { supporter: 'Kin', creator: 'Wayfarer' };
             const billing = this.$store.state.billing;
-            return map[billing && billing.plan] || 'plan';
+            return (billing && billing.plan) ? planTierLabel(billing.plan) : 'plan';
         },
     },
     watch: {
+        initializationStatus: {
+            immediate: true,
+            handler(status) {
+                if (status !== 'ready') return;
+
+                if (!this.library) {
+                    if (this.isSignedIn && !this.loadingPrivateLibrary) {
+                        this.loadingPrivateLibrary = true;
+                        this.$store.dispatch('init')
+                            .then(() => {
+                                if (this.library) this.prepareDashboard();
+                                else push('/welcome');
+                            })
+                            .catch(() => {
+                                push('/welcome');
+                            })
+                            .finally(() => {
+                                this.loadingPrivateLibrary = false;
+                            });
+                        return;
+                    }
+                    push('/welcome');
+                    return;
+                }
+
+                this.prepareDashboard();
+            },
+        },
         emailVerified(val) {
             if (val === true) {
                 localStorage.removeItem('verifyBannerDismissed');
                 this.verifyBannerDismissed = false;
             }
         },
+        forkCurrencyNote: {
+            immediate: true,
+            handler(note) {
+                if (!note || !this.list || this.currencyNoticeListId === this.list.id) return;
+                this.currencyNoticeListId = this.list.id;
+                this.showForkCurrencyNotice();
+            },
+        },
     },
     created() {
-        if (!this.$store.state.library) {
-            push('/welcome');
-        } else {
-            this.isLoaded = true;
-        }
+        Object.entries(lazyDialogs).forEach(([name, dialog]) => {
+            const loader = () => this.loadDialog(dialog.component, dialog.loader);
+            this.dialogLoaders.push({ name, loader });
+            registerDialogLoader(name, loader);
+        });
+        this.speedbumpLoader = () => this.loadDialog(lazySpeedbump.component, lazySpeedbump.loader);
+        setSpeedbumpLoader(this.speedbumpLoader);
+        this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
+        this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
+        registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
+        registerShortcut('?', this.$t('shortcuts.showHelp'), () => {
+            openDialog('shortcutsHelp');
+        });
+
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
         }
         if (this.$route && this.$route.query.billing === 'success') {
             fetch('/api/billing/me', { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingSuccess = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -255,21 +422,142 @@ export default {
         }
         if (this.$route && this.$route.query.billing === 'managed') {
             fetch('/api/billing/me', { credentials: 'include' })
-                .then(r => r.ok ? r.json() : null)
-                .then(data => { if (data) this.$store.commit('setBilling', data); })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingManaged = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             setTimeout(() => { this.billingManaged = false; }, 6000);
         }
     },
+    beforeUnmount() {
+        this.dialogLoaders.forEach(({ name, loader }) => {
+            unregisterDialogLoader(name, loader);
+        });
+        this.dialogLoaders = [];
+        clearSpeedbumpLoader(this.speedbumpLoader);
+        this.speedbumpLoader = null;
+        unregisterShortcut('s');
+        unregisterShortcut('?');
+        if (this.sidebarFrame) cancelAnimationFrame(this.sidebarFrame);
+        if (this.sidebarMediaQuery) {
+            this.sidebarMediaQuery.removeEventListener('change', this.handleSidebarBreakpoint);
+        }
+    },
     methods: {
+        prepareDashboard() {
+            if (this.isLoaded) return;
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                this.$store.commit('setSidebarOpen', false);
+            }
+
+            this.isLoaded = true;
+            this.sidebarFrame = requestAnimationFrame(() => {
+                this.sidebarReady = true;
+                this.sidebarFrame = null;
+            });
+            this.prefetchLikelyChunks();
+            this.loadForkUpdates();
+        },
+        loadForkUpdates() {
+            if (!this.isSignedIn || !this.library || !Array.isArray(this.library.lists)) return;
+            const hasTrackedFork = this.library.lists.some((l) => l.forkedFrom && Number.isInteger(l.forkedFrom.version));
+            if (!hasTrackedFork) return;
+            fetchJson('/api/lists/fork-updates', { credentials: 'same-origin' })
+                .then((response) => {
+                    this.forkUpdates = Array.isArray(response.updates) ? response.updates : [];
+                })
+                .catch(() => {});
+        },
+        dismissForkUpdate() {
+            if (!this.list || !this.activeForkUpdate) return;
+            this.$store.commit('dismissForkUpdate', { listId: this.list.id, version: this.activeForkUpdate.latestVersion });
+        },
+        openGearRoom() {
+            this.$store.commit('setGearRoomOpen', true);
+            if (this.sidebarMediaQuery && this.sidebarMediaQuery.matches) {
+                this.$store.commit('setSidebarOpen', false);
+            }
+        },
+        async loadDialog(componentName, loader) {
+            if (this.loadedDialogs.some((dialog) => dialog.name === componentName)) return;
+            const module = await loader();
+            this.loadedDialogs.push({ name: componentName, component: markRaw(module.default || module) });
+            await this.$nextTick();
+        },
+        prefetchLikelyChunks() {
+            scheduleIdle(() => {
+                [
+                    lazyDialogs.itemDetail.loader,
+                    lazyDialogs.itemMeta.loader,
+                    lazyDialogs.itemLink.loader,
+                    lazyDialogs.itemImage.loader,
+                    lazyDialogs.itemViewImage.loader,
+                    lazySpeedbump.loader,
+                ].forEach((loader) => {
+                    loader().catch(() => {});
+                });
+            });
+        },
+        handleSidebarBreakpoint(event) {
+            if (event.matches) {
+                this._sidebarWasOpen = this.library && this.library.showSidebar;
+                if (this._sidebarWasOpen) {
+                    this.$store.commit('setSidebarOpen', false);
+                }
+            } else {
+                if (this._sidebarWasOpen) {
+                    this.$store.commit('setSidebarOpen', true);
+                }
+                this._sidebarWasOpen = false;
+            }
+        },
         toggleSidebar() {
             this.$store.commit('toggleSidebar');
         },
         updateListName(evt) {
             if (!this.list) return;
             this.$store.commit('updateListName', { id: this.list.id, name: evt.target.value });
+        },
+        showForkCurrencyNotice() {
+            if (!this.forkCurrencyNote) return;
+            this.$store.commit('pushGlobalAlert', {
+                key: 'dash.sourceCurrencyNote',
+                params: {
+                    source: this.forkSource.sourceCurrencySymbol,
+                    current: this.library.currencySymbol,
+                },
+                type: 'info',
+            });
+        },
+        hideSourceListInfo() {
+            if (!this.list) return;
+            this.$store.commit('hideSourceListInfo', { listId: this.list.id });
+            const persist = this.$store.state.saveType === 'remote' && this.$store.state.loggedIn
+                ? fetchJson(`/api/lists/${this.list.id}/hide-source-list-info`, { method: 'POST', credentials: 'same-origin' })
+                    .then((response) => {
+                        if (response && typeof response.syncToken !== 'undefined') {
+                            this.$store.commit('setSyncToken', response.syncToken);
+                            this.$store.commit('setLastSaveData', JSON.stringify(this.library.save()));
+                        }
+                    })
+                : this.$store.dispatch('saveNow');
+
+            persist
+                .then(() => {
+                    this.$store.commit('pushGlobalAlert', {
+                        key: 'dash.sourceListInfoHidden',
+                        type: 'success',
+                    });
+                })
+                .catch(() => {
+                    this.$store.commit('pushGlobalAlert', { message: 'An error occurred while attempting to save your data.' });
+                });
+        },
+        dismissSourceListInfoAction() {
+            if (!this.list) return;
+            this.$store.commit('dismissSourceListInfoAction', { listId: this.list.id });
+            this.$store.dispatch('saveNow').catch(() => {});
         },
         dismissVerifyBanner() {
             localStorage.setItem('verifyBannerDismissed', '1');
@@ -279,17 +567,27 @@ export default {
             this.verifyResendError = null;
             fetchJson('/resendVerification', { method: 'POST', credentials: 'same-origin' })
                 .then(() => { this.verifyResendSent = true; })
-                .catch((err) => { this.verifyResendError = (err && err.message) || 'An error occurred.'; });
+                .catch((err) => { this.verifyResendError = this.translateServerError((err && err.message) || 'An error occurred, please try again later.'); });
+        },
+        translateServerError(message) {
+            const serverMessageKeys = {
+                'Too many requests. Try again in 1 hour.': 'misc.alertTooManyRequests',
+                'Please wait 5 minutes before requesting another verification email.': 'misc.alertVerifyEmailCooldown',
+                'Verification email could not be sent. Please try again later.': 'misc.alertVerificationEmailFailed',
+                'An error occurred, please try again later.': 'misc.alertTryAgainLater',
+            };
+            return serverMessageKeys[message] ? this.$t(serverMessageKeys[message]) : message;
         },
         async openPortal() {
             try {
                 const res = await fetch('/api/billing/portal-session', {
-                    method: 'POST', credentials: 'include',
+                    method: 'POST',
+                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                 });
                 const data = await res.json();
                 if (data.url) window.location.href = data.url;
-            } catch (_) {}
+            } catch (_) { /* ignore */ }
         },
     },
 };

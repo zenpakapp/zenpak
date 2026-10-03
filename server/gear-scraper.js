@@ -1,19 +1,112 @@
+const dns = require('dns').promises;
+const net = require('net');
+
 const TIMEOUT_MS = 8000;
 const MAX_BYTES = 512 * 1024; // 512 KB — enough for <head>
+const MAX_REDIRECTS = 5;
+const blockedAddresses = new net.BlockList();
+
+[
+    ['0.0.0.0', 8],
+    ['10.0.0.0', 8],
+    ['100.64.0.0', 10],
+    ['127.0.0.0', 8],
+    ['169.254.0.0', 16],
+    ['172.16.0.0', 12],
+    ['192.0.0.0', 24],
+    ['192.0.2.0', 24],
+    ['192.168.0.0', 16],
+    ['198.18.0.0', 15],
+    ['198.51.100.0', 24],
+    ['203.0.113.0', 24],
+    ['224.0.0.0', 4],
+    ['240.0.0.0', 4],
+].forEach(([address, prefix]) => blockedAddresses.addSubnet(address, prefix, 'ipv4'));
+
+[
+    ['::', 128],
+    ['::1', 128],
+    ['fc00::', 7],
+    ['fe80::', 10],
+    ['ff00::', 8],
+    ['2001:db8::', 32],
+].forEach(([address, prefix]) => blockedAddresses.addSubnet(address, prefix, 'ipv6'));
+
+function isPrivateAddress(address) {
+    const normalized = String(address || '').toLowerCase().split('%')[0];
+    const family = net.isIP(normalized);
+
+    if (family === 4) return blockedAddresses.check(normalized, 'ipv4');
+    if (family !== 6) return true;
+    return blockedAddresses.check(normalized, 'ipv6');
+}
+
+async function assertSafeOutboundUrl(rawUrl, lookup = dns.lookup) {
+    let parsed;
+    try {
+        parsed = new URL(rawUrl);
+    } catch (err) {
+        const unsafeError = new Error('Unsafe outbound URL');
+        unsafeError.code = 'UNSAFE_URL';
+        throw unsafeError;
+    }
+
+    if (!['http:', 'https:'].includes(parsed.protocol)
+        || parsed.username
+        || parsed.password
+        || !parsed.hostname) {
+        const unsafeError = new Error('Unsafe outbound URL');
+        unsafeError.code = 'UNSAFE_URL';
+        throw unsafeError;
+    }
+
+    let addresses;
+    try {
+        addresses = net.isIP(parsed.hostname)
+            ? [{ address: parsed.hostname }]
+            : await lookup(parsed.hostname, { all: true, verbatim: true });
+    } catch (err) {
+        const unsafeError = new Error('Unsafe outbound URL');
+        unsafeError.code = 'UNSAFE_URL';
+        throw unsafeError;
+    }
+
+    if (!addresses.length || addresses.some(({ address }) => isPrivateAddress(address))) {
+        const unsafeError = new Error('Unsafe outbound URL');
+        unsafeError.code = 'UNSAFE_URL';
+        throw unsafeError;
+    }
+
+    return parsed;
+}
 
 async function fetchHtml(url) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
     try {
-        const res = await fetch(url, {
-            signal: controller.signal,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; LighterPack/1.0; +https://lighterpack.com)',
-                'Accept': 'text/html,application/xhtml+xml',
-                'Accept-Language': 'en-US,en;q=0.9',
-            },
-            redirect: 'follow',
-        });
+        let currentUrl = url;
+        let res;
+
+        for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects++) {
+            await assertSafeOutboundUrl(currentUrl);
+            res = await fetch(currentUrl, {
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (compatible; LighterPack/1.0; +https://lighterpack.com)',
+                    Accept: 'text/html,application/xhtml+xml',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                },
+                redirect: 'manual',
+            });
+
+            if (![301, 302, 303, 307, 308].includes(res.status)) break;
+            if (redirects === MAX_REDIRECTS) throw new Error('Too many redirects');
+
+            const location = res.headers.get('location');
+            if (!location) throw new Error('Invalid redirect');
+            currentUrl = new URL(location, currentUrl).toString();
+        }
+
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         // Stream only the first MAX_BYTES to avoid downloading full page
@@ -50,8 +143,8 @@ function extractMeta(html, property) {
 
 function extractJsonLd(html) {
     const re = /<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
-    let m;
-    while ((m = re.exec(html)) !== null) {
+    let m = re.exec(html);
+    while (m !== null) {
         try {
             const data = JSON.parse(m[1]);
             const items = Array.isArray(data) ? data : [data];
@@ -65,6 +158,7 @@ function extractJsonLd(html) {
                 }
             }
         } catch (_) { /* malformed JSON-LD — skip */ }
+        m = re.exec(html);
     }
     return null;
 }
@@ -102,7 +196,9 @@ function extractWeightFromJsonLd(jsonLd) {
     if (!w) return null;
     if (typeof w === 'string') return parseWeight(w);
     if (w.value && w.unitCode) {
-        const unitMap = { GRM: 'g', KGM: 'kg', ONZ: 'oz', LBR: 'lb' };
+        const unitMap = {
+            GRM: 'g', KGM: 'kg', ONZ: 'oz', LBR: 'lb',
+        };
         return { value: parseFloat(w.value), unit: unitMap[w.unitCode] || 'g' };
     }
     if (w.value) return { value: parseFloat(w.value), unit: 'g' };
@@ -149,4 +245,8 @@ async function scrapeGear(url) {
     };
 }
 
-module.exports = { scrapeGear };
+module.exports = {
+    assertSafeOutboundUrl,
+    isPrivateAddress,
+    scrapeGear,
+};

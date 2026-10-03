@@ -7,11 +7,14 @@ const ownerUser = {
     _id: new ObjectId(),
     username: 'fx',
     library: {
+        currencySymbol: '€',
         lists: [{
             id: new ObjectId(),
             externalId: 'gr34-summer',
             name: 'GR34 Summer',
             visibility: 'discoverable',
+            seasons: ['3-season', 'summer'],
+            listTypes: ['trek'],
             categoryIds: [],
         }],
         categories: [],
@@ -48,10 +51,19 @@ const ownerUser2 = {
     },
 };
 
+const { createListVersionsStub } = require('./fixtures/list-versions-fixtures.js');
+
+const listVersionsDb = createListVersionsStub();
+
 const savedUsers = [];
 const dbStub = {
     users: {
         findOne(query) {
+            if (query._id) {
+                if (String(ownerUser._id) === String(query._id)) return Promise.resolve(ownerUser);
+                if (String(ownerUser2._id) === String(query._id)) return Promise.resolve(ownerUser2);
+                return Promise.resolve(null);
+            }
             const extId = query['library.lists.externalId'];
             if (extId === 'gr34-summer') return Promise.resolve(ownerUser);
             if (extId === 'weekend-budget') return Promise.resolve(ownerUser2);
@@ -62,6 +74,7 @@ const dbStub = {
             return Promise.resolve(user);
         },
     },
+    listVersions: listVersionsDb,
 };
 require.cache[require.resolve('../server/db.js')] = {
     exports: dbStub, id: require.resolve('../server/db.js'),
@@ -82,6 +95,21 @@ require.cache[require.resolve('../server/feed-events.js')] = {
     exports: feedStub, id: require.resolve('../server/feed-events.js'),
     filename: require.resolve('../server/feed-events.js'), loaded: true, children: [], paths: [],
 };
+
+const { buildFrozenLibrary } = require('../server/list-versions.js');
+
+listVersionsDb.rows.push({
+    externalId: 'gr34-summer',
+    version: 1,
+    ownerId: ownerUser._id,
+    library: buildFrozenLibrary(ownerUser.library, 'gr34-summer'),
+});
+listVersionsDb.rows.push({
+    externalId: 'weekend-budget',
+    version: 1,
+    ownerId: ownerUser2._id,
+    library: buildFrozenLibrary(ownerUser2.library, 'weekend-budget'),
+});
 
 const router = require('../server/community-endpoints.js');
 
@@ -112,7 +140,11 @@ async function run() {
     assert('forkedFrom.ownerUsername matches source owner username', f1.ownerUsername === 'fx');
     assert('forkedFrom.ownerName uses publicProfile.displayName when set', f1.ownerName === 'FX Bénard');
     assert('forkedFrom.listName matches source list name', f1.listName === 'GR34 Summer');
+    assert('forkedFrom.sourceCurrencySymbol matches source library', f1.sourceCurrencySymbol === '€');
+    assert('copy payload includes source currency', response1.sourceCurrencySymbol === '€');
     assert('forkedFrom.copiedAt is a valid ISO date', !Number.isNaN(Date.parse(f1.copiedAt)));
+    assert('copy payload includes source seasons', JSON.stringify(response1.seasons) === JSON.stringify(['3-season', 'summer']));
+    assert('copy payload includes source list types', JSON.stringify(response1.listTypes) === JSON.stringify(['trek']));
 
     const response2 = await callCopy('weekend-budget');
     const f2 = response2.forkedFrom || {};

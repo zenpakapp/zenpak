@@ -1,44 +1,45 @@
 // server/community-endpoints.js
 const express = require('express');
 const { ObjectId } = require('mongodb');
+
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
+
 const { authenticateUser } = auth;
 
 const { getFeedForUser } = require('./feed-events.js');
 const { createNotification } = require('./notifications.js');
+const { normalizeTier } = require('./tier-policy.js');
+const { getLatest } = require('./list-versions.js');
+const {
+    incrementPublicListStat,
+    normalizeTagArray,
+    projectionToDiscoverItem,
+    publicDisplayName,
+    syncUserPublicLists,
+} = require('./public-list-projections.js');
 
 // In-memory rate limiter: max 5 copies/hour per userId or IP
 const COPY_RATE_LIMIT = 5;
 const COPY_RATE_WINDOW_MS = 60 * 60 * 1000;
 const copyRateMap = new Map();
 
-function isCopyRateLimited(key) {
+function checkCopyRateLimit(key) {
     const now = Date.now();
     const windowStart = now - COPY_RATE_WINDOW_MS;
-    const timestamps = (copyRateMap.get(key) || []).filter(t => t > windowStart);
+    const timestamps = (copyRateMap.get(key) || []).filter((t) => t > windowStart);
     if (timestamps.length >= COPY_RATE_LIMIT) {
         copyRateMap.set(key, timestamps);
-        return true;
+        const retryAfterMs = COPY_RATE_WINDOW_MS - (now - timestamps[0]);
+        return {
+            limited: true,
+            retryAfterMinutes: Math.max(1, Math.ceil(retryAfterMs / 60000)),
+        };
     }
     timestamps.push(now);
     copyRateMap.set(key, timestamps);
-    return false;
-}
-
-function normalizeTagArray(value) {
-    if (!Array.isArray(value)) return [];
-    return value
-        .map(tag => String(tag || '').trim().toLowerCase())
-        .filter(Boolean)
-        .slice(0, 12);
-}
-
-function normalizeTier(plan) {
-    if (plan === 'creator') return 'guide';
-    if (plan === 'supporter') return 'trail';
-    return 'base';
+    return { limited: false, remaining: COPY_RATE_LIMIT - timestamps.length };
 }
 
 function parseNumberParam(value) {
@@ -47,8 +48,13 @@ function parseNumberParam(value) {
     return Number.isFinite(number) && number >= 0 ? number : null;
 }
 
-function listMatchesFilters(list, filters) {
-    if (filters.q && !String(list.name || '').toLowerCase().includes(filters.q)) return false;
+function normalizeCopiedQuantity(value) {
+    const quantity = Number(value);
+    return Number.isFinite(quantity) ? quantity : 1;
+}
+
+function projectionMatchesFilters(list, filters) {
+    if (filters.q && !String(`${list.name || ''} ${list.description || ''} ${list.ownerDisplayName || ''}`).toLowerCase().includes(filters.q)) return false;
     const totalBaseWeight = Number(list.totalBaseWeight) || 0;
     if (filters.minWeight !== null && totalBaseWeight < filters.minWeight) return false;
     if (filters.maxWeight !== null && totalBaseWeight > filters.maxWeight) return false;
@@ -57,29 +63,6 @@ function listMatchesFilters(list, filters) {
     if (filters.season && !seasons.includes(filters.season)) return false;
     if (filters.type && !listTypes.includes(filters.type)) return false;
     return true;
-}
-
-function buildDiscoverItem(user, list) {
-    const insights = (user.library && user.library.insights) || {};
-    const listViews = insights.listViews || {};
-    const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-    const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-
-    return {
-        externalId: list.externalId,
-        name: list.name || '',
-        description: list.description || '',
-        totalBaseWeight: Number(list.totalBaseWeight) || 0,
-        totalQty: Number(list.totalQty) || 0,
-        author: user.username || '',
-        authorTier: normalizeTier(plan),
-        copyCount: Number(list.copyCount) || 0,
-        viewCount: Number(listViews[list.externalId] || list.viewCount) || 0,
-        seasons: normalizeTagArray(list.seasons),
-        listTypes: normalizeTagArray(list.listTypes),
-        updatedAt: updatedAt.toISOString(),
-        featured: Boolean(list.featured),
-    };
 }
 
 // POST /api/community/follow/:username
@@ -109,6 +92,8 @@ router.post('/follow/:username', (req, res) => {
                 userId: target._id,
                 type: 'follow',
                 actorUsername: user.username,
+                actorDisplayName: publicDisplayName(user),
+                actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
             });
 
             return res.json({ following: true, mode });
@@ -205,10 +190,7 @@ router.get('/feed', (req, res) => {
 
             const tierMap = Object.fromEntries(authors.map((a) => {
                 const plan = (a.library && a.library.entitlements && a.library.entitlements.plan) || 'free';
-                let tier = 'base';
-                if (plan === 'creator') tier = 'guide';
-                else if (plan === 'supporter') tier = 'trail';
-                return [a._id.toString(), tier];
+                return [a._id.toString(), normalizeTier(plan)];
             }));
 
             // Resolve list names from author docs (lists stored in user.library.lists)
@@ -257,33 +239,19 @@ router.get('/discover', async (req, res) => {
 
     try {
         const PAGE_SIZE = Math.min(parseNumberParam(req.query.limit) || 20, 20);
-        const allUsers = await db.users.findMany({});
-        const items = [];
-
-        for (const user of allUsers) {
-            const lists = (user.library && user.library.lists) || [];
-            for (const list of lists) {
-                if (!list.externalId) continue;
-                if (list.visibility !== 'discoverable' && list.visibility !== 'indexable') continue;
-                if (!listMatchesFilters(list, filters)) continue;
-
-                const updatedAt = list.updatedAt ? new Date(list.updatedAt) : new Date(0);
-                if (sort === 'recent' && cursor && updatedAt >= new Date(cursor)) continue;
-
-                items.push(buildDiscoverItem(user, list));
-            }
+        const query = { visibility: { $in: ['discoverable', 'indexable'] } };
+        if (sort === 'recent' && cursor) {
+            query.updatedAt = { $lt: new Date(cursor) };
         }
 
-        if (sort === 'popular') {
-            items.sort((a, b) => {
-                if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
-                return new Date(b.updatedAt) - new Date(a.updatedAt);
-            });
-        } else {
-            items.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-        }
+        let projections = await db.publicLists.findSorted(
+            query,
+            sort === 'popular' ? { viewCount: -1, updatedAt: -1 } : { updatedAt: -1 },
+            200,
+        );
+        projections = projections.filter((list) => projectionMatchesFilters(list, filters));
 
-        const page = items.slice(0, PAGE_SIZE);
+        const page = projections.slice(0, PAGE_SIZE).map(projectionToDiscoverItem);
         const nextCursor = sort === 'recent' && page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
@@ -302,12 +270,13 @@ router.post('/copy-list/:externalId', (req, res) => {
         }
 
         try {
-            const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+            const version = await getLatest(externalId);
+            const owner = version ? await db.users.findOne({ _id: version.ownerId }) : null;
             if (!owner) {
                 return res.status(404).json({ message: 'List not found' });
             }
 
-            const sourceList = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const sourceList = (owner.library.lists || []).find((l) => l.externalId === externalId);
             const isAlwaysCopyable = sourceList?.visibility === 'discoverable' || sourceList?.visibility === 'indexable';
             const isOptInCopyable = sourceList?.visibility === 'shareable' && sourceList?.copyable === true;
             if (!sourceList || (!isAlwaysCopyable && !isOptInCopyable)) {
@@ -322,37 +291,53 @@ router.post('/copy-list/:externalId', (req, res) => {
                 return res.status(403).json({ message: 'Account suspended' });
             }
 
-            const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
-            if (isCopyRateLimited(rateLimitKey)) {
-                return res.status(429).json({ message: 'Too many copies, try again later' });
-            }
+            const published = version.library;
+            const publishedList = (published.lists || [])[0] || {};
 
             // Increment copyCount once per user (dedup via copiedBy array)
             const userId = String(user._id);
             if (!Array.isArray(sourceList.copiedBy)) sourceList.copiedBy = [];
-            if (!sourceList.copiedBy.includes(userId)) {
+            const alreadyCopied = sourceList.copiedBy.includes(userId);
+            if (!alreadyCopied) {
+                const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
+                const rateLimit = checkCopyRateLimit(rateLimitKey);
+                if (rateLimit.limited) {
+                    res.set('Retry-After', String(rateLimit.retryAfterMinutes * 60));
+                    return res.status(429).json({
+                        message: 'Copy limit reached',
+                        retryAfterMinutes: rateLimit.retryAfterMinutes,
+                        limit: COPY_RATE_LIMIT,
+                    });
+                }
+
                 sourceList.copiedBy.push(userId);
                 sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
                 await db.users.save(owner);
+                await incrementPublicListStat(sourceList.externalId, 'copyCount');
+                syncUserPublicLists(owner).catch(() => {});
 
                 await createNotification({
                     userId: owner._id,
                     type: 'copy',
                     actorUsername: user.username,
+                    actorDisplayName: publicDisplayName(user),
+                    actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
                     listName: sourceList.name,
                 });
             }
 
-            // Return list data (categories + items) for client-side dedup import
-            const categoryIds = sourceList.categoryIds || [];
-            const categories = (owner.library.categories || [])
-                .filter(c => categoryIds.includes(c.id) || categoryIds.map(String).includes(String(c.id)))
-                .map(c => ({
+            // Return the published list data (categories + items) for client-side dedup import
+            const categoryIds = (publishedList.categoryIds || []).map(String);
+            const categories = (published.categories || [])
+                .filter((c) => categoryIds.includes(String(c.id)))
+                .map((c) => ({
+                    sourceCategoryId: c.id,
                     name: c.name,
-                    categoryItems: (c.categoryItems || []).map(ci => {
-                        const item = (owner.library.items || []).find(i => String(i.id) === String(ci.itemId));
+                    categoryItems: (c.categoryItems || []).map((ci) => {
+                        const item = (published.items || []).find((i) => String(i.id) === String(ci.itemId));
                         if (!item) return null;
                         return {
+                            sourceItemId: item.id,
                             name: item.name || '',
                             description: item.description || '',
                             weight: Number(item.weight) || 0,
@@ -360,8 +345,12 @@ router.post('/copy-list/:externalId', (req, res) => {
                             price: Number(item.price) || 0,
                             brand: item.brand || '',
                             shop: item.shop || '',
+                            url: item.url || '',
+                            affiliateUrl: item.affiliateUrl || '',
+                            promoCode: item.promoCode || '',
+                            promoLabel: item.promoLabel || '',
                             imageUrl: item.imageUrl || '',
-                            qty: Number(ci.qty) || 1,
+                            qty: normalizeCopiedQuantity(ci.qty),
                             worn: ci.worn || 0,
                             consumable: ci.consumable === true,
                             star: ci.star || 0,
@@ -370,18 +359,25 @@ router.post('/copy-list/:externalId', (req, res) => {
                 }));
 
             const ownerName = (owner.library && owner.library.publicProfile && owner.library.publicProfile.displayName) || owner.username;
+            const sourceCurrencySymbol = published.currencySymbol || '$';
+            const listName = publishedList.name || sourceList.name;
             const forkedFrom = {
                 externalId: sourceList.externalId,
                 ownerId: String(owner._id),
                 ownerUsername: owner.username,
                 ownerName,
-                listName: sourceList.name,
+                listName,
+                sourceCurrencySymbol,
                 copiedAt: new Date().toISOString(),
+                version: version.version,
             };
 
             return res.json({
-                listName: sourceList.name,
-                description: sourceList.description || '',
+                listName,
+                description: publishedList.description || '',
+                seasons: normalizeTagArray(publishedList.seasons),
+                listTypes: normalizeTagArray(publishedList.listTypes),
+                sourceCurrencySymbol,
                 categories,
                 forkedFrom,
             });
@@ -400,20 +396,22 @@ router.get('/insights', (req, res) => {
         }
 
         try {
-            const insights = (user.library && user.library.insights) || {};
-            const listViews = insights.listViews || {};
-            const listCopies = insights.listCopies || {};
-
             const publicLists = ((user.library && user.library.lists) || []).filter(
-                l => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable')
+                (l) => l.externalId && (l.visibility === 'discoverable' || l.visibility === 'indexable'),
             );
 
-            const listsData = publicLists.map(l => ({
-                externalId: l.externalId,
-                name: l.name || '',
-                viewCount: listViews[l.externalId] || 0,
-                copyCount: listCopies[l.externalId] || 0,
-            }));
+            const statsDocs = await db.publicListStats.findMany({ externalId: { $in: publicLists.map((l) => l.externalId) } });
+            const statsByExternalId = Object.fromEntries(statsDocs.map((s) => [s.externalId, s]));
+
+            const listsData = publicLists.map((l) => {
+                const stats = statsByExternalId[l.externalId] || {};
+                return {
+                    externalId: l.externalId,
+                    name: l.name || '',
+                    viewCount: stats.viewCount || 0,
+                    copyCount: stats.copyCount || 0,
+                };
+            });
 
             const totalViews = listsData.reduce((sum, l) => sum + l.viewCount, 0);
             const totalCopies = listsData.reduce((sum, l) => sum + l.copyCount, 0);
@@ -455,43 +453,49 @@ router.get('/users', async (req, res) => {
             // Default: discoverable/indexable profiles sorted by most recent public list
             pipeline = [
                 { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] } } },
-                { $addFields: {
-                    _latestList: {
-                        $max: {
-                            $map: {
-                                input: { $filter: {
-                                    input: { $ifNull: ['$library.lists', []] },
+                {
+                    $addFields: {
+                        _latestList: {
+                            $max: {
+                                $map: {
+                                    input: {
+                                        $filter: {
+                                            input: { $ifNull: ['$library.lists', []] },
+                                            as: 'l',
+                                            cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
+                                        },
+                                    },
                                     as: 'l',
-                                    cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
-                                } },
-                                as: 'l',
-                                in: '$$l.dateUpdated',
+                                    in: '$$l.dateUpdated',
+                                },
                             },
                         },
                     },
-                } },
+                },
                 { $sort: { _latestList: -1 } },
                 { $limit: PAGE_SIZE },
                 { $project: PROJECT },
             ];
         } else {
             pipeline = [
-                { $match: {
-                    $or: [
-                        { username: { $regex: q, $options: 'i' } },
-                        { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
-                    ],
-                    'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
-                } },
+                {
+                    $match: {
+                        $or: [
+                            { username: { $regex: q, $options: 'i' } },
+                            { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
+                        ],
+                        'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
+                    },
+                },
                 { $limit: PAGE_SIZE },
                 { $project: PROJECT },
             ];
         }
 
         const users = await db.users.aggregate(pipeline);
-        const normalized = users.map(u => ({
+        const normalized = users.map((u) => ({
             ...u,
-            tier: u.plan === 'creator' ? 'guide' : u.plan === 'supporter' ? 'trail' : 'base',
+            tier: normalizeTier(u.plan),
             plan: undefined,
         }));
 

@@ -38,7 +38,7 @@ test.describe('CSV workflows', () => {
     await page.getByText('Share', { exact: true }).hover();
     await externalIdResponse;
 
-    const shareUrlLocator = page.getByLabel('Share your list');
+    const shareUrlLocator = page.locator('#shareUrl');
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
     const shareUrl = await shareUrlLocator.inputValue();
     const csvUrl = shareUrl.replace('/r/', '/csv/');
@@ -49,11 +49,11 @@ test.describe('CSV workflows', () => {
 
     try {
       await sharePage.goto(shareUrl);
-      await expect(sharePage.locator('h1.lpListName')).toHaveText('roundtrip-rich');
-      await expect(sharePage.locator('.lpItem').filter({ hasText: 'Tente, ultra légère' })).toBeVisible();
-      await expect(sharePage.locator('.lpItem').filter({ hasText: 'Backpack (Sac à dos)' })).toBeVisible();
-      await expect(sharePage.locator('.lpItem').filter({ hasText: 'Rain jacket' })).toContainText('0');
-      await expect(sharePage.locator('.lpItem').filter({ hasText: 'Fuel canister' })).toContainText('2');
+      await expect(sharePage.locator('h1.lpPublicListTitle')).toHaveText('roundtrip-rich');
+      await expect(sharePage.locator('.lpPublicListItem').filter({ hasText: 'Tente, ultra légère' })).toBeVisible();
+      await expect(sharePage.locator('.lpPublicListItem').filter({ hasText: 'Backpack (Sac à dos)' })).toBeVisible();
+      await expect(sharePage.locator('.lpPublicListItem').filter({ hasText: 'Rain jacket' })).toHaveClass(/lpPublicListItemOptional/);
+      await expect(sharePage.locator('.lpPublicListItem').filter({ hasText: 'Fuel canister' })).toContainText('×2');
     } finally {
       await shareContext.close();
     }

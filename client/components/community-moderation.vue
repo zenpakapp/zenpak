@@ -1,8 +1,17 @@
 <template>
     <div>
-        <h2 style="font-size:14px;font-weight:700;margin-bottom:16px">{{ $t('community.moderationReports') }} ({{ reports.length }} pending)</h2>
-        <p v-if="loading" class="lpCommunityEmpty">{{ $t('community.loading') }}</p>
-        <p v-else-if="reports.length === 0" class="lpCommunityEmpty">{{ $t('community.moderationNoPendingReports') }}</p>
+        <h2 style="font-size:14px;font-weight:700;margin-bottom:16px">
+            {{ $t('community.moderationReports') }} ({{ reports.length }} pending)
+        </h2>
+        <p v-if="error" class="lpCommunityEmpty">
+            {{ error }}
+        </p>
+        <p v-if="loading" class="lpCommunityEmpty">
+            {{ $t('community.loading') }}
+        </p>
+        <p v-else-if="reports.length === 0" class="lpCommunityEmpty">
+            {{ $t('community.moderationNoPendingReports') }}
+        </p>
         <template v-else>
             <div v-for="r in reports" :key="String(r._id)" class="lpModerationReport">
                 <div class="lpModerationReportMeta">
@@ -15,11 +24,21 @@
                     <a :href="r.targetType === 'list' ? `/p/${r.targetId}` : `/u/${r.targetId}`" target="_blank" class="lpHref">{{ r.targetId }}</a>
                 </div>
                 <div class="lpModerationReportActions">
-                    <button class="lpButton lpSmall" @click="resolve(r, 'resolved')">{{ $t('community.moderationResolve') }}</button>
-                    <button class="lpButton lpSmall" @click="resolve(r, 'dismissed')">{{ $t('community.moderationDismiss') }}</button>
-                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall" @click="$emit('feature-list', r.targetId)">{{ $t('community.moderationFeature') }}</button>
-                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublish(r)">{{ $t('community.moderationUnpublish') }}</button>
-                    <button class="lpButton lpSmall lpButtonDanger" @click="ban(r)">{{ $t('community.moderationBan') }}</button>
+                    <button class="lpButton lpSmall" @click="resolve(r, 'resolved')">
+                        {{ $t('community.moderationResolve') }}
+                    </button>
+                    <button class="lpButton lpSmall" @click="resolve(r, 'dismissed')">
+                        {{ $t('community.moderationDismiss') }}
+                    </button>
+                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall" @click="$emit('feature-list', r.targetId)">
+                        {{ $t('community.moderationFeature') }}
+                    </button>
+                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublish(r)">
+                        {{ $t('community.moderationUnpublish') }}
+                    </button>
+                    <button class="lpButton lpSmall lpButtonDanger" @click="ban(r)">
+                        {{ $t('community.moderationBan') }}
+                    </button>
                 </div>
             </div>
         </template>
@@ -36,6 +55,7 @@ export default {
         return {
             reports: [],
             loading: false,
+            error: null,
         };
     },
     created() {
@@ -44,38 +64,49 @@ export default {
     methods: {
         async load() {
             this.loading = true;
+            this.error = null;
             try {
                 const data = await fetchJson('/api/reports');
                 this.reports = data.reports || [];
             } catch {
                 this.reports = [];
+                this.error = 'Unable to load reports.';
             } finally {
                 this.loading = false;
             }
         },
         async resolve(report, status) {
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/${report._id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({ status }),
                 });
-                this.reports = this.reports.filter(r => String(r._id) !== String(report._id));
-            } catch {}
+                this.reports = this.reports.filter((r) => String(r._id) !== String(report._id));
+            } catch {
+                this.error = 'Unable to update report.';
+            }
         },
         async ban(report) {
             const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
             if (!username || !confirm(`Ban "${username}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
                 await this.resolve(report, 'resolved');
-            } catch { alert('Failed.'); }
+            } catch {
+                this.error = 'Unable to ban user.';
+            }
         },
         async unpublish(report) {
             if (!confirm(`Unpublish "${report.targetId}"?`)) return;
+            this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
                 await this.resolve(report, 'resolved');
-            } catch { alert('Failed.'); }
+            } catch {
+                this.error = 'Unable to unpublish list.';
+            }
         },
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();

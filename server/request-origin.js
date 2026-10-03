@@ -1,5 +1,3 @@
-'use strict';
-
 function readHeader(req, name) {
     if (!req || typeof req.get !== 'function') {
         return '';

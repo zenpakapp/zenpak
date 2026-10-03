@@ -1,31 +1,63 @@
-import backpackingData from '../data/templates/3-day-backpacking.json';
-import ultralightData from '../data/templates/weekend-ultralight.json';
-import thruHikeData from '../data/templates/thru-hike-pct.json';
-import fourSeasonData from '../data/templates/4-season-backpacking.json';
+// CommonJS, unlike its sibling composables: Node's ESM loader requires JSON imports to
+// carry a `with { type: 'json' }` attribute this repo's ESLint (ecmaVersion 2020) can't
+// parse, and this file must stay require()'able so test/unit-*.js can load it directly.
+const weightUtils = require('../utils/weight.js');
 
-export const templates = [
-    {
-        id: '3-day-backpacking',
-        name: '3-Day Backpacking',
-        description: '30 items across 6 categories — shelter, sleep, clothing, water, food, essentials',
-        data: backpackingData,
-    },
+const backpackingData = require('../data/templates/3-day-backpacking.json');
+const ultralightData = require('../data/templates/weekend-ultralight.json');
+const thruHikeData = require('../data/templates/thru-hike-pct.json');
+const fourSeasonData = require('../data/templates/4-season-backpacking.json');
+
+const SUBTOTAL_WEIGHT_FIELDS = ['subtotalWeight', 'subtotalWornWeight', 'subtotalConsumableWeight'];
+
+// Template JSON is authored in human units (item.authorUnit / totalUnit), but a saved
+// library stores every weight in mg, so convert once before the data reaches the store.
+function toLibraryData(raw) {
+    const data = JSON.parse(JSON.stringify(raw));
+    const totalUnit = data.totalUnit || 'oz';
+    data.items = (data.items || []).map((item) => ({
+        ...item,
+        weight: weightUtils.WeightToMg(item.weight || 0, item.authorUnit || totalUnit),
+    }));
+    data.categories = (data.categories || []).map((category) => {
+        const converted = { ...category };
+        SUBTOTAL_WEIGHT_FIELDS.forEach((field) => {
+            converted[field] = weightUtils.WeightToMg(category[field] || 0, totalUnit);
+        });
+        return converted;
+    });
+    return data;
+}
+
+function templateWeightMg(templateData) {
+    return (templateData.categories || []).reduce((sum, c) => sum + (c.subtotalWeight || 0), 0);
+}
+
+const templates = [
     {
         id: 'weekend-ultralight',
-        name: 'Weekend Ultralight',
-        description: '22 items, sub-10kg target — tarp, quilt, frameless pack',
-        data: ultralightData,
+        data: toLibraryData(ultralightData),
+        listTypes: ['weekend'],
+        seasons: ['3-season', 'summer'],
+    },
+    {
+        id: '3-day-backpacking',
+        data: toLibraryData(backpackingData),
+        listTypes: ['weekend'],
+        seasons: ['3-season'],
     },
     {
         id: 'thru-hike-pct',
-        name: 'PCT Thru-Hike',
-        description: '29 items, ultralight long-distance setup — Zpacks, EE, Hyperlite, inReach',
-        data: thruHikeData,
+        data: toLibraryData(thruHikeData),
+        listTypes: ['trek'],
+        seasons: ['3-season', 'summer'],
     },
     {
         id: '4-season-backpacking',
-        name: '4-Season Backpacking',
-        description: '30 items for winter/alpine — MSR Access, WM 0°F bag, microspikes, hardshell',
-        data: fourSeasonData,
+        data: toLibraryData(fourSeasonData),
+        listTypes: ['trek'],
+        seasons: ['4-season', 'winter'],
     },
 ];
+
+module.exports = { templates, templateWeightMg };

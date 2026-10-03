@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const config = require('config');
-const db = require('./db.js');
 
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const db = require('./db.js');
 const { logWithRequest } = require('./log.js');
 
 const moderatorList = config.get('moderators');
@@ -108,7 +108,9 @@ const generateSession = function (req, res, user, callback) {
         const token = buf.toString('hex');
         user.token = token;
         await db.users.updateOne({ _id: user._id }, { $set: { token } });
-        res.cookie('lp', token, { path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie });
+        res.cookie('lp', token, {
+            path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie,
+        });
         callback(req, res, user);
     });
 };

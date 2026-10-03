@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const colorUtils = require('../utils/color.js');
 const weightUtils = require('../utils/weight.js');
@@ -19,6 +19,8 @@ const List = function ({ id, library }) {
     this.externalId = '';
     this.forkedFrom = null;
     this.copyable = false;
+    this.sourceListInfoHidden = false;
+    this.sourceListInfoActionDismissed = false;
 
     this.totalWeight = 0;
     this.totalWornWeight = 0;
@@ -54,13 +56,14 @@ List.prototype.removeCategory = function (categoryId) {
 List.prototype.renderChart = function (type, linkParent) {
     const chartData = { points: {} };
     let total = 0;
+    let totalBase = 0;
 
     if (typeof linkParent === 'undefined') linkParent = true;
 
-    for (var i in this.categoryIds) {
-        var category = this.library.getCategoryById(this.categoryIds[i]);
+    for (const i in this.categoryIds) {
+        const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
-            category.calculateSubtotal();
+            totalBase += category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
 
             if (type === 'consumable') {
                 total += category.subtotalConsumableWeight;
@@ -80,12 +83,12 @@ List.prototype.renderChart = function (type, linkParent) {
         return `${name}: ${weightUtils.MgToWeight(valueMg, unit)} ${unit}`;
     };
 
-    for (var i in this.categoryIds) {
-        var category = this.library.getCategoryById(this.categoryIds[i]);
+    for (const i in this.categoryIds) {
+        const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
             const points = {};
 
-            var categoryTotal;
+            let categoryTotal;
             if (type === 'consumable') {
                 categoryTotal = category.subtotalConsumableWeight;
             } else if (type === 'worn') {
@@ -107,16 +110,18 @@ List.prototype.renderChart = function (type, linkParent) {
                 let name = getTooltipText(item.name, value, item.authorUnit);
                 const color = colorUtils.getColor(j, tempColor);
                 if (item.qty > 1) name += ` x ${item.qty}`;
-                var percent = value / categoryTotal;
+                const itemPercent = value / categoryTotal;
                 const tempItem = {
-                    value, id: item.id, name, color, percent,
+                    value, id: item.id, name, color, percent: itemPercent,
                 };
                 if (linkParent) tempItem.parent = tempCategory;
                 points[j] = tempItem;
             }
-            var percent = categoryTotal / total;
+            const percent = categoryTotal / total;
+            const categoryBase = category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
+            const basePercent = totalBase ? categoryBase / totalBase : 0;
             const tempCategoryData = {
-                points, color: category.color, id: category.id, name: getTooltipText(category.name, categoryTotal, this.library.totalUnit), total: categoryTotal, percent, visiblePoints: false,
+                points, color: category.color, id: category.id, name: category.name, total: categoryTotal, percent, basePercent, visiblePoints: false,
             };
             if (linkParent) tempCategoryData.parent = chartData;
             assignIn(tempCategory, tempCategoryData);

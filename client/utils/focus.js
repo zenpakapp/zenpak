@@ -14,64 +14,64 @@ function removeElementListener(el, key, eventName) {
 
 const directives = {
     'select-on-focus': {
-    mounted(el) {
-        addElementListener(el, '__lpSelectOnFocus', 'focus', () => {
-            el.select();
-        });
-    },
-    beforeUnmount(el) {
-        removeElementListener(el, '__lpSelectOnFocus', 'focus');
-    },
+        mounted(el) {
+            addElementListener(el, '__lpSelectOnFocus', 'focus', () => {
+                el.select();
+            });
+        },
+        beforeUnmount(el) {
+            removeElementListener(el, '__lpSelectOnFocus', 'focus');
+        },
     },
     'focus-on-create': {
-    mounted(el, binding) {
-        if (typeof binding.value === 'undefined' || binding.value) {
-            el.focus({ preventScroll: true });
-        }
-    },
-    beforeUnmount() {
-    },
+        mounted(el, binding) {
+            if (typeof binding.value === 'undefined' || binding.value) {
+                el.focus({ preventScroll: true });
+            }
+        },
+        beforeUnmount() {
+        },
     },
     'empty-if-zero': {
-    mounted(el) {
-        addElementListener(el, '__lpEmptyIfZeroFocus', 'focus', () => {
-            if (el.value === '0' || el.value === '0.00') {
-                el.dataset.originalValue = el.value;
-                el.value = '';
-            }
-        });
+        mounted(el) {
+            addElementListener(el, '__lpEmptyIfZeroFocus', 'focus', () => {
+                if (el.value === '0' || el.value === '0.00') {
+                    el.dataset.originalValue = el.value;
+                    el.value = '';
+                }
+            });
 
-        addElementListener(el, '__lpEmptyIfZeroBlur', 'blur', () => {
-            if (el.value === '') {
-                el.value = el.dataset.originalValue || '0';
-            }
-        });
-    },
-    beforeUnmount(el) {
-        removeElementListener(el, '__lpEmptyIfZeroFocus', 'focus');
-        removeElementListener(el, '__lpEmptyIfZeroBlur', 'blur');
-    },
+            addElementListener(el, '__lpEmptyIfZeroBlur', 'blur', () => {
+                if (el.value === '') {
+                    el.value = el.dataset.originalValue || '0';
+                }
+            });
+        },
+        beforeUnmount(el) {
+            removeElementListener(el, '__lpEmptyIfZeroFocus', 'focus');
+            removeElementListener(el, '__lpEmptyIfZeroBlur', 'blur');
+        },
     },
     'click-outside': {
-    mounted(el, binding) {
-        const handler = (evt) => {
-            if (el.contains(evt.target)) {
-                return;
-            }
-            if (binding && typeof binding.value === 'function') {
-                binding.value();
-            }
-        };
+        mounted(el, binding) {
+            const handler = (evt) => {
+                if (el.contains(evt.target)) {
+                    return;
+                }
+                if (binding && typeof binding.value === 'function') {
+                    binding.value();
+                }
+            };
 
-        addWindowListener('click', handler);
-        el.__lpClickOutside = handler;
-    },
-    beforeUnmount(el) {
-        if (el.__lpClickOutside) {
-            removeWindowListener('click', el.__lpClickOutside);
-            delete el.__lpClickOutside;
-        }
-    },
+            addWindowListener('click', handler);
+            el.__lpClickOutside = handler;
+        },
+        beforeUnmount(el) {
+            if (el.__lpClickOutside) {
+                removeWindowListener('click', el.__lpClickOutside);
+                delete el.__lpClickOutside;
+            }
+        },
     },
 };
 

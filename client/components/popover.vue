@@ -170,7 +170,7 @@ export default {
             removeWindowListener('keyup', this.closeOnEscape);
         },
         closeOnEscape(evt) {
-            if (this.shown && evt.keyCode === 27) {
+            if (this.shown && evt.key === 'Escape') {
                 this.hide();
             }
         },

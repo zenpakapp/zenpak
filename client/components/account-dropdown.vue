@@ -113,6 +113,17 @@
     border-top: 1px solid $color-border;
     margin: 4px 0;
 }
+
+html.lpSigningOut body::before {
+    background: $color-bg;
+    bottom: 0;
+    content: "";
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 2147483647;
+}
 </style>
 
 <template>
@@ -130,11 +141,11 @@
                         <span class="accountDropdownUsername">{{ navLabel }}</span>
                         <span v-if="displayName" class="accountDropdownUsernameHandle">@{{ username }}</span>
                     </div>
-                    <a class="accountDropdownItem" @click="showAccount">{{ $t('dash.accountSettings') }}</a>
-                    <router-link v-if="isTrail" class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.myProfile') }}</router-link>
-                    <a class="accountDropdownItem" @click="showHelp">{{ $t('dash.help') }}</a>
+                    <a class="accountDropdownItem" role="button" tabindex="0" @click="showAccount" @keydown.enter="showAccount" @keydown.space.prevent="showAccount">{{ $t('dash.accountSettings') }}</a>
+                    <router-link class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.profileAndLists') }}</router-link>
+                    <a class="accountDropdownItem" role="button" tabindex="0" @click="showHelp" @keydown.enter="showHelp" @keydown.space.prevent="showHelp">{{ $t('dash.help') }}</a>
                     <hr class="accountDropdownDivider">
-                    <a class="accountDropdownItem accountDropdownDanger" @click="signout">{{ $t('dash.signOut') }}</a>
+                    <a class="accountDropdownItem accountDropdownDanger" role="button" tabindex="0" @click="signout" @keydown.enter="signout" @keydown.space.prevent="signout">{{ $t('dash.signOut') }}</a>
                 </div>
             </template>
         </PopoverHover>
@@ -144,6 +155,7 @@
 <script>
 import PopoverHover from './popover-hover.vue';
 import { openDialog } from '../services/dialogs';
+import { redirect } from '../services/navigation';
 import { useTheme } from '../composables/useTheme.js';
 
 export default {
@@ -187,8 +199,9 @@ export default {
             openDialog('help');
         },
         signout() {
+            document.documentElement.classList.add('lpSigningOut');
             this.$store.commit('signout');
-            this.$router.push('/welcome');
+            redirect('/welcome');
         },
     },
 };

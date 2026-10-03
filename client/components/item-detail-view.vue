@@ -1,38 +1,47 @@
-<style lang="scss" scoped>
-@import "../css/_item-detail-view";
-</style>
-
 <template>
     <div class="itemDetailView">
         <item-detail-header
-            :name="item.name || 'Unnamed item'"
+            :name="item.name || $t('gearroom.unnamedItem')"
             :brand="item.brand || ''"
             :category="item.category || ''"
             :image-key="item.image || ''"
             :image-url="item.imageUrl || ''"
             :starred="localStarred"
-            @toggle-star="toggleStar"
-            @close="$emit('close')"
-            @view-image="viewImage"
             :show-add-category="true"
+            @toggle-star="toggleStar"
+            @view-image="viewImage"
             @click-category="$emit('start-edit')"
         />
 
         <div class="itemDetailStats">
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelWeight') }}</div>
-                <div class="itemDetailStatValue">{{ displayWeight }} {{ item.authorUnit }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelWeight') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ displayWeight }} {{ itemUnit }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelPrice') }}</div>
-                <div class="itemDetailStatValue">{{ item.price ? item.price.toFixed(2) : '—' }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelPrice') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ item.price ? item.price.toFixed(2) : '—' }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelQty') }}</div>
-                <div class="itemDetailStatValue">{{ categoryItem ? categoryItem.qty : 1 }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelQty') }}
+                </div>
+                <div class="itemDetailStatValue">
+                    {{ categoryItem ? categoryItem.qty : '-' }}
+                </div>
             </div>
             <div class="itemDetailStat">
-                <div class="itemDetailStatLabel">{{ $t('item.viewLabelRating') }}</div>
+                <div class="itemDetailStatLabel">
+                    {{ $t('item.viewLabelRating') }}
+                </div>
                 <div class="itemDetailStatValue itemDetailStarRow">
                     <span
                         v-for="n in 3"
@@ -47,7 +56,9 @@
 
         <div class="itemDetailBody">
             <div class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelDescription') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelDescription') }}
+                </div>
                 <div :class="['itemDetailSectionValue', { muted: !item.description }]">
                     {{ item.description || $t('item.viewNoDescription') }}
                 </div>
@@ -56,7 +67,9 @@
             <hr v-if="item.url" class="itemDetailDivider">
 
             <div v-if="item.url" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelLink') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelLink') }}
+                </div>
                 <a :href="item.url" target="_blank" rel="noopener" class="itemDetailLink">
                     {{ $t('item.viewLinkText') }}
                 </a>
@@ -65,7 +78,9 @@
             <hr v-if="item.tags && item.tags.length" class="itemDetailDivider">
 
             <div v-if="item.tags && item.tags.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelTags') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelTags') }}
+                </div>
                 <div class="itemDetailTags">
                     <span v-for="tag in item.tags" :key="tag" class="itemDetailTag">{{ tag }}</span>
                 </div>
@@ -74,7 +89,9 @@
             <hr v-if="itemUsedInLists.length" class="itemDetailDivider">
 
             <div v-if="itemUsedInLists.length" class="itemDetailSection">
-                <div class="itemDetailSectionLabel">{{ $t('item.viewLabelUsedIn') }}</div>
+                <div class="itemDetailSectionLabel">
+                    {{ $t('item.viewLabelUsedIn') }}
+                </div>
                 <div class="itemDetailUsedInLists">
                     <button
                         v-for="list in itemUsedInLists"
@@ -82,18 +99,18 @@
                         class="itemDetailUsedInBadge"
                         @click="navigateToList(list)"
                     >
-                        {{ list.name || 'Unnamed list' }}
+                        {{ list.name || $t('gearroom.unnamedList') }}
                     </button>
                 </div>
             </div>
         </div>
 
         <div class="itemDetailFooter">
-            <a v-if="category" class="lpButton lpButtonGhost itemDetailRemove" @click="removeFromList">
+            <a v-if="category" class="lpButton lpButtonGhost itemDetailRemove" role="button" tabindex="0" @click="removeFromList" @keydown.enter="removeFromList" @keydown.space.prevent="removeFromList">
                 {{ $t('item.viewButtonRemoveFromList') }}
             </a>
             <item-add-to-list v-else :item="item" @added="$emit('close')" />
-            <a class="lpButton lpButtonGhost itemDetailDelete" @click="deleteGear">
+            <a class="lpButton lpButtonGhost itemDetailDelete" role="button" tabindex="0" @click="deleteGear" @keydown.enter="deleteGear" @keydown.space.prevent="deleteGear">
                 {{ $t('item.viewButtonDelete') }}
             </a>
             <button class="lpButton lpButtonGhost itemDetailDuplicate" @click="$emit('duplicate')">
@@ -107,12 +124,14 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import ItemDetailHeader from './item-detail-header.vue';
-import ItemAddToList from './item-add-to-list.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { openDialog } from '../services/dialogs';
 
 const weightUtils = require('../utils/weight.js');
+
+const ItemAddToList = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-add-to-list" */ './item-add-to-list.vue'));
 
 export default {
     name: 'ItemDetailView',
@@ -129,14 +148,6 @@ export default {
             localCategoryStar: 0,
         };
     },
-    created() {
-        this.localStarred = !!this.item?.starred;
-        this.localCategoryStar = this.categoryItem?.star || 0;
-    },
-    watch: {
-        'item.starred'(val) { this.localStarred = !!val; },
-        'categoryItem.star'(val) { this.localCategoryStar = val || 0; },
-    },
     computed: {
         thumbnailImage() {
             if (!this.item) return null;
@@ -145,23 +156,33 @@ export default {
         },
         displayWeight() {
             if (!this.item) return 0;
-            return weightUtils.MgToWeight(this.item.weight, this.item.authorUnit);
+            return weightUtils.MgToWeight(this.item.weight, this.itemUnit);
+        },
+        itemUnit() {
+            const library = this.$store.state.library;
+            return (library && library.itemUnit) || 'g';
         },
         itemUsedInLists() {
             const library = this.$store.state.library;
             if (!library || !this.item) return [];
-            return library.lists.filter(list =>
-                list.categoryIds.some(catId => {
-                    const cat = library.getCategoryById(catId);
-                    return cat && cat.categoryItems.some(ci => ci.itemId === this.item.id);
-                })
-            );
+            return library.lists.filter((list) => list.categoryIds.some((catId) => {
+                const cat = library.getCategoryById(catId);
+                return cat && cat.categoryItems.some((ci) => ci.itemId === this.item.id);
+            }));
         },
+    },
+    watch: {
+        'item.starred': function (val) { this.localStarred = !!val; },
+        'categoryItem.star': function (val) { this.localCategoryStar = val || 0; },
+    },
+    created() {
+        this.localStarred = !!this.item?.starred;
+        this.localCategoryStar = this.categoryItem?.star || 0;
     },
     methods: {
         toggleStar() {
             const starred = !this.localStarred;
-            this.$store.commit('updateItem', { ...this.item, starred });
+            this.$store.commit('updateItemMetadata', { ...this.item, starred });
             this.localStarred = starred;
         },
         setCategoryStar(n) {
@@ -187,7 +208,7 @@ export default {
                 this.$emit('close');
             };
             openSpeedbump(callback, {
-                body: `Delete "${this.item.name || 'this item'}" from your item library? It will be removed from all lists.`,
+                body: this.$t('item.deleteConfirm', { name: this.item.name || this.$t('gearroom.unnamedItem') }),
             });
         },
         navigateToList(list) {
@@ -198,3 +219,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "../css/_item-detail-view";
+</style>

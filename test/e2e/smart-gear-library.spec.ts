@@ -133,6 +133,56 @@ test.describe("Smart Gear Library", () => {
     await expect(page.locator("#itemDetailDialog")).toContainText("Trail mug");
   });
 
+  test("gear room batch dropdowns support keyboard option selection", async ({
+    page,
+  }) => {
+    const now = Date.now();
+    await registerUser(
+      page,
+      `batchkeys${now}`,
+      "testtest",
+      `batchkeys+${now}@lighterpack.com`,
+    );
+
+    const csvPath = path.join(
+      process.cwd(),
+      "test/fixtures/csv/brand-dedup.csv",
+    );
+    await page.setInputFiles("#csv", csvPath);
+    await expect(page.locator("#importValidate")).toBeVisible();
+    const importSave = page.waitForResponse(isSuccessfulSave, {
+      timeout: 35000,
+    });
+    await page.locator("#importConfirm").click();
+    await importSave;
+
+    await page.getByRole("button", { name: /gear room/i }).click();
+    await expect(page.locator(".lpGearRoomModal")).toBeVisible();
+    await page.locator(".lpGearRoomModal tbody input[type='checkbox']").nth(0).check();
+    await page.locator(".lpGearRoomModal tbody input[type='checkbox']").nth(1).check();
+
+    await page.getByRole("button", { name: /set brand/i }).click();
+    const brandInput = page.locator(".lpGearRoomBatchPanelInput").first();
+    await brandInput.fill("sea");
+    await brandInput.press("ArrowDown");
+    await expect(page.locator(".lpBrandSuggestions li.active")).toContainText("Sea to Summit");
+    await brandInput.press("Enter");
+    await expect(brandInput).toHaveValue("Sea to Summit");
+
+    await page.getByRole("button", { name: /add to list/i }).click();
+    const listInput = page.locator(".lpGearRoomBatchPanelInput").first();
+    await listInput.press("ArrowDown");
+    await expect(page.locator(".lpBrandSuggestions li.active")).toBeVisible();
+    await listInput.press("Enter");
+
+    const categoryInput = page.locator(".lpGearRoomBatchPanelInput").nth(1);
+    await expect(categoryInput).toBeVisible();
+    await categoryInput.press("ArrowDown");
+    await expect(page.locator(".lpBrandSuggestions li.active")).toBeVisible();
+    await categoryInput.press("Enter");
+    await expect(categoryInput).not.toHaveValue("");
+  });
+
   test("gear search has a clear button that resets the input and keeps focus", async ({
     page,
   }) => {

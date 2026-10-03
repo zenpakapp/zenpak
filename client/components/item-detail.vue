@@ -1,31 +1,10 @@
-<style lang="scss">
-@import "../css/_globals";
-
-#itemDetailDialog.lpModal {
-    border-radius: $radius-md;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 0;
-    width: min(480px, 92vw);
-
-    &::before {
-        display: none;
-    }
-}
-
-.itemDetail {
-    display: flex;
-    flex-direction: column;
-}
-</style>
-
 <template>
     <modal id="itemDetailDialog" :shown="shown" @hide="close">
         <div class="itemDetail">
             <item-detail-view
                 v-if="!editing"
                 :item="item"
-                :category-item="categoryItem"
+                :category-item="activeCategoryItem"
                 :category="category"
                 @close="close"
                 @start-edit="startEdit"
@@ -35,8 +14,9 @@
             <item-detail-edit
                 v-else
                 :item="item"
-                :category-item="categoryItem"
+                :category-item="activeCategoryItem"
                 :category="category"
+                :initial-focus="initialFocus"
                 @close="close"
                 @saved="onSaved"
             />
@@ -45,10 +25,12 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import modal from './modal.vue';
 import ItemDetailView from './item-detail-view.vue';
-import ItemDetailEdit from './item-detail-edit.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
+
+const ItemDetailEdit = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-detail-edit" */ './item-detail-edit.vue'));
 
 export default {
     name: 'ItemDetail',
@@ -60,16 +42,44 @@ export default {
             item: null,
             categoryItem: null,
             category: null,
+            discardOnCancel: false,
+            initialFocus: 'name',
+            closeAfterSave: false,
         };
     },
+    computed: {
+        activeCategoryItem() {
+            if (!this.category || !this.item) return this.categoryItem;
+            return this.category.getCategoryItemById(this.item.id) || this.categoryItem;
+        },
+    },
     mounted() {
-        registerDialogOpener('itemDetail', ({ item, categoryItem, category, startEditing }) => {
+        registerDialogOpener('itemDetail', ({
+            item,
+            categoryItem,
+            category,
+            startEditing,
+            discardOnCancel,
+            initialFocus,
+        }) => {
             const library = this.$store.state.library;
-            const liveCategory = category ? library.getCategoryById(category.id) : null;
+            let liveCategory = category ? library.getCategoryById(category.id) : null;
+            if (!liveCategory && item) {
+                liveCategory = library.findCategoryWithItemById(item.id, library.defaultListId);
+            }
             const liveCategoryItem = liveCategory && item ? liveCategory.getCategoryItemById(item.id) : null;
             this.item = { ...item };
-            this.categoryItem = liveCategoryItem ? { ...liveCategoryItem } : (categoryItem ? { ...categoryItem } : null);
+            if (liveCategoryItem) {
+                this.categoryItem = { ...liveCategoryItem };
+            } else if (categoryItem) {
+                this.categoryItem = { ...categoryItem };
+            } else {
+                this.categoryItem = null;
+            }
             this.category = liveCategory || category || null;
+            this.discardOnCancel = !!discardOnCancel;
+            this.initialFocus = initialFocus || 'name';
+            this.closeAfterSave = !!startEditing;
             this.shown = true;
             this.editing = !!startEditing;
         });
@@ -79,15 +89,34 @@ export default {
     },
     methods: {
         close() {
+            if (this.discardOnCancel && this.item) {
+                const liveItem = this.$store.state.library.getItemById(this.item.id);
+                if (liveItem) this.$store.commit('removeItem', liveItem);
+            }
+            this.discardOnCancel = false;
+            this.closeAfterSave = false;
             this.shown = false;
             this.editing = false;
         },
         startEdit() {
+            this.closeAfterSave = false;
             this.editing = true;
         },
         onSaved({ item, categoryItem }) {
+            this.discardOnCancel = false;
             this.item = { ...item };
-            if (categoryItem) this.categoryItem = { ...categoryItem };
+            const liveCategoryItem = this.category && item ? this.category.getCategoryItemById(item.id) : null;
+            if (liveCategoryItem) {
+                this.categoryItem = { ...liveCategoryItem };
+            } else if (categoryItem) {
+                this.categoryItem = { ...categoryItem };
+            }
+            if (this.closeAfterSave) {
+                this.closeAfterSave = false;
+                this.shown = false;
+                this.editing = false;
+                return;
+            }
             this.editing = false;
         },
         duplicateItem() {
@@ -102,3 +131,28 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_globals";
+
+#itemDetailDialog.lpModal {
+    border-radius: $radius-md;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 0;
+    width: min(480px, 92vw);
+
+    &::before {
+        display: none;
+    }
+
+    .lpModalClose {
+        top: 20px;
+    }
+}
+
+.itemDetail {
+    display: flex;
+    flex-direction: column;
+}
+</style>

@@ -1,5 +1,3 @@
-import assignIn from 'lodash/assignIn';
-
 class lpError extends Error {
     constructor(response, statusCode = null) {
         super();
@@ -11,6 +9,8 @@ class lpError extends Error {
         this.errors = null;
         this.id = null;
         this.metadata = null;
+        this.limit = response.limit || null;
+        this.retryAfterMinutes = response.retryAfterMinutes || null;
 
         if (response.message) {
             this.message = response.message;
@@ -27,11 +27,11 @@ class lpError extends Error {
 export function fetchJson(url, options) {
     const fetchOptions = {
         method: 'GET',
-        headers: {}
+        headers: {},
     };
 
     if (options) {
-        assignIn(fetchOptions, options);
+        Object.assign(fetchOptions, options);
     }
 
     if (!fetchOptions.headers['Content-Type']) {
@@ -57,7 +57,7 @@ export function fetchJson(url, options) {
                         json,
                     });
                 })
-                .catch(err => reject(err));
+                .catch((err) => reject(err));
         });
     }
 
@@ -91,8 +91,10 @@ export function fetchJson(url, options) {
 
 export function getElementIndex(node) {
     let index = 0;
-    while ((node = node.previousElementSibling)) {
+    let current = node.previousElementSibling;
+    while (current) {
         index++;
+        current = current.previousElementSibling;
     }
     return index;
 }

@@ -1,5 +1,189 @@
 @import "globals";
 
+.lpEditorLoading {
+    background: $color-surface;
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.lpEditorLoadingText {
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    position: absolute;
+    width: 1px;
+}
+
+.lpEditorLoadingSidebar,
+.lpEditorLoadingContent,
+.lpEditorLoadingToolbar,
+.lpEditorLoadingList,
+.lpEditorLoadingRow {
+    box-sizing: border-box;
+}
+
+.lpEditorLoadingSidebar {
+    background: color-mix(in sRGB, $color-surface 92%, $color-text);
+    border-right: 1px solid $color-border;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 20px;
+}
+
+.lpEditorLoadingContent {
+    min-width: 0;
+}
+
+.lpEditorLoadingToolbar {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    justify-content: space-between;
+    min-height: 60px;
+    padding: 0 24px;
+}
+
+.lpEditorLoadingWorkspace {
+    margin: 28px auto;
+    max-width: 920px;
+    padding: 0 24px;
+}
+
+.lpEditorLoadingSummary {
+    align-items: center;
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    margin-bottom: 30px;
+}
+
+.lpEditorLoadingTotals {
+    border-top: 1px solid $color-border;
+    display: grid;
+}
+
+.lpEditorLoadingTotals span {
+    border-bottom: 1px solid $color-border;
+    height: 32px;
+}
+
+.lpEditorLoadingRows {
+    border-top: 1px solid $color-border;
+    margin-top: 12px;
+}
+
+.lpEditorLoadingRow {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(120px, 2fr) minmax(80px, 1fr) 64px;
+    min-height: 58px;
+}
+
+.lpEditorLoadingBone {
+    animation: lpEditorLoadingSweep 1.4s ease-in-out infinite;
+    background: linear-gradient(90deg, color-mix(in sRGB, $color-text 8%, transparent) 20%, color-mix(in sRGB, $color-text 15%, transparent) 45%, color-mix(in sRGB, $color-text 8%, transparent) 70%);
+    background-size: 240% 100%;
+    border-radius: $radius-sm;
+    display: block;
+    height: 10px;
+}
+
+.lpEditorLoadingBrand {
+    height: 18px;
+    width: 132px;
+}
+
+.lpEditorLoadingNav {
+    width: 76%;
+}
+
+.lpEditorLoadingTitle {
+    height: 14px;
+    width: min(280px, 42%);
+}
+
+.lpEditorLoadingTitleMeta {
+    height: 10px;
+    margin-left: 14px;
+    margin-right: auto;
+    width: 150px;
+}
+
+.lpEditorLoadingAction {
+    width: 96px;
+}
+
+.lpEditorLoadingChart {
+    border-radius: 50%;
+    height: 220px;
+    width: 220px;
+}
+
+.lpEditorLoadingListTitle {
+    height: 14px;
+    width: 180px;
+}
+
+.lpEditorLoadingRow span:nth-child(1) {
+    width: 72%;
+}
+
+.lpEditorLoadingRow span:nth-child(2) {
+    width: 58%;
+}
+
+.lpEditorLoadingRow span:nth-child(3) {
+    justify-self: end;
+    width: 40px;
+}
+
+@keyframes lpEditorLoadingSweep {
+    from { background-position: 100% 0; }
+    to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lpEditorLoadingBone {
+        animation: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .lpEditorLoading {
+        grid-template-columns: 1fr;
+    }
+
+    .lpEditorLoadingSidebar {
+        display: none;
+    }
+
+    .lpEditorLoadingWorkspace {
+        margin-top: 20px;
+        padding: 0 16px;
+    }
+
+    .lpEditorLoadingSummary {
+        gap: 18px;
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .lpEditorLoadingChart {
+        height: 120px;
+        width: 120px;
+    }
+
+    .lpEditorLoadingRow {
+        gap: 12px;
+        grid-template-columns: minmax(100px, 2fr) minmax(64px, 1fr) 44px;
+    }
+}
+
 #header {
     align-items: center;
     background: $color-surface;
@@ -18,8 +202,8 @@
 
 .lpVerifyBanner {
     align-items: center;
-    background: color-mix(in srgb, $color-accent 10%, transparent);
-    border: 1px solid color-mix(in srgb, $color-accent 30%, transparent);
+    background: color-mix(in sRGB, $color-accent 10%, transparent);
+    border: 1px solid color-mix(in sRGB, $color-accent 30%, transparent);
     border-radius: $radius-sm;
     color: $color-text;
     display: flex;
@@ -61,32 +245,45 @@
     &:hover { opacity: 1; }
 }
 
+.lpForkUpdateBadge {
+    background: color-mix(in sRGB, $color-accent 15%, transparent);
+    border-radius: $radius-sm;
+    color: $color-accent;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+    padding: 1px 6px;
+    white-space: nowrap;
+}
+
 .lpBillingSuccessBanner {
     background: #d1fae5;
     border: 1px solid #34d399;
-    color: #065f46;
-    padding: 12px 16px;
     border-radius: 6px;
+    color: #065f46;
     margin-bottom: 16px;
+    padding: 12px 16px;
 }
+
 .lpBillingCancelBanner {
     background: #fef3c7;
     border: 1px solid #fbbf24;
-    color: #92400e;
-    padding: 12px 16px;
     border-radius: 6px;
+    color: #92400e;
     margin-bottom: 16px;
+    padding: 12px 16px;
 }
+
 .lpPastDueBanner {
+    align-items: center;
     background: #fff3cd;
     border: 1px solid #ffc107;
-    color: #856404;
-    padding: 12px 16px;
     border-radius: 6px;
-    margin-bottom: 16px;
+    color: #856404;
     display: flex;
-    align-items: center;
     gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
 }
 
 #hamburger {
@@ -119,6 +316,10 @@
 }
 
 @media (max-width: 768px) {
+    #main {
+        overflow-x: clip;
+    }
+
     #sidebar {
         transform: translateX(-100%);
         transition: transform $transitionDurationSlow ease-in-out;
@@ -131,6 +332,73 @@
 
     #main .lpList {
         margin-left: 0 !important;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #header {
+        gap: 0;
+        margin-left: -12px;
+        padding: 0 10px 0 8px;
+        width: calc(100% + 24px);
+    }
+
+    .lpListTitleBlock {
+        flex-basis: 120px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #lpListName {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .lpForkSource {
+        display: none;
+    }
+
+    .headerCommunityItem,
+    .headerMenuLabel,
+    .accountDropdownLead,
+    .accountDropdownName {
+        display: none;
+    }
+
+    .headerItem .lpTarget {
+        justify-content: center;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .headerTruncateItem {
+        flex: 0 0 30px;
+    }
+
+    .headerItem .lpPopover .lpContent {
+        box-sizing: border-box;
+        left: 12px;
+        max-height: calc(100vh - 84px);
+        max-width: none;
+        min-width: 0;
+        overflow-y: auto;
+        position: fixed;
+        right: 12px;
+        top: 60px;
+        transform: translateY(6px);
+        width: auto !important;
+    }
+
+    .headerItem .lpPopover.lpPopoverShown .lpContent {
+        transform: translateY(0);
+    }
+
+    .headerItem .lpPopover .lpContent::before {
+        display: none;
+    }
+
+    .headerItem .lpPopoverRight {
+        right: 5px;
     }
 }
 
@@ -142,12 +410,119 @@
     font-weight: $fontWeight-bold;
     letter-spacing: -0.01em;
     min-width: 0;
-    padding: 10px 14px;
+    padding: 7px 14px;
     width: 100%;
 
     &::placeholder {
         color: $color-text-muted;
         font-weight: $fontWeight-normal;
+    }
+}
+
+.lpListTitleBlock {
+    align-self: stretch;
+    display: flex;
+    flex: 1 1 240px;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+    min-width: 0;
+}
+
+.lpForkSource {
+    color: $color-text-muted;
+    display: block;
+    font-size: $fontSize-xs;
+    line-height: 1.2;
+    margin: 0 14px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lpForkSourceActions {
+    align-self: flex-start;
+    align-items: center;
+    display: inline-flex;
+    gap: 6px;
+    margin: -4px 14px 5px;
+}
+
+.lpForkSourceAction,
+.lpForkSourceDismiss {
+    background: transparent;
+    border: 0;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $fontSize-xs;
+    padding: 0;
+}
+
+.lpForkSourceAction {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+        color: $color-link;
+    }
+}
+
+.lpForkSourceHelp {
+    align-items: center;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    cursor: help;
+    display: inline-flex;
+    font-size: 10px;
+    height: 14px;
+    justify-content: center;
+    line-height: 1;
+    width: 14px;
+}
+
+.lpForkSourceDismiss {
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+        color: $color-text;
+        opacity: 1;
+    }
+}
+
+.lpForkSourceLink {
+    color: inherit;
+    font-weight: $fontWeight-medium;
+    text-decoration: none;
+
+    &:hover {
+        color: $color-link;
+        text-decoration: underline;
+    }
+}
+
+.lpForkSourceInfo {
+    align-items: center;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: 50%;
+    color: $color-text-muted;
+    cursor: help;
+    display: inline-flex;
+    font-size: 10px;
+    height: 14px;
+    justify-content: center;
+    line-height: 1;
+    margin-left: 6px;
+    padding: 0;
+    vertical-align: 1px;
+    width: 14px;
+
+    &:hover {
+        border-color: $color-link;
+        color: $color-link;
     }
 }
 
@@ -163,14 +538,18 @@
 }
 
 .headerItem {
-    flex: 0 0 auto;
     color: $color-text-muted;
+    flex: 0 0 auto;
     height: auto;
     padding: 0;
     position: relative;
     transition: color $transitionDurationFast ease;
 
     .lpPopover {
+        align-items: center;
+        display: flex;
+        position: relative;
+
         &:hover .lpTarget {
             color: $color-accent;
         }
@@ -209,7 +588,7 @@
         transform: none;
     }
 
-    &#lpListName {
+    &.lpListTitleBlock {
         flex: 1 1 240px;
         min-width: 0;
     }
@@ -219,13 +598,13 @@
     }
 
     &.signInRegisterButtons {
+        gap: 8px;
         height: auto;
         padding: 0 16px;
-        gap: 8px;
     }
 }
 
-.headerItem:not(#lpListName) {
+.headerItem:not(.lpListTitleBlock) {
     align-items: center;
     display: flex;
     min-height: 60px;
@@ -252,12 +631,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.headerItem .lpPopover {
-    align-items: center;
-    display: flex;
-    position: relative;
 }
 
 .headerItem .lpPopover::after {
@@ -300,7 +673,7 @@
 
     #lpListName {
         font-size: 15px;
-        padding: 10px 8px;
+        padding: 7px 8px;
     }
 
     .headerItem .lpTarget {

@@ -2,7 +2,7 @@
 @import "../css/_globals";
 
 .itemDetailHeader {
-    align-items: center;
+    align-items: flex-start;
     background:
         linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.02)),
         $color-surface;
@@ -13,6 +13,7 @@
     gap: 18px;
     min-height: 132px;
     padding: 22px 24px;
+    padding-right: 52px;
     position: relative;
 
     .itemDetailThumb {
@@ -99,6 +100,7 @@
     }
 
     .itemDetailStar {
+        align-self: flex-start;
         background: none;
         border: none;
         color: $color-text-muted;
@@ -117,28 +119,6 @@
             color: #f59e0b;
         }
     }
-
-    .itemDetailClose {
-        align-items: center;
-        background: rgba(var(--color-accent-rgb), 0.12);
-        border: none;
-        border-radius: 50%;
-        color: $color-accent;
-        cursor: pointer;
-        display: flex;
-        flex-shrink: 0;
-        font-size: 22px;
-        font-weight: $fontWeight-bold;
-        height: 44px;
-        justify-content: center;
-        line-height: 1;
-        margin-left: auto;
-        width: 44px;
-
-        &:hover {
-            background: rgba(var(--color-accent-rgb), 0.2);
-        }
-    }
 }
 </style>
 
@@ -149,15 +129,20 @@
             <zenpak-gear-icon />
         </div>
         <div class="itemDetailHeaderInfo">
-            <div class="itemDetailName">{{ name || 'Unnamed item' }}</div>
-            <div v-if="brand" class="itemDetailBrand">{{ brand }}</div>
+            <div class="itemDetailName">
+                {{ name || $t('gearroom.unnamedItem') }}
+            </div>
+            <div v-if="brand" class="itemDetailBrand">
+                {{ brand }}
+            </div>
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
-            <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">+ Add type</button>
+            <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">
+                + Add type
+            </button>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
             {{ starred ? '★' : '☆' }}
         </button>
-        <button class="lpIconButton itemDetailClose" title="Close" @click="$emit('close')">×</button>
     </div>
 </template>
 
@@ -168,15 +153,15 @@ export default {
     name: 'ItemDetailHeader',
     components: { ZenpakGearIcon },
     props: {
-        name:     { type: String, default: '' },
-        brand:    { type: String, default: '' },
+        name: { type: String, default: '' },
+        brand: { type: String, default: '' },
         category: { type: String, default: '' },
         imageKey: { type: String, default: '' },
         imageUrl: { type: String, default: '' },
-        starred:  { type: Boolean, default: false },
+        starred: { type: Boolean, default: false },
         showAddCategory: { type: Boolean, default: false },
     },
-    emits: ['toggle-star', 'close', 'view-image', 'click-category'],
+    emits: ['toggle-star', 'view-image', 'click-category'],
     computed: {
         thumbnailImage() {
             if (this.imageKey) return `https://i.imgur.com/${this.imageKey}l.jpg`;

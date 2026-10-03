@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-        name: 'lighterpack',
+        name: 'zenpak',
         script: './app.js',
         instances: 'max',
         exec_mode: 'cluster',

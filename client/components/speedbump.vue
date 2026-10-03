@@ -1,6 +1,16 @@
 <style lang="scss">
+@import "../css/_globals";
+
 .speedbumpBody {
     max-width: 44ch;
+}
+
+#speedbump.lpModal {
+    z-index: $aboveDialog;
+}
+
+.lpModalContainer:has(#speedbump) .lpModalOverlay {
+    z-index: $aboveDialog - 1;
 }
 </style>
 
@@ -10,7 +20,9 @@
             {{ messages.title }}
         </h2>
 
-        <p class="speedbumpBody">{{ messages.body }}</p>
+        <p class="speedbumpBody">
+            {{ messages.body }}
+        </p>
 
         <div class="lpModalActions">
             <button v-focus-on-create class="lpButton" @click="confirmSpeedbump()">
@@ -62,10 +74,14 @@ export default {
             this.shown = true;
         },
         confirmSpeedbump() {
-            if (this.callback && typeof this.callback === 'function') {
-                this.callback(true);
-            }
+            const callback = this.callback;
+            this.callback = null;
             this.shown = false;
+            this.$nextTick(() => {
+                if (callback && typeof callback === 'function') {
+                    callback(true);
+                }
+            });
         },
     },
 };

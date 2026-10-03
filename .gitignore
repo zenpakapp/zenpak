@@ -3,6 +3,7 @@ node_modules
 .DS_Store
 /config/local.json
 /public/dist/*
+/dist/
 app.sublime-project
 app.sublime-workspace
 *.code-workspace
@@ -14,7 +15,9 @@ app.sublime-workspace
 *__pycache__*
 /.codex/
 /.superpowers/
+/.worktrees/
 /.claude/worktrees/
 /docs/
 .gstack/
 /logs/
+/maintenance/

@@ -61,7 +61,7 @@ test.describe("Visual refresh", () => {
     await page.getByText("Share", { exact: true }).hover();
     await externalIdResponse;
 
-    const shareUrlLocator = page.getByLabel("Share your list");
+    const shareUrlLocator = page.locator('#shareUrl');
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
     const shareUrl = await shareUrlLocator.inputValue();
     await externalIdSave;
@@ -72,9 +72,9 @@ test.describe("Visual refresh", () => {
     try {
       await sharePage.goto(shareUrl);
       const sharedZeroQtyRow = sharePage
-        .locator(".lpItem")
+        .locator(".lpPublicListItem")
         .filter({ hasText: "Rain jacket" });
-      await expect(sharedZeroQtyRow).toHaveClass(/lpQtyZero/);
+      await expect(sharedZeroQtyRow).toHaveClass(/lpPublicListItemOptional/);
     } finally {
       await shareContext.close();
     }

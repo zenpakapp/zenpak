@@ -2,13 +2,21 @@ const {
     isPublicVisibility,
     allowsSearchIndexing,
 } = require('../client/services/public-visibility.js');
+const { normalizeTier } = require('./tier-policy.js');
+const { Library } = require('../client/models/library.js');
+const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
         return null;
     }
 
-    return user.library;
+    // Hydrate through the shared client model so list/category totals are
+    // recalculated (List.load → calculateTotals) instead of trusting persisted
+    // values that may predate the current worn/consumable rules.
+    const library = new Library();
+    library.load(user.library);
+    return library;
 }
 
 function normalizeString(value) {
@@ -58,7 +66,8 @@ function sanitizeProfile(profile) {
     };
 }
 
-function sanitizeListSummary(list) {
+function sanitizeListSummary(list, options = {}) {
+    const includePrice = options.includePrice !== false;
     return {
         id: list.id,
         externalId: list.externalId || '',
@@ -73,15 +82,35 @@ function sanitizeListSummary(list) {
         totalConsumableWeight: Number(list.totalConsumableWeight) || 0,
         totalBaseWeight: Number(list.totalBaseWeight) || 0,
         totalPackWeight: Number(list.totalPackWeight) || 0,
-        totalPrice: Number(list.totalPrice) || 0,
-        totalConsumablePrice: Number(list.totalConsumablePrice) || 0,
+        totalPrice: includePrice ? Number(list.totalPrice) || 0 : 0,
+        totalConsumablePrice: includePrice ? Number(list.totalConsumablePrice) || 0 : 0,
         totalQty: Number(list.totalQty) || 0,
         seasons: Array.isArray(list.seasons) ? list.seasons.slice() : [],
         listTypes: Array.isArray(list.listTypes) ? list.listTypes.slice() : [],
     };
 }
 
-function publicListsForProfile(library) {
+// Nothing not-yet-published is served anywhere: build the summary from the list's latest
+// OWNED published snapshot, not the live list. Share settings (visibility, copyable, ...)
+// still come from the live list, mirroring how getServedUser overlays them at read time.
+async function buildProfileListSummary(user, list) {
+    if (!list.externalId) return null;
+    const version = await getLatestOwnedVersion(user, list.externalId);
+    if (!version) return null;
+
+    const frozen = JSON.parse(JSON.stringify(version.library));
+    const publishedListRaw = frozen.lists[0];
+    SHARE_SETTING_FIELDS.forEach((field) => {
+        if (typeof list[field] === 'undefined') delete publishedListRaw[field];
+        else publishedListRaw[field] = list[field];
+    });
+
+    const publishedLibrary = new Library();
+    publishedLibrary.load(frozen);
+    return sanitizeListSummary(publishedLibrary.lists[0]);
+}
+
+async function publicListsForProfile(user, library) {
     const profile = library.publicProfile || {};
     const featuredListIds = Array.isArray(profile.featuredListIds) ? profile.featuredListIds : [];
     const featuredOnly = featuredListIds.length > 0;
@@ -90,18 +119,20 @@ function publicListsForProfile(library) {
         return lookup;
     }, {});
 
-    return (library.lists || [])
-        .filter(list => isPublicVisibility(list.visibility))
-        .filter(list => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)])
-        .map(sanitizeListSummary);
+    const candidates = (library.lists || [])
+        .filter((list) => isPublicVisibility(list.visibility))
+        .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)]);
+
+    const summaries = await Promise.all(candidates.map((list) => buildProfileListSummary(user, list)));
+    return summaries.filter(Boolean);
 }
 
 function findListByExternalId(library, externalId) {
-    return (library.lists || []).find(list => list.externalId && list.externalId === externalId) || null;
+    return (library.lists || []).find((list) => list.externalId && list.externalId === externalId) || null;
 }
 
 function findById(collection, id) {
-    return (collection || []).find(entry => entry.id == id) || null;
+    return (collection || []).find((entry) => entry.id == id) || null;
 }
 
 function isSafeUrl(value) {
@@ -115,7 +146,9 @@ function isSafeUrl(value) {
 
 function resolvePublicItemLink(item, creator) {
     if (!item) {
-        return { url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false };
+        return {
+            url: '', promoCode: '', promoLabel: '', hasAffiliateLink: false,
+        };
     }
 
     const rawAffiliate = normalizeString(item.affiliateUrl);
@@ -144,20 +177,21 @@ function resolvePublicItemLink(item, creator) {
     };
 }
 
-function sanitizeCategoryItem(library, categoryItem, creator) {
+function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
     const item = findById(library.items, categoryItem.itemId);
     if (!item) {
         return null;
     }
-    const publicLink = resolvePublicItemLink(item, creator);
+    const publicLink = resolvePublicItemLink(item, options.applyCreatorRules === false ? null : creator);
+    const includePrice = options.includePrice !== false;
 
-    return Object.assign({
+    return {
         id: item.id,
         name: item.name || '',
         description: item.description || '',
         weight: Number(item.weight) || 0,
         authorUnit: item.authorUnit || library.itemUnit || '',
-        price: Number(item.price) || 0,
+        price: includePrice ? Number(item.price) || 0 : 0,
         image: item.image || '',
         imageUrl: item.imageUrl || '',
         shop: item.shop || '',
@@ -171,10 +205,12 @@ function sanitizeCategoryItem(library, categoryItem, creator) {
         worn: categoryItem.worn || 0,
         consumable: categoryItem.consumable === true,
         star: categoryItem.star || 0,
-    });
+    };
 }
 
-function buildPublicCategories(library, list, creator) {
+function buildPublicCategories(library, list, creator, options = {}) {
+    const includePrice = options.includePrice !== false;
+    const applyCreatorRules = options.applyCreatorRules !== false;
     return (list.categoryIds || []).map((categoryId) => {
         const category = findById(library.categories, categoryId);
         if (!category) {
@@ -182,7 +218,7 @@ function buildPublicCategories(library, list, creator) {
         }
 
         const items = (category.categoryItems || [])
-            .map(categoryItem => sanitizeCategoryItem(library, categoryItem, creator))
+            .map((categoryItem) => sanitizeCategoryItem(library, categoryItem, creator, { includePrice, applyCreatorRules }))
             .filter(Boolean);
 
         return {
@@ -191,15 +227,32 @@ function buildPublicCategories(library, list, creator) {
             subtotalWeight: Number(category.subtotalWeight) || 0,
             subtotalWornWeight: Number(category.subtotalWornWeight) || 0,
             subtotalConsumableWeight: Number(category.subtotalConsumableWeight) || 0,
-            subtotalPrice: Number(category.subtotalPrice) || 0,
-            subtotalConsumablePrice: Number(category.subtotalConsumablePrice) || 0,
+            subtotalPrice: includePrice ? Number(category.subtotalPrice) || 0 : 0,
+            subtotalConsumablePrice: includePrice ? Number(category.subtotalConsumablePrice) || 0 : 0,
             subtotalQty: Number(category.subtotalQty) || 0,
             items,
         };
     }).filter(Boolean);
 }
 
-function buildPublicProfile(user) {
+function listHasExplicitSourceListInfo(library, list) {
+    return (list.categoryIds || []).some((categoryId) => {
+        const category = findById(library.categories, categoryId);
+        if (!category) return false;
+
+        return (category.categoryItems || []).some((categoryItem) => {
+            const item = findById(library.items, categoryItem.itemId);
+            return item && (
+                normalizeString(item.affiliateUrl)
+                || normalizeString(item.promoCode)
+                || normalizeString(item.promoLabel)
+            );
+        });
+    });
+}
+const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
+
+async function buildPublicProfile(user) {
     const library = getLibrary(user);
     const profile = library && library.publicProfile;
 
@@ -218,7 +271,9 @@ function buildPublicProfile(user) {
             const url = rule.type === 'domain' && normalizeString(rule.match)
                 ? `https://${normalizeString(rule.match)}`
                 : '';
-            creatorCodes.push({ name: normalizeString(rule.match), code, label, url });
+            creatorCodes.push({
+                name: normalizeString(rule.match), code, label, url,
+            });
         }
     }
 
@@ -226,7 +281,7 @@ function buildPublicProfile(user) {
         username: user.username || '',
         profile: sanitizeProfile(profile),
         entitlements: sanitizeEntitlements(library.entitlements),
-        lists: publicListsForProfile(library),
+        lists: await publicListsForProfile(user, library),
         affiliateDisclosure: library.creator && library.creator.disclosure ? library.creator.disclosure : '',
         hasAffiliateDisclosure: Boolean(library.creator && library.creator.disclosure),
         creatorCodes,
@@ -242,8 +297,12 @@ function buildPublicList(user, externalId) {
     }
 
     const creator = library.creator || {};
-    const categories = buildPublicCategories(library, list, creator);
-    const hasAffiliateLinks = categories.some(category => category.items.some(item => item.hasAffiliateLink));
+    const includePrice = !!(list.publicFields && list.publicFields.price);
+    const sourceListInfoHidden = list.sourceListInfoHidden === true || list[legacySourceListInfoHiddenField] === true;
+    const applyCreatorRules = !sourceListInfoHidden
+        && (!list.forkedFrom || listHasExplicitSourceListInfo(library, list));
+    const categories = buildPublicCategories(library, list, creator, { includePrice, applyCreatorRules });
+    const hasAffiliateLinks = categories.some((category) => category.items.some((item) => item.hasAffiliateLink));
 
     const seenCodes = new Set();
     const creatorCodes = [];
@@ -263,8 +322,10 @@ function buildPublicList(user, externalId) {
 
     const payload = {
         username: user.username || '',
-        authorTier: (library.entitlements && library.entitlements.plan) || null,
-        list: sanitizeListSummary(list),
+        authorDisplayName: (library.publicProfile && library.publicProfile.displayName) || user.username || '',
+        authorTier: normalizeTier(library.entitlements && library.entitlements.plan),
+        list: sanitizeListSummary(list, { includePrice }),
+        forkedFrom: list.forkedFrom || null,
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
         currencySymbol: library.currencySymbol || '$',
@@ -272,6 +333,7 @@ function buildPublicList(user, externalId) {
             price: !!(list.publicFields && list.publicFields.price),
             links: !!(list.publicFields && list.publicFields.links),
             images: !!(list.publicFields && list.publicFields.images),
+            downloadable: !!(list.publicFields && list.publicFields.downloadable),
         },
         categories,
         hasAffiliateLinks,

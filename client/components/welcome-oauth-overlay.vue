@@ -1,9 +1,15 @@
 <template>
     <div v-if="showUsernameSetup" class="lpOAuthSetup">
         <div class="lpOAuthSetupCard">
-            <h2 class="lpOAuthSetupTitle">{{ $t('misc.oauthSetupTitle') }}</h2>
-            <p class="lpOAuthSetupText">{{ $t('misc.oauthSetupText') }}</p>
-            <div v-if="setupError" class="lpError">{{ setupError }}</div>
+            <h2 class="lpOAuthSetupTitle">
+                {{ $t('misc.oauthSetupTitle') }}
+            </h2>
+            <p class="lpOAuthSetupText">
+                {{ $t('misc.oauthSetupText') }}
+            </p>
+            <div v-if="setupError" class="lpError">
+                {{ setupError }}
+            </div>
             <input
                 v-model="setupUsername"
                 class="lpOAuthSetupInput"
@@ -11,7 +17,7 @@
                 :placeholder="$t('misc.oauthSetupPlaceholder')"
                 maxlength="20"
                 @keyup.enter="submit"
-            />
+            >
             <div class="lpButtons" style="margin-top: 16px;">
                 <button
                     class="lpButton lpButtonPrimary"
@@ -39,7 +45,7 @@ export default {
     },
     mounted() {
         const getCookie = (name) => {
-            const c = document.cookie.split('; ').find(r => r.startsWith(`${name}=`));
+            const c = document.cookie.split('; ').find((r) => r.startsWith(`${name}=`));
             return c ? decodeURIComponent(c.split('=')[1]) : '';
         };
         const token = getCookie('oauth_setup_token');
@@ -52,6 +58,12 @@ export default {
         }
     },
     methods: {
+        localizeError(message) {
+            if (message === 'This username is reserved.') return this.$t('auth.usernameReserved');
+            if (message === 'Username already taken.') return this.$t('auth.usernameTaken');
+            if (message && message.startsWith('Username must be')) return this.$t('auth.usernameOauthFormat');
+            return message;
+        },
         async submit() {
             this.loading = true;
             this.setupError = '';
@@ -63,7 +75,7 @@ export default {
                     body: JSON.stringify({ username: this.setupUsername, setupToken: this.setupToken }),
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Error');
+                if (!res.ok) throw new Error(this.localizeError(data.message || 'Error'));
                 document.cookie = 'oauth_setup_token=; path=/; max-age=0';
                 document.cookie = 'oauth_setup_suggested=; path=/; max-age=0';
                 window.location.replace('/welcome?onboarding=1');

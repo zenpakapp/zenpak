@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const Item = function ({ id, unit }) {
     this.id = id;

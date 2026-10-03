@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_list";
-</style>
-
 <template>
     <div class="lpListBody">
         <!-- Packing mode bar -->
@@ -10,17 +6,27 @@
             <div class="lpPackingProgressTrack">
                 <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
             </div>
-            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">{{ $t('list.exitPacking') }}</button>
+            <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">
+                {{ $t('list.exitPacking') }}
+            </button>
         </div>
 
         <!-- Completion modal -->
         <div v-if="showCompletionModal" class="lpPackModal" @click.self="showCompletionModal = false">
             <div class="lpPackModalInner">
-                <p class="lpPackModalPhrase">{{ completionPhrase }}</p>
-                <p class="lpPackModalWeight">{{ $t('list.packTotal', { weight: packTotalWeight }) }}</p>
+                <p class="lpPackModalPhrase">
+                    {{ completionPhrase }}
+                </p>
+                <p class="lpPackModalWeight">
+                    {{ $t('list.packTotal', { weight: packTotalWeight }) }}
+                </p>
                 <div class="lpPackModalActions">
-                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">{{ $t('list.reset') }}</button>
-                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">{{ $t('list.close') }}</button>
+                    <button class="lpPackModalBtn lpPackModalBtnReset" @click="resetPacking">
+                        {{ $t('list.reset') }}
+                    </button>
+                    <button class="lpPackModalBtn lpPackModalBtnClose" @click="showCompletionModal = false">
+                        {{ $t('list.close') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -28,35 +34,42 @@
         <div v-if="isListNew" id="getStarted">
             <h2>
                 <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
-                {{ $t('list.getStartedTitle') }}
+                {{ getStartedTitle }}
             </h2>
-            <p>{{ $t('list.getStartedIntro') }}</p>
-            <ol>
-                <li>{{ $t('list.getStartedStep1') }}</li>
-                <li>{{ $t('list.getStartedStep2') }}</li>
-                <li v-if="!isLocalSaving">{{ $t('list.getStartedStep3') }}</li>
-            </ol>
+            <p>{{ $t('list.getStartedText') }}</p>
             <p class="lpGetStartedCommunity">
                 {{ $t('list.communityHint') }}
-                <router-link to="/community" class="lpHref">{{ $t('list.communityHintCta') }}</router-link>
+                <router-link to="/community" class="lpHref">
+                    {{ $t('list.communityHintCta') }}
+                </router-link>
             </p>
         </div>
         <list-summary v-if="!isListNew" :list="list" />
 
         <div v-if="!isListNew && !isPackingMode" style="margin-bottom: 10px;">
-            <button class="lpPackBtn" @click="enterPackingMode">🎒 {{ $t('list.packThis') }}</button>
+            <button class="lpPackBtn" @click="enterPackingMode">
+                🎒 {{ $t('list.packThis') }}
+            </button>
         </div>
 
         <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.guestHint') }}</span>
-            <router-link to="/register" class="lpCommunityHintCta">{{ $t('list.guestHintCta') }}</router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">✕</button>
+            <router-link to="/register" class="lpCommunityHintCta">
+                {{ $t('list.guestHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">
+                ✕
+            </button>
         </div>
 
         <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.communityHint') }}</span>
-            <router-link to="/community" class="lpCommunityHintCta">{{ $t('list.communityHintCta') }}</router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">✕</button>
+            <router-link to="/community" class="lpCommunityHintCta">
+                {{ $t('list.communityHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">
+                ✕
+            </button>
         </div>
 
         <div style="clear: both;" />
@@ -66,7 +79,7 @@
             <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
         </div>
 
-        <TransitionGroup name="lp-list" tag="ul" ref="categories" class="lpCategories">
+        <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
             <category
                 v-for="category in categories"
                 :key="category.id"
@@ -89,10 +102,11 @@ import listSummary from './list-summary.vue';
 import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
-import { usePackingMode } from '../composables/usePackingMode.js';
-import phrasesEn from '../data/packing-phrases.en.js';
-import phrasesFr from '../data/packing-phrases.fr.js';
-import weightUtils from '../utils/weight.js';
+import { usePackingMode } from '../composables/usePackingMode';
+import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
+import phrasesEn from '../data/packing-phrases.en';
+import phrasesFr from '../data/packing-phrases.fr';
+import weightUtils from '../utils/weight';
 
 export default {
     name: 'List',
@@ -100,18 +114,28 @@ export default {
         listSummary,
         category,
         ZenpakBrandAsset,
-        categoryDragStartIndex: false,
-        itemDragId: false,
     },
     setup() {
-        const { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset } = usePackingMode();
-        return { isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset };
+        const {
+            isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset,
+        } = usePackingMode();
+        return {
+            isPackingMode, packedItemIds, activate, deactivate, toggleItem, reset,
+        };
     },
     data() {
         return {
-            onboardingCompleted: false,
             itemDrake: null,
             categoryDrake: null,
+            itemDragId: null,
+            categoryDragStartIndex: null,
+            itemReorderFrame: null,
+            itemReorderIdle: null,
+            itemReorderToken: 0,
+            categoryReorderFrame: null,
+            categoryReorderIdle: null,
+            categoryReorderToken: 0,
+            isSwitchingList: false,
             showCompletionModal: false,
             completionPhrase: '',
             communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
@@ -126,10 +150,7 @@ export default {
             return this.$store.getters.activeList;
         },
         categories() {
-            return this.list.categoryIds.map(id => this.library.getCategoryById(id)).filter(Boolean);
-        },
-        isListNew() {
-            return this.list.totalWeight === 0 && this.categories.every(c => c.categoryItems.length === 0);
+            return this.list.categoryIds.map((id) => this.library.getCategoryById(id)).filter(Boolean);
         },
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
@@ -143,10 +164,32 @@ export default {
         showGuestHint() {
             return this.isLocalSaving && !this.isListNew && !this.guestHintDismissed;
         },
+        getStartedName() {
+            const displayName = this.library.publicProfile && this.library.publicProfile.displayName;
+            return displayName || this.$store.state.loggedIn || '';
+        },
+        getStartedTitle() {
+            if (this.getStartedName) return this.$t('list.getStartedTitleNamed', { name: this.getStartedName });
+            return this.$t('list.getStartedTitle');
+        },
+        categoryItemStats() {
+            const itemIds = [];
+            let hasItems = false;
+
+            this.categories.forEach((category) => {
+                category.categoryItems.forEach((categoryItem) => {
+                    hasItems = true;
+                    itemIds.push(categoryItem.itemId);
+                });
+            });
+
+            return { hasItems, itemIds };
+        },
+        isListNew() {
+            return this.list.totalWeight === 0 && !this.categoryItemStats.hasItems;
+        },
         allItemIds() {
-            return this.categories.flatMap(cat =>
-                cat.categoryItems.map(ci => ci.itemId)
-            );
+            return this.categoryItemStats.itemIds;
         },
         packingProgress() {
             return {
@@ -166,17 +209,28 @@ export default {
         },
     },
     watch: {
-        categories() {
-            this.$nextTick(() => {
-                this.handleItemReorder();
+        'list.id': function (id, oldId) {
+            if (!oldId || id === oldId) return;
+            this.isSwitchingList = true;
+            requestAnimationFrame(() => {
+                this.isSwitchingList = false;
             });
+        },
+        categories() {
+            this.scheduleItemReorder();
         },
     },
     mounted() {
-        this.handleCategoryReorder();
-        this.handleItemReorder();
+        this.scheduleCategoryReorder();
+        this.scheduleItemReorder();
+        registerShortcut('n', this.$t('shortcuts.newItem'), this.focusAddItem);
     },
     beforeUnmount() {
+        unregisterShortcut('n');
+        if (this.itemReorderFrame) cancelAnimationFrame(this.itemReorderFrame);
+        if (this.categoryReorderFrame) cancelAnimationFrame(this.categoryReorderFrame);
+        this.cancelIdle(this.itemReorderIdle);
+        this.cancelIdle(this.categoryReorderIdle);
         if (this.itemDrake) {
             this.itemDrake.destroy();
             this.itemDrake = null;
@@ -187,6 +241,10 @@ export default {
         }
     },
     methods: {
+        focusAddItem() {
+            const btn = this.$el.querySelector('.lpAddItem');
+            if (btn) btn.click();
+        },
         newCategory() {
             this.$store.commit('newCategory', this.list);
         },
@@ -223,13 +281,53 @@ export default {
             const phrases = lang.startsWith('fr') ? phrasesFr : phrasesEn;
             return phrases[Math.floor(Math.random() * phrases.length)];
         },
-        handleItemReorder() {
+        cancelIdle(id) {
+            if (!id) return;
+            if (typeof window !== 'undefined' && typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(id);
+            } else {
+                clearTimeout(id);
+            }
+        },
+        scheduleItemReorder() {
+            if (this.itemReorderFrame || this.itemReorderIdle) return;
+            this.itemReorderFrame = requestAnimationFrame(() => {
+                this.itemReorderFrame = null;
+                const run = () => {
+                    this.itemReorderIdle = null;
+                    this.handleItemReorder();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.itemReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.itemReorderIdle = setTimeout(run, 0);
+                }
+            });
+        },
+        scheduleCategoryReorder() {
+            if (this.categoryReorderFrame || this.categoryReorderIdle) return;
+            this.categoryReorderFrame = requestAnimationFrame(() => {
+                this.categoryReorderFrame = null;
+                const run = () => {
+                    this.categoryReorderIdle = null;
+                    this.handleCategoryReorder();
+                };
+                if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+                    this.categoryReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                } else {
+                    this.categoryReorderIdle = setTimeout(run, 0);
+                }
+            });
+        },
+        async handleItemReorder() {
+            const reorderToken = ++this.itemReorderToken;
             if (this.itemDrake) {
                 this.itemDrake.destroy();
+                this.itemDrake = null;
             }
             const categoryItems = queryContainers(this.$el, '.lpItems');
-            const drake = createDragDrop(categoryItems, {
-                moves($el, $source, $handle, $sibling) {
+            const drake = await createDragDrop(categoryItems, {
+                moves($el, $source, $handle) {
                     return $handle.classList.contains('lpItemHandle');
                 },
                 accepts($el, $target, $source, $sibling) {
@@ -239,10 +337,14 @@ export default {
                     return true;
                 },
             });
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            if (!this.$el || reorderToken !== this.itemReorderToken) {
+                drake.destroy();
+                return;
+            }
+            drake.on('drag', ($el) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el, $target) => {
                 const categoryId = getDatasetInt($target, 'categoryId');
                 if (this.itemDragId === null || categoryId === null) {
                     drake.cancel(true);
@@ -255,20 +357,26 @@ export default {
             });
             this.itemDrake = drake;
         },
-        handleCategoryReorder() {
+        async handleCategoryReorder() {
+            const reorderToken = ++this.categoryReorderToken;
             if (this.categoryDrake) {
                 this.categoryDrake.destroy();
+                this.categoryDrake = null;
             }
 
-            const drake = createDragDrop([this.$refs.categories.$el], {
-                moves(el, $source, $handle, $sibling) {
+            const drake = await createDragDrop([this.$refs.categories.$el], {
+                moves(el, $source, $handle) {
                     return $handle.classList.contains('lpCategoryHandle');
                 },
             });
-            drake.on('drag', ($el, $target, $source, $sibling) => {
+            if (!this.$el || reorderToken !== this.categoryReorderToken) {
+                drake.destroy();
+                return;
+            }
+            drake.on('drag', ($el) => {
                 this.categoryDragStartIndex = getElementIndex($el);
             });
-            drake.on('drop', ($el, $target, $source, $sibling) => {
+            drake.on('drop', ($el) => {
                 this.$store.commit('reorderCategory', { list: this.list, before: this.categoryDragStartIndex, after: getElementIndex($el) });
                 drake.cancel(true);
             });
@@ -277,3 +385,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_list";
+</style>

@@ -1,7 +1,3 @@
-<style lang="scss">
-@import "../css/_item-meta";
-</style>
-
 <template>
     <modal id="itemMetaDialog" :shown="shown" @hide="cancel">
         <h2>{{ $t('item.metaDialogTitle') }}</h2>
@@ -29,7 +25,9 @@
                         class="itemMetaBrandSuggestion"
                         :class="{ active: i === brandActiveIndex }"
                         @mousedown.prevent="brand = b; brandDropdownOpen = false; brandActiveIndex = -1"
-                    >{{ b }}</li>
+                    >
+                        {{ b }}
+                    </li>
                 </ul>
             </div>
 
@@ -37,8 +35,12 @@
                 <span class="itemMetaLabel">{{ $t('item.metaLabelType') }}</span>
                 <div class="itemMetaSelectWrap">
                     <select id="itemMetaCategory" v-model="category" class="itemMetaSelect">
-                        <option value="">{{ $t('item.metaSelectNone') }}</option>
-                        <option v-for="cat in gearCategories" :key="cat" :value="cat">{{ cat }}</option>
+                        <option value="">
+                            {{ $t('item.metaSelectNone') }}
+                        </option>
+                        <option v-for="cat in gearCategories" :key="cat" :value="cat">
+                            {{ cat }}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -53,7 +55,9 @@
                 </div>
                 <div class="itemMetaTagInput">
                     <input v-model="tagInput" type="text" class="itemMetaInput" :placeholder="$t('item.metaTagPlaceholder')" @keydown.enter.prevent="addTag">
-                    <button type="button" @click="addTag">{{ $t('item.metaButtonAdd') }}</button>
+                    <button type="button" @click="addTag">
+                        {{ $t('item.metaButtonAdd') }}
+                    </button>
                 </div>
             </div>
 
@@ -68,11 +72,8 @@
 <script>
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
-
-const GEAR_CATEGORIES = [
-    'Pack & Bags', 'Shelter', 'Sleep', 'Clothing', 'Water', 'Food', 'Cook',
-    'Navigation', 'Safety', 'Hygiene', 'Essentials', 'Other',
-];
+import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { normalizeTag, normalizeTags } from '../services/item-tags';
 
 export default {
     name: 'ItemMeta',
@@ -96,14 +97,23 @@ export default {
         knownBrands() {
             const library = this.$store.state.library;
             if (!library || !library.items) return [];
-            return [...new Set(
-                library.items.map((i) => i.brand).filter(Boolean),
-            )].sort();
+            const brands = new Set();
+            library.items.forEach((item) => {
+                if (item.brand) brands.add(item.brand);
+            });
+            return [...brands].sort().map((brand) => ({
+                label: brand,
+                search: brand.toLowerCase(),
+            }));
         },
         brandSuggestionsFiltered() {
-            if (!this.brand) return this.knownBrands;
+            const brands = this.knownBrands;
+            if (!this.brand) return brands.map((brand) => brand.label);
             const q = this.brand.toLowerCase();
-            return this.knownBrands.filter(b => b.toLowerCase().includes(q));
+            return brands.reduce((suggestions, brand) => {
+                if (brand.search.includes(q)) suggestions.push(brand.label);
+                return suggestions;
+            }, []);
         },
     },
     mounted() {
@@ -141,7 +151,7 @@ export default {
             this.brandActiveIndex = -1;
         },
         addTag() {
-            const tag = this.tagInput.trim().toLowerCase();
+            const tag = normalizeTag(this.tagInput);
             if (tag && !this.tags.includes(tag)) {
                 this.tags.push(tag);
             }
@@ -151,12 +161,15 @@ export default {
             this.tags = this.tags.filter((t) => t !== tag);
         },
         save() {
-            this.$store.commit('updateItem', {
+            const tags = normalizeTags(this.tags, this.tagInput);
+            this.$store.commit('updateItemMetadata', {
                 ...this.item,
                 brand: this.brand.trim(),
                 category: this.category,
-                tags: [...this.tags],
+                tags,
             });
+            this.tags = tags;
+            this.tagInput = '';
             this.shown = false;
         },
         cancel() {
@@ -165,3 +178,7 @@ export default {
     },
 };
 </script>
+
+<style lang="scss">
+@import "../css/_item-meta";
+</style>

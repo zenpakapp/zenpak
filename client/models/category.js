@@ -1,4 +1,4 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
 const Category = function ({ library, id, _isNew }) {
     this.library = library;
@@ -33,8 +33,30 @@ Category.prototype.addItem = function (partialCategoryItem) {
 Category.prototype.updateCategoryItem = function (categoryItem) {
     const oldCategoryItem = this.getCategoryItemById(categoryItem.itemId);
     const newCategoryItem = assignIn({}, oldCategoryItem, categoryItem);
+
+    if (typeof categoryItem.qty !== 'undefined' && categoryItem.qty !== oldCategoryItem.qty) {
+        delete newCategoryItem.qtyBeforeOptional;
+    }
+
     const idx = this.categoryItems.indexOf(oldCategoryItem);
     if (idx !== -1) this.categoryItems.splice(idx, 1, newCategoryItem);
+};
+
+Category.prototype.toggleOptionalItem = function (itemId) {
+    const categoryItem = this.getCategoryItemById(itemId);
+    if (!categoryItem) return;
+
+    const updatedCategoryItem = { ...categoryItem };
+    if (categoryItem.qty > 0) {
+        updatedCategoryItem.qtyBeforeOptional = categoryItem.qty;
+        updatedCategoryItem.qty = 0;
+    } else {
+        updatedCategoryItem.qty = categoryItem.qtyBeforeOptional || 1;
+        delete updatedCategoryItem.qtyBeforeOptional;
+    }
+
+    const idx = this.categoryItems.indexOf(categoryItem);
+    if (idx !== -1) this.categoryItems.splice(idx, 1, updatedCategoryItem);
 };
 
 Category.prototype.removeItem = function (itemId) {
@@ -65,6 +87,7 @@ Category.prototype.calculateSubtotal = function () {
         this.subtotalPrice += price * qty;
 
         if (this.library.optionalFields.worn && categoryItem.worn) {
+            // One unit is on the body; any spares (qty > 1) stay in the pack.
             this.subtotalWornWeight += weight * ((qty > 0) ? 1 : 0);
         }
         if (this.library.optionalFields.consumable && categoryItem.consumable) {
@@ -95,7 +118,6 @@ Category.prototype.save = function () {
     const out = assignIn({}, this);
 
     delete out.library;
-    delete out.template;
     delete out._isNew;
 
     return out;
@@ -106,7 +128,7 @@ Category.prototype.load = function (input) {
 
     assignIn(this, input);
 
-    this.categoryItems.forEach((categoryItem, index) => {
+    this.categoryItems.forEach((categoryItem) => {
         delete categoryItem._isNew;
         if (typeof categoryItem.price !== 'undefined') {
             delete categoryItem.price;
@@ -114,10 +136,8 @@ Category.prototype.load = function (input) {
         if (!categoryItem.star) {
             categoryItem.star = 0;
         }
-        if (!this.library.getItemById(categoryItem.itemId)) {
-            this.categoryItems.splice(index, 1);
-        }
     });
+    this.categoryItems = this.categoryItems.filter((categoryItem) => this.library.getItemById(categoryItem.itemId));
 };
 
 module.exports = { Category };

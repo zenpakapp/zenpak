@@ -1,4 +1,6 @@
+dist
 public/dist
+public/js/jquery.min.js
 node_modules
 server/sha3.js
 test/

@@ -28,7 +28,9 @@ export function useGuide() {
             };
             affiliateRules.value = data.affiliateRules && data.affiliateRules.length
                 ? data.affiliateRules
-                : [{ type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '' }];
+                : [{
+                    type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '',
+                }];
             disclosure.value = data.disclosure || '';
         } catch (err) {
             // silently ignore — fields stay empty
@@ -90,15 +92,13 @@ export function useGuide() {
         savingItems.value = true;
         itemsSaved.value = false;
         error.value = null;
-        const updates = itemGroups.flatMap(group =>
-            group.items.map(item => ({
-                listId: group.listId,
-                itemId: item.itemId,
-                affiliateUrl: item.affiliateUrl,
-                promoCode: item.promoCode,
-                promoLabel: item.promoLabel,
-            }))
-        );
+        const updates = itemGroups.flatMap((group) => group.items.map((item) => ({
+            listId: group.listId,
+            itemId: item.itemId,
+            affiliateUrl: item.affiliateUrl,
+            promoCode: item.promoCode,
+            promoLabel: item.promoLabel,
+        })));
         try {
             await fetchJson('/api/guide/items', {
                 method: 'PUT',
@@ -115,7 +115,9 @@ export function useGuide() {
     }
 
     function addRule() {
-        affiliateRules.value.push({ type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '' });
+        affiliateRules.value.push({
+            type: 'brand', match: '', affiliateUrl: '', appendParam: '', promoCode: '', promoLabel: '',
+        });
     }
 
     function removeRule(index) {
@@ -123,10 +125,24 @@ export function useGuide() {
     }
 
     return {
-        profile, loadProfile, saveProfile, savingProfile, profileSaved,
-        affiliateRules, disclosure, saveAffiliateRules, savingRules, rulesSaved,
-        addRule, removeRule,
-        itemGroups, loadItems, saveItems, savingItems, itemsSaved, loadingItems,
+        profile,
+        loadProfile,
+        saveProfile,
+        savingProfile,
+        profileSaved,
+        affiliateRules,
+        disclosure,
+        saveAffiliateRules,
+        savingRules,
+        rulesSaved,
+        addRule,
+        removeRule,
+        itemGroups,
+        loadItems,
+        saveItems,
+        savingItems,
+        itemsSaved,
+        loadingItems,
         error,
     };
 }

@@ -1,17 +1,35 @@
-import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 const colorUtils = require('../utils/color.js');
+const weightUtils = require('../utils/weight.js');
 
-Chart.register(DoughnutController, ArcElement, Tooltip);
+let chartModulePromise = null;
+
+async function loadChart() {
+    if (!chartModulePromise) {
+        chartModulePromise = import(/* webpackChunkName: "vendor-chart" */ 'chart.js')
+            .then(({
+                Chart, DoughnutController, ArcElement, Tooltip,
+            }) => {
+                Chart.register(DoughnutController, ArcElement, Tooltip);
+                return Chart;
+            });
+    }
+    return chartModulePromise;
+}
 
 function extractCategories(processedData) {
     return Object.values(processedData.points);
+}
+
+function getChartBorderColor() {
+    const style = getComputedStyle(document.documentElement);
+    return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
 }
 
 function buildDataset(categories) {
     return {
         data: categories.map((c) => c.total),
         backgroundColor: categories.map((c, i) => colorUtils.rgbToString(c.color || colorUtils.getColor(i))),
-        borderColor: 'rgb(245,245,245)',
+        borderColor: getChartBorderColor(),
         borderWidth: 3,
         hoverBorderColor: 'rgb(50,50,50)',
         hoverBorderWidth: 2,
@@ -19,17 +37,22 @@ function buildDataset(categories) {
     };
 }
 
-export function renderListChart({ chart, canvas, processedData, hoverCallback }) {
+export async function renderListChart({
+    chart, canvas, processedData, hoverCallback, unit,
+}) {
     if (!canvas || !processedData) return chart;
 
+    const Chart = await loadChart();
     const categories = extractCategories(processedData);
 
     if (chart) {
         chart._categories = categories;
+        chart._unit = unit;
         chart.data.labels = categories.map((c) => c.name);
         const ds = buildDataset(categories);
         chart.data.datasets[0].data = ds.data;
         chart.data.datasets[0].backgroundColor = ds.backgroundColor;
+        chart.data.datasets[0].borderColor = ds.borderColor;
         chart.update();
         return chart;
     }
@@ -50,7 +73,12 @@ export function renderListChart({ chart, canvas, processedData, hoverCallback })
                     caretSize: 0,
                     displayColors: false,
                     callbacks: {
-                        label: () => null,
+                        label: (context) => {
+                            const cat = context.chart._categories?.[context.dataIndex];
+                            if (!cat) return null;
+                            const chartUnit = context.chart._unit;
+                            return `${weightUtils.MgToWeight(cat.total, chartUnit)} ${chartUnit} (${Math.round((cat.basePercent || 0) * 100)}%)`;
+                        },
                     },
                 },
             },
@@ -65,5 +93,6 @@ export function renderListChart({ chart, canvas, processedData, hoverCallback })
     });
 
     newChart._categories = categories;
+    newChart._unit = unit;
     return newChart;
 }

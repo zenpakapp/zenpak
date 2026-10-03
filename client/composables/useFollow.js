@@ -49,5 +49,7 @@ export function useFollow(username) {
         }
     }
 
-    return { following, mode, loading, error, loadStatus, follow, unfollow };
+    return {
+        following, mode, loading, error, loadStatus, follow, unfollow,
+    };
 }

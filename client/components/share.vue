@@ -5,7 +5,11 @@
 <template>
     <span v-if="isSignedIn" class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="share" @shown="focusShare">
-            <template #target><span title="Share"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">{{ $t('share.share') }}</span></span></template>
+            <template #target>
+                <span :title="$t('share.share')"><i class="lpSprite lpLink" /> <span class="headerMenuLabel">{{ $t('share.share') }}</span>
+                    <span v-if="publishStateLabel" class="sharePublishState" :class="{ sharePublishStateDirty: publishStateDirty }">{{ publishStateLabel }}</span>
+                </span>
+            </template>
             <template #content>
                 <div class="sharePopover">
                     <div class="shareSection">
@@ -24,6 +28,15 @@
                             </select>
                         </div>
                         <p class="shareVisibilityHint">{{ visibilityHint }}</p>
+                    </div>
+
+                    <div v-if="isShared" class="shareSection">
+                        <div class="shareLabel">{{ $t('share.publishTitle') }}</div>
+                        <p class="shareVisibilityHint">{{ $t('share.publishHint') }}</p>
+                        <input v-model="publishNote" type="text" class="shareInput" maxlength="200" :placeholder="$t('share.publishNotePlaceholder')" :disabled="publishing">
+                        <button type="button" class="sharePublishButton" :disabled="publishing" @click="publish">
+                            {{ publishing ? $t('share.publishing') : $t('share.publish') }}
+                        </button>
                     </div>
 
                     <div v-if="list.visibility === 'shareable'" class="shareSection">
@@ -100,6 +113,7 @@
 import PopoverHover from './popover-hover.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { fetchJson } from '../utils/utils';
+import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
 
 export default {
     name: 'Share',
@@ -109,26 +123,18 @@ export default {
     data() {
         return {
             shareReady: true,
+            publishStatus: { latestVersion: 0, publishedAt: null, hasUnpublishedChanges: false },
+            publishNote: '',
+            publishing: false,
+            statusTimer: null,
         };
     },
     computed: {
         seasonOptions() {
-            return [
-                { value: '3-season', label: this.$t('list.season3') },
-                { value: '4-season', label: this.$t('list.season4') },
-                { value: 'spring', label: this.$t('list.seasonSpring') },
-                { value: 'summer', label: this.$t('list.seasonSummer') },
-                { value: 'fall', label: this.$t('list.seasonFall') },
-                { value: 'winter', label: this.$t('list.seasonWinter') },
-            ];
+            return toI18nOptions(SEASON_VALUES, (key) => this.$t(key));
         },
         listTypeOptions() {
-            return [
-                { value: 'day-hike', label: this.$t('list.typeDay') },
-                { value: 'weekend', label: this.$t('list.typeWeekend') },
-                { value: 'trek', label: this.$t('list.typeThru') },
-                { value: 'bikepacking', label: this.$t('list.typeBike') },
-            ];
+            return toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key));
         },
         visibilityHint() {
             const hints = {
@@ -173,6 +179,34 @@ export default {
         selectedListTypes() {
             return Array.isArray(this.list.listTypes) ? this.list.listTypes : [];
         },
+        isShared() {
+            return Boolean(this.list && this.list.visibility && this.list.visibility !== 'private');
+        },
+        publishStateLabel() {
+            if (!this.isShared || !this.list.externalId) return '';
+            if (!this.publishStatus.latestVersion) return this.$t('share.notPublished');
+            if (this.hasUnpublishedChanges) return this.$t('share.unpublishedChanges');
+            return this.$t('share.publishedVersion', { version: this.publishStatus.latestVersion });
+        },
+        publishStateDirty() {
+            return !this.publishStatus.latestVersion || this.hasUnpublishedChanges;
+        },
+        // A local edit not yet autosaved can't be seen by the server's status check,
+        // so flag it right away; the next status refresh confirms or clears it.
+        hasUnpublishedChanges() {
+            return this.publishStatus.hasUnpublishedChanges || this.$store.state.hasPendingSave;
+        },
+    },
+    watch: {
+        '$store.state.syncToken': 'scheduleStatusRefresh',
+        'list.externalId': 'scheduleStatusRefresh',
+        'list.visibility': 'scheduleStatusRefresh',
+    },
+    mounted() {
+        this.refreshPublishStatus();
+    },
+    beforeUnmount() {
+        clearTimeout(this.statusTimer);
     },
     methods: {
         selectShareUrl() {
@@ -187,7 +221,8 @@ export default {
                 listId: this.list.id,
                 [field]: value,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
@@ -197,16 +232,19 @@ export default {
                 visibility,
                 allowSearchIndexing: visibility === 'indexable' && this.list.allowSearchIndexing,
             });
-            return this.saveShareState().catch((err) => {
-                showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
-            });
+            return this.saveShareState()
+                .then(() => this.ensurePublished())
+                .catch((err) => {
+                    showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
+                });
         },
         setCopyable(copyable) {
             this.$store.commit('updateListCopyable', {
                 listId: this.list.id,
                 copyable,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingSettings'));
             });
         },
@@ -223,7 +261,8 @@ export default {
                 seasons,
                 listTypes,
             });
-            return this.saveShareState().catch(() => {
+            return this.saveShareState().catch((err) => {
+                if (err && err.message) return;
                 showGlobalAlert(this.$t('share.errorSavingTags'));
             });
         },
@@ -233,12 +272,18 @@ export default {
                 visibility: allowSearchIndexing ? 'indexable' : this.list.visibility,
                 allowSearchIndexing,
             });
-            return this.saveShareState().catch((err) => {
-                showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
-            });
+            return this.saveShareState()
+                .then(() => this.ensurePublished())
+                .catch((err) => {
+                    showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
+                });
         },
         focusShare() {
             if (!this.list.externalId) {
+                // Only auto-promote on the very first share ever (no externalId yet).
+                // Once a list has been shared, reopening the popover must not override
+                // a visibility the user deliberately set back to private.
+                this.ensureShareable();
                 this.shareReady = false;
                 return fetchJson('/externalId', {
                     method: 'POST',
@@ -251,6 +296,7 @@ export default {
                         this.$store.commit('setExternalId', { externalId: response.externalId, list: this.list });
                         return this.saveShareState();
                     })
+                    .then(() => this.ensurePublished())
                     .then(() => {
                         this.shareReady = true;
                         this.selectShareUrl();
@@ -261,11 +307,13 @@ export default {
             }
             this.shareReady = false;
             return this.saveShareState()
+                .then(() => this.ensurePublished())
                 .then(() => {
                     this.shareReady = true;
                     this.selectShareUrl();
                 })
-                .catch(() => {
+                .catch((err) => {
+                    if (err && err.message) return;
                     showGlobalAlert(this.$t('share.errorSavingSettingsDetail'));
                 });
         },
@@ -279,53 +327,69 @@ export default {
             }
         },
         saveShareState() {
-            if (this.$store.state.saveType !== 'remote' || !this.$store.state.loggedIn) {
+            return this.$store.dispatch('saveNow');
+        },
+        refreshPublishStatus() {
+            if (!this.isSignedIn || !this.isShared || !this.list.externalId) {
+                this.publishStatus = { latestVersion: 0, publishedAt: null, hasUnpublishedChanges: false };
                 return Promise.resolve();
             }
-
-            if (this.$store.state.isSaving) {
-                return new Promise((resolve, reject) => {
-                    const unwatch = this.$store.watch(
-                        (state) => state.isSaving,
-                        (isSaving) => {
-                            if (!isSaving) {
-                                unwatch();
-                                this.saveShareState().then(resolve).catch(reject);
-                            }
-                        },
-                    );
-                });
-            }
-
-            const saveData = JSON.stringify(this.library.save());
-
-            if (saveData === this.$store.state.lastSaveData) {
-                return Promise.resolve();
-            }
-
-            this.$store.commit('setIsSaving', true);
-            this.$store.commit('setLastSaveData', saveData);
-
-            return fetchJson('/saveLibrary/', {
-                method: 'POST',
-                body: JSON.stringify({
-                    syncToken: this.$store.state.syncToken,
-                    username: this.$store.state.loggedIn,
-                    data: saveData,
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-            })
-                .then((response) => {
-                    this.$store.commit('setSyncToken', response.syncToken);
-                    this.$store.commit('setIsSaving', false);
+            return fetchJson(`/api/lists/${this.list.externalId}/publish-status`, { credentials: 'same-origin' })
+                .then((status) => {
+                    this.publishStatus = status;
                 })
-                .catch((error) => {
-                    this.$store.commit('setIsSaving', false);
-                    throw error;
+                .catch(() => {});
+        },
+        scheduleStatusRefresh() {
+            clearTimeout(this.statusTimer);
+            this.statusTimer = setTimeout(() => this.refreshPublishStatus(), 800);
+        },
+        // Button handler: save the latest edits first, then publish.
+        publish() {
+            if (this.publishing || !this.list.externalId) return Promise.resolve();
+            this.publishing = true;
+            return this.saveShareState()
+                .then(() => this.publishSnapshot())
+                .catch((err) => {
+                    showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
+                })
+                .finally(() => {
+                    this.publishing = false;
                 });
+        },
+        // Publish what the server already has. Callers must have saved first (focusShare and
+        // setVisibility do), so the auto-publish path adds no extra save round trip.
+        publishSnapshot({ silent = false } = {}) {
+            return fetchJson(`/api/lists/${this.list.externalId}/publish`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: JSON.stringify({ note: this.publishNote }),
+            })
+                .then((result) => {
+                    this.publishNote = '';
+                    if (!silent) {
+                        showGlobalAlert(result.created
+                            ? this.$t('share.publishSuccess', { version: result.version })
+                            : this.$t('share.publishNoChanges'));
+                    }
+                    return this.refreshPublishStatus();
+                })
+                .catch((err) => {
+                    if (!silent) showGlobalAlert((err && err.message) || this.$t('share.errorPublishing'));
+                });
+        },
+        // Auto-publish v1 the first time a list becomes shared. This is implicit
+        // bookkeeping, not a user-initiated action, so it stays silent.
+        ensurePublished() {
+            return this.refreshPublishStatus().then(() => {
+                if (this.isShared && this.list.externalId && !this.publishStatus.latestVersion) {
+                    this.publishing = true;
+                    return this.publishSnapshot({ silent: true }).finally(() => {
+                        this.publishing = false;
+                    });
+                }
+                return undefined;
+            });
         },
     },
 };

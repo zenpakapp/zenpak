@@ -1,9 +1,12 @@
 // server/report-endpoints.js
 const express = require('express');
 const { ObjectId } = require('mongodb');
+
 const router = express.Router();
 const db = require('./db.js');
 const auth = require('./auth.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
+const { getPublishedOwner } = require('./list-versions.js');
 
 const VALID_REASONS = ['spam', 'inappropriate', 'fake', 'other'];
 
@@ -104,12 +107,13 @@ router.post('/feature/:externalId', (req, res) => {
     auth.authenticateModerator(req, res, async (req, res) => {
         const externalId = String(req.params.externalId || '').trim();
         try {
-            const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+            const owner = await getPublishedOwner(externalId);
             if (!owner) return res.status(404).json({ message: 'List not found' });
-            const list = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.featured = !list.featured;
             await db.users.save(owner);
+            syncUserPublicLists(owner).catch(() => {});
             return res.json({ ok: true, featured: list.featured });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -122,12 +126,13 @@ router.post('/unpublish/:externalId', (req, res) => {
     auth.authenticateModerator(req, res, async (req, res) => {
         const externalId = String(req.params.externalId || '').trim();
         try {
-            const owner = await db.users.findOne({ 'library.lists.externalId': externalId });
+            const owner = await getPublishedOwner(externalId);
             if (!owner) return res.status(404).json({ message: 'List not found' });
-            const list = (owner.library.lists || []).find(l => l.externalId === externalId);
+            const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.visibility = 'private';
             await db.users.save(owner);
+            syncUserPublicLists(owner).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

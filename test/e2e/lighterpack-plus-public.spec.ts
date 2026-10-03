@@ -29,7 +29,7 @@ test.describe('LighterPack+ public sharing', () => {
     await shareTrigger.hover();
     await externalIdResponse;
 
-    const shareUrlLocator = page.getByLabel('Share your list');
+    const shareUrlLocator = page.locator('#shareUrl');
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
 
     const visibilitySave = page.waitForResponse(isSuccessfulSave, { timeout: 35000 });

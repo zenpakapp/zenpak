@@ -1,3 +1,134 @@
+<template>
+    <modal id="gearPickerDialog" :shown="shown" @hide="reset">
+        <div class="gearPicker">
+            <div class="gearPickerHeader">
+                <p class="gearPickerTitle">
+                    {{ $t('library.gearPickerTitle') }}
+                </p>
+                <p class="gearPickerSubtitle">
+                    {{ $t('library.gearPickerSubtitle', { categoryName }) }}
+                </p>
+            </div>
+
+            <input
+                v-model="search"
+                class="gearPickerSearch"
+                type="text"
+                :placeholder="$t('library.gearPickerSearchPlaceholder')"
+            >
+
+            <ul class="gearPickerList">
+                <li
+                    v-for="gearItem in filteredItems"
+                    :key="gearItem.id"
+                    :class="['gearPickerItem', { alreadyAdded: isAlreadyInCategory(gearItem) }]"
+                    @click="pickItem(gearItem)"
+                >
+                    <span class="gearPickerItemName">{{ gearItem.name || $t('library.gearPickerUnnamedItem') }}</span>
+                    <span v-if="gearItem.brand" class="gearPickerItemBrand">{{ gearItem.brand }}</span>
+                    <span class="gearPickerItemWeight">{{ formatWeight(gearItem.weight) }}</span>
+                </li>
+                <li v-if="filteredItems.length === 0" class="gearPickerEmpty">
+                    {{ $t('library.gearPickerNoResults') }}
+                </li>
+            </ul>
+
+            <div class="gearPickerFooter">
+                <button class="lpButton lpSmall lpButtonSecondary gearPickerCreate" @click="createNew">
+                    {{ $t('library.gearPickerCreatePrefix') }}{{ search ? ` "${search}"` : '' }}
+                </button>
+            </div>
+        </div>
+    </modal>
+</template>
+
+<script>
+import modal from './modal.vue';
+import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
+import { useUtils } from '../composables/useUtils';
+
+const { displayWeight } = useUtils();
+
+export default {
+    name: 'GearPicker',
+    components: { modal },
+    data() {
+        return {
+            shown: false,
+            search: '',
+            category: null,
+        };
+    },
+    computed: {
+        library() {
+            return this.$store.state.library;
+        },
+        categoryName() {
+            return this.category ? (this.category.name || 'category') : 'list';
+        },
+        searchableItems() {
+            return (this.library?.items || []).map((gearItem) => ({
+                gearItem,
+                search: `${gearItem.name || ''} ${gearItem.brand || ''}`.toLowerCase(),
+            }));
+        },
+        filteredItems() {
+            const q = this.search.trim().toLowerCase();
+            if (!q) return this.library?.items || [];
+            return this.searchableItems.reduce((items, entry) => {
+                if (entry.search.includes(q)) items.push(entry.gearItem);
+                return items;
+            }, []);
+        },
+    },
+    mounted() {
+        registerDialogOpener('gearPicker', ({ category }) => {
+            this.category = category || null;
+            this.search = '';
+            this.shown = true;
+        });
+    },
+    beforeUnmount() {
+        unregisterDialogOpener('gearPicker');
+    },
+    methods: {
+        formatWeight(weight) {
+            const unit = (this.library && this.library.itemUnit) || 'g';
+            return `${displayWeight(weight, unit)} ${unit}`;
+        },
+        isAlreadyInCategory(gearItem) {
+            if (!this.category) return false;
+            return !!this.category.getCategoryItemById(gearItem.id);
+        },
+        pickItem(gearItem) {
+            if (!this.category || this.isAlreadyInCategory(gearItem)) return;
+            this.$store.commit('addItemToCategory', {
+                itemId: gearItem.id,
+                categoryId: this.category.id,
+                dropIndex: this.category.categoryItems.length,
+            });
+            this.shown = false;
+        },
+        createNew() {
+            this.$store.commit('newItem', {
+                category: this.category,
+                _isNew: true,
+                name: this.search || '',
+            });
+            const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
+            const categoryItem = this.category ? this.category.getCategoryItemById(newItem.id) : null;
+            this.shown = false;
+            openDialog('itemDetail', { item: newItem, categoryItem, category: this.category });
+        },
+        reset() {
+            this.shown = false;
+            this.search = '';
+            this.category = null;
+        },
+    },
+};
+</script>
+
 <style lang="scss">
 @import "../css/_globals";
 
@@ -117,123 +248,3 @@
     width: 100%;
 }
 </style>
-
-<template>
-    <modal id="gearPickerDialog" :shown="shown" @hide="reset">
-        <div class="gearPicker">
-            <div class="gearPickerHeader">
-                <p class="gearPickerTitle">{{ $t('library.gearPickerTitle') }}</p>
-                <p class="gearPickerSubtitle">{{ $t('library.gearPickerSubtitle', { categoryName }) }}</p>
-            </div>
-
-            <input
-                v-model="search"
-                class="gearPickerSearch"
-                type="text"
-                :placeholder="$t('library.gearPickerSearchPlaceholder')"
-            >
-
-            <ul class="gearPickerList">
-                <li
-                    v-for="gearItem in filteredItems"
-                    :key="gearItem.id"
-                    :class="['gearPickerItem', { alreadyAdded: isAlreadyInCategory(gearItem) }]"
-                    @click="pickItem(gearItem)"
-                >
-                    <span class="gearPickerItemName">{{ gearItem.name || $t('library.gearPickerUnnamedItem') }}</span>
-                    <span v-if="gearItem.brand" class="gearPickerItemBrand">{{ gearItem.brand }}</span>
-                    <span class="gearPickerItemWeight">{{ formatWeight(gearItem.weight, gearItem.authorUnit) }}</span>
-                </li>
-                <li v-if="filteredItems.length === 0" class="gearPickerEmpty">
-                    {{ $t('library.gearPickerNoResults') }}
-                </li>
-            </ul>
-
-            <div class="gearPickerFooter">
-                <button class="lpButton lpSmall lpButtonSecondary gearPickerCreate" @click="createNew">
-                    {{ $t('library.gearPickerCreatePrefix') }}{{ search ? ` "${search}"` : '' }}
-                </button>
-            </div>
-        </div>
-    </modal>
-</template>
-
-<script>
-import modal from './modal.vue';
-import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
-import { useUtils } from '../composables/useUtils.js';
-
-const { displayWeight } = useUtils();
-
-export default {
-    name: 'GearPicker',
-    components: { modal },
-    data() {
-        return {
-            shown: false,
-            search: '',
-            category: null,
-        };
-    },
-    computed: {
-        library() {
-            return this.$store.state.library;
-        },
-        categoryName() {
-            return this.category ? (this.category.name || 'category') : 'list';
-        },
-        filteredItems() {
-            const q = this.search.toLowerCase();
-            return (this.library?.items || []).filter(gearItem =>
-                !q ||
-                (gearItem.name && gearItem.name.toLowerCase().includes(q)) ||
-                (gearItem.brand && gearItem.brand.toLowerCase().includes(q))
-            );
-        },
-    },
-    mounted() {
-        registerDialogOpener('gearPicker', ({ category }) => {
-            this.category = category || null;
-            this.search = '';
-            this.shown = true;
-        });
-    },
-    beforeUnmount() {
-        unregisterDialogOpener('gearPicker');
-    },
-    methods: {
-        formatWeight(weight, unit) {
-            return `${displayWeight(weight, unit)} ${unit}`;
-        },
-        isAlreadyInCategory(gearItem) {
-            if (!this.category) return false;
-            return !!this.category.getCategoryItemById(gearItem.id);
-        },
-        pickItem(gearItem) {
-            if (!this.category || this.isAlreadyInCategory(gearItem)) return;
-            this.$store.commit('addItemToCategory', {
-                itemId: gearItem.id,
-                categoryId: this.category.id,
-                dropIndex: this.category.categoryItems.length,
-            });
-            this.shown = false;
-        },
-        createNew() {
-            this.$store.commit('newItem', {
-                category: this.category,
-                _isNew: true,
-                name: this.search || '',
-            });
-            const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
-            const categoryItem = this.category ? this.category.getCategoryItemById(newItem.id) : null;
-            this.shown = false;
-            openDialog('itemDetail', { item: newItem, categoryItem, category: this.category });
-        },
-        reset() {
-            this.shown = false;
-            this.search = '';
-            this.category = null;
-        },
-    },
-};
-</script>

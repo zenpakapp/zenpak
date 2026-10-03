@@ -1,5 +1,6 @@
-const assignIn = require('lodash/assignIn');
+const assignIn = require('../utils/assign-in.js');
 
+const { resolveGearCategory } = require('../data/gear-categories');
 const { PLAN_FREE, getPlanFeatures } = require('../services/entitlements.js');
 const { VISIBILITY_PRIVATE, normalizeVisibility } = require('../services/public-visibility.js');
 const { Item } = require('./item.js');
@@ -60,7 +61,6 @@ const Library = function () {
     return this;
 };
 
-
 Library.prototype.firstRun = function () {
     const firstList = this.newList();
     this.newCategory({ list: firstList });
@@ -78,19 +78,24 @@ Library.prototype.newItem = function ({ category, _isNew }) {
 
 Library.prototype.updateItem = function (item) {
     const oldItem = this.getItemById(item.id);
-    const newItem = assignIn({}, oldItem, item);
-    const idx = this.items.indexOf(oldItem);
-    if (idx !== -1) this.items.splice(idx, 1, newItem);
-    this.idMap[newItem.id] = newItem;
-    return newItem;
+    if (!oldItem) return false;
+    assignIn(oldItem, item);
+    this.idMap[oldItem.id] = oldItem;
+    return oldItem;
 };
 
 Library.prototype.removeItem = function (id) {
     const item = this.getItemById(id);
-    for (const i in this.lists) {
-        const category = this.findCategoryWithItemById(id, this.lists[i].id);
-        if (category) {
-            category.removeItem(id);
+    if (!item) {
+        return false;
+    }
+
+    for (const list of this.lists) {
+        for (const categoryId of list.categoryIds) {
+            const category = this.getCategoryById(categoryId);
+            if (category) {
+                category.removeItem(id);
+            }
         }
     }
 
@@ -142,7 +147,7 @@ Library.prototype.removeList = function (id) {
     if (this.lists.length === 1) return;
     const list = this.getListById(id);
 
-    for (var i = 0; i < list.categoryIds.length; i++) {
+    for (let i = 0; i < list.categoryIds.length; i++) {
         this.removeCategory(list.categoryIds[i], true);
     }
 
@@ -151,7 +156,7 @@ Library.prototype.removeList = function (id) {
 
     if (this.defaultListId == id) {
         let newId = -1;
-        for (var i in this.lists) {
+        for (const i in this.lists) {
             newId = this.lists[i].id;
             break;
         }
@@ -180,10 +185,10 @@ Library.prototype.copyList = function (id) {
     return copiedList;
 };
 
-Library.prototype.renderChart = function (type) {
+Library.prototype.renderChart = function () {
     const list = this.getListById(this.defaultListId);
     if (!list) return false;
-    return list.renderChart(type);
+    return list.renderChart();
 };
 
 Library.prototype.getCategoryById = function (id) {
@@ -216,21 +221,21 @@ Library.prototype.getItemsInCurrentList = function () {
 Library.prototype.findCategoryWithItemById = function (itemId, listId) {
     if (listId) {
         const list = this.getListById(listId);
-        for (i in list.categoryIds) {
-            var category = this.getCategoryById(list.categoryIds[i]);
+        for (const i in list.categoryIds) {
+            const category = this.getCategoryById(list.categoryIds[i]);
             if (category) {
-                for (var j in category.categoryItems) {
-                    var categoryItem = category.categoryItems[j];
+                for (const j in category.categoryItems) {
+                    const categoryItem = category.categoryItems[j];
                     if (categoryItem.itemId == itemId) return category;
                 }
             }
         }
     } else {
-        for (var i in this.categories) {
-            var category = this.categories[i];
+        for (const i in this.categories) {
+            const category = this.categories[i];
             if (category) {
-                for (var j in category.categoryItems) {
-                    var categoryItem = category.categoryItems[j];
+                for (const j in category.categoryItems) {
+                    const categoryItem = category.categoryItems[j];
                     if (categoryItem.itemId == itemId) return category;
                 }
             }
@@ -268,17 +273,17 @@ Library.prototype.save = function () {
     out.insights = this.insights;
 
     out.items = [];
-    for (var i in this.items) {
+    for (const i in this.items) {
         out.items.push(this.items[i].save());
     }
 
     out.categories = [];
-    for (var i in this.categories) {
+    for (const i in this.categories) {
         out.categories.push(this.categories[i].save());
     }
 
     out.lists = [];
-    for (var i in this.lists) {
+    for (const i in this.lists) {
         out.lists.push(this.lists[i].save());
     }
 
@@ -294,6 +299,7 @@ Library.prototype.load = function (serializedLibrary) {
         this.upgrade02to03(serializedLibrary);
     }
 
+    this.idMap = {};
     this.items = [];
 
     assignIn(this.optionalFields, serializedLibrary.optionalFields);
@@ -312,30 +318,33 @@ Library.prototype.load = function (serializedLibrary) {
         assignIn(this.insights, serializedLibrary.insights);
     }
 
-    for (var i in serializedLibrary.items) {
-        var temp = new Item({ id: serializedLibrary.items[i].id });
+    for (const i in serializedLibrary.items) {
+        const temp = new Item({ id: serializedLibrary.items[i].id });
         temp.load(serializedLibrary.items[i]);
+        // One-shot migration: item.category is now a gear type from GEAR_CATEGORIES.
+        // Normalize free-text values to the enum by fuzzy matching; drop the rest.
+        temp.category = resolveGearCategory(temp.category);
         this.items.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.categories = [];
-    for (var i in serializedLibrary.categories) {
-        var temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
+    for (const i in serializedLibrary.categories) {
+        const temp = new Category({ id: serializedLibrary.categories[i].id, library: this });
         temp.load(serializedLibrary.categories[i]);
         this.categories.push(temp);
         this.idMap[temp.id] = temp;
     }
 
     this.lists = [];
-    for (var i in serializedLibrary.lists) {
-        var temp = new List({ id: serializedLibrary.lists[i].id, library: this });
+    for (const i in serializedLibrary.lists) {
+        const temp = new List({ id: serializedLibrary.lists[i].id, library: this });
         temp.load(serializedLibrary.lists[i]);
         this.lists.push(temp);
         this.idMap[temp.id] = temp;
     }
 
-    if (serializedLibrary.showSidebar) this.showSidebar = serializedLibrary.showSidebar;
+    if (serializedLibrary.showSidebar !== undefined) this.showSidebar = serializedLibrary.showSidebar;
     if (serializedLibrary.totalUnit) this.totalUnit = serializedLibrary.totalUnit;
     if (serializedLibrary.itemUnit) this.itemUnit = serializedLibrary.itemUnit;
     if (serializedLibrary.currencySymbol) this.currencySymbol = serializedLibrary.currencySymbol;
@@ -392,7 +401,7 @@ Library.prototype.sequenceShouldBeCorrect = function (serializedLibrary) {
 Library.prototype.idsShouldBeInts = function (serializedLibrary) {
     // Some lists of Ids were strings previously. They should be numbers.
     serializedLibrary.lists.forEach((list) => {
-        list.categoryIds = list.categoryIds.map(categoryId => parseInt(categoryId, 10));
+        list.categoryIds = list.categoryIds.map((categoryId) => parseInt(categoryId, 10));
     });
 };
 
@@ -437,7 +446,7 @@ Library.prototype.fixDuplicateIds = function (serializedLibrary) {
         foundIds[list.id].push({ type: 'list', list });
     });
 
-    for (id in foundIds) {
+    for (const id in foundIds) {
         if (foundIds[id].length > 1) {
             const duplicateSet = foundIds[id];
             duplicateSet.forEach((duplicate, index) => {

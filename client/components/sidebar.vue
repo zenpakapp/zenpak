@@ -84,14 +84,15 @@ $sidebarPadding: 20px;
     #sidebar {
         box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
         margin-left: 0;
-        opacity: 1;
+        opacity: 0;
         padding-left: $sidebarPadding;
         transform: translateX(-100%);
-        transition: transform $transitionDurationSlow ease-in-out;
+        transition: opacity $transitionDurationSlow ease-in-out, transform $transitionDurationSlow ease-in-out;
         width: $sidebarWidth + $sidebarPadding * 2;
         z-index: $dialog;
 
         .lpHasSidebar & {
+            opacity: 1;
             transform: translateX(0);
         }
     }
@@ -134,7 +135,6 @@ $sidebarPadding: 20px;
     white-space: nowrap;
 }
 
-
 .lpThemeToggle {
     background: transparent;
     border: none;
@@ -157,18 +157,22 @@ $sidebarPadding: 20px;
     <div>
         <div class="lpSidebarOverlay" @click="closeSidebar" />
         <div id="sidebar">
-        <div id="scrollable">
-            <h1>{{ $t('dash.zenPakSidebar') }}</h1>
+            <div id="scrollable">
+                <h1>
+                    {{ $t('dash.zenPakSidebar') }}
+                </h1>
 
-            <libraryLists />
-            <section class="lpGearSection">
-                <h2 class="lpGearSectionHeader">
-                    {{ $t('dash.items') }}
-                    <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">{{ $t('dash.itemLibrary') }}</button>
-                </h2>
-                <libraryItems :show-title="false" />
-            </section>
-        </div>
+                <libraryLists />
+                <section class="lpGearSection">
+                    <h2 class="lpGearSectionHeader">
+                        {{ $t('dash.items') }}
+                        <button class="lpButton lpSmall lpButtonSecondary lpGearRoomBtn" @click="$emit('open-gear-room')">
+                            {{ $t('dash.itemLibrary') }}
+                        </button>
+                    </h2>
+                    <libraryItems :show-title="false" />
+                </section>
+            </div>
         </div>
     </div>
 </template>
@@ -176,6 +180,7 @@ $sidebarPadding: 20px;
 <script>
 import libraryItems from './library-items.vue';
 import libraryLists from './library-lists.vue';
+
 export default {
     name: 'Sidebar',
     components: {

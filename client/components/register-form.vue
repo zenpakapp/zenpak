@@ -4,7 +4,12 @@
 
 <template>
     <div>
-        <template-picker v-if="showTemplatePicker" @select="submitWithTemplate" @dismiss="submitWithTemplate(null)" />
+        <template-picker
+            v-if="showTemplatePicker"
+            :request-display-name="requestDisplayName"
+            @select="submitWithTemplate"
+            @dismiss="submitWithTemplate(null, $event)"
+        />
         <form class="lpRegister lpFields" @submit.prevent="submit">
             <div class="lpFields">
                 <input v-model="username" v-focus-on-create type="text" :placeholder="$t('auth.username')" name="username">
@@ -25,16 +30,25 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import errors from './errors.vue';
 import spinner from './spinner.vue';
-import templatePicker from './template-picker.vue';
 import { push } from '../services/navigation';
 import { getLocalLibrary, hasLocalLibrary, moveLocalLibraryToRegistered } from '../services/browser-storage';
+import { applyQuickSetup } from '../utils/quick-setup';
 import { fetchJson } from '../utils/utils';
 
 const dataTypes = require('../dataTypes.js');
+const {
+    canonicalUsername,
+    isReservedUsername,
+    USERNAME_FORMAT_REGEX,
+    USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH,
+} = require('../../server/username-policy.js');
 
 const Library = dataTypes.Library;
+const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ './template-picker.vue'));
 
 export default {
     name: 'RegisterForm',
@@ -59,6 +73,9 @@ export default {
         isLocalSaving() {
             return this.$store.state.saveType === 'local';
         },
+        requestDisplayName() {
+            return !!(this.pendingRegisterData && !this.pendingRegisterData.localMode);
+        },
     },
     methods: {
         loadLocal() {
@@ -69,15 +86,12 @@ export default {
             this.pendingRegisterData = { localMode: true };
             this.showTemplatePicker = true;
         },
-        loadLocalWithTemplate(templateData) {
+        loadLocalWithTemplate(templateData, setup) {
             this.showTemplatePicker = false;
             this.pendingRegisterData = null;
             const library = new Library();
-            if (templateData) {
-                this.$store.commit('loadLibraryData', JSON.stringify(templateData));
-            } else {
-                this.$store.commit('loadLibraryData', JSON.stringify(library.save()));
-            }
+            const libraryData = applyQuickSetup(templateData || library.save(), setup);
+            this.$store.commit('loadLibraryData', JSON.stringify(libraryData));
             this.$store.commit('setSaveType', 'local');
             this.$store.commit('setLoggedIn', false);
             push('/');
@@ -89,8 +103,16 @@ export default {
                 this.errors.push({ field: 'username', message: this.$t('auth.usernameRequired') });
             }
 
-            if (this.username && (this.username.length < 3 || this.username.length > 32)) {
+            if (this.username && (this.username.length < USERNAME_MIN_LENGTH || this.username.length > USERNAME_MAX_LENGTH)) {
                 this.errors.push({ field: 'username', message: this.$t('auth.usernameLengthError') });
+            }
+
+            if (this.username && !USERNAME_FORMAT_REGEX.test(canonicalUsername(this.username))) {
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameFormatError') });
+            }
+
+            if (this.username && isReservedUsername(this.username)) {
+                this.errors.push({ field: 'username', message: this.$t('auth.usernameReserved') });
             }
 
             if (!this.email) {
@@ -117,7 +139,7 @@ export default {
                 return;
             }
 
-            const registerData = { username: this.username, email: this.email, password: this.password };
+            const registerData = { username: canonicalUsername(this.username), email: this.email.trim().toLowerCase(), password: this.password };
 
             if (hasLocalLibrary()) {
                 registerData.library = getLocalLibrary();
@@ -126,9 +148,9 @@ export default {
             this.pendingRegisterData = registerData;
             this.showTemplatePicker = true;
         },
-        submitWithTemplate(templateData) {
+        submitWithTemplate(templateData, setup) {
             if (this.pendingRegisterData && this.pendingRegisterData.localMode) {
-                this.loadLocalWithTemplate(templateData);
+                this.loadLocalWithTemplate(templateData, setup);
                 return;
             }
 
@@ -136,9 +158,9 @@ export default {
             const registerData = this.pendingRegisterData;
             this.pendingRegisterData = null;
 
-            if (templateData !== null) {
-                registerData.library = JSON.stringify(templateData);
-            }
+            const existingLibraryData = registerData.library ? JSON.parse(registerData.library) : new Library().save();
+            const libraryData = templateData !== null ? templateData : existingLibraryData;
+            registerData.library = JSON.stringify(applyQuickSetup(libraryData, setup));
 
             this.saving = true;
             return fetchJson('/register', {

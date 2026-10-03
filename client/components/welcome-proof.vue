@@ -50,7 +50,7 @@ export default {
             ];
         },
         activeTabData() {
-            return this.tabs.find(t => t.id === this.activeTab);
+            return this.tabs.find((t) => t.id === this.activeTab);
         },
     },
 };

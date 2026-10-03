@@ -1,11 +1,14 @@
 import { createI18n } from 'vue-i18n';
-import en from './locales/en.json';
-import fr from './locales/fr.json';
-import de from './locales/de.json';
-import es from './locales/es.json';
 
 const SUPPORTED = ['en', 'fr', 'de', 'es'];
 const LOCALE_KEY = 'zp-locale';
+const localeLoaders = {
+    en: () => import(/* webpackChunkName: "locale-en" */ './locales/en.json'),
+    fr: () => import(/* webpackChunkName: "locale-fr" */ './locales/fr.json'),
+    de: () => import(/* webpackChunkName: "locale-de" */ './locales/de.json'),
+    es: () => import(/* webpackChunkName: "locale-es" */ './locales/es.json'),
+};
+const loadedLocales = {};
 
 function detectLocale() {
     const saved = localStorage.getItem(LOCALE_KEY);
@@ -18,16 +21,34 @@ export const i18n = createI18n({
     legacy: true,
     locale: detectLocale(),
     fallbackLocale: 'en',
-    messages: { en, fr, de, es },
+    messages: {},
 });
 
-export function setLocale(locale) {
+export async function loadLocale(locale) {
+    const target = SUPPORTED.includes(locale) ? locale : 'en';
+    if (!loadedLocales[target]) {
+        const messages = await localeLoaders[target]();
+        i18n.global.setLocaleMessage(target, messages.default || messages);
+        loadedLocales[target] = true;
+    }
+    return target;
+}
+
+export async function setLocale(locale) {
+    let target = locale;
     if (locale === 'auto') {
         localStorage.removeItem(LOCALE_KEY);
         const lang = (navigator.language || 'en').slice(0, 2).toLowerCase();
-        i18n.global.locale = SUPPORTED.includes(lang) ? lang : 'en';
+        target = SUPPORTED.includes(lang) ? lang : 'en';
     } else if (SUPPORTED.includes(locale)) {
         localStorage.setItem(LOCALE_KEY, locale);
-        i18n.global.locale = locale;
+    } else {
+        target = 'en';
     }
+
+    i18n.global.locale = await loadLocale(target);
+}
+
+export function initLocale() {
+    return loadLocale(i18n.global.locale);
 }

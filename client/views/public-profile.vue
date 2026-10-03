@@ -4,54 +4,72 @@
 
 <template>
     <teleport to="head">
-        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path" />
-        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path" />
+        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
+        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
     </teleport>
     <main class="lpPublicProfile">
-        <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex" />
+        <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex">
 
         <nav v-if="!error" class="lpPublicNav">
-            <router-link :to="backTo">{{ backLabel }}</router-link>
+            <span class="lpPublicProfileNavLeft">
+                <router-link :to="backTo">{{ $t(backLabelKey) }}</router-link>
+            </span>
+            <span class="lpPublicProfileNavRight">
+                <router-link v-if="backTo !== '/community'" to="/community">{{ $t('public.backToCommunity') }}</router-link>
+                <router-link v-if="showAppLink" :to="$store.state.loggedIn ? '/' : '/welcome'">
+                    {{ $store.state.loggedIn ? $t('public.openApp') : $t('public.joinZenPak') }}
+                </router-link>
+            </span>
         </nav>
 
-        <p v-if="isLoading">{{ $t('public.loading') }}</p>
+        <p v-if="isLoading">
+            {{ $t('public.loading') }}
+        </p>
         <div v-else-if="error" class="lpPublicError">
-            <div class="lpPublicErrorIcon">×</div>
-            <h2 v-if="error === 'Profile not found.'">{{ $t('public.profileNotFoundTitle') }}</h2>
-            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">{{ $t('public.profileNotFoundSub') }}</p>
-            <h2 v-else>{{ $t('public.unableToLoadProfile') }}</h2>
+            <div class="lpPublicErrorIcon">
+                ×
+            </div>
+            <h2 v-if="error === 'Profile not found.'">
+                {{ $t('public.profileNotFoundTitle') }}
+            </h2>
+            <p v-if="error === 'Profile not found.'" class="lpPublicErrorSub">
+                {{ $t('public.profileNotFoundSub') }}
+            </p>
+            <h2 v-else>
+                {{ $t('public.unableToLoadProfile') }}
+            </h2>
             <router-link :to="$store.state.loggedIn ? '/' : '/welcome'" class="lpPublicErrorBack">
                 {{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}
             </router-link>
         </div>
         <template v-else-if="profile">
-
             <!-- Hero -->
             <div class="lpPublicHero">
                 <div class="lpPublicHeroInner">
-                    <div class="lpPublicAvatar">
-                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName" />
-                        <upgrade-prompt v-else-if="isOwnProfile && !isTrail" tier="trail" feature="profileCustomization" mode="inline" />
+                    <div class="lpPublicAvatar" :class="{ lpPublicAvatarImage: profile.avatarUrl }">
+                        <img v-if="profile.avatarUrl" :src="profile.avatarUrl" :alt="profile.displayName">
                         <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                     </div>
                     <div class="lpPublicHeroMeta">
                         <div class="lpPublicNameRow">
-                            <h1 class="lpPublicName">{{ profile.displayName }}</h1>
-                            <span v-if="isCreator" class="lpPublicBadge">Wayfarer</span>
-                            <span v-else-if="isSupporter" class="lpPublicBadge">Kin</span>
+                            <h1 class="lpPublicName">
+                                {{ profile.displayName }}
+                            </h1>
+                            <span v-if="isCreator" class="lpPublicBadge">{{ tierLabel('guide') }}</span>
+                            <span v-else-if="isSupporter" class="lpPublicBadge">{{ tierLabel('trail') }}</span>
                         </div>
-                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !profile.bio" tier="trail" feature="profileCustomization" mode="inline" />
-                        <p v-else-if="profile.bio" class="lpPublicBio">{{ profile.bio }}</p>
+                        <p v-if="profile.bio" class="lpPublicBio">
+                            {{ profile.bio }}
+                        </p>
                         <div class="lpPublicStats">
                             <span><strong>{{ lists.length }}</strong> {{ $t('public.statLists') }}</span>
                             <span><strong>{{ followerCount }}</strong> {{ $t('public.statFollowers') }}</span>
                             <span><strong>{{ followingCount }}</strong> {{ $t('public.statFollowing') }}</span>
                         </div>
-                        <upgrade-prompt v-if="isOwnProfile && !isTrail && !safeLinks.length" tier="trail" feature="profileCustomization" mode="inline" />
-                        <ul v-else-if="safeLinks.length" class="lpPublicLinks">
+                        <ul v-if="safeLinks.length" class="lpPublicLinks">
                             <li v-for="link in safeLinks" :key="link.url">
                                 <a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label || link.url }}</a>
                             </li>
@@ -74,25 +92,37 @@
 
             <!-- Listes -->
             <div v-if="lists && lists.length">
-                <div class="lpPublicListsHeader">{{ $t('public.publicLists') }}</div>
+                <div class="lpPublicListsHeader">
+                    {{ $t('public.publicLists') }}
+                </div>
                 <router-link
                     v-for="list in lists"
                     :key="list.externalId"
-                    :to="`/p/${list.externalId}`"
+                    :to="listTo(list.externalId)"
                     class="lpPublicListCard"
                 >
-                    <div class="lpPublicListName">{{ list.name }}</div>
-                    <div v-if="list.description" class="lpPublicListDesc">{{ list.description }}</div>
-                    <div class="lpPublicListMeta">
-                        <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }} base</span>
-                        <span v-if="list.totalQty">📦 {{ list.totalQty }} items</span>
+                    <div class="lpPublicListCardTop">
+                        <div class="lpPublicListName">
+                            {{ list.name }}
+                        </div>
+                        <div class="lpPublicListMeta">
+                            <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }}</span>
+                            <span v-if="list.totalQty">📦 {{ list.totalQty }}</span>
+                        </div>
+                    </div>
+                    <div v-if="list.description" class="lpPublicListDesc">
+                        {{ list.description }}
                     </div>
                 </router-link>
             </div>
-            <p v-else style="color: var(--color-text-muted); font-size: 14px;">{{ $t('public.noPublicLists') }}</p>
+            <p v-else style="color: var(--color-text-muted); font-size: 14px;">
+                {{ $t('public.noPublicLists') }}
+            </p>
 
             <aside v-if="affiliateDisclosure || creatorCodes.length" class="lpPublicDisclosure">
-                <p v-if="affiliateDisclosure">{{ affiliateDisclosure }}</p>
+                <p v-if="affiliateDisclosure">
+                    {{ affiliateDisclosure }}
+                </p>
                 <div v-if="creatorCodes.length" class="lpPublicCreatorCodes">
                     <strong>{{ $t('public.creatorCodes') }}</strong>
                     <ul>
@@ -103,7 +133,6 @@
                     </ul>
                 </div>
             </aside>
-
         </template>
     </main>
 </template>
@@ -113,18 +142,16 @@ import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
+import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
-import upgradePrompt from '../components/upgrade-prompt.vue';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 
 export default {
     name: 'PublicProfile',
-    components: { upgradePrompt },
     setup() {
         useTheme();
         const route = useRoute();
-        const { backTo, backLabel } = useBackNav();
+        const { backTo, backLabelKey } = useBackNav();
         const username = route.params.username;
         const {
             following,
@@ -133,13 +160,16 @@ export default {
             follow: followUser,
             unfollow: unfollowUser,
         } = useFollow(username);
-        return { following, mode, followLoading, followUser, unfollowUser, backTo, backLabel };
+        return {
+            following, mode, followLoading, followUser, unfollowUser, backTo, backLabelKey,
+        };
     },
     data() {
         return {
             isLoading: true,
             error: null,
             profile: null,
+            profileUsername: '',
             entitlements: null,
             lists: [],
             affiliateDisclosure: null,
@@ -180,9 +210,9 @@ export default {
         avatarLetter() {
             return avatarInitial(this.profile && this.profile.displayName, this.$route.params.username);
         },
-        isTrail() {
-            const lib = this.$store.state.library;
-            return lib && lib.entitlements && hasFeature(lib.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
+        showAppLink() {
+            const appPath = this.$store.state.loggedIn ? '/' : '/welcome';
+            return this.backTo !== appPath;
         },
     },
     created() {
@@ -190,6 +220,7 @@ export default {
         fetchJson(`/api/public/profile/${username}`)
             .then((payload) => {
                 this.profile = payload.profile;
+                this.profileUsername = payload.username || username;
                 this.entitlements = payload.entitlements;
                 this.lists = payload.lists || [];
                 this.affiliateDisclosure = payload.affiliateDisclosure;
@@ -218,6 +249,7 @@ export default {
             });
     },
     methods: {
+        tierLabel,
         updateDocumentMeta() {
             if (!this.profile) return;
             document.title = `${this.profile.displayName || 'Public profile'} - ZenPak`;
@@ -233,10 +265,16 @@ export default {
                 robots.remove();
             }
         },
-        formatWeight(grams) {
-            if (!grams) return '';
-            const kg = grams / 1000;
-            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${grams} g`;
+        formatWeight(mg) {
+            if (!mg) return '';
+            const kg = mg / 1000000;
+            return kg >= 1 ? `${kg.toFixed(1)} kg` : `${Math.round(mg / 1000)} g`;
+        },
+        listTo(externalId) {
+            const profileUsername = this.profileUsername || this.$route.params.username;
+            return this.$route.query.from === 'community'
+                ? { path: `/p/${externalId}`, query: { from: 'community', profile: profileUsername } }
+                : `/p/${externalId}`;
         },
         async toggleFollow() {
             if (!this.isLoggedIn) return;

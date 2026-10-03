@@ -10,10 +10,18 @@
             <h3>{{ $t('auth.resetPasswordTitle') }}</h3>
 
             <div v-if="success">
-                <p>{{ $t('auth.passwordUpdated') }} <router-link to="/welcome" class="lpHref">{{ $t('auth.signIn') }} →</router-link></p>
+                <p>
+                    {{ $t('auth.passwordUpdated') }} <router-link to="/welcome" class="lpHref">
+                        {{ $t('auth.signIn') }} →
+                    </router-link>
+                </p>
             </div>
             <div v-else-if="!token">
-                <p>{{ $t('auth.invalidResetLink') }} <router-link to="/forgot-password" class="lpHref">{{ $t('auth.requestNewResetLink') }} →</router-link></p>
+                <p>
+                    {{ $t('auth.invalidResetLink') }} <router-link to="/forgot-password" class="lpHref">
+                        {{ $t('auth.requestNewResetLink') }} →
+                    </router-link>
+                </p>
             </div>
             <div v-else>
                 <form @submit.prevent="submit">

@@ -92,8 +92,8 @@ import { bindWindowListeners, unbindWindowListeners } from '../services/window-e
 
 export default {
     name: 'UnitSelect',
-    emits: ['change'],
     props: ['weight', 'unit'],
+    emits: ['change'],
     data() {
         return {
             units: [
@@ -146,7 +146,7 @@ export default {
             unbindWindowListeners(this.closeBindings);
         },
         closeOnEscape(evt) {
-            if (evt.keyCode === 27) {
+            if (evt.key === 'Escape') {
                 this.close();
             }
         },
