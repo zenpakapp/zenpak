@@ -19,6 +19,10 @@ function copiedItemSignature(item) {
     ].join('|');
 }
 
+function hasSourceId(value) {
+    return value !== undefined && value !== null && value !== '';
+}
+
 function createImportedItem(library, category, row) {
     const item = library.newItem({ category, _isNew: false });
     item.name = row.name;
@@ -127,10 +131,15 @@ module.exports = {
 
         let mergedCount = 0;
         let newCount = 0;
+        const itemLinks = [];
+        const categoryLinks = [];
 
         for (const catDef of (categories || [])) {
             const category = state.library.newCategory({ list, _isNew: false });
             category.name = catDef.name;
+            if (hasSourceId(catDef.sourceCategoryId)) {
+                categoryLinks.push({ categoryId: category.id, sourceCategoryId: catDef.sourceCategoryId });
+            }
 
             for (const ci of (catDef.categoryItems || [])) {
                 const signature = copiedItemSignature(ci);
@@ -168,7 +177,17 @@ module.exports = {
                     categoryItem.consumable = ci.consumable === true;
                     categoryItem.star = ci.star || 0;
                 }
+                if (hasSourceId(ci.sourceItemId)) {
+                    itemLinks.push({ categoryId: category.id, itemId: item.id, sourceItemId: ci.sourceItemId });
+                }
             }
+        }
+
+        // Links are placement pairs, not a map keyed by local item id: the signature merge above
+        // can fold two source items into one local item, and both links must survive.
+        if (list.forkedFrom && Number.isInteger(list.forkedFrom.version)) {
+            list.forkedFrom.itemLinks = itemLinks;
+            list.forkedFrom.categoryLinks = categoryLinks;
         }
 
         state.library.defaultListId = list.id;

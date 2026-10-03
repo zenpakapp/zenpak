@@ -111,6 +111,56 @@ function run() {
     assert('public copy keeps same-name variants separate', copiedVariants.length === 2);
     assert('public copy preserves second variant description', copiedVariants.some(item => item.description === 'T-shirt manches courtes mérinos bleu'));
 
+    const linkState = { library: new Library(), globalAlerts: [], loggedIn: 'bob' };
+    const existingStove = linkState.library.newItem({});
+    existingStove.name = 'Stove';
+    existingStove.brand = 'BRS';
+    existingStove.weight = 25000;
+    mutations.importPublicList(linkState, {
+        listName: 'Linked source',
+        description: '',
+        forkedFrom: { externalId: 'src1', ownerUsername: 'alice', listName: 'Linked source', version: 3 },
+        categories: [
+            {
+                sourceCategoryId: 50,
+                name: 'Shelter',
+                categoryItems: [
+                    { sourceItemId: 101, name: 'Tent', weight: 900000, qty: 1 },
+                    { sourceItemId: 102, name: 'Stake', weight: 8000, qty: 6 },
+                ],
+            },
+            {
+                sourceCategoryId: 60,
+                name: 'Cook',
+                categoryItems: [
+                    { sourceItemId: 103, name: 'Stove', brand: 'BRS', weight: 25000, qty: 1 },
+                    { sourceItemId: 104, name: 'Stake', weight: 8000, qty: 2 },
+                ],
+            },
+        ],
+    });
+    const linkedList = linkState.library.lists[linkState.library.lists.length - 1];
+    const links = linkedList.forkedFrom.itemLinks || [];
+    const linkFor = (sourceItemId) => links.find((link) => link.sourceItemId === sourceItemId) || {};
+    assert('fork keeps the copied version', linkedList.forkedFrom.version === 3);
+    assert('one item link per imported placement', links.length === 4);
+    assert('item links point at local categories of the new list', links.length > 0 && links.every((link) => linkedList.categoryIds.includes(link.categoryId)));
+    assert('a new item is linked to its source item', Boolean(linkFor(101).itemId) && linkState.library.getItemById(linkFor(101).itemId).name === 'Tent');
+    assert('an item merged into an existing local item is linked too', linkFor(103).itemId === existingStove.id);
+    assert('two source items merged into one local item keep both links', Boolean(linkFor(102).itemId) && linkFor(102).itemId === linkFor(104).itemId && linkFor(102).categoryId !== linkFor(104).categoryId);
+    assert('category links map local categories to source categories', JSON.stringify((linkedList.forkedFrom.categoryLinks || []).map((link) => link.sourceCategoryId)) === JSON.stringify([50, 60]));
+    assert('category links use the new list category ids', (linkedList.forkedFrom.categoryLinks || []).length === 2 && linkedList.forkedFrom.categoryLinks.every((link) => linkedList.categoryIds.includes(link.categoryId)));
+
+    const legacyState = { library: new Library(), globalAlerts: [], loggedIn: 'bob' };
+    mutations.importPublicList(legacyState, {
+        listName: 'Old server',
+        description: '',
+        forkedFrom: { externalId: 'src2', ownerUsername: 'alice', listName: 'Old server' },
+        categories: [{ name: 'Shelter', categoryItems: [{ name: 'Tarp', weight: 300000, qty: 1 }] }],
+    });
+    const legacyList = legacyState.library.lists[legacyState.library.lists.length - 1];
+    assert('a payload without version stores no links', !('itemLinks' in legacyList.forkedFrom) && !('categoryLinks' in legacyList.forkedFrom) && !('version' in legacyList.forkedFrom));
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }
