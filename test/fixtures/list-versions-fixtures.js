@@ -75,7 +75,11 @@ function createUsersStub(users) {
             if (cb) { cb(null, found); return undefined; }
             return Promise.resolve(found);
         },
-        findMany() { return Promise.resolve(users); },
+        findManyCalls: [],
+        findMany(query, options) {
+            this.findManyCalls.push({ query, options });
+            return Promise.resolve(users);
+        },
         save(user) { return Promise.resolve(user); },
     };
 }

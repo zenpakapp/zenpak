@@ -136,17 +136,17 @@ import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop } from '../services/drag-drop';
-import { findForkUpdate } from '../utils/fork-updates.js';
+import { findForkUpdate } from '../utils/fork-updates';
 
 export default {
     name: 'LibraryList',
     components: {
         PopoverHover,
     },
-    props: ['list'],
     inject: {
         forkUpdates: { from: 'forkUpdates', default: () => [] },
     },
+    props: ['list'],
     data() {
         return {
             dragStartIndex: null,

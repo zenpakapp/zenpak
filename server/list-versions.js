@@ -152,9 +152,13 @@ async function getForkUpdates(user) {
     if (!forks.length) return [];
 
     const latest = await getLatestVersions(forks.map((list) => list.forkedFrom.externalId));
-    const ownerIds = [...new Set([...latest.values()].map((row) => String(row.ownerId)))];
+    const ownerIds = [...new Set([...latest.values()].map((row) => String(row.ownerId)))].filter((id) => ObjectId.isValid(id));
     if (!ownerIds.length) return [];
-    const owners = await db.users.findMany({ _id: { $in: ownerIds.map((id) => new ObjectId(id)) } });
+    // Only the lists are needed to check the source is still public.
+    const owners = await db.users.findMany(
+        { _id: { $in: ownerIds.map((id) => new ObjectId(id)) } },
+        { projection: { 'library.lists': 1 } },
+    );
     const ownersById = new Map(owners.map((owner) => [String(owner._id), owner]));
 
     return forks.reduce((updates, list) => {
@@ -164,7 +168,9 @@ async function getForkUpdates(user) {
         const owner = ownersById.get(String(row.ownerId));
         const sourceList = owner ? findLiveList(owner, externalId) : null;
         if (!sourceList || !isPublicVisibility(sourceList.visibility)) return updates;
-        updates.push({ listId: list.id, sourceExternalId: externalId, forkedVersion, latestVersion: row.version });
+        updates.push({
+            listId: list.id, sourceExternalId: externalId, forkedVersion, latestVersion: row.version,
+        });
         return updates;
     }, []);
 }

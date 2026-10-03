@@ -181,7 +181,7 @@
 <script>
 import { computed, defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
-import { findForkUpdate } from '../utils/fork-updates.js';
+import { findForkUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';

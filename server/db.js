@@ -49,9 +49,9 @@ function collection(name) {
                 .then((docs) => callback(null, docs))
                 .catch((err) => callback(err, null));
         },
-        findMany(query) {
+        findMany(query, options) {
             return getCollection(name)
-                .then((mongoCollection) => mongoCollection.find(query).toArray());
+                .then((mongoCollection) => mongoCollection.find(query, options).toArray());
         },
         findSorted(query, sort, limit) {
             return getCollection(name)

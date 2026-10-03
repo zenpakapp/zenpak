@@ -31,7 +31,9 @@ listVersionsDb.rows.push(
     { externalId: 'src2', version: 1, ownerId: carol._id },
     { externalId: 'src2', version: 2, ownerId: carol._id },
 );
-stubServerModule('db.js', { listVersions: listVersionsDb, users: createUsersStub([alice, carol, bob]) });
+listVersionsDb.rows.push({ externalId: 'badowner', version: 2, ownerId: 'not-an-object-id' });
+const usersDb = createUsersStub([alice, carol, bob]);
+stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb });
 
 const currentUser = bob;
 stubServerModule('auth.js', { authenticateUser(req, res, cb) { cb(req, res, currentUser); } });
@@ -78,6 +80,15 @@ async function run() {
     alice.library.lists[0].externalId = 'renamed';
     assert('a source list gone from its owner library gives none', (await getForkUpdates(bob)).length === 0);
     alice.library.lists[0].externalId = 'src1';
+
+    const lastFind = usersDb.findManyCalls[usersDb.findManyCalls.length - 1];
+    const projection = lastFind && lastFind.options && lastFind.options.projection;
+    assert('source owners are loaded with a lists-only projection', Boolean(projection) && projection['library.lists'] === 1 && Object.keys(projection).length === 1);
+
+    const dave = { _id: new ObjectId(), library: { lists: [{ id: 1, forkedFrom: { externalId: 'badowner', version: 1 } }] } };
+    let badOwnerUpdates = null;
+    try { badOwnerUpdates = await getForkUpdates(dave); } catch (err) { badOwnerUpdates = err; }
+    assert('a malformed source ownerId is skipped instead of throwing', Array.isArray(badOwnerUpdates) && badOwnerUpdates.length === 0);
 
     assert('a user with no lists gets an empty array', (await getForkUpdates({ _id: new ObjectId(), library: {} })).length === 0);
 
