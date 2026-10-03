@@ -135,6 +135,9 @@ async function run() {
     assert('copy payload preserves affiliate URL', responseData.categories[0].categoryItems[0].affiliateUrl === 'https://example.com/platypus?ref=alice');
     assert('copy payload preserves promo code', responseData.categories[0].categoryItems[0].promoCode === 'ALICE10');
     assert('copy payload preserves promo label', responseData.categories[0].categoryItems[0].promoLabel === '10% off');
+    assert('copy payload exposes the source category id', responseData.categories[0].sourceCategoryId === 'cat-hydration');
+    assert('copy payload exposes each source item id', responseData.categories[0].categoryItems.map((i) => i.sourceItemId).join() === 'item-zero,item-two,item-half');
+    assert('copy payload records the copied version', responseData.forkedFrom && responseData.forkedFrom.version === 1);
 
     // Test: cannot copy own list
     savedUsers.length = 0;

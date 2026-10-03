@@ -331,11 +331,13 @@ router.post('/copy-list/:externalId', (req, res) => {
             const categories = (published.categories || [])
                 .filter((c) => categoryIds.includes(String(c.id)))
                 .map((c) => ({
+                    sourceCategoryId: c.id,
                     name: c.name,
                     categoryItems: (c.categoryItems || []).map((ci) => {
                         const item = (published.items || []).find((i) => String(i.id) === String(ci.itemId));
                         if (!item) return null;
                         return {
+                            sourceItemId: item.id,
                             name: item.name || '',
                             description: item.description || '',
                             weight: Number(item.weight) || 0,
@@ -367,6 +369,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                 listName,
                 sourceCurrencySymbol,
                 copiedAt: new Date().toISOString(),
+                version: version.version,
             };
 
             return res.json({
