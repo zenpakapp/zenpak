@@ -226,6 +226,11 @@ module.exports = {
         const list = state.library.getListById(args.list.id);
         list.externalId = args.externalId;
     },
+    dismissForkUpdate(state, { listId, version }) {
+        const list = state.library.getListById(listId);
+        if (!list || !list.forkedFrom) return;
+        list.forkedFrom = { ...list.forkedFrom, dismissedVersion: version };
+    },
     updateCategoryName(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
         category.name = updatedCategory.name;
