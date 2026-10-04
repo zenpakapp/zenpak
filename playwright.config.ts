@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -13,10 +13,10 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   use: {
-    baseURL: 'http://127.0.0.1:3101',
-    trace: 'on-first-retry',
+    baseURL: "http://127.0.0.1:3101",
+    trace: "on-first-retry",
   },
-  testDir: './test/e2e',
+  testDir: "./test/e2e",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -26,17 +26,17 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: "html",
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
 
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"] },
     },
     /* TODO: investigate why webkit appears to be broken */
     /*{
@@ -67,8 +67,10 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 npm run start',
-    url: 'http://127.0.0.1:3101',
+    // AUTH_RATE_LIMIT_MAX: the suite registers dozens of users from one IP, past the default limit of 10.
+    command:
+      "NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 AUTH_RATE_LIMIT_MAX=1000 npm run start",
+    url: "http://127.0.0.1:3101",
     reuseExistingServer: !process.env.CI,
   },
 });
