@@ -14,10 +14,13 @@ async function getForkDiff(user, listId) {
     const lists = (user && user.library && user.library.lists) || [];
     const fork = lists.find((list) => String(list.id) === String(listId));
     if (!isTrackedFork(fork)) return null;
-    const { externalId, version: forkedVersion } = fork.forkedFrom;
+    const { externalId, version: forkedVersion, ownerId: copiedOwnerId } = fork.forkedFrom;
 
     const latest = await getLatest(externalId);
     if (!latest) return null;
+    // externalId is client-authored and can be reused after an account deletion: only diff
+    // against the account this list was actually copied from.
+    if (!copiedOwnerId || String(copiedOwnerId) !== String(latest.ownerId)) return null;
     const owner = await db.users.findOne({ _id: latest.ownerId });
     const liveList = owner ? findLiveList(owner, externalId) : null;
     if (!liveList || !isPublicVisibility(liveList.visibility)) return null;

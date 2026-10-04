@@ -11,10 +11,12 @@ const bob = {
     username: 'bob',
     library: {
         lists: [
-            { id: 1, name: 'My PCT', forkedFrom: { externalId: 'abc123', version: 1 } },
+            { id: 1, name: 'My PCT', forkedFrom: { externalId: 'abc123', version: 1, ownerId: String(alice._id) } },
             { id: 2, name: 'Legacy', forkedFrom: { externalId: 'abc123', ownerUsername: 'alice' } },
             { id: 3, name: 'Mine' },
-            { id: 4, name: 'Pruned base', forkedFrom: { externalId: 'abc123', version: 7 } },
+            { id: 4, name: 'Pruned base', forkedFrom: { externalId: 'abc123', version: 7, ownerId: String(alice._id) } },
+            { id: 5, name: 'Reused id', forkedFrom: { externalId: 'abc123', version: 1, ownerId: String(new ObjectId()) } },
+            { id: 6, name: 'No owner recorded', forkedFrom: { externalId: 'abc123', version: 1 } },
         ],
     },
 };
@@ -103,6 +105,8 @@ async function run() {
     assert('a list that is not a fork gets null', (await getForkDiff(bob, 3)) === null);
     assert('an unknown list id gets null', (await getForkDiff(bob, 99)) === null);
     assert('a missing base version gets null', (await getForkDiff(bob, 4)) === null);
+    assert('an externalId now published by another account than the one copied gets null', (await getForkDiff(bob, 5)) === null);
+    assert('a fork that recorded no source owner gets null', (await getForkDiff(bob, 6)) === null);
 
     const liveList = alice.library.lists[0];
     liveList.publicFields = { ...liveList.publicFields, price: false };
