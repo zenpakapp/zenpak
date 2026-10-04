@@ -41,12 +41,22 @@ libraryMutations.dismissForkUpdate(state, { listId: 999999, version: 2 });
 assert('no-op on an unknown list id', true);
 
 console.log('\n--- list.versioning i18n ---');
-const versioningKeys = ['updateBadge', 'bannerText', 'viewOriginal', 'dismiss'];
+const versioningKeys = [
+    'updateBadge', 'bannerText', 'viewOriginal', 'dismiss', 'viewChanges', 'diffTitle', 'diffLoading', 'diffError', 'diffEmpty',
+    'diffBaseWeight', 'diffItemCount', 'diffAdded', 'diffRemoved', 'diffMoved', 'diffModified', 'diffCategoriesRenamed',
+    'diffListDetails', 'diffAffiliate',
+];
+const diffFieldKeys = [
+    'name', 'description', 'brand', 'shop', 'weight', 'price', 'qty', 'worn', 'consumable', 'star', 'imageUrl', 'image',
+    'publicUrl', 'promoCode', 'promoLabel', 'seasons', 'listTypes',
+];
 ['en', 'fr', 'de', 'es'].forEach((locale) => {
     const messages = require(`../client/locales/${locale}.json`);
     const block = messages.list && messages.list.versioning;
     assert(`${locale} has every list.versioning key`, Boolean(block) && versioningKeys.every((key) => typeof block[key] === 'string' && block[key].length > 0));
     assert(`${locale} keeps the {version} placeholder`, Boolean(block) && block.updateBadge.includes('{version}') && block.bannerText.includes('{version}'));
+    assert(`${locale} keeps the {from}/{to} placeholders`, Boolean(block) && typeof block.diffTitle === 'string' && block.diffTitle.includes('{from}') && block.diffTitle.includes('{to}'));
+    assert(`${locale} has every diff field label`, Boolean(block && block.diffFields) && diffFieldKeys.every((key) => typeof block.diffFields[key] === 'string' && block.diffFields[key].length > 0));
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);
