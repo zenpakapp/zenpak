@@ -30,6 +30,9 @@ function createListVersionsStub() {
             matches.sort((a, b) => (dir < 0 ? b[key] - a[key] : a[key] - b[key]));
             return Promise.resolve(matches.slice(0, limit));
         },
+        findOne(query) {
+            return Promise.resolve(rows.find((row) => matchesFilter(row, query)) || null);
+        },
         updateOne(filter, update, options) {
             const exists = rows.some((row) => matchesFilter(row, filter));
             if (exists || !(options && options.upsert)) return Promise.resolve({ upsertedCount: 0 });

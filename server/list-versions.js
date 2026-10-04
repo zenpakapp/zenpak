@@ -122,6 +122,11 @@ async function getLatest(externalId) {
     return rows[0] || null;
 }
 
+async function getVersion(externalId, version) {
+    if (!externalId || !Number.isInteger(version) || !db.listVersions) return null;
+    return (await db.listVersions.findOne({ externalId, version })) || null;
+}
+
 async function getLatestOwnedVersion(user, externalId) {
     const latest = await getLatest(externalId);
     if (!latest || String(latest.ownerId) !== String(user._id)) return null;
@@ -226,15 +231,8 @@ async function getPublishStatus(user, externalId) {
     };
 }
 
-// Live identity + frozen content + live share settings. Null unless the list is currently
-// shared AND has a snapshot owned by this user. Public readers use this instead of the live library.
-async function getServedUser(user, externalId) {
-    const liveList = findLiveList(user, externalId);
-    if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
-
-    const version = await getLatestOwnedVersion(user, externalId);
-    if (!version) return null;
-
+// Live identity + frozen content of one version + live share settings.
+function buildServedUser(user, liveList, version) {
     const library = clone(version.library);
     const publishedList = library.lists[0];
     SHARE_SETTING_FIELDS.forEach((field) => {
@@ -247,6 +245,17 @@ async function getServedUser(user, externalId) {
         else library[field] = liveLibrary[field];
     });
     return { ...user, library, publishedVersion: version.version };
+}
+
+// Null unless the list is currently shared AND has a snapshot owned by this user.
+// Public readers use this instead of the live library.
+async function getServedUser(user, externalId) {
+    const liveList = findLiveList(user, externalId);
+    if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
+
+    const version = await getLatestOwnedVersion(user, externalId);
+    if (!version) return null;
+    return buildServedUser(user, liveList, version);
 }
 
 // library.lists.externalId is client-authored and not unique, so the owner comes from the snapshot,
@@ -291,7 +300,11 @@ module.exports = {
     hashFrozenLibrary,
     computeTotals,
     normalizeNote,
+    findLiveList,
+    isTrackedFork,
+    buildServedUser,
     getLatest,
+    getVersion,
     getLatestOwnedVersion,
     getLatestVersions,
     getForkUpdates,

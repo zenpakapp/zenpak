@@ -3,6 +3,7 @@ const express = require('express');
 const auth = require('./auth.js');
 const { logWithRequest } = require('./log.js');
 const { publishVersion, getPublishStatus, getForkUpdates } = require('./list-versions.js');
+const { getForkDiff } = require('./fork-diff.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const router = express.Router();
@@ -75,6 +76,20 @@ router.get('/api/lists/fork-updates', (req, res) => {
             return res.json({ updates: await getForkUpdates(user) });
         } catch (err) {
             logWithRequest(req, { message: 'fork updates failed', username: user.username, error: err.message });
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+router.get('/api/lists/fork-diff/:listId', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '').trim();
+        try {
+            const result = await getForkDiff(user, listId);
+            if (!result) return res.status(404).json({ message: 'Not found' });
+            return res.json(result);
+        } catch (err) {
+            logWithRequest(req, { message: 'fork diff failed', username: user.username, listId, error: err.message });
             return res.status(500).json({ message: 'An error occurred' });
         }
     });
