@@ -70,7 +70,7 @@
 
 <template>
     <div class="lpSelectWrap">
-        <select class="lpInvisible" :value="value" tabindex="-1" @change="select($event.target.value)">
+        <select class="lpInvisible" :value="value" :aria-label="ariaLabel || null" tabindex="-1" @change="select($event.target.value)">
             <option v-for="opt in options" :key="opt.value" :value="opt.value">
                 {{ opt.label }}
             </option>
@@ -107,6 +107,7 @@ export default {
     props: {
         value: { type: String, required: true },
         options: { type: Array, required: true },
+        ariaLabel: { type: String, default: '' },
     },
     emits: ['change'],
     data() {
