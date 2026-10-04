@@ -184,8 +184,9 @@ test.describe("Billing — past_due banner", () => {
     await page.locator(".accountDropdownName").hover();
     await page.getByText("Account Settings").click();
 
+    // Shown both in the dashboard banner and in the account dialog's billing alert.
     await expect(
-      page.getByText("payment failed", { exact: false }),
+      page.getByText("payment failed", { exact: false }).first(),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Update Payment" }),
