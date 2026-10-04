@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import path from "path";
 
-import { registerUser } from "./auth-utils";
+import { registerUser, verifyUserEmail, importCsvFile } from "./auth-utils";
 
 const isSuccessfulExternalId = (response) =>
   response.url().includes("/externalId") && response.ok();
@@ -19,9 +19,9 @@ test.describe("Visual refresh", () => {
 
     await registerUser(page, username, password, email);
 
-    await expect(page.getByText(`Signed in as ${username}`)).toBeVisible();
+    await expect(page.locator(".accountDropdownName")).toHaveText(username);
     await expect(page.locator("#getStarted")).toBeVisible();
-    await expect(page.getByText("Welcome to LighterPack!")).toBeVisible();
+    await expect(page.getByText(`Welcome ${username} to ZenPak`)).toBeVisible();
   });
 
   test("should de-emphasize zero-quantity rows in edit and share views", async ({
@@ -38,8 +38,10 @@ test.describe("Visual refresh", () => {
     );
 
     await registerUser(page, username, password, email);
+    // Unverified accounts cannot make lists public, so sharing would 403.
+    await verifyUserEmail(username);
 
-    await page.setInputFiles("#csv", csvPath);
+    await importCsvFile(page, csvPath);
     const importSave = page.waitForResponse(isSuccessfulSave, {
       timeout: 35000,
     });
@@ -61,7 +63,7 @@ test.describe("Visual refresh", () => {
     await page.getByText("Share", { exact: true }).hover();
     await externalIdResponse;
 
-    const shareUrlLocator = page.locator('#shareUrl');
+    const shareUrlLocator = page.locator("#shareUrl");
     await expect(shareUrlLocator).toHaveValue(/\S/, { timeout: 35000 });
     const shareUrl = await shareUrlLocator.inputValue();
     await externalIdSave;
