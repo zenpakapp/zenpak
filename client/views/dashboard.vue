@@ -128,6 +128,9 @@
 
             <div v-if="activeForkUpdate" class="lpVerifyBanner lpForkUpdateBanner">
                 <span>{{ $t('list.versioning.bannerText', { version: activeForkUpdate.latestVersion }) }}</span>
+                <button class="lpVerifyBannerBtn" type="button" @click="openForkDiff">
+                    {{ $t('list.versioning.viewChanges') }}
+                </button>
                 <router-link class="lpVerifyBannerBtn" :to="`/p/${activeForkUpdate.sourceExternalId}`">
                     {{ $t('list.versioning.viewOriginal') }}
                 </router-link>
@@ -206,6 +209,7 @@ const guestSettings = defineAsyncComponent(() => import(/* webpackChunkName: "da
 const lazyDialogs = {
     account: { component: 'account', loader: () => import(/* webpackChunkName: "dialog-account" */ '../components/account.vue') },
     copyList: { component: 'copyList', loader: () => import(/* webpackChunkName: "dialog-copy-list" */ '../components/copy-list.vue') },
+    forkDiff: { component: 'forkDiff', loader: () => import(/* webpackChunkName: "dialog-fork-diff" */ '../components/list-version-diff.vue') },
     deleteAccount: { component: 'accountDelete', loader: () => import(/* webpackChunkName: "dialog-account-delete" */ '../components/account-delete.vue') },
     gearPicker: { component: 'gearPicker', loader: () => import(/* webpackChunkName: "dialog-gear-picker" */ '../components/gear-picker.vue') },
     help: { component: 'help', loader: () => import(/* webpackChunkName: "dialog-help" */ '../components/help.vue') },
@@ -472,6 +476,10 @@ export default {
         dismissForkUpdate() {
             if (!this.list || !this.activeForkUpdate) return;
             this.$store.commit('dismissForkUpdate', { listId: this.list.id, version: this.activeForkUpdate.latestVersion });
+        },
+        openForkDiff() {
+            if (!this.list || !this.activeForkUpdate) return;
+            openDialog('forkDiff', this.list.id).catch(() => {});
         },
         openGearRoom() {
             this.$store.commit('setGearRoomOpen', true);

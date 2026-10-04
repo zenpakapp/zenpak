@@ -89,7 +89,9 @@ router.get('/api/lists/fork-diff/:listId', (req, res) => {
             if (!result) return res.status(404).json({ message: 'Not found' });
             return res.json(result);
         } catch (err) {
-            logWithRequest(req, { message: 'fork diff failed', username: user.username, listId, error: err.message });
+            logWithRequest(req, {
+                message: 'fork diff failed', username: user.username, listId, error: err.message,
+            });
             return res.status(500).json({ message: 'An error occurred' });
         }
     });
