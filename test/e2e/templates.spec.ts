@@ -16,11 +16,20 @@ test.describe("Template picker", () => {
     await page.fill('.lpRegister input[name="passwordConfirm"]', "testtest");
     await page.getByRole("button").filter({ hasText: "Register" }).click();
 
-    await expect(page.getByText("Start with a template")).toBeVisible();
-    await expect(page.getByText("3-Day Backpacking")).toBeVisible();
-    await expect(page.getByText("Weekend Ultralight")).toBeVisible();
-    await expect(page.getByText("Winter Car Camping")).toBeVisible();
-    await expect(page.getByText("Start blank")).toBeVisible();
+    await expect(page.getByText("What is your next adventure?")).toBeVisible();
+    await expect(page.getByText("3-day hike", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("Ultralight weekend", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Long-distance trek", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("4-season hiking", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Create my list" }),
+    ).toBeVisible();
   });
 
   test("register with template populates list categories", async ({ page }) => {
@@ -39,20 +48,23 @@ test.describe("Template picker", () => {
       username,
       "testtest",
       `tpl+${now}@lighterpack.com`,
-      "3-Day Backpacking",
+      "3-day hike",
     );
 
-    await expect(page.getByText(`Signed in as ${username}`)).toBeVisible();
+    await expect(page.locator(".accountDropdownName")).toHaveText(username);
     expect(libraryPayload).not.toBeNull();
 
     const library = JSON.parse(libraryPayload!);
     expect(library.items.length).toBeGreaterThan(0);
     expect(library.lists[0].name).toBe("3-Day Backpacking");
 
-    await expect(page.getByText("Shelter")).toBeVisible();
+    await expect(page.locator("input.lpCategoryName").first()).toBeVisible();
+    await expect(
+      page.locator('input.lpCategoryName[value="Shelter"]'),
+    ).toHaveCount(1);
   });
 
-  test("dismiss picker starts blank — POST fires with empty library", async ({
+  test("dismiss picker starts blank — POST fires without template items", async ({
     page,
   }) => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
@@ -72,8 +84,12 @@ test.describe("Template picker", () => {
       `tpl+${now}@lighterpack.com`,
     );
 
-    await expect(page.getByText(`Signed in as ${username}`)).toBeVisible();
-    expect(libraryPayload).toBeNull();
+    await expect(page.locator(".accountDropdownName")).toHaveText(username);
+    // A blank start may still send the quick-setup choices (units, currency, names),
+    // but never any template items.
+    expect(libraryPayload).not.toBeUndefined();
+    const library = libraryPayload ? JSON.parse(libraryPayload) : { items: [] };
+    expect(library.items ?? []).toHaveLength(0);
   });
 
   test("skip registration with template populates local library", async ({
@@ -81,16 +97,18 @@ test.describe("Template picker", () => {
   }) => {
     await page.goto(testRoot);
 
-    await page.getByText("Skip registration").click();
-    await expect(page.getByText("Start with a template")).toBeVisible();
+    await page.getByText("Skip account for now").click();
+    await expect(page.getByText("What is your next adventure?")).toBeVisible();
 
     await page
-      .getByText("Weekend Ultralight")
+      .getByText("Ultralight weekend", { exact: true })
       .locator("..")
       .locator("..")
       .getByRole("button", { name: "Select" })
       .click();
 
-    await expect(page.getByText("Shelter")).toBeVisible();
+    await expect(
+      page.locator('input.lpCategoryName[value="Shelter"]'),
+    ).toHaveCount(1);
   });
 });

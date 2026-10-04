@@ -55,8 +55,9 @@ export async function registerUserWithTemplate(page, username, password, email, 
     await page.fill('.lpRegister input[name="password"]', password);
     await page.fill('.lpRegister input[name="passwordConfirm"]', password);
     await page.getByRole('button').filter({hasText: 'Register'}).click();
-    await page.getByText(templateName).waitFor();
-    await page.getByText(templateName).locator('..').locator('..').getByRole('button', { name: 'Select' }).click();
+    const templateCard = page.getByText(templateName, { exact: true });
+    await templateCard.waitFor();
+    await templateCard.locator('..').locator('..').getByRole('button', { name: 'Select' }).click();
 }
 
 export async function loginUser(page, username, password) {
