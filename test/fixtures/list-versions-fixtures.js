@@ -81,7 +81,9 @@ function createUsersStub(users) {
         findManyCalls: [],
         findMany(query, options) {
             this.findManyCalls.push({ query, options });
-            return Promise.resolve(users);
+            const wanted = query && query._id;
+            const ids = wanted ? (wanted.$in || [wanted]).map(String) : null;
+            return Promise.resolve(ids ? users.filter((user) => ids.includes(String(user._id))) : users);
         },
         save(user) { return Promise.resolve(user); },
     };

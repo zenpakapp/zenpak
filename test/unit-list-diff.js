@@ -132,6 +132,28 @@ const twice = payload({
 });
 const twiceDiff = diffSnapshots(twice, JSON.parse(JSON.stringify(twice)));
 assert('an item placed twice does not crash or report changes', twiceDiff.moved.length === 0 && twiceDiff.modified.length === 0);
+console.log('\n--- an item placed in two categories ---');
+const twoPlaces = (qtyShelter, qtyCook) => payload({
+    categories: [
+        { id: 5, name: 'Shelter', items: [item(11, { qty: qtyShelter })] },
+        { id: 6, name: 'Cook', items: [item(11, { qty: qtyCook })] },
+    ],
+});
+const secondQty = diffSnapshots(twoPlaces(1, 1), twoPlaces(1, 3));
+const secondQtyChange = secondQty.modified.length === 1 && secondQty.modified[0].changes.find((change) => change.field === 'qty');
+assert('a qty change on the second placement is reported', Boolean(secondQtyChange) && secondQtyChange.from === 1 && secondQtyChange.to === 3);
+assert('that change names the category it happened in', Boolean(secondQtyChange) && secondQtyChange.category.name === 'Cook');
+assert('it is not reported as added, removed or moved', secondQty.added.length + secondQty.removed.length + secondQty.moved.length === 0);
+
+const dropped = diffSnapshots(twoPlaces(1, 1), payload({ categories: [{ id: 5, name: 'Shelter', items: [item(11)] }, { id: 6, name: 'Cook', items: [] }] }));
+assert('dropping the second placement is a removal from that category, not a move', dropped.removed.length === 1 && dropped.removed[0].category.name === 'Cook' && dropped.moved.length === 0);
+
+const gained = diffSnapshots(payload({ categories: [{ id: 5, name: 'Shelter', items: [item(11)] }, { id: 6, name: 'Cook', items: [] }] }), twoPlaces(1, 1));
+assert('gaining a second placement is an addition to that category', gained.added.length === 1 && gained.added[0].category.name === 'Cook' && gained.removed.length === 0 && gained.moved.length === 0);
+
+const singlePlace = diffSnapshots(base, next);
+assert('single placements carry no category on their changes', singlePlace.modified.every((entry) => entry.changes.every((change) => !('category' in change))));
+
 const empty = diffSnapshots({}, next);
 assert('an empty base reports every item as added', empty.added.length === 3 && empty.removed.length === 0);
 

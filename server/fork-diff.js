@@ -6,6 +6,17 @@ const {
     getLatest, getVersion, buildServedUser, findLiveList, isTrackedFork,
 } = require('./list-versions.js');
 
+const OWNER_PROJECTION = {
+    username: 1,
+    'library.lists': 1,
+    'library.publicProfile': 1,
+    'library.entitlements': 1,
+    'library.totalUnit': 1,
+    'library.itemUnit': 1,
+    'library.currencySymbol': 1,
+    'library.creator': 1,
+};
+
 // What changed in the source between the version this fork was copied from and the latest.
 // Bound to the caller's own fork: the base version comes from its forkedFrom, never from input.
 // Both versions go through buildPublicList with the author's live share settings, so anything
@@ -21,7 +32,8 @@ async function getForkDiff(user, listId) {
     // externalId is client-authored and can be reused after an account deletion: only diff
     // against the account this list was actually copied from.
     if (!copiedOwnerId || String(copiedOwnerId) !== String(latest.ownerId)) return null;
-    const owner = await db.users.findOne({ _id: latest.ownerId });
+    // Only what buildServedUser / buildPublicList read: the lists plus the live library overlay.
+    const [owner] = await db.users.findMany({ _id: latest.ownerId }, { projection: OWNER_PROJECTION });
     const liveList = owner ? findLiveList(owner, externalId) : null;
     if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
 

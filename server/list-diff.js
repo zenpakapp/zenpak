@@ -1,7 +1,11 @@
 // Pure diff between two public payloads (buildPublicList output) of the same source list.
 // Items and categories are matched by their author-side id, never by name; order is ignored.
 // Inputs are already sanitized, so the diff can only show what the public page shows.
-const ITEM_FIELDS = ['name', 'description', 'brand', 'shop', 'weight', 'price', 'qty', 'worn', 'consumable', 'star'];
+// Item-level fields (name, weight, ...) are compared once per item; placement-level fields
+// (qty, worn, ...) once per category the item sits in, so an item placed in two categories
+// is compared in both.
+const ITEM_FIELDS = ['name', 'description', 'brand', 'shop', 'weight', 'price'];
+const PLACEMENT_FIELDS = ['qty', 'worn', 'consumable', 'star'];
 const IMAGE_FIELDS = ['imageUrl', 'image'];
 const LINK_FIELDS = ['publicUrl', 'promoCode', 'promoLabel'];
 const AFFILIATE_FIELDS = ['promoCode', 'promoLabel'];
@@ -17,13 +21,14 @@ function summarizeItem(item) {
     };
 }
 
-// First placement wins when the author put the same item in two categories.
+// item id -> every placement of that item, in category order.
 function indexItems(payload) {
     const byId = new Map();
     ((payload && payload.categories) || []).forEach((category) => {
         (category.items || []).forEach((item) => {
             const key = String(item.id);
-            if (!byId.has(key)) byId.set(key, { item, category: { id: category.id, name: category.name } });
+            if (!byId.has(key)) byId.set(key, []);
+            byId.get(key).push({ item, category: { id: category.id, name: category.name } });
         });
     });
     return byId;
@@ -36,42 +41,76 @@ function comparedItemFields(publicFields) {
     return fields;
 }
 
-function diffItemFields(from, to, fields) {
+function diffFields(from, to, fields, category) {
     const affiliateLink = Boolean(from.hasAffiliateLink || to.hasAffiliateLink);
     return fields.reduce((changes, field) => {
         if (sameValue(from[field], to[field])) return changes;
         const affiliate = AFFILIATE_FIELDS.includes(field) || (field === 'publicUrl' && affiliateLink);
-        changes.push({
+        const change = {
             field, from: from[field], to: to[field], affiliate,
-        });
+        };
+        if (category) change.category = category;
+        changes.push(change);
         return changes;
     }, []);
 }
 
+// Same category -> same placement. Leftovers on both sides pair up as moves; any extra
+// next placement is an addition to that category, any extra base one a removal from it.
+function pairPlacements(before, after) {
+    const unmatchedBefore = before.slice();
+    const unmatchedAfter = [];
+    const pairs = [];
+    after.forEach((placement) => {
+        const index = unmatchedBefore.findIndex((entry) => String(entry.category.id) === String(placement.category.id));
+        if (index >= 0) pairs.push([unmatchedBefore.splice(index, 1)[0], placement]);
+        else unmatchedAfter.push(placement);
+    });
+    const moves = [];
+    while (unmatchedBefore.length && unmatchedAfter.length) {
+        const from = unmatchedBefore.shift();
+        const to = unmatchedAfter.shift();
+        moves.push([from, to]);
+        pairs.push([from, to]);
+    }
+    return {
+        pairs, moves, added: unmatchedAfter, removed: unmatchedBefore,
+    };
+}
+
 function diffSnapshots(base, next) {
-    const fields = comparedItemFields(next && next.publicFields);
+    const itemFields = comparedItemFields(next && next.publicFields);
     const before = indexItems(base);
     const after = indexItems(next);
     const added = [];
+    const removed = [];
     const moved = [];
     const modified = [];
 
-    after.forEach((entry, id) => {
+    after.forEach((placements, id) => {
         const previous = before.get(id);
         if (!previous) {
-            added.push({ item: summarizeItem(entry.item), category: entry.category });
+            placements.forEach((placement) => added.push({ item: summarizeItem(placement.item), category: placement.category }));
             return;
         }
-        if (String(previous.category.id) !== String(entry.category.id)) {
-            moved.push({ item: summarizeItem(entry.item), fromCategory: previous.category, toCategory: entry.category });
-        }
-        const changes = diffItemFields(previous.item, entry.item, fields);
-        if (changes.length) modified.push({ item: summarizeItem(entry.item), changes });
+        const paired = pairPlacements(previous, placements);
+        paired.moves.forEach(([from, to]) => {
+            moved.push({ item: summarizeItem(to.item), fromCategory: from.category, toCategory: to.category });
+        });
+        paired.added.forEach((placement) => added.push({ item: summarizeItem(placement.item), category: placement.category }));
+        paired.removed.forEach((placement) => removed.push({ item: summarizeItem(placement.item), category: placement.category }));
+
+        const several = previous.length > 1 || placements.length > 1;
+        const changes = diffFields(previous[0].item, placements[0].item, itemFields);
+        paired.pairs.forEach(([from, to]) => {
+            changes.push(...diffFields(from.item, to.item, PLACEMENT_FIELDS, several ? to.category : null));
+        });
+        if (changes.length) modified.push({ item: summarizeItem(placements[0].item), changes });
     });
 
-    const removed = [];
-    before.forEach((entry, id) => {
-        if (!after.has(id)) removed.push({ item: summarizeItem(entry.item), category: entry.category });
+    before.forEach((placements, id) => {
+        if (after.has(id)) return;
+        placements.forEach((placement) => removed.push({ item: summarizeItem(placement.item), category: placement.category }));
     });
 
     const baseCategories = new Map(((base && base.categories) || []).map((category) => [String(category.id), category]));

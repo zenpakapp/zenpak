@@ -167,9 +167,12 @@ async function getForkUpdates(user) {
     const ownersById = new Map(owners.map((owner) => [String(owner._id), owner]));
 
     return forks.reduce((updates, list) => {
-        const { externalId, version: forkedVersion } = list.forkedFrom;
+        const { externalId, version: forkedVersion, ownerId: copiedOwnerId } = list.forkedFrom;
         const row = latest.get(externalId);
         if (!row || row.version <= forkedVersion) return updates;
+        // externalId is client-authored and can be reused after an account deletion: only
+        // report updates from the account this list was actually copied from.
+        if (!copiedOwnerId || String(copiedOwnerId) !== String(row.ownerId)) return updates;
         const owner = ownersById.get(String(row.ownerId));
         const sourceList = owner ? findLiveList(owner, externalId) : null;
         if (!sourceList || !isPublicVisibility(sourceList.visibility)) return updates;

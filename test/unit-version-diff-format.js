@@ -21,6 +21,17 @@ assert('undefined is a dash', formatDiffValue('brand', undefined) === '—');
 assert('numbers are stringified', formatDiffValue('qty', 2) === '2');
 assert('text is kept', formatDiffValue('name', 'Tent') === 'Tent');
 
+console.log('\n--- friendly values ---');
+const t = (key) => `T:${key}`;
+assert('worn 1 is a check mark', formatDiffValue('worn', 1) === '✓');
+assert('worn 0 is a dash', formatDiffValue('worn', 0) === '—');
+assert('star 1 is a check mark', formatDiffValue('star', 1) === '✓');
+assert('star 0 is a dash', formatDiffValue('star', 0) === '—');
+assert('seasons are translated', formatDiffValue('seasons', ['summer', '3-season'], { t }) === 'T:list.seasonSummer, T:list.season3');
+assert('list types are translated', formatDiffValue('listTypes', ['trek', 'day-hike'], { t }) === 'T:list.typeThru, T:list.typeDay');
+assert('an unknown slug stays as is', formatDiffValue('seasons', ['monsoon'], { t }) === 'monsoon');
+assert('seasons without a translator stay raw', formatDiffValue('seasons', ['summer']) === 'summer');
+
 console.log('\n--- isEmptyDiff ---');
 const none = {
     added: [], removed: [], moved: [], modified: [], categoriesRenamed: [], meta: [], totals: {},

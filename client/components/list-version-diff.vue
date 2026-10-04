@@ -93,7 +93,7 @@
                         <strong>{{ entry.item.name }}</strong>
                         <ul>
                             <li v-for="change in entry.changes" :key="`${entry.item.id}-${change.field}`">
-                                {{ fieldLabel(change.field) }}: {{ value(change.field, change.from) }} → {{ value(change.field, change.to) }}
+                                {{ fieldLabel(change.field) }}<span v-if="change.category" class="lpVersionDiffMuted"> ({{ change.category.name }})</span>: {{ value(change.field, change.from) }} → {{ value(change.field, change.to) }}
                                 <span v-if="change.affiliate" class="lpVersionDiffAffiliate">{{ $t('list.versioning.diffAffiliate') }}</span>
                             </li>
                         </ul>
@@ -182,7 +182,11 @@ export default {
             return this.$t(`list.versioning.diffFields.${field}`);
         },
         value(field, raw) {
-            return formatDiffValue(field, raw, { itemUnit: this.itemUnit, currencySymbol: this.result && this.result.currencySymbol });
+            return formatDiffValue(field, raw, {
+                itemUnit: this.itemUnit,
+                currencySymbol: this.result && this.result.currencySymbol,
+                t: (key) => this.$t(key),
+            });
         },
         weight(mg, unit) {
             return formatDiffValue('weight', mg, { itemUnit: unit });

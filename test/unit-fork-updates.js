@@ -13,13 +13,15 @@ const bob = {
     username: 'bob',
     library: {
         lists: [
-            { id: 1, name: 'Behind', forkedFrom: { externalId: 'src1', version: 1 } },
-            { id: 2, name: 'Current', forkedFrom: { externalId: 'src1', version: 2 } },
+            { id: 1, name: 'Behind', forkedFrom: { externalId: 'src1', version: 1, ownerId: String(alice._id) } },
+            { id: 2, name: 'Current', forkedFrom: { externalId: 'src1', version: 2, ownerId: String(alice._id) } },
             { id: 3, name: 'Legacy', forkedFrom: { externalId: 'src1', ownerUsername: 'alice' } },
-            { id: 4, name: 'String version', forkedFrom: { externalId: 'src1', version: '1' } },
-            { id: 5, name: 'Unpublished source', forkedFrom: { externalId: 'never', version: 1 } },
-            { id: 6, name: 'Private source', forkedFrom: { externalId: 'src2', version: 1 } },
+            { id: 4, name: 'String version', forkedFrom: { externalId: 'src1', version: '1', ownerId: String(alice._id) } },
+            { id: 5, name: 'Unpublished source', forkedFrom: { externalId: 'never', version: 1, ownerId: String(alice._id) } },
+            { id: 6, name: 'Private source', forkedFrom: { externalId: 'src2', version: 1, ownerId: String(carol._id) } },
             { id: 7, name: 'Not a fork', forkedFrom: null },
+            { id: 8, name: 'Reused id', forkedFrom: { externalId: 'src1', version: 1, ownerId: String(new ObjectId()) } },
+            { id: 9, name: 'No owner recorded', forkedFrom: { externalId: 'src1', version: 1 } },
         ],
     },
 };
@@ -72,6 +74,8 @@ async function run() {
     assert('a source with no published version gets none', !byList(5));
     assert('a source that is no longer public gets none', !byList(6));
     assert('a list that is not a fork gets none', !byList(7));
+    assert('an externalId now published by another account than the one copied gets none', !byList(8));
+    assert('a fork that recorded no source owner gets none', !byList(9));
     assert('exactly one update overall', updates.length === 1);
 
     alice.library.lists[0].visibility = 'private';

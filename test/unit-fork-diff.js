@@ -22,7 +22,8 @@ const bob = {
 };
 
 const listVersionsDb = createListVersionsStub();
-stubServerModule('db.js', { listVersions: listVersionsDb, users: createUsersStub([alice, bob]) });
+const usersDb = createUsersStub([alice, bob]);
+stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb });
 const currentUser = bob;
 stubServerModule('auth.js', { authenticateUser(req, res, cb) { cb(req, res, currentUser); } });
 stubServerModule('public-list-projections.js', { syncUserPublicLists: async () => {} });
@@ -100,6 +101,9 @@ async function run() {
     assert('Cook renamed to Kitchen', diff.categoriesRenamed.length === 1 && diff.categoriesRenamed[0].to === 'Kitchen');
     assert('totals from the public payloads', diff.totals.baseWeightFrom === 1100000 && diff.totals.baseWeightTo === 1450000 && diff.totals.qtyFrom === 3 && diff.totals.qtyTo === 4);
     assert('a string list id works too', Boolean(await getForkDiff(bob, '1')));
+    const ownerLookup = usersDb.findManyCalls[usersDb.findManyCalls.length - 1];
+    const projection = ownerLookup && ownerLookup.options && ownerLookup.options.projection;
+    assert('the source owner is loaded with a projection, not the whole document', Boolean(projection) && projection['library.lists'] === 1 && projection['library.items'] === undefined && projection.password === undefined);
 
     assert('a legacy fork gets null', (await getForkDiff(bob, 2)) === null);
     assert('a list that is not a fork gets null', (await getForkDiff(bob, 3)) === null);
