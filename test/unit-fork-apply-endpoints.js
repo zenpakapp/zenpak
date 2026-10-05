@@ -81,6 +81,29 @@ async function run() {
     const missing = await callRoute('get', '/api/lists/fork-apply/:listId', { params: { listId: '2' } });
     assert('404 for a legacy fork', missing.status === 404);
 
+    console.log('\n--- POST /api/lists/fork-apply/:listId/record ---');
+    const post = (listId, body) => callRoute('post', '/api/lists/fork-apply/:listId/record', { params: { listId }, body });
+    const rowsBefore = listCopiesDb.rows.length;
+    const recorded = await post('1', { version: 2 });
+    assert('records the latest version', recorded.status === 200 && recorded.body.recorded === true && recorded.body.version === 2);
+    assert('a registry row exists for bob v2', listCopiesDb.rows.some((r) => r.userId === String(bob._id) && r.externalId === 'abc123' && r.version === 2));
+    await post('1', { version: 2 });
+    assert('recording twice is idempotent', listCopiesDb.rows.length === rowsBefore + 1);
+    assert('an older version is refused (409)', (await post('1', { version: 1 })).status === 409);
+    assert('a future version is refused (409)', (await post('1', { version: 9 })).status === 409);
+    assert('a non-integer version is refused (400)', (await post('1', { version: '2' })).status === 400);
+    assert('a missing body is refused (400)', (await post('1', undefined)).status === 400);
+    assert('a legacy fork gets 404', (await post('2', { version: 2 })).status === 404);
+    assert('a non-fork gets 404', (await post('3', { version: 2 })).status === 404);
+    assert('refused calls wrote nothing', listCopiesDb.rows.length === rowsBefore + 1);
+    const eve = { _id: new ObjectId(), username: 'eve', library: { lists: [{ id: 1, name: 'Forged', forkedFrom: { externalId: 'abc123', version: 1, ownerId: String(alice._id) } }] } };
+    currentUser = eve;
+    assert('a user who never copied v1 cannot register v2', (await post('1', { version: 2 })).status === 404);
+    currentUser = bob;
+    let limited = null;
+    for (let i = 0; i < 31 && !(limited && limited.status === 429); i++) limited = await post('1', { version: 2 });
+    assert('rate limited after 30 calls an hour', limited && limited.status === 429 && Boolean(limited.headers['Retry-After']));
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }
