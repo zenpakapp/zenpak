@@ -22,6 +22,17 @@ async function run() {
     assert('recording the same copy twice stores one row', listCopiesDb.rows.length === 4);
     assert('a row stores the user as a string', listCopiesDb.rows.every((row) => typeof row.userId === 'string'));
 
+    const realUpdateOne = listCopiesDb.updateOne;
+    listCopiesDb.updateOne = () => Promise.reject(Object.assign(new Error('E11000 duplicate key'), { code: 11000 }));
+    let raceError = null;
+    try { await recordCopy('u9', 'src1', 1); } catch (err) { raceError = err; }
+    assert('a duplicate-key race on the unique index is not an error', raceError === null);
+    listCopiesDb.updateOne = () => Promise.reject(new Error('db down'));
+    let dbError = null;
+    try { await recordCopy('u9', 'src1', 1); } catch (err) { dbError = err; }
+    assert('any other database error still surfaces', dbError && dbError.message === 'db down');
+    listCopiesDb.updateOne = realUpdateOne;
+
     const copied = await getCopiedVersions('u1', ['src1', 'src2', 'src3']);
     assert('returns every version copied from a list', hasCopiedVersion(copied, 'src1', 1) && hasCopiedVersion(copied, 'src1', 2));
     assert('returns copies from other lists', hasCopiedVersion(copied, 'src2', 1));

@@ -5,11 +5,16 @@ const db = require('./db.js');
 // diff lookups only trust a version that appears here.
 
 async function recordCopy(userId, externalId, version) {
-    await db.listCopies.updateOne(
-        { userId: String(userId), externalId, version },
-        { $setOnInsert: { copiedAt: new Date() } },
-        { upsert: true },
-    );
+    try {
+        await db.listCopies.updateOne(
+            { userId: String(userId), externalId, version },
+            { $setOnInsert: { copiedAt: new Date() } },
+            { upsert: true },
+        );
+    } catch (err) {
+        // Two simultaneous copies of the same version race on the unique index; the row exists.
+        if (err.code !== 11000) throw err;
+    }
 }
 
 // Map of externalId -> Set of versions this user copied, for the given lists.
