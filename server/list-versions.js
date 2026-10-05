@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { ObjectId } = require('mongodb');
 
 const db = require('./db.js');
+const { getCopiedVersions, hasCopiedVersion } = require('./list-copies.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { Library } = require('../client/models/library.js');
 
@@ -156,7 +157,10 @@ async function getForkUpdates(user) {
     const forks = ((user && user.library && user.library.lists) || []).filter(isTrackedFork);
     if (!forks.length) return [];
 
-    const latest = await getLatestVersions(forks.map((list) => list.forkedFrom.externalId));
+    const externalIds = [...new Set(forks.map((list) => list.forkedFrom.externalId))];
+    // forkedFrom.version is client-authored: only versions the server saw this user copy count.
+    const copied = await getCopiedVersions(user._id, externalIds);
+    const latest = await getLatestVersions(externalIds);
     const ownerIds = [...new Set([...latest.values()].map((row) => String(row.ownerId)))].filter((id) => ObjectId.isValid(id));
     if (!ownerIds.length) return [];
     // Only the lists are needed to check the source is still public.
@@ -168,6 +172,7 @@ async function getForkUpdates(user) {
 
     return forks.reduce((updates, list) => {
         const { externalId, version: forkedVersion, ownerId: copiedOwnerId } = list.forkedFrom;
+        if (!hasCopiedVersion(copied, externalId, forkedVersion)) return updates;
         const row = latest.get(externalId);
         if (!row || row.version <= forkedVersion) return updates;
         // externalId is client-authored and can be reused after an account deletion: only

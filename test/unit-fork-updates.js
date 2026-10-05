@@ -2,7 +2,7 @@
 
 const { ObjectId } = require('mongodb');
 const {
-    createListVersionsStub, createUsersStub, buildOwnerUser, stubServerModule,
+    createListVersionsStub, createListCopiesStub, createUsersStub, buildOwnerUser, stubServerModule,
 } = require('./fixtures/list-versions-fixtures.js');
 
 const alice = buildOwnerUser({ externalId: 'src1', username: 'alice' });
@@ -35,7 +35,12 @@ listVersionsDb.rows.push(
 );
 listVersionsDb.rows.push({ externalId: 'badowner', version: 2, ownerId: 'not-an-object-id' });
 const usersDb = createUsersStub([alice, carol, bob]);
-stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb });
+const listCopiesDb = createListCopiesStub();
+// bob really copied v1 and v2 of src1 and v1 of src2; only forks of those versions are tracked.
+[['src1', 1], ['src1', 2], ['src2', 1]].forEach(([externalId, version]) => {
+    listCopiesDb.rows.push({ userId: String(bob._id), externalId, version });
+});
+stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb, listCopies: listCopiesDb });
 
 const currentUser = bob;
 stubServerModule('auth.js', { authenticateUser(req, res, cb) { cb(req, res, currentUser); } });
@@ -77,6 +82,13 @@ async function run() {
     assert('an externalId now published by another account than the one copied gets none', !byList(8));
     assert('a fork that recorded no source owner gets none', !byList(9));
     assert('exactly one update overall', updates.length === 1);
+
+    const eve = { _id: new ObjectId(), username: 'eve', library: { lists: [{ id: 1, name: 'Forged', forkedFrom: { externalId: 'src1', version: 1, ownerId: String(alice._id) } }] } };
+    assert('a version the user never copied gets no update', (await getForkUpdates(eve)).length === 0);
+    listCopiesDb.rows.push({ userId: String(eve._id), externalId: 'src1', version: 2 });
+    assert('copying another version of the list does not vouch for the forged one', (await getForkUpdates(eve)).length === 0);
+    listCopiesDb.rows.push({ userId: String(eve._id), externalId: 'src1', version: 1 });
+    assert('the same fork is tracked once its version is registered', (await getForkUpdates(eve)).length === 1);
 
     alice.library.lists[0].visibility = 'private';
     assert('unsharing the source removes the update', (await getForkUpdates(bob)).length === 0);

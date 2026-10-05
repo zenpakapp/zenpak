@@ -3,7 +3,7 @@
 
 const { ObjectId } = require('mongodb');
 const {
-    createListVersionsStub, createUsersStub, buildOwnerUser, stubServerModule,
+    createListVersionsStub, createListCopiesStub, createUsersStub, buildOwnerUser, stubServerModule,
 } = require('./fixtures/list-versions-fixtures.js');
 
 const listVersionsDb = createListVersionsStub();
@@ -11,7 +11,7 @@ const owner = buildOwnerUser({ externalId: 'dup1' });
 const impostor = buildOwnerUser({ externalId: 'dup1', username: 'mallory' });
 const copier = { _id: new ObjectId(), username: 'bob', library: { lists: [] } };
 const users = [impostor, owner, copier]; // impostor first: a non-unique externalId query would return it
-stubServerModule('db.js', { listVersions: listVersionsDb, users: createUsersStub(users) });
+stubServerModule('db.js', { listVersions: listVersionsDb, listCopies: createListCopiesStub(),users: createUsersStub(users) });
 stubServerModule('auth.js', { authenticateUser(req, res, cb) { cb(req, res, copier); } });
 stubServerModule('feed-events.js', { getFeedForUser: async () => ({ events: [], nextCursor: null }) });
 

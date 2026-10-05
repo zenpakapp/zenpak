@@ -2,7 +2,7 @@
 
 const { ObjectId } = require('mongodb');
 const {
-    createListVersionsStub, createUsersStub, buildOwnerUser, stubServerModule,
+    createListVersionsStub, createListCopiesStub, createUsersStub, buildOwnerUser, stubServerModule,
 } = require('./fixtures/list-versions-fixtures.js');
 
 const alice = buildOwnerUser({ externalId: 'abc123', username: 'alice' });
@@ -23,7 +23,10 @@ const bob = {
 
 const listVersionsDb = createListVersionsStub();
 const usersDb = createUsersStub([alice, bob]);
-stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb });
+const listCopiesDb = createListCopiesStub();
+// bob really copied v1 of abc123; v7 is registered so the pruned-base case still reaches the version lookup.
+[1, 7].forEach((version) => listCopiesDb.rows.push({ userId: String(bob._id), externalId: 'abc123', version }));
+stubServerModule('db.js', { listVersions: listVersionsDb, users: usersDb, listCopies: listCopiesDb });
 const currentUser = bob;
 stubServerModule('auth.js', { authenticateUser(req, res, cb) { cb(req, res, currentUser); } });
 stubServerModule('public-list-projections.js', { syncUserPublicLists: async () => {} });
@@ -111,6 +114,12 @@ async function run() {
     assert('a missing base version gets null', (await getForkDiff(bob, 4)) === null);
     assert('an externalId now published by another account than the one copied gets null', (await getForkDiff(bob, 5)) === null);
     assert('a fork that recorded no source owner gets null', (await getForkDiff(bob, 6)) === null);
+    const eve = { _id: new ObjectId(), username: 'eve', library: { lists: [{ id: 1, name: 'Forged', forkedFrom: { externalId: 'abc123', version: 1, ownerId: String(alice._id) } }] } };
+    assert('a version the user never copied gets null', (await getForkDiff(eve, 1)) === null);
+    listCopiesDb.rows.push({ userId: String(eve._id), externalId: 'abc123', version: 2 });
+    assert('copying another version does not vouch for the forged one', (await getForkDiff(eve, 1)) === null);
+    listCopiesDb.rows.push({ userId: String(eve._id), externalId: 'abc123', version: 1 });
+    assert('the diff is served once the version is registered', Boolean(await getForkDiff(eve, 1)));
 
     const liveList = alice.library.lists[0];
     liveList.publicFields = { ...liveList.publicFields, price: false };

@@ -51,9 +51,10 @@ const ownerUser2 = {
     },
 };
 
-const { createListVersionsStub } = require('./fixtures/list-versions-fixtures.js');
+const { createListVersionsStub, createListCopiesStub } = require('./fixtures/list-versions-fixtures.js');
 
 const listVersionsDb = createListVersionsStub();
+const listCopiesDb = createListCopiesStub();
 
 const savedUsers = [];
 const dbStub = {
@@ -75,6 +76,7 @@ const dbStub = {
         },
     },
     listVersions: listVersionsDb,
+    listCopies: listCopiesDb,
 };
 require.cache[require.resolve('../server/db.js')] = {
     exports: dbStub, id: require.resolve('../server/db.js'),
@@ -145,6 +147,10 @@ async function run() {
     assert('forkedFrom.copiedAt is a valid ISO date', !Number.isNaN(Date.parse(f1.copiedAt)));
     assert('copy payload includes source seasons', JSON.stringify(response1.seasons) === JSON.stringify(['3-season', 'summer']));
     assert('copy payload includes source list types', JSON.stringify(response1.listTypes) === JSON.stringify(['trek']));
+
+    assert('the copied version is registered server-side for the copier', listCopiesDb.rows.some((row) => row.userId === String(copyUser._id) && row.externalId === 'gr34-summer' && row.version === f1.version));
+    await callCopy('gr34-summer');
+    assert('copying the same version again registers it once', listCopiesDb.rows.filter((row) => row.externalId === 'gr34-summer').length === 1);
 
     const response2 = await callCopy('weekend-budget');
     const f2 = response2.forkedFrom || {};

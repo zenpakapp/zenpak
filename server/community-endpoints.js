@@ -12,6 +12,7 @@ const { getFeedForUser } = require('./feed-events.js');
 const { createNotification } = require('./notifications.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { getLatest } = require('./list-versions.js');
+const { recordCopy } = require('./list-copies.js');
 const {
     incrementPublicListStat,
     normalizeTagArray,
@@ -371,6 +372,9 @@ router.post('/copy-list/:externalId', (req, res) => {
                 copiedAt: new Date().toISOString(),
                 version: version.version,
             };
+            // Registered on every copy (not just the first), so a later copy of a newer
+            // version can be tracked too. The client cannot vouch for forkedFrom.version.
+            await recordCopy(user._id, sourceList.externalId, version.version);
 
             return res.json({
                 listName,

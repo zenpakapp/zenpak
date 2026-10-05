@@ -2,6 +2,7 @@ const db = require('./db.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { buildPublicList } = require('./public-sharing.js');
 const { diffSnapshots } = require('./list-diff.js');
+const { getCopiedVersions, hasCopiedVersion } = require('./list-copies.js');
 const {
     getLatest, getVersion, buildServedUser, findLiveList, isTrackedFork,
 } = require('./list-versions.js');
@@ -26,6 +27,9 @@ async function getForkDiff(user, listId) {
     const fork = lists.find((list) => String(list.id) === String(listId));
     if (!isTrackedFork(fork)) return null;
     const { externalId, version: forkedVersion, ownerId: copiedOwnerId } = fork.forkedFrom;
+    // forkedFrom.version is client-authored: only a version the server saw this user copy counts.
+    const copied = await getCopiedVersions(user._id, [externalId]);
+    if (!hasCopiedVersion(copied, externalId, forkedVersion)) return null;
 
     const latest = await getLatest(externalId);
     if (!latest) return null;

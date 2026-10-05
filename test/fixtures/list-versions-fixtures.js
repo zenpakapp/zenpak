@@ -62,6 +62,23 @@ function createListVersionsStub() {
     };
 }
 
+// In-memory stand-in for db.listCopies (the server-side registry of copied versions).
+function createListCopiesStub() {
+    const rows = [];
+    return {
+        rows,
+        findMany(query) {
+            return Promise.resolve(rows.filter((row) => matchesFilter(row, query)));
+        },
+        updateOne(filter, update, options) {
+            const exists = rows.some((row) => matchesFilter(row, filter));
+            if (exists || !(options && options.upsert)) return Promise.resolve({ upsertedCount: 0 });
+            rows.push({ ...filter, ...update.$setOnInsert });
+            return Promise.resolve({ upsertedCount: 1 });
+        },
+    };
+}
+
 // Stand-in for db.users over a live array. A `library.lists.externalId` query returns the FIRST
 // matching user, like Mongo does for a non-unique field; put an impostor first to prove callers
 // resolve owners by _id instead.
@@ -153,5 +170,5 @@ function buildOwnerUser({ externalId = 'abc123', username = 'alice' } = {}) {
 }
 
 module.exports = {
-    stubServerModule, createListVersionsStub, createUsersStub, buildOwnerUser,
+    stubServerModule, createListVersionsStub, createListCopiesStub, createUsersStub, buildOwnerUser,
 };

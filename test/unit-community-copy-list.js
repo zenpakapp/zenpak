@@ -48,7 +48,7 @@ const copyUser = {
     library: { lists: [] },
 };
 
-const { createListVersionsStub } = require('./fixtures/list-versions-fixtures.js');
+const { createListVersionsStub, createListCopiesStub } = require('./fixtures/list-versions-fixtures.js');
 
 const listVersionsDb = createListVersionsStub();
 
@@ -65,6 +65,7 @@ const dbStub = {
         },
     },
     listVersions: listVersionsDb,
+    listCopies: createListCopiesStub(),
 };
 
 require.cache[require.resolve('../server/db.js')] = {
