@@ -3,7 +3,7 @@ const express = require('express');
 const auth = require('./auth.js');
 const { logWithRequest } = require('./log.js');
 const { publishVersion, getPublishStatus, getForkUpdates } = require('./list-versions.js');
-const { getForkDiff } = require('./fork-diff.js');
+const { getForkDiff, loadForkPayloads } = require('./fork-diff.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const router = express.Router();
@@ -91,6 +91,29 @@ router.get('/api/lists/fork-diff/:listId', (req, res) => {
         } catch (err) {
             logWithRequest(req, {
                 message: 'fork diff failed', username: user.username, listId, error: err.message,
+            });
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+router.get('/api/lists/fork-apply/:listId', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '').trim();
+        try {
+            const loaded = await loadForkPayloads(user, listId);
+            if (!loaded) return res.status(404).json({ message: 'Not found' });
+            return res.json({
+                sourceExternalId: loaded.externalId,
+                fromVersion: loaded.fromVersion,
+                toVersion: loaded.toVersion,
+                currencySymbol: loaded.currencySymbol,
+                base: loaded.basePayload,
+                latest: loaded.latestPayload,
+            });
+        } catch (err) {
+            logWithRequest(req, {
+                message: 'fork apply data failed', username: user.username, listId, error: err.message,
             });
             return res.status(500).json({ message: 'An error occurred' });
         }
