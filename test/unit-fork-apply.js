@@ -199,6 +199,70 @@ console.log('\n--- moves, removals, existing links, untrusted links ---');
     applyUpdate(d.library, d.list, only, empty, 2);
     assert('a source with no categories never leaves the copy with zero (the emptied last category stays, unlinked)', d.list.categoryIds.length === 1 && !d.list.forkedFrom.categoryLinks.some((l) => String(l.sourceCategoryId) === '5'));
 }
+{
+    // Fix 1: undo drops placements whose item the user deleted after the update.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 5 })])]);
+    const c = buildCopy(b);
+    const catA = c.library.getCategoryById(c.list.categoryIds[0]);
+    const own = c.library.newItem({ category: catA, _isNew: false }); own.name = 'Mine';
+    applyUpdate(c.library, c.list, b, n, 2);
+    c.library.removeItem(own.id);
+    undoUpdate(c.library, c.list);
+    const restored = c.library.getCategoryById(c.list.categoryIds[0]);
+    assert('undo leaves no placement pointing at a deleted item', restored.categoryItems.every((ci) => Boolean(c.library.getItemById(ci.itemId))));
+}
+{
+    // Fix 2: totals of the user's other lists follow shared items.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 100 })])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 500 })])]);
+    const c = buildCopy(b);
+    const tent = c.library.items.find((i) => i.name === 'Tent');
+    const other = c.library.newList();
+    const otherCat = c.library.newCategory({ list: other, _isNew: false });
+    otherCat.addItem({ itemId: tent.id, _isNew: false });
+    other.calculateTotals(); c.list.calculateTotals();
+    const w = other.totalWeight;
+    applyUpdate(c.library, c.list, b, n, 2);
+    assert('another list sharing the item gets fresh totals after apply', other.totalWeight === 500 && w !== 500);
+    undoUpdate(c.library, c.list);
+    assert('and after undo', other.totalWeight === w);
+}
+{
+    // Fix 3a: an item link whose category belongs to another list means modified.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })])]);
+    const c = buildCopy(b);
+    const tent = c.library.items.find((i) => i.name === 'Tent');
+    const other = c.library.newList();
+    const otherCat = c.library.newCategory({ list: other, _isNew: false });
+    otherCat.addItem({ itemId: tent.id, _isNew: false });
+    c.list.forkedFrom.itemLinks[0].categoryId = otherCat.id;
+    assert('an item link into another list\'s category blocks the untouched check', isForkUntouched(c.list, c.library, b) === false);
+}
+{
+    // Fix 3b: a category link pointing at another list's empty category is not deleted.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })]), category(6, 'B', [])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })])]);
+    const c = buildCopy(b);
+    const other = c.library.newList();
+    const foreign = c.library.newCategory({ list: other, _isNew: false });
+    c.list.forkedFrom.categoryLinks.find((l) => String(l.sourceCategoryId) === '6').categoryId = foreign.id;
+    applyUpdate(c.library, c.list, b, n, 2);
+    assert('a foreign category is never removed by apply', Boolean(c.library.getCategoryById(foreign.id)) && other.categoryIds.includes(foreign.id));
+}
+{
+    // Fix 3c: an item link whose itemId is a category id never throws and the snapshot serialises.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 5 })])]);
+    const c = buildCopy(b);
+    c.list.forkedFrom.itemLinks.push({ categoryId: c.list.categoryIds[0], itemId: c.list.categoryIds[0], sourceItemId: 11 });
+    let threw = false;
+    try { applyUpdate(c.library, c.list, b, n, 2); } catch (err) { threw = true; }
+    let serialisable = true;
+    try { JSON.stringify(c.list.forkedFrom.undo); } catch (err) { serialisable = false; }
+    assert('an item link pointing at a category id does not throw', threw === false);
+    assert('and the undo snapshot is JSON-serialisable', serialisable);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

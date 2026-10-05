@@ -13,6 +13,10 @@ function placementValues(payloadItem) {
     };
 }
 
+const realItem = (library, id) => library.items.find((item) => item && sameId(item.id, id)) || null;
+const ownsCategory = (list, id) => list.categoryIds.some((own) => sameId(own, id));
+const recalculateAll = (library) => library.lists.forEach((entry) => entry.calculateTotals());
+
 function takeUndoSnapshot(library, list) {
     const forked = list.forkedFrom;
     const itemLinks = Array.isArray(forked.itemLinks) ? forked.itemLinks : [];
@@ -28,7 +32,7 @@ function takeUndoSnapshot(library, list) {
         categories: list.categoryIds.map((id) => library.getCategoryById(id)).filter(Boolean).map((entry) => ({
             id: entry.id, name: entry.name, color: entry.color, categoryItems: clone(entry.categoryItems),
         })),
-        items: linkedItemIds.map((id) => library.getItemById(id)).filter(Boolean).map((item) => clone(item)),
+        items: linkedItemIds.map((id) => realItem(library, id)).filter(Boolean).map((item) => clone(item)),
         createdItemIds: [],
     };
 }
@@ -107,7 +111,7 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
         entry.changes.forEach((change) => {
             if (PLACEMENT_FIELDS.includes(change.localField)) {
                 links.forEach((link) => {
-                    const owner = library.getCategoryById(link.categoryId);
+                    const owner = ownsCategory(list, link.categoryId) ? library.getCategoryById(link.categoryId) : null;
                     const sourceLink = categoryLinks.find((c) => sameId(c.categoryId, link.categoryId));
                     if (change.category && (!sourceLink || !sameId(sourceLink.sourceCategoryId, change.category.id))) return;
                     const placement = owner && owner.getCategoryItemById(link.itemId);
@@ -146,13 +150,13 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
         if (!link) return;
         categoryLinks.splice(categoryLinks.indexOf(link), 1);
         const target = library.getCategoryById(link.categoryId);
-        if (target && target.categoryItems.length === 0) library.removeCategory(target.id);
+        if (target && ownsCategory(list, target.id) && target.categoryItems.length === 0) library.removeCategory(target.id);
     });
 
     list.forkedFrom = {
         ...forked, version: toVersion, itemLinks, categoryLinks, undo: snapshot,
     };
-    list.calculateTotals();
+    recalculateAll(library);
 }
 
 function usedElsewhere(library, list, itemId) {
@@ -187,8 +191,13 @@ function undoUpdate(library, list) {
         if (!usedElsewhere(library, list, id)) library.removeItem(id);
     });
     snapshot.items.forEach((saved) => {
-        const current = library.getItemById(saved.id);
+        const current = realItem(library, saved.id);
         if (current) Object.assign(current, clone(saved));
+    });
+    // Items the user deleted after the update must not leave dangling placements.
+    snapshot.categories.forEach((saved) => {
+        const restored = library.getCategoryById(saved.id);
+        if (restored) restored.categoryItems = restored.categoryItems.filter((entry) => realItem(library, entry.itemId));
     });
 
     Object.assign(list, clone(snapshot.listMeta));
@@ -199,7 +208,7 @@ function undoUpdate(library, list) {
     if (snapshot.dismissedVersion === undefined) delete restoredFork.dismissedVersion;
     else restoredFork.dismissedVersion = snapshot.dismissedVersion;
     list.forkedFrom = restoredFork;
-    list.calculateTotals();
+    recalculateAll(library);
     return true;
 }
 

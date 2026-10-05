@@ -108,7 +108,7 @@ function isForkUntouched(list, library, basePayload) {
         const localCategory = library.getCategoryById(link.categoryId);
         const localItem = library.getItemById(link.itemId);
         const placement = localCategory && localCategory.getCategoryItemById(link.itemId);
-        if (!localCategory || !localItem || !placement) return false;
+        if (!localCategory || !localItem || !placement || !listCategoryIds.includes(String(link.categoryId))) return false;
         const categoryLink = categoryLinks.find((entry) => sameId(entry.categoryId, link.categoryId));
         const sourceItem = categoryLink ? findPayloadItem(basePayload, categoryLink.sourceCategoryId, link.sourceItemId) : null;
         if (!sourceItem) return true;
