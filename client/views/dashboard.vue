@@ -128,6 +128,7 @@
 
             <div v-if="activeForkUpdate" class="lpVerifyBanner lpForkUpdateBanner">
                 <span>{{ $t('list.versioning.bannerText', { version: activeForkUpdate.latestVersion }) }}</span>
+                <fork-apply-controls :list="list" :version="activeForkUpdate.latestVersion" />
                 <button class="lpVerifyBannerBtn" type="button" @click="openForkDiff">
                     {{ $t('list.versioning.viewChanges') }}
                 </button>
@@ -138,6 +139,7 @@
                     ✕
                 </button>
             </div>
+            <fork-undo-banner v-if="list && list.forkedFrom && list.forkedFrom.undo" :list="list" />
 
             <list />
 
@@ -186,6 +188,8 @@ import { computed, defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
 import { findForkUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
+import forkApplyControls from '../components/fork-apply-controls.vue';
+import forkUndoBanner from '../components/fork-undo-banner.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import list from '../components/list.vue';
@@ -250,6 +254,8 @@ export default {
         guestSettings,
         list,
         globalAlerts,
+        forkApplyControls,
+        forkUndoBanner,
         gearRoom,
         profileInsights,
         upgradePrompt,

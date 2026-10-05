@@ -20,6 +20,7 @@ assert('null when the list is not a fork', findForkUpdate({ id: 7, forkedFrom: n
 assert('null for a null list', findForkUpdate(null, updates) === null);
 assert('null when updates is not an array', findForkUpdate(list, undefined) === null);
 assert('null when the entry is not newer', findForkUpdate(list, [{ ...updates[0], latestVersion: 1 }]) === null);
+assert('no banner once the copy was updated past the cached forkedVersion', findForkUpdate({ id: 7, forkedFrom: { externalId: 'src1', version: 2 } }, updates) === null);
 const dismissedV2 = { id: 7, forkedFrom: { externalId: 'src1', version: 1, dismissedVersion: 2 } };
 assert('null once that version was dismissed', findForkUpdate(dismissedV2, updates) === null);
 const v3 = findForkUpdate(dismissedV2, [{ ...updates[0], latestVersion: 3 }]);
