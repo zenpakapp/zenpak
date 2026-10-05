@@ -16,6 +16,9 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { notifyGlobalAlert } from '../services/app-events';
+
+const { commitAndSave } = require('../utils/fork-apply-flow.js');
 
 const { isForkUntouched } = require('../utils/fork-apply-plan.js');
 
@@ -77,16 +80,14 @@ export default {
                     return;
                 }
                 const { data } = result;
-                this.$store.commit('applyForkUpdate', {
+                // After the commit this component unmounts (the banner goes away), so failures are reported globally.
+                await commitAndSave({
+                    commit: (...args) => this.$store.commit(...args),
+                    dispatch: (...args) => this.$store.dispatch(...args),
+                    notify: notifyGlobalAlert,
+                }, {
                     listId: this.list.id, base: data.base, latest: data.latest, toVersion: data.toVersion,
                 });
-                try {
-                    await this.$store.dispatch('saveNow');
-                } catch (saveError) {
-                    // Never keep a half-applied copy: reload what the server has.
-                    await this.$store.dispatch('loadRemote');
-                    this.error = true;
-                }
             } catch (err) {
                 this.error = true;
             } finally {
