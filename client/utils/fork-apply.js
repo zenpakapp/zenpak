@@ -66,7 +66,7 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
         const payloadItem = findPayloadItem(latestPayload, sourceCategory.id, summary.id);
         if (!target || !payloadItem) return;
         const existingLink = linkFor(summary.id);
-        let item = existingLink ? library.getItemById(existingLink.itemId) : null;
+        let item = existingLink ? realItem(library, existingLink.itemId) : null;
         if (!item) {
             const signature = copiedItemSignature(payloadItem);
             item = payloadItem.name ? library.items.find((candidate) => copiedItemSignature(candidate) === signature) : null;
@@ -119,7 +119,7 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
                 });
                 return;
             }
-            const localItem = links[0] ? library.getItemById(links[0].itemId) : null;
+            const localItem = links.map((link) => realItem(library, link.itemId)).find(Boolean) || null;
             if (!localItem) return;
             const numeric = change.localField === 'weight' || change.localField === 'price';
             localItem[change.localField] = numeric ? Number(change.to) || 0 : change.to || '';

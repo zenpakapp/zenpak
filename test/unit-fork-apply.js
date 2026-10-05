@@ -263,6 +263,51 @@ console.log('\n--- moves, removals, existing links, untrusted links ---');
     assert('an item link pointing at a category id does not throw', threw === false);
     assert('and the undo snapshot is JSON-serialisable', serialisable);
 }
+{
+    // Round 2: a link whose itemId is a category id, placed first, never writes onto that category.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 100 })])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', weight: 5 })])]);
+    const c = buildCopy(b);
+    const catId = c.list.categoryIds[0];
+    const cat = c.library.getCategoryById(catId);
+    c.list.forkedFrom.itemLinks.unshift({ categoryId: catId, itemId: catId, sourceItemId: 11 });
+    let threw = false;
+    try { applyUpdate(c.library, c.list, b, n, 2); } catch (err) { threw = true; }
+    assert('step 4: no throw with a category-id item link first', threw === false);
+    assert('step 4: the category object is not written as an item', cat.weight === undefined && cat.name === 'A' && Array.isArray(cat.categoryItems));
+    assert('step 4: the valid change still lands', c.library.items.find((i) => i.name === 'Tent').weight === 5);
+}
+{
+    // Round 2, step 2: an added item matched by a link whose itemId is a category id gets a real item.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' })])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent' }), payloadItem(13, { name: 'Pad', weight: 7 })])]);
+    const c = buildCopy(b);
+    const catId = c.list.categoryIds[0];
+    const cat = c.library.getCategoryById(catId);
+    c.list.forkedFrom.itemLinks.push({ categoryId: catId, itemId: catId, sourceItemId: 13 });
+    let threw = false;
+    try { applyUpdate(c.library, c.list, b, n, 2); } catch (err) { threw = true; }
+    assert('step 2: no throw', threw === false);
+    assert('step 2: a real item is created and placed', c.library.items.some((i) => i.name === 'Pad' && i.weight === 7) && cat.categoryItems.some((ci) => c.library.items.some((i) => i.id === ci.itemId && i.name === 'Pad')));
+    assert('step 2: the category object is untouched', cat.weight === undefined && cat.name === 'A');
+}
+{
+    // Round 2: guards in steps 4 and 8 with a foreign category that is not its list's only one.
+    const b = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', qty: 1 })]), category(6, 'B', [])]);
+    const n = payload([category(5, 'A', [payloadItem(11, { name: 'Tent', qty: 3 })])]);
+    const c = buildCopy(b);
+    const tent = c.library.items.find((i) => i.name === 'Tent');
+    const other = c.library.newList();
+    const keep = c.library.newCategory({ list: other, _isNew: false }); keep.name = 'Keep';
+    const emptyForeign = c.library.newCategory({ list: other, _isNew: false }); emptyForeign.name = 'Empty';
+    const foreignWithTent = c.library.newCategory({ list: other, _isNew: false }); foreignWithTent.name = 'WithTent';
+    foreignWithTent.addItem({ itemId: tent.id, _isNew: false });
+    c.list.forkedFrom.categoryLinks.find((l) => String(l.sourceCategoryId) === '6').categoryId = emptyForeign.id;
+    c.list.forkedFrom.itemLinks.unshift({ categoryId: foreignWithTent.id, itemId: tent.id, sourceItemId: 11 });
+    applyUpdate(c.library, c.list, b, n, 2);
+    assert('step 8 guard: another list\'s empty category is not deleted', Boolean(c.library.getCategoryById(emptyForeign.id)) && other.categoryIds.includes(emptyForeign.id));
+    assert('step 4 guard: another list\'s placement qty is not changed', foreignWithTent.getCategoryItemById(tent.id).qty === 1);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
