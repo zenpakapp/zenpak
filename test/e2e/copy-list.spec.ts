@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { registerUser } from "./auth-utils";
+import { registerUser, verifyUserEmail } from "./auth-utils";
 
 test.describe("Copy list", () => {
   test('shows "Sign in to copy this list" link for unauthenticated visitor', async ({
@@ -14,9 +14,11 @@ test.describe("Copy list", () => {
 
     // Register + create a list, wait for dashboard ready
     await registerUser(page, username, password, email);
-    await expect(
-      page.getByText(`Signed in as ${username}`).first(),
-    ).toBeVisible({ timeout: 35000 });
+    // Unverified accounts cannot make lists public, so sharing would 403.
+    await verifyUserEmail(username);
+    await expect(page.locator(".accountDropdownName")).toBeVisible({
+      timeout: 35000,
+    });
 
     // Open share panel — click to keep it open (hover closes on mouse move)
     const shareTrigger = page
@@ -50,7 +52,7 @@ test.describe("Copy list", () => {
     expect(shareUrl).toContain("/p/");
 
     // Sign out
-    await page.getByText("Signed in as").first().hover();
+    await page.locator(".accountDropdownName").hover();
     await page.getByText("Sign out").click();
 
     // Visit the public list page unauthenticated

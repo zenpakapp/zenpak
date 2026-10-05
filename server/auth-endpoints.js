@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const { authRateLimitMax } = require('./auth-rate-limit.js');
 const config = require('config');
 
 const { logWithRequest } = require('./log.js');
@@ -67,7 +68,7 @@ function isSessionRestoreSignin(req) {
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10,
+    max: authRateLimitMax(process.env.AUTH_RATE_LIMIT_MAX),
     skip: isSessionRestoreSignin,
     standardHeaders: true,
     legacyHeaders: false,

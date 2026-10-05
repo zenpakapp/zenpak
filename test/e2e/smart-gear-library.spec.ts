@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import path from "path";
-import { registerUser } from "./auth-utils";
+import { registerUser, importCsvFile } from "./auth-utils";
 
 const isSuccessfulSave = (response: any) =>
   response.url().includes("/saveLibrary") && response.ok();
@@ -23,7 +23,7 @@ test.describe("Smart Gear Library", () => {
     );
 
     // First import to populate library
-    await page.setInputFiles("#csv", csvPath);
+    await importCsvFile(page, csvPath);
     await expect(page.locator("#importValidate")).toBeVisible();
     const firstSave = page.waitForResponse(isSuccessfulSave, {
       timeout: 35000,
@@ -32,7 +32,7 @@ test.describe("Smart Gear Library", () => {
     await firstSave;
 
     // Second import of same file — should detect duplicates
-    await page.setInputFiles("#csv", csvPath);
+    await importCsvFile(page, csvPath);
     await expect(page.locator("#importValidate")).toBeVisible();
     await expect(page.locator("#importValidate")).toContainText(
       "will merge with existing gear",
@@ -67,7 +67,7 @@ test.describe("Smart Gear Library", () => {
       process.cwd(),
       "test/fixtures/csv/brand-dedup.csv",
     );
-    await page.setInputFiles("#csv", csvPath);
+    await importCsvFile(page, csvPath);
     await expect(page.locator("#importValidate")).toBeVisible();
     const importSave = page.waitForResponse(isSuccessfulSave, {
       timeout: 35000,
@@ -112,9 +112,7 @@ test.describe("Smart Gear Library", () => {
       .toBe(true);
   });
 
-  test("gear room can create a new library item from search text", async ({
-    page,
-  }) => {
+  test("gear room can create a new library item", async ({ page }) => {
     const now = Date.now();
     await registerUser(
       page,
@@ -123,14 +121,24 @@ test.describe("Smart Gear Library", () => {
       `gearroom+${now}@lighterpack.com`,
     );
 
-    await page.getByRole("button", { name: /gear room/i }).click();
-    await expect(page.locator(".lpGearRoomModal")).toBeVisible();
+    await page.getByRole("button", { name: /item library/i }).click();
+    await expect(page.locator(".lpGearRoom")).toBeVisible();
 
-    await page.locator(".lpGearRoomModal .librarySearch").fill("Trail mug");
-    await page.getByRole("button", { name: /new gear item/i }).click();
-
+    await page.getByRole("button", { name: /\+ new item/i }).click();
     await expect(page.locator("#itemDetailDialog")).toBeVisible();
-    await expect(page.locator("#itemDetailDialog")).toContainText("Trail mug");
+    await page
+      .locator("#itemDetailDialog")
+      .getByPlaceholder("Item name")
+      .fill("Trail mug");
+    await page
+      .locator("#itemDetailDialog")
+      .getByRole("button", { name: "Save" })
+      .click();
+
+    await expect(page.locator("#itemDetailDialog")).toBeHidden();
+    await expect(
+      page.locator(".lpGearRoom tbody tr", { hasText: "Trail mug" }).first(),
+    ).toBeVisible();
   });
 
   test("gear room batch dropdowns support keyboard option selection", async ({
@@ -148,7 +156,7 @@ test.describe("Smart Gear Library", () => {
       process.cwd(),
       "test/fixtures/csv/brand-dedup.csv",
     );
-    await page.setInputFiles("#csv", csvPath);
+    await importCsvFile(page, csvPath);
     await expect(page.locator("#importValidate")).toBeVisible();
     const importSave = page.waitForResponse(isSuccessfulSave, {
       timeout: 35000,
@@ -156,16 +164,24 @@ test.describe("Smart Gear Library", () => {
     await page.locator("#importConfirm").click();
     await importSave;
 
-    await page.getByRole("button", { name: /gear room/i }).click();
-    await expect(page.locator(".lpGearRoomModal")).toBeVisible();
-    await page.locator(".lpGearRoomModal tbody input[type='checkbox']").nth(0).check();
-    await page.locator(".lpGearRoomModal tbody input[type='checkbox']").nth(1).check();
+    await page.getByRole("button", { name: /item library/i }).click();
+    await expect(page.locator(".lpGearRoom")).toBeVisible();
+    await page
+      .locator(".lpGearRoom tbody input[type='checkbox']")
+      .nth(0)
+      .check();
+    await page
+      .locator(".lpGearRoom tbody input[type='checkbox']")
+      .nth(1)
+      .check();
 
     await page.getByRole("button", { name: /set brand/i }).click();
     const brandInput = page.locator(".lpGearRoomBatchPanelInput").first();
     await brandInput.fill("sea");
     await brandInput.press("ArrowDown");
-    await expect(page.locator(".lpBrandSuggestions li.active")).toContainText("Sea to Summit");
+    await expect(page.locator(".lpBrandSuggestions li.active")).toContainText(
+      "Sea to Summit",
+    );
     await brandInput.press("Enter");
     await expect(brandInput).toHaveValue("Sea to Summit");
 
@@ -219,16 +235,32 @@ test.describe("Smart Gear Library", () => {
       `newcat+${now}@lighterpack.com`,
     );
 
-    await page.getByRole("button", { name: /gear room/i }).click();
-    await page.locator(".lpGearRoomModal .librarySearch").fill("Camp cup");
-    await page.getByRole("button", { name: /new gear item/i }).click();
-
+    // Create the item in the Item Library, then reopen it to add it to a list.
+    await page.getByRole("button", { name: /item library/i }).click();
+    await page.getByRole("button", { name: /\+ new item/i }).click();
     await expect(page.locator("#itemDetailDialog")).toBeVisible();
-    await page.getByRole("button", { name: /\+ add to list/i }).click();
+    await page
+      .locator("#itemDetailDialog")
+      .getByPlaceholder("Item name")
+      .fill("Camp cup");
+    await page
+      .locator("#itemDetailDialog")
+      .getByRole("button", { name: "Save" })
+      .click();
+    await expect(page.locator("#itemDetailDialog")).toBeHidden();
+
+    await page
+      .locator(".lpGearRoom tbody tr", { hasText: "Camp cup" })
+      .first()
+      .click();
+    await expect(page.locator("#itemDetailDialog")).toBeVisible();
+    await page.getByRole("button", { name: /add to/i }).click();
+    await page.locator(".itemDetailAddOption", { hasText: "New list" }).click();
     await page.getByPlaceholder("New category").fill("Kitchen");
     await page.getByRole("button", { name: /^create$/i }).click();
 
     await expect(page.locator("#itemDetailDialog")).toBeHidden();
+    await page.getByRole("button", { name: /back to lists/i }).click();
     await expect(page.locator(".lpCategoryName").last()).toHaveValue("Kitchen");
     await expect(page.locator(".lpItem .lpName").last()).toHaveValue(
       "Camp cup",

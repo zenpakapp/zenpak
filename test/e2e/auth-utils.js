@@ -55,8 +55,18 @@ export async function registerUserWithTemplate(page, username, password, email, 
     await page.fill('.lpRegister input[name="password"]', password);
     await page.fill('.lpRegister input[name="passwordConfirm"]', password);
     await page.getByRole('button').filter({hasText: 'Register'}).click();
-    await page.getByText(templateName).waitFor();
-    await page.getByText(templateName).locator('..').locator('..').getByRole('button', { name: 'Select' }).click();
+    const templateCard = page.getByText(templateName, { exact: true });
+    await templateCard.waitFor();
+    await templateCard.locator('..').locator('..').getByRole('button', { name: 'Select' }).click();
+}
+
+// The CSV input lives in a lazily loaded dialog: open it from the "Add new list" flyout and
+// answer the native file chooser it triggers.
+export async function importCsvFile(page, csvPath) {
+    const fileChooser = page.waitForEvent('filechooser');
+    await page.getByText('Add new list').first().hover();
+    await page.getByRole('button', { name: 'Import CSV' }).click();
+    await (await fileChooser).setFiles(csvPath);
 }
 
 export async function loginUser(page, username, password) {
@@ -68,6 +78,6 @@ export async function loginUser(page, username, password) {
 }
 
 export async function logoutUser(page) { 
-    await page.getByText('Signed in as').hover();
+    await page.locator('.accountDropdownName').hover();
     await page.getByText('Sign out').click();
 }

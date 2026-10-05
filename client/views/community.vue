@@ -84,11 +84,13 @@
                 <lp-select
                     :value="filterSeason"
                     :options="seasonOptions"
+                    :aria-label="$t('community.ariaFilterSeason')"
                     @change="val => { filterSeason = val; applyDiscoverFilters(); }"
                 />
                 <lp-select
                     :value="filterType"
                     :options="listTypeOptions"
+                    :aria-label="$t('community.ariaFilterType')"
                     @change="val => { filterType = val; applyDiscoverFilters(); }"
                 />
                 <input

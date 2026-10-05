@@ -318,7 +318,11 @@ export default {
             if (val) {
                 this._returnFocus = document.activeElement;
                 this.$nextTick(() => {
-                    const first = this.$refs.modalEl?.querySelector(
+                    const modalEl = this.$refs.modalEl;
+                    // A dialog that already focused one of its own controls (the speedbump's
+                    // "Yes") keeps it, so Enter confirms instead of hitting the close button.
+                    if (!modalEl || modalEl.contains(document.activeElement)) return;
+                    const first = modalEl.querySelector(
                         'button:not([disabled]),input:not([disabled]),select,textarea,a[href],[tabindex]:not([tabindex="-1"])',
                     );
                     if (first) first.focus();
