@@ -114,6 +114,12 @@ const hashBeforeDismiss = hashFrozenLibrary(frozenFork);
 forkOwner.library.lists[0].forkedFrom.dismissedVersion = 4;
 forkOwner.library.lists[0].forkedFrom.itemLinks.push({ categoryId: 6, itemId: 12, sourceItemId: 102 });
 assert('fork sync state changes do not change the content hash', hashFrozenLibrary(buildFrozenLibrary(forkOwner.library, 'fork1')) === hashBeforeDismiss);
+// forkedFrom.undo is private sync state: it must not reach the snapshot or change the hash.
+const hashWithoutUndo = hashFrozenLibrary(buildFrozenLibrary(forkOwner.library, 'fork1'));
+forkOwner.library.lists[0].forkedFrom.undo = { fromVersion: 1, items: [{ id: 1, name: 'secret' }] };
+const frozenWithUndo = buildFrozenLibrary(forkOwner.library, 'fork1');
+assert('forkedFrom.undo is not published', !JSON.stringify(frozenWithUndo).includes('secret'));
+assert('forkedFrom.undo does not change the content hash', hashFrozenLibrary(frozenWithUndo) === hashWithoutUndo);
 forkOwner.library.lists[0].forkedFrom = null;
 assert('a null forkedFrom stays null', buildFrozenLibrary(forkOwner.library, 'fork1').lists[0].forkedFrom === null);
 

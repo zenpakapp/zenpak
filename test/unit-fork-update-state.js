@@ -59,5 +59,34 @@ const diffFieldKeys = [
     assert(`${locale} has every diff field label`, Boolean(block && block.diffFields) && diffFieldKeys.every((key) => typeof block.diffFields[key] === 'string' && block.diffFields[key].length > 0));
 });
 
+console.log('\n--- applyForkUpdate / undoForkUpdate / discardForkUndo ---');
+{
+    const st = { library: new Library() };
+    const forkList = st.library.lists[0];
+    const cat = st.library.categories[0];
+    const item = st.library.newItem({ category: cat, _isNew: false });
+    item.name = 'Tent'; item.weight = 900000;
+    forkList.forkedFrom = {
+        externalId: 'src1', version: 1, itemLinks: [{ categoryId: cat.id, itemId: item.id, sourceItemId: 11 }], categoryLinks: [{ categoryId: cat.id, sourceCategoryId: 5 }],
+    };
+    cat.name = 'Shelter';
+    const mk = (weight) => ({
+        publicFields: { images: false, links: false, price: false },
+        categories: [{ id: 5, name: 'Shelter', items: [{ id: 11, name: 'Tent', description: '', brand: '', shop: '', weight, price: 0, qty: 1, worn: 0, consumable: false, star: 0 }] }],
+        list: { name: 'S', description: '', seasons: [], listTypes: [], totalBaseWeight: 0, totalQty: 0 },
+    });
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    assert('applyForkUpdate updates the copy', item.weight === 800000 && forkList.forkedFrom.version === 2);
+    assert('applyForkUpdate stores an undo snapshot', Boolean(forkList.forkedFrom.undo));
+    libraryMutations.undoForkUpdate(st, { listId: forkList.id });
+    assert('undoForkUpdate restores the copy', item.weight === 900000 && forkList.forkedFrom.version === 1 && !forkList.forkedFrom.undo);
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    libraryMutations.discardForkUndo(st, { listId: forkList.id });
+    assert('discardForkUndo drops the snapshot and keeps the update', !forkList.forkedFrom.undo && forkList.forkedFrom.version === 2 && item.weight === 800000);
+    libraryMutations.applyForkUpdate(st, { listId: 999999, base: mk(1), latest: mk(2), toVersion: 3 });
+    libraryMutations.undoForkUpdate(st, { listId: 999999 });
+    assert('unknown lists are ignored', true);
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
