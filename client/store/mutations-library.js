@@ -237,6 +237,9 @@ module.exports = {
     }) {
         const list = state.library.getListById(listId);
         if (!list || !list.forkedFrom) return;
+        // Never apply a payload fetched for another list (the user may have switched lists).
+        const payloadSource = latest && latest.list && latest.list.externalId;
+        if (!payloadSource || String(payloadSource) !== String(list.forkedFrom.externalId)) return;
         applyUpdate(state.library, list, base, latest, toVersion);
     },
     undoForkUpdate(state, { listId }) {

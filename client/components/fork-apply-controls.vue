@@ -38,8 +38,8 @@ export default {
         version: 'check',
     },
     methods: {
-        url(suffix = '') {
-            return `/api/lists/fork-apply/${encodeURIComponent(this.list.id)}${suffix}`;
+        url(listId, suffix = '') {
+            return `/api/lists/fork-apply/${encodeURIComponent(listId)}${suffix}`;
         },
         async check() {
             this.blocked = false;
@@ -47,33 +47,35 @@ export default {
             this.checkId += 1;
             const { checkId } = this;
             try {
-                const data = await fetchJson(this.url(), { credentials: 'same-origin' });
+                const data = await fetchJson(this.url(this.list.id), { credentials: 'same-origin' });
                 if (checkId !== this.checkId) return;
                 this.blocked = !isForkUntouched(this.list, this.$store.state.library, data.base);
             } catch (err) {
                 // Leave the button enabled: clicking it surfaces the real error.
             }
         },
-        async fetchAndRecord() {
-            const data = await fetchJson(this.url(), { credentials: 'same-origin' });
-            if (!isForkUntouched(this.list, this.$store.state.library, data.base)) return { data, blocked: true };
-            await fetchJson(this.url('/record'), {
+        async fetchAndRecord(list) {
+            const data = await fetchJson(this.url(list.id), { credentials: 'same-origin' });
+            if (!isForkUntouched(list, this.$store.state.library, data.base)) return { data, blocked: true };
+            await fetchJson(this.url(list.id, '/record'), {
                 method: 'POST', body: JSON.stringify({ version: data.toVersion }), credentials: 'same-origin',
             });
             return { data, blocked: false };
         },
         async apply() {
             if (this.busy || this.blocked) return;
+            // The list may change under us (list switch): everything below uses the one clicked.
+            const { list } = this;
             this.busy = true;
             this.error = false;
             try {
                 let result;
                 try {
-                    result = await this.fetchAndRecord();
+                    result = await this.fetchAndRecord(list);
                 } catch (err) {
                     // The author published again between the data fetch and the record: one retry on the newer version.
                     if (!err || err.statusCode !== 409) throw err;
-                    result = await this.fetchAndRecord();
+                    result = await this.fetchAndRecord(list);
                 }
                 if (result.blocked) {
                     this.blocked = true;
@@ -86,7 +88,7 @@ export default {
                     dispatch: (...args) => this.$store.dispatch(...args),
                     notify: notifyGlobalAlert,
                 }, {
-                    listId: this.list.id, base: data.base, latest: data.latest, toVersion: data.toVersion,
+                    listId: list.id, base: data.base, latest: data.latest, toVersion: data.toVersion,
                 });
             } catch (err) {
                 this.error = true;

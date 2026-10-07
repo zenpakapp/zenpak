@@ -74,13 +74,21 @@ console.log('\n--- applyForkUpdate / undoForkUpdate / discardForkUndo ---');
     const mk = (weight) => ({
         publicFields: { images: false, links: false, price: false },
         categories: [{ id: 5, name: 'Shelter', items: [{ id: 11, name: 'Tent', description: '', brand: '', shop: '', weight, price: 0, qty: 1, worn: 0, consumable: false, star: 0 }] }],
-        list: { name: 'S', description: '', seasons: [], listTypes: [], totalBaseWeight: 0, totalQty: 0 },
+        list: {
+            externalId: 'src1', name: 'S', description: '', seasons: [], listTypes: [], totalBaseWeight: 0, totalQty: 0,
+        },
     });
     libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
     assert('applyForkUpdate updates the copy', item.weight === 800000 && forkList.forkedFrom.version === 2);
     assert('applyForkUpdate stores an undo snapshot', Boolean(forkList.forkedFrom.undo));
     libraryMutations.undoForkUpdate(st, { listId: forkList.id });
     assert('undoForkUpdate restores the copy', item.weight === 900000 && forkList.forkedFrom.version === 1 && !forkList.forkedFrom.undo);
+    const wrong = { ...mk(800000), list: { ...mk(800000).list, externalId: 'other' } };
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: wrong, toVersion: 2 });
+    assert('a payload from another source list is refused', item.weight === 900000 && forkList.forkedFrom.version === 1 && !forkList.forkedFrom.undo);
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    assert('a matching source list applies', item.weight === 800000 && forkList.forkedFrom.version === 2);
+    libraryMutations.undoForkUpdate(st, { listId: forkList.id });
     libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
     libraryMutations.discardForkUndo(st, { listId: forkList.id });
     assert('discardForkUndo drops the snapshot and keeps the update', !forkList.forkedFrom.undo && forkList.forkedFrom.version === 2 && item.weight === 800000);
