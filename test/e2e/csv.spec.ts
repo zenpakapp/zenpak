@@ -75,8 +75,11 @@ test.describe("CSV workflows", () => {
 
     try {
       await sharePage.goto(shareUrl);
+      // The public page renders after the share is projected; under parallel load that can
+      // take longer than the default 5s expect timeout.
       await expect(sharePage.locator("h1.lpPublicListTitle")).toHaveText(
         "roundtrip-rich",
+        { timeout: 20000 },
       );
       await expect(
         sharePage
