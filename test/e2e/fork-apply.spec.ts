@@ -150,6 +150,9 @@ test.describe("Fork apply", () => {
         "880",
       );
       await undoSaved;
+      // The update list was fetched while the copy was current (after the reload above),
+      // so the banner must come back from the Undo itself, not from a later reload.
+      await expect(banner).toBeVisible({ timeout: 20000 });
 
       await copierPage.reload();
       await expect(copierPage.locator(".lpItem .lpWeight").first()).toHaveValue(

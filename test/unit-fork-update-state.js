@@ -97,5 +97,24 @@ console.log('\n--- applyForkUpdate / undoForkUpdate / discardForkUndo ---');
     assert('unknown lists are ignored', true);
 }
 
+console.log('\n--- withUndoneUpdate (banner returns after Undo without a reload) ---');
+{
+    const { withUndoneUpdate } = require('../client/utils/fork-updates.js');
+    // After apply -> reload, fork-updates held no entry for the list; Undo puts the version back to 1.
+    const undone = withUndoneUpdate([], {
+        listId: 7, sourceExternalId: 'src1', forkedVersion: 1, latestVersion: 2,
+    });
+    assert('adds an entry for the undone list', undone.length === 1 && undone[0].latestVersion === 2);
+    const restoredList = { id: 7, forkedFrom: { externalId: 'src1', version: 1 } };
+    assert('the banner shows again for the restored copy', findForkUpdate(restoredList, undone) === undone[0]);
+    const replaced = withUndoneUpdate([{ listId: 7, sourceExternalId: 'src1', forkedVersion: 1, latestVersion: 1 }, { listId: 8, latestVersion: 4, forkedVersion: 1 }], {
+        listId: 7, sourceExternalId: 'src1', forkedVersion: 1, latestVersion: 2,
+    });
+    assert('replaces an existing entry for that list and keeps the others', replaced.length === 2 && replaced.find((e) => e.listId === 7).latestVersion === 2 && replaced.some((e) => e.listId === 8));
+    const dismissed = { id: 7, forkedFrom: { externalId: 'src1', version: 1, dismissedVersion: 2 } };
+    assert('a version dismissed before the update stays dismissed', findForkUpdate(dismissed, undone) === null);
+    assert('a bad entry or a non-array leaves the list untouched', withUndoneUpdate(undefined, null).length === 0 && withUndoneUpdate([{ listId: 1 }], null).length === 1);
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

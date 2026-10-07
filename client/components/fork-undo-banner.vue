@@ -18,6 +18,7 @@ export default {
     props: {
         list: { type: Object, required: true },
     },
+    emits: ['undone'],
     computed: {
         undo() {
             return this.list && this.list.forkedFrom && this.list.forkedFrom.undo;
@@ -26,7 +27,16 @@ export default {
     methods: {
         askUndo() {
             openSpeedbump(() => {
+                // Read before the commit: Undo clears forkedFrom.undo and rewinds the version.
+                const { forkedFrom } = this.list;
+                const entry = {
+                    listId: this.list.id,
+                    sourceExternalId: forkedFrom.externalId,
+                    forkedVersion: forkedFrom.undo.fromVersion,
+                    latestVersion: forkedFrom.version,
+                };
                 this.$store.commit('undoForkUpdate', { listId: this.list.id });
+                this.$emit('undone', entry);
             }, {
                 title: this.$t('list.versioning.undoConfirmTitle'),
                 body: this.$t('list.versioning.undoConfirmBody'),
