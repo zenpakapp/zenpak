@@ -136,6 +136,11 @@ router.post('/api/lists/fork-apply/:listId/record', (req, res) => {
         try {
             const loaded = await loadForkPayloads(user, listId);
             if (!loaded) return res.status(404).json({ message: 'Not found' });
+            // Same eligibility as /copy-list: discoverable/indexable, or shareable and opted in to copying.
+            const { liveList } = loaded;
+            const copyable = liveList.visibility === 'discoverable' || liveList.visibility === 'indexable'
+                || (liveList.visibility === 'shareable' && liveList.copyable === true);
+            if (!copyable || user.banned) return res.status(404).json({ message: 'Not found' });
             // Only the current latest can be registered: that is what the caller was just served.
             if (version !== loaded.toVersion) return res.status(409).json({ message: 'Not the latest version' });
             await recordCopy(user._id, loaded.externalId, version);

@@ -55,6 +55,7 @@ async function loadForkPayloads(user, listId) {
         currencySymbol: latestPayload.currencySymbol,
         basePayload,
         latestPayload,
+        liveList,
     };
 }
 

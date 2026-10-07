@@ -96,6 +96,18 @@ async function run() {
     assert('a legacy fork gets 404', (await post('2', { version: 2 })).status === 404);
     assert('a non-fork gets 404', (await post('3', { version: 2 })).status === 404);
     assert('refused calls wrote nothing', listCopiesDb.rows.length === rowsBefore + 1);
+    const liveShared = alice.library.lists[0];
+    const rowsNow = listCopiesDb.rows.length;
+    liveShared.visibility = 'shareable'; liveShared.copyable = false;
+    assert('a shareable, non-copyable source gets 404', (await post('1', { version: 2 })).status === 404);
+    liveShared.copyable = true;
+    assert('a shareable, copyable source is still recorded', (await post('1', { version: 2 })).status === 200);
+    liveShared.visibility = 'discoverable'; liveShared.copyable = false;
+    bob.banned = true;
+    assert('a banned caller gets 404', (await post('1', { version: 2 })).status === 404);
+    bob.banned = false;
+    assert('ineligible calls wrote nothing', listCopiesDb.rows.length === rowsNow);
+    assert('an eligible caller is still recorded', (await post('1', { version: 2 })).status === 200);
     const eve = { _id: new ObjectId(), username: 'eve', library: { lists: [{ id: 1, name: 'Forged', forkedFrom: { externalId: 'abc123', version: 1, ownerId: String(alice._id) } }] } };
     currentUser = eve;
     assert('a user who never copied v1 cannot register v2', (await post('1', { version: 2 })).status === 404);
