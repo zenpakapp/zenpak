@@ -146,6 +146,26 @@ console.log('\n--- isForkUntouched ---');
     const shownPrice = payload(base.categories, { publicFields: { images: false, links: false, price: true } });
     assert('price counts once the author shows prices', isForkUntouched(list, library, shownPrice) === false);
 }
+{
+    const imageBase = payload([category(5, 'Shelter', [payloadItem(11, { name: 'Tent', weight: 900000, image: 'abc123', imageUrl: 'https://img.example/t.jpg' })])], { publicFields: { images: true, links: false, price: false } });
+    const { library, list } = buildCopy(imageBase);
+    const tent = library.items.find((i) => i.name === 'Tent');
+    tent.imageUrl = 'https://img.example/t.jpg';
+    assert('an untouched copy of an item with an uploaded image is untouched', isForkUntouched(list, library, imageBase) === true);
+    tent.imageUrl = 'https://img.example/other.jpg';
+    assert('a changed imageUrl still blocks', isForkUntouched(list, library, imageBase) === false);
+    const imageNext = payload([category(5, 'Shelter', [payloadItem(11, { name: 'Tent', weight: 900000, image: 'zzz', imageUrl: 'https://img.example/new.jpg' })])], { publicFields: { images: true, links: false, price: false } });
+    const fields = planUpdate(imageBase, imageNext).modified.flatMap((entry) => entry.changes);
+    assert('a plan drops the image change and keeps imageUrl', !fields.some((c) => c.field === 'image') && fields.some((c) => c.field === 'imageUrl' && c.localField === 'imageUrl'));
+}
+{
+    const { library, list } = buildCopy(base);
+    const tentId = library.items.find((i) => i.name === 'Tent').id;
+    list.forkedFrom.itemLinks.push({ categoryId: tentId, itemId: tentId, sourceItemId: 11 });
+    let result; let threw = false;
+    try { result = isForkUntouched(list, library, base); } catch (err) { threw = true; }
+    assert('a link whose categoryId is an item id returns false, never throws', !threw && result === false);
+}
 
 console.log('\n--- planUpdate ---');
 {

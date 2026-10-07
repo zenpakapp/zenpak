@@ -3,7 +3,7 @@
 // fields count (see "Field mapping" in the phase 2 spec).
 const { diffSnapshots } = require('../../server/list-diff.js');
 
-const ITEM_FIELDS = ['name', 'description', 'brand', 'shop', 'weight', 'price', 'publicUrl', 'imageUrl', 'image'];
+const ITEM_FIELDS = ['name', 'description', 'brand', 'shop', 'weight', 'price', 'publicUrl', 'imageUrl'];
 const PLACEMENT_FIELDS = ['qty', 'worn', 'consumable', 'star'];
 const ALWAYS_FIELDS = new Set(['name', 'description', 'brand', 'shop', 'weight', ...PLACEMENT_FIELDS]);
 const NUMERIC_FIELDS = new Set(['weight', 'price', 'qty', 'worn', 'star']);
@@ -20,7 +20,8 @@ function localFieldFor(field, publicFields, hasAffiliateLink) {
     if (field === 'price') return shown.price ? 'price' : null;
     // The copy keeps the author's raw url while the payload shows affiliateUrl || url: not comparable.
     if (field === 'publicUrl') return shown.links && !hasAffiliateLink ? 'url' : null;
-    if (field === 'imageUrl' || field === 'image') return shown.images ? field : null;
+    // `image` (uploaded picture key) is never copied by /copy-list, so it is not comparable.
+    if (field === 'imageUrl') return shown.images ? field : null;
     return null;
 }
 
@@ -105,10 +106,12 @@ function isForkUntouched(list, library, basePayload) {
     if (!categoriesOk) return false;
 
     return itemLinks.every((link) => {
+        if (!listCategoryIds.includes(String(link.categoryId))) return false;
         const localCategory = library.getCategoryById(link.categoryId);
+        if (!localCategory || !Array.isArray(localCategory.categoryItems)) return false;
         const localItem = library.getItemById(link.itemId);
-        const placement = localCategory && localCategory.getCategoryItemById(link.itemId);
-        if (!localCategory || !localItem || !placement || !listCategoryIds.includes(String(link.categoryId))) return false;
+        const placement = localCategory.getCategoryItemById(link.itemId);
+        if (!localItem || !placement) return false;
         const categoryLink = categoryLinks.find((entry) => sameId(entry.categoryId, link.categoryId));
         const sourceItem = categoryLink ? findPayloadItem(basePayload, categoryLink.sourceCategoryId, link.sourceItemId) : null;
         if (!sourceItem) return true;
