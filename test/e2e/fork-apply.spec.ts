@@ -129,6 +129,16 @@ test.describe("Fork apply", () => {
         "800",
       );
 
+      await copierPage.reload();
+      await expect(copierPage.locator(".lpItem .lpWeight").first()).toHaveValue(
+        "800",
+        { timeout: 20000 },
+      );
+      await expect(banner).toBeHidden();
+
+      const undoSaved = copierPage.waitForResponse(isSuccessfulSave, {
+        timeout: 35000,
+      });
       await copierPage
         .getByRole("button", { name: "Undo", exact: true })
         .click();
@@ -139,7 +149,14 @@ test.describe("Fork apply", () => {
       await expect(copierPage.locator(".lpItem .lpWeight").first()).toHaveValue(
         "880",
       );
-      await expect(banner).toBeVisible();
+      await undoSaved;
+
+      await copierPage.reload();
+      await expect(copierPage.locator(".lpItem .lpWeight").first()).toHaveValue(
+        "880",
+        { timeout: 20000 },
+      );
+      await expect(banner).toBeVisible({ timeout: 20000 });
     } finally {
       await close();
     }
