@@ -139,7 +139,7 @@
                     ✕
                 </button>
             </div>
-            <fork-undo-banner v-if="list && list.forkedFrom && list.forkedFrom.undo" :list="list" />
+            <fork-undo-banner v-if="list && list.forkedFrom && list.forkedFrom.undo" :list="list" @undone="onForkUndone" />
 
             <list />
 
@@ -186,7 +186,7 @@
 <script>
 import { computed, defineAsyncComponent, markRaw } from 'vue';
 import { fetchJson } from '../utils/utils.js';
-import { findForkUpdate } from '../utils/fork-updates';
+import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
 import forkApplyControls from '../components/fork-apply-controls.vue';
 import forkUndoBanner from '../components/fork-undo-banner.vue';
@@ -478,6 +478,9 @@ export default {
                     this.forkUpdates = Array.isArray(response.updates) ? response.updates : [];
                 })
                 .catch(() => {});
+        },
+        onForkUndone(entry) {
+            this.forkUpdates = withUndoneUpdate(this.forkUpdates, entry);
         },
         dismissForkUpdate() {
             if (!this.list || !this.activeForkUpdate) return;
