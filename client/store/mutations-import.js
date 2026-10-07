@@ -1,22 +1,10 @@
 const weightUtils = require('../utils/weight.js');
 const { resolveGearCategory } = require('../data/gear-categories');
+const { normalizeText, copiedItemSignature } = require('../utils/item-signature.js');
 
 function normalizeQuantity(value) {
     const quantity = parseFloat(value);
     return Number.isNaN(quantity) ? 1 : quantity;
-}
-
-function normalizeText(value) {
-    return (value || '').toLowerCase().trim().replace(/\s+/g, ' ');
-}
-
-function copiedItemSignature(item) {
-    return [
-        normalizeText(item.name),
-        normalizeText(item.description),
-        normalizeText(item.brand),
-        Math.round(Number(item.weight) || 0),
-    ].join('|');
 }
 
 function hasSourceId(value) {

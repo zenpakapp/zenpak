@@ -10,6 +10,7 @@ const sandbox = {
     exports: {},
     require(name) {
         if (name === '../utils/utils') return { arrayMove: (arr) => arr };
+        if (name === '../utils/fork-apply.js') return { applyUpdate: () => {}, undoUpdate: () => {} };
         return require(name);
     },
 };

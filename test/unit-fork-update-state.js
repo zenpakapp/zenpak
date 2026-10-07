@@ -20,6 +20,7 @@ assert('null when the list is not a fork', findForkUpdate({ id: 7, forkedFrom: n
 assert('null for a null list', findForkUpdate(null, updates) === null);
 assert('null when updates is not an array', findForkUpdate(list, undefined) === null);
 assert('null when the entry is not newer', findForkUpdate(list, [{ ...updates[0], latestVersion: 1 }]) === null);
+assert('no banner once the copy was updated past the cached forkedVersion', findForkUpdate({ id: 7, forkedFrom: { externalId: 'src1', version: 2 } }, updates) === null);
 const dismissedV2 = { id: 7, forkedFrom: { externalId: 'src1', version: 1, dismissedVersion: 2 } };
 assert('null once that version was dismissed', findForkUpdate(dismissedV2, updates) === null);
 const v3 = findForkUpdate(dismissedV2, [{ ...updates[0], latestVersion: 3 }]);
@@ -58,6 +59,43 @@ const diffFieldKeys = [
     assert(`${locale} keeps the {from}/{to} placeholders`, Boolean(block) && typeof block.diffTitle === 'string' && block.diffTitle.includes('{from}') && block.diffTitle.includes('{to}'));
     assert(`${locale} has every diff field label`, Boolean(block && block.diffFields) && diffFieldKeys.every((key) => typeof block.diffFields[key] === 'string' && block.diffFields[key].length > 0));
 });
+
+console.log('\n--- applyForkUpdate / undoForkUpdate / discardForkUndo ---');
+{
+    const st = { library: new Library() };
+    const forkList = st.library.lists[0];
+    const cat = st.library.categories[0];
+    const item = st.library.newItem({ category: cat, _isNew: false });
+    item.name = 'Tent'; item.weight = 900000;
+    forkList.forkedFrom = {
+        externalId: 'src1', version: 1, itemLinks: [{ categoryId: cat.id, itemId: item.id, sourceItemId: 11 }], categoryLinks: [{ categoryId: cat.id, sourceCategoryId: 5 }],
+    };
+    cat.name = 'Shelter';
+    const mk = (weight) => ({
+        publicFields: { images: false, links: false, price: false },
+        categories: [{ id: 5, name: 'Shelter', items: [{ id: 11, name: 'Tent', description: '', brand: '', shop: '', weight, price: 0, qty: 1, worn: 0, consumable: false, star: 0 }] }],
+        list: {
+            externalId: 'src1', name: 'S', description: '', seasons: [], listTypes: [], totalBaseWeight: 0, totalQty: 0,
+        },
+    });
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    assert('applyForkUpdate updates the copy', item.weight === 800000 && forkList.forkedFrom.version === 2);
+    assert('applyForkUpdate stores an undo snapshot', Boolean(forkList.forkedFrom.undo));
+    libraryMutations.undoForkUpdate(st, { listId: forkList.id });
+    assert('undoForkUpdate restores the copy', item.weight === 900000 && forkList.forkedFrom.version === 1 && !forkList.forkedFrom.undo);
+    const wrong = { ...mk(800000), list: { ...mk(800000).list, externalId: 'other' } };
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: wrong, toVersion: 2 });
+    assert('a payload from another source list is refused', item.weight === 900000 && forkList.forkedFrom.version === 1 && !forkList.forkedFrom.undo);
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    assert('a matching source list applies', item.weight === 800000 && forkList.forkedFrom.version === 2);
+    libraryMutations.undoForkUpdate(st, { listId: forkList.id });
+    libraryMutations.applyForkUpdate(st, { listId: forkList.id, base: mk(900000), latest: mk(800000), toVersion: 2 });
+    libraryMutations.discardForkUndo(st, { listId: forkList.id });
+    assert('discardForkUndo drops the snapshot and keeps the update', !forkList.forkedFrom.undo && forkList.forkedFrom.version === 2 && item.weight === 800000);
+    libraryMutations.applyForkUpdate(st, { listId: 999999, base: mk(1), latest: mk(2), toVersion: 3 });
+    libraryMutations.undoForkUpdate(st, { listId: 999999 });
+    assert('unknown lists are ignored', true);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);

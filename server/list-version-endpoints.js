@@ -3,7 +3,8 @@ const express = require('express');
 const auth = require('./auth.js');
 const { logWithRequest } = require('./log.js');
 const { publishVersion, getPublishStatus, getForkUpdates } = require('./list-versions.js');
-const { getForkDiff } = require('./fork-diff.js');
+const { getForkDiff, loadForkPayloads } = require('./fork-diff.js');
+const { recordCopy } = require('./list-copies.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const router = express.Router();
@@ -91,6 +92,62 @@ router.get('/api/lists/fork-diff/:listId', (req, res) => {
         } catch (err) {
             logWithRequest(req, {
                 message: 'fork diff failed', username: user.username, listId, error: err.message,
+            });
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+router.get('/api/lists/fork-apply/:listId', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '').trim();
+        try {
+            const loaded = await loadForkPayloads(user, listId);
+            if (!loaded) return res.status(404).json({ message: 'Not found' });
+            return res.json({
+                sourceExternalId: loaded.externalId,
+                fromVersion: loaded.fromVersion,
+                toVersion: loaded.toVersion,
+                currencySymbol: loaded.currencySymbol,
+                base: loaded.basePayload,
+                latest: loaded.latestPayload,
+            });
+        } catch (err) {
+            logWithRequest(req, {
+                message: 'fork apply data failed', username: user.username, listId, error: err.message,
+            });
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+router.post('/api/lists/fork-apply/:listId/record', (req, res) => {
+    auth.authenticateUser(req, res, async (req, res, user) => {
+        const listId = String(req.params.listId || '').trim();
+        const version = req.body && req.body.version;
+        if (!Number.isInteger(version) || version < 1) return res.status(400).json({ message: 'Invalid version' });
+
+        const rate = checkPublishRateLimit(`apply:${String(user._id)}`);
+        if (rate.limited) {
+            res.set('Retry-After', String(rate.retryAfterMinutes * 60));
+            return res.status(429).json({ message: 'Update limit reached', retryAfterMinutes: rate.retryAfterMinutes });
+        }
+
+        try {
+            const loaded = await loadForkPayloads(user, listId);
+            if (!loaded) return res.status(404).json({ message: 'Not found' });
+            // Same eligibility as /copy-list: discoverable/indexable, or shareable and opted in to copying.
+            const { liveList } = loaded;
+            const copyable = liveList.visibility === 'discoverable' || liveList.visibility === 'indexable'
+                || (liveList.visibility === 'shareable' && liveList.copyable === true);
+            if (!copyable || user.banned) return res.status(404).json({ message: 'Not found' });
+            // Only the current latest can be registered: that is what the caller was just served.
+            if (version !== loaded.toVersion) return res.status(409).json({ message: 'Not the latest version' });
+            await recordCopy(user._id, loaded.externalId, version);
+            return res.json({ recorded: true, version });
+        } catch (err) {
+            logWithRequest(req, {
+                message: 'fork apply record failed', username: user.username, listId, error: err.message,
             });
             return res.status(500).json({ message: 'An error occurred' });
         }

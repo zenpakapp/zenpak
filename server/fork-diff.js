@@ -18,11 +18,11 @@ const OWNER_PROJECTION = {
     'library.creator': 1,
 };
 
-// What changed in the source between the version this fork was copied from and the latest.
+// Everything the fork-diff and fork-apply endpoints need, behind the same guards.
 // Bound to the caller's own fork: the base version comes from its forkedFrom, never from input.
 // Both versions go through buildPublicList with the author's live share settings, so anything
 // hidden publicly is hidden here too. Null (404) whenever the source is not currently public.
-async function getForkDiff(user, listId) {
+async function loadForkPayloads(user, listId) {
     const lists = (user && user.library && user.library.lists) || [];
     const fork = lists.find((list) => String(list.id) === String(listId));
     if (!isTrackedFork(fork)) return null;
@@ -49,12 +49,27 @@ async function getForkDiff(user, listId) {
     if (!basePayload || !latestPayload) return null;
 
     return {
-        sourceExternalId: externalId,
+        externalId,
         fromVersion: base.version,
         toVersion: latest.version,
         currencySymbol: latestPayload.currencySymbol,
-        diff: diffSnapshots(basePayload, latestPayload),
+        basePayload,
+        latestPayload,
+        liveList,
     };
 }
 
-module.exports = { getForkDiff };
+// What changed in the source between the version this fork was copied from and the latest.
+async function getForkDiff(user, listId) {
+    const loaded = await loadForkPayloads(user, listId);
+    if (!loaded) return null;
+    return {
+        sourceExternalId: loaded.externalId,
+        fromVersion: loaded.fromVersion,
+        toVersion: loaded.toVersion,
+        currencySymbol: loaded.currencySymbol,
+        diff: diffSnapshots(loaded.basePayload, loaded.latestPayload),
+    };
+}
+
+module.exports = { getForkDiff, loadForkPayloads };

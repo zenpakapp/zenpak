@@ -1,4 +1,5 @@
 const { arrayMove } = require('../utils/utils');
+const { applyUpdate, undoUpdate } = require('../utils/fork-apply.js');
 
 function recalculateListsForItem(library, itemId) {
     const affectedCategoryIds = new Set();
@@ -230,6 +231,27 @@ module.exports = {
         const list = state.library.getListById(listId);
         if (!list || !list.forkedFrom) return;
         list.forkedFrom = { ...list.forkedFrom, dismissedVersion: version };
+    },
+    applyForkUpdate(state, {
+        listId, base, latest, toVersion,
+    }) {
+        const list = state.library.getListById(listId);
+        if (!list || !list.forkedFrom) return;
+        // Never apply a payload fetched for another list (the user may have switched lists).
+        const payloadSource = latest && latest.list && latest.list.externalId;
+        if (!payloadSource || String(payloadSource) !== String(list.forkedFrom.externalId)) return;
+        applyUpdate(state.library, list, base, latest, toVersion);
+    },
+    undoForkUpdate(state, { listId }) {
+        const list = state.library.getListById(listId);
+        if (!list) return;
+        undoUpdate(state.library, list);
+    },
+    discardForkUndo(state, { listId }) {
+        const list = state.library.getListById(listId);
+        if (!list || !list.forkedFrom || !list.forkedFrom.undo) return;
+        const { undo, ...rest } = list.forkedFrom;
+        list.forkedFrom = rest;
     },
     updateCategoryName(state, updatedCategory) {
         const category = state.library.getCategoryById(updatedCategory.id);
