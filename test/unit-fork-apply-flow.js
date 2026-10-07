@@ -24,14 +24,24 @@ function harness(failing) {
 (async () => {
     const ok = harness([]);
     await commitAndSave(ok.deps, { listId: 1 });
-    assert('success: commit then save, no reload, no notify', ok.calls.join() === 'commit:applyForkUpdate,dispatch:saveNow' && ok.alerts.length === 0);
+    assert('success: save, commit, save, no reload, no notify', ok.calls.join() === 'dispatch:saveNow,commit:applyForkUpdate,dispatch:saveNow' && ok.alerts.length === 0);
 
-    const saveFail = harness(['saveNow']);
+    const preFail = harness(['saveNow']);
+    await commitAndSave(preFail.deps, { listId: 1 });
+    assert('pre-save failure: no commit, no reload', !preFail.calls.some((c) => c.startsWith('commit:') || c === 'dispatch:loadRemote'));
+    assert('pre-save failure: notify with update-error key', preFail.alerts.length === 1 && preFail.alerts[0].key === 'list.versioning.updateError');
+
+    // Fails on the second saveNow only (the post-commit one).
+    const saveFail = harness([]);
+    let saves = 0;
+    saveFail.deps.dispatch = async (name) => { saveFail.calls.push(`dispatch:${name}`); if (name === 'saveNow' && (saves += 1) === 2) throw new Error(name); };
     await commitAndSave(saveFail.deps, { listId: 1 });
     assert('save failure: loadRemote dispatched', saveFail.calls.includes('dispatch:loadRemote'));
     assert('save failure: notify with update-error key', saveFail.alerts.length === 1 && saveFail.alerts[0].key === 'list.versioning.updateError');
 
-    const both = harness(['saveNow', 'loadRemote']);
+    const both = harness([]);
+    let bothSaves = 0;
+    both.deps.dispatch = async (name) => { both.calls.push(`dispatch:${name}`); if (name === 'loadRemote' || (name === 'saveNow' && (bothSaves += 1) === 2)) throw new Error(name); };
     await commitAndSave(both.deps, { listId: 1 });
     assert('loadRemote failure: notify still called, no throw', both.alerts.length === 1 && both.alerts[0].key === 'list.versioning.updateError');
 
