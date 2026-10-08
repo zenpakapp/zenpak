@@ -638,6 +638,8 @@
   "gearroom": {
     "title": "Your Gear",
     "newItem": "+ New item",
+    "noResults": "No gear matches “{query}”.",
+    "createNamed": "Create “{name}”",
     "backToLists": "← Back to lists",
     "hideFilters": "Hide filters",
     "filters": "Filters",

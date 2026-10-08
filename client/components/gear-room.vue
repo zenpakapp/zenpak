@@ -7,7 +7,7 @@
             <h1 class="lpGearRoomTitle">
                 {{ $t('gearroom.title') }}
             </h1>
-            <button class="lpButton lpSmall" @click="createItem">
+            <button class="lpButton lpSmall" @click="createItem()">
                 {{ $t('gearroom.newItem') }}
             </button>
         </div>
@@ -125,6 +125,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr v-if="nameFromSearch" class="lpGearRoomNoResults">
+                                <td :colspan="showPrice ? 7 : 6">
+                                    <span class="lpGearRoomNoResultsText">{{ $t('gearroom.noResults', { query: nameFromSearch }) }}</span>
+                                    <button class="lpButton lpSmall lpGearRoomCreateFromSearch" type="button" @click="createItem(nameFromSearch)">
+                                        {{ $t('gearroom.createNamed', { name: nameFromSearch }) }}
+                                    </button>
+                                </td>
+                            </tr>
                             <tr v-for="item in sortedItems" :key="item.id" @click.self="openItemDetail(item)">
                                 <td class="lpGRCheckCol" @click.stop>
                                     <input v-model="selected" type="checkbox" :value="item.id">
@@ -191,6 +199,7 @@
 import { openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils';
 import useGearRoomFilters from '../composables/useGearRoomFilters';
+import { newItemNameFromSearch } from '../services/gear-room-filters';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
 import GearRoomBatchBar from './gear-room-batch-bar.vue';
@@ -247,6 +256,10 @@ export default {
         itemUnit() {
             return (this.library && this.library.itemUnit) || 'g';
         },
+        // Set only when the applied search matches nothing: it then names the item to create.
+        nameFromSearch() {
+            return newItemNameFromSearch(this.search, this.filteredItems.length);
+        },
     },
     methods: {
         displayWeight,
@@ -266,8 +279,8 @@ export default {
         openItemDetail(item) {
             openDialog('itemDetail', { item, categoryItem: null, category: null });
         },
-        createItem() {
-            this.$store.commit('newItem', { _isNew: true, name: '' });
+        createItem(name = '') {
+            this.$store.commit('newItem', { _isNew: true, name });
             const newItem = this.library.items[this.library.items.length - 1];
             openDialog('itemDetail', {
                 item: newItem, categoryItem: null, category: null, startEditing: true,

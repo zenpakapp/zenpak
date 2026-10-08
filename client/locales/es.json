@@ -638,6 +638,8 @@
   "gearroom": {
     "title": "Tu equipo",
     "newItem": "+ Nuevo artículo",
+    "noResults": "Ningún artículo coincide con «{query}».",
+    "createNamed": "Crear «{name}»",
     "backToLists": "← Volver a listas",
     "hideFilters": "Ocultar filtros",
     "filters": "Filtros",

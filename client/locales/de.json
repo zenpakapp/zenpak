@@ -638,6 +638,8 @@
   "gearroom": {
     "title": "Deine Ausrüstung",
     "newItem": "+ Neuer Gegenstand",
+    "noResults": "Kein Gegenstand passt zu „{query}“.",
+    "createNamed": "„{name}“ erstellen",
     "backToLists": "← Zurück zu Listen",
     "hideFilters": "Filter verbergen",
     "filters": "Filter",
