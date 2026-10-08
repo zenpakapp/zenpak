@@ -141,6 +141,88 @@ test.describe("Smart Gear Library", () => {
     ).toBeVisible();
   });
 
+  test("gear room offers to create an item from a search that finds nothing", async ({
+    page,
+  }) => {
+    const now = Date.now();
+    await registerUser(
+      page,
+      `gearsearch${now}`,
+      "testtest",
+      `gearsearch+${now}@lighterpack.com`,
+    );
+
+    await page.getByRole("button", { name: /item library/i }).click();
+    await expect(page.locator(".lpGearRoom")).toBeVisible();
+
+    // Nothing to offer before searching, and "+ New item" still opens an empty item.
+    await expect(page.locator(".lpGearRoomNoResults")).toHaveCount(0);
+
+    await page.locator(".lpGearRoomSearch").fill("  Zzquux   spork ");
+    const createButton = page.locator(".lpGearRoomCreateFromSearch");
+    await expect(createButton).toBeVisible();
+    await expect(createButton).toHaveText("Create “Zzquux spork”");
+    await expect(page.locator(".lpGearRoomNoResults")).toContainText(
+      "No gear matches “Zzquux spork”.",
+    );
+
+    await createButton.click();
+    await expect(page.locator("#itemDetailDialog")).toBeVisible();
+    const nameInput = page
+      .locator("#itemDetailDialog")
+      .getByPlaceholder("Item name");
+    await expect(nameInput).toHaveValue("Zzquux spork");
+    await page
+      .locator("#itemDetailDialog")
+      .getByRole("button", { name: "Save" })
+      .click();
+    await expect(page.locator("#itemDetailDialog")).toBeHidden();
+
+    // The new item now matches the search, so the offer goes away.
+    await expect(page.locator(".lpGearRoomNoResults")).toHaveCount(0);
+    await expect(
+      page.locator(".lpGearRoom tbody tr", { hasText: "Zzquux spork" }).first(),
+    ).toBeVisible();
+  });
+
+  test("gear room does not offer to create an item while a search has results", async ({
+    page,
+  }) => {
+    const now = Date.now();
+    await registerUser(
+      page,
+      `gearsearchhit${now}`,
+      "testtest",
+      `gearsearchhit+${now}@lighterpack.com`,
+    );
+
+    await page.getByRole("button", { name: /item library/i }).click();
+    await expect(page.locator(".lpGearRoom")).toBeVisible();
+
+    await page.getByRole("button", { name: /\+ new item/i }).click();
+    const nameInput = page
+      .locator("#itemDetailDialog")
+      .getByPlaceholder("Item name");
+    await nameInput.fill("Alpine stove");
+    await page
+      .locator("#itemDetailDialog")
+      .getByRole("button", { name: "Save" })
+      .click();
+    await expect(page.locator("#itemDetailDialog")).toBeHidden();
+
+    await page.locator(".lpGearRoomSearch").fill("stove");
+    await expect(
+      page.locator(".lpGearRoom tbody tr", { hasText: "Alpine stove" }).first(),
+    ).toBeVisible();
+    await expect(page.locator(".lpGearRoomNoResults")).toHaveCount(0);
+
+    // The header button still opens an item with an empty name, whatever is typed in the search.
+    await page.getByRole("button", { name: /\+ new item/i }).click();
+    await expect(
+      page.locator("#itemDetailDialog").getByPlaceholder("Item name"),
+    ).toHaveValue("");
+  });
+
   test("gear room batch dropdowns support keyboard option selection", async ({
     page,
   }) => {

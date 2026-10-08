@@ -18,7 +18,7 @@ function buildSearchableItems(items) {
 }
 
 function filterSearchableItems(searchableItems, query) {
-    const q = String(query || '').toLowerCase();
+    const q = String(query || '').toLowerCase().trim().replace(/\s+/g, ' ');
     if (!q) return searchableItems.map((entry) => entry.item);
     return searchableItems.reduce((matches, entry) => {
         if (entry.search.includes(q)) matches.push(entry.item);
@@ -41,10 +41,17 @@ function sortItems(items, key, asc) {
     return decorated.map((entry) => entry.item);
 }
 
+// A search that finds nothing is usually "I cannot find it, let me add it": offer its text as the new item's name.
+function newItemNameFromSearch(query, resultCount) {
+    if (resultCount > 0) return '';
+    return String(query == null ? '' : query).trim().replace(/\s+/g, ' ');
+}
+
 module.exports = {
     buildSearchableItems,
     filterSearchableItems,
     itemDisplayName,
+    newItemNameFromSearch,
     sortItems,
     sortValue,
 };
