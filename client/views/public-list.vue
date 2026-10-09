@@ -74,6 +74,9 @@
                     <span v-else>{{ forkSource.ownerName }}</span>
                 </span>
             </p>
+            <p v-if="copyCount > 0" class="lpPublicListCopies">
+                {{ $t('public.copyCount', { n: copyCount }) }}
+            </p>
             <div class="lpPublicListActions">
                 <button
                     v-if="isLoggedIn && !isOwnList && isCopyable"
@@ -89,6 +92,12 @@
                 <p v-if="copyError" class="lpCopyListError">
                     {{ formatCopyError(copyError) }}
                 </p>
+                <report-button
+                    v-if="isLoggedIn && !isOwnList"
+                    class="noprint"
+                    target-type="list"
+                    :target-id="list.externalId"
+                />
                 <button v-if="isOwnList" class="lpBtn lpPrintBtn noprint" @click="printList">
                     {{ $t('public.printSaveAsPdf') }}
                 </button>
@@ -226,6 +235,7 @@ import { fetchJson } from '../utils/utils';
 import { tierLabel } from '../services/tier-labels';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
+import ReportButton from '../components/report-button.vue';
 
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
@@ -247,6 +257,7 @@ async function loadChart() {
 
 export default {
     name: 'PublicList',
+    components: { ReportButton },
     setup() {
         useTheme();
         const router = useRouter();
@@ -272,6 +283,7 @@ export default {
             creatorCodes: [],
             authorTier: null,
             forkedFrom: null,
+            copyCount: 0,
             chart: null,
             copying: false,
             copyError: null,
@@ -388,6 +400,7 @@ export default {
                 this.affiliateDisclosure = payload.affiliateDisclosure;
                 this.creatorCodes = payload.creatorCodes || [];
                 this.forkedFrom = payload.forkedFrom || null;
+                this.copyCount = Number(payload.copyCount) || 0;
                 this.updateDocumentMeta();
                 this.track('listView');
             })

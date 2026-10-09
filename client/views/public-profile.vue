@@ -87,6 +87,11 @@
                     >
                         {{ following ? $t('public.following') : $t('public.follow') }}
                     </button>
+                    <report-button
+                        v-if="isLoggedIn && !isOwnProfile"
+                        target-type="user"
+                        :target-id="$route.params.username"
+                    />
                 </div>
             </div>
 
@@ -145,9 +150,11 @@ import { useTheme } from '../composables/useTheme';
 import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
+import ReportButton from '../components/report-button.vue';
 
 export default {
     name: 'PublicProfile',
+    components: { ReportButton },
     setup() {
         useTheme();
         const route = useRoute();

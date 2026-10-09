@@ -83,6 +83,8 @@ router.get('/api/public/list/:externalId', async (req, res) => {
         if (!payload) {
             return res.status(404).json({ message: 'List not found' });
         }
+        const stats = db.publicListStats ? await db.publicListStats.findOne({ externalId }) : null;
+        payload.copyCount = Number(stats && stats.copyCount) || 0;
         return res.json(payload);
     } catch (err) {
         logWithRequest(req, { message: 'Public list snapshot error', externalId, error: err.message });
