@@ -265,6 +265,7 @@
     "joinZenPak": "Join ZenPak →",
     "openApp": "Open app →",
     "byAuthor": "By",
+    "copyCount": "Copies: {n}",
     "backToProfile": "← {username}'s profile",
     "items": "items",
     "consumable": "Consumable",

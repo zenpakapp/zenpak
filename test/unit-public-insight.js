@@ -35,6 +35,7 @@ const dbStub = {
         },
     },
     publicListStats: {
+        findOne(filter) { return Promise.resolve(stats[filter.externalId] || null); },
         updateOne(filter, update) {
             const doc = stats[filter.externalId] || { externalId: filter.externalId };
             if (update.$inc) {
@@ -105,6 +106,17 @@ function callInsight(req) {
     });
 }
 
+function callListRoute(externalId) {
+    const route = router.stack.find(l => l.route && l.route.path === '/api/public/list/:externalId' && l.route.methods.get);
+    return new Promise(resolve => {
+        const res = {
+            status(code) { this._status = code; return this; },
+            json(data) { resolve({ status: this._status || 200, data }); },
+        };
+        route.route.stack[0].handle({ params: { externalId } }, res);
+    });
+}
+
 async function run() {
     const baseReq = {
         body: { externalId: 'abc', type: 'listView', itemId: '' },
@@ -141,6 +153,13 @@ async function run() {
     assert('gearClick with a numeric or string item id is counted', stats.abc['gearClicks.11'] === 2);
     const rejected = await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: { $gt: '' } } });
     assert('object item ids are rejected with 400', rejected.status === 400);
+
+    const before = await callListRoute('abc');
+    assert('public list payload starts with a zero copy count', before.data.copyCount === 0);
+    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'listCopy', itemId: '' } });
+    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'listCopy', itemId: '' } });
+    const after = await callListRoute('abc');
+    assert('public list payload exposes the copy count', after.data.copyCount === 2);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
