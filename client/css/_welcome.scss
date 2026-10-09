@@ -714,6 +714,11 @@ details[open] .lpWelcomeFaqQ::after {
         font-size: 17px;
     }
 
+    .lpWelcomeStats {
+        flex-wrap: wrap;
+        gap: 12px 24px;
+    }
+
     .lpWelcomeProof,
     .lpWelcomeCard {
         border-radius: 20px;
