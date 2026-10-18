@@ -71,7 +71,7 @@
                         </div>
                         <ul v-if="safeLinks.length" class="lpPublicLinks">
                             <li v-for="link in safeLinks" :key="link.url">
-                                <a :href="link.url" target="_blank" rel="noopener noreferrer">{{ link.label || link.url }}</a>
+                                <a :href="link.url" target="_blank" :rel="ugcRel">{{ link.label || link.url }}</a>
                             </li>
                         </ul>
                         <div v-if="profile.gearPhilosophy && profile.gearPhilosophy.length" class="lpPublicTags">
@@ -132,7 +132,7 @@
                     <strong>{{ $t('public.creatorCodes') }}</strong>
                     <ul>
                         <li v-for="cc in creatorCodes" :key="cc.code">
-                            <a v-if="cc.url" :href="cc.url" target="_blank" rel="noopener noreferrer"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
+                            <a v-if="cc.url" :href="cc.url" target="_blank" :rel="sponsoredRel"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
                             <span v-else><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></span>
                         </li>
                     </ul>
@@ -151,6 +151,7 @@ import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
+import { SPONSORED_REL, UGC_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
@@ -168,7 +169,15 @@ export default {
             unfollow: unfollowUser,
         } = useFollow(username);
         return {
-            following, mode, followLoading, followUser, unfollowUser, backTo, backLabelKey,
+            following,
+            mode,
+            followLoading,
+            followUser,
+            unfollowUser,
+            backTo,
+            backLabelKey,
+            sponsoredRel: SPONSORED_REL,
+            ugcRel: UGC_REL,
         };
     },
     data() {

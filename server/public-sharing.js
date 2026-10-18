@@ -5,6 +5,7 @@ const {
 const { normalizeTier } = require('./tier-policy.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
+const { clipDescription } = require('./text-limits.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -72,8 +73,8 @@ function sanitizeListSummary(list, options = {}) {
         id: list.id,
         externalId: list.externalId || '',
         name: list.name || '',
-        summary: list.summary || '',
-        description: list.description || '',
+        summary: clipDescription(list.summary),
+        description: clipDescription(list.description),
         visibility: list.visibility,
         allowSearchIndexing: allowsSearchIndexing(list.visibility),
         copyable: list.copyable || false,

@@ -97,6 +97,7 @@
     "faq3A": "Sí. Exporta tu CSV desde lighterpack.com u otra herramienta de lista de equipo basada en hojas de cálculo, luego impórtala en ZenPak. Las listas, artículos, pesos y notas se transfieren limpiamente para que puedas migrar sin reconstruir todo a mano."
   },
   "list": {
+    "descriptionHelp": "Los enlaces de la descripción son clicables (3 como máximo). Si un enlace te genera ingresos, indícalo.",
     "addCategory": "Añadir categoría",
     "packThis": "Empacar esta lista",
     "reset": "Restablecer",

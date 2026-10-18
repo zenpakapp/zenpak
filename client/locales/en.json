@@ -97,6 +97,7 @@
     "faq3A": "Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak. Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand."
   },
   "list": {
+    "descriptionHelp": "Links in the description are clickable (3 at most). If a link earns you money, say so.",
     "addCategory": "Add new category",
     "packThis": "Pack this list",
     "reset": "Reset",

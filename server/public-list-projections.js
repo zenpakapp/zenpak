@@ -4,6 +4,7 @@ const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
 const { buildSearchTokens } = require('./search-text.js');
+const { clipDescription } = require('./text-limits.js');
 
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
@@ -52,7 +53,7 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
     return {
         searchTokens: buildSearchTokens({
             name: published.name,
-            description: published.description,
+            description: clipDescription(published.description),
             ownerDisplayName,
             ownerUsername: user.username,
             itemNames,
@@ -64,7 +65,7 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
         ownerDisplayName: profile.displayName || user.username || '',
         ownerTier: normalizeTier(plan),
         name: published.name || '',
-        description: published.description || '',
+        description: clipDescription(published.description),
         visibility: list.visibility || 'private',
         totalBaseWeight: totals ? Number(totals.baseWeight) || 0 : Number(list.totalBaseWeight) || 0,
         totalQty: totals ? Number(totals.qty) || 0 : Number(list.totalQty) || 0,

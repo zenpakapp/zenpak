@@ -75,8 +75,8 @@
         <div style="clear: both;" />
 
         <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
-            <h3>{{ $t('list.listDescription') }}</h3> <p>(<a href="https://guides.github.com/features/mastering-markdown/" target="_blank" class="lpHref">Markdown</a> {{ $t('list.markdownSupported') }})</p>
-            <textarea id="listDescription" v-model="list.description" @input="updateListDescription" />
+            <h3>{{ $t('list.listDescription') }}</h3> <p>{{ $t('list.descriptionHelp') }}</p>
+            <textarea id="listDescription" v-model="list.description" :maxlength="descriptionMaxLength" @input="updateListDescription" />
         </div>
 
         <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
@@ -101,6 +101,7 @@ import category from './category.vue';
 import listSummary from './list-summary.vue';
 import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
+import { MAX_DESCRIPTION_LENGTH } from '../utils/linkify';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { usePackingMode } from '../composables/usePackingMode';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
@@ -140,6 +141,7 @@ export default {
             completionPhrase: '',
             communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
             guestHintDismissed: !!localStorage.getItem('lpGuestHintDismissed'),
+            descriptionMaxLength: MAX_DESCRIPTION_LENGTH,
         };
     },
     computed: {
