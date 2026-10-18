@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { registerUser } from "./auth-utils";
+import {
+  createEditorLibrary,
+  mockSuccessfulEditorInitialization,
+} from "./editor-fixture";
 import { testRoot } from "./utils";
 
 test.use({
@@ -95,4 +99,19 @@ test.describe("signed in", () => {
     expect(sizes.length).toBeGreaterThan(1);
     expect(Math.min(...sizes)).toBeGreaterThanOrEqual(16);
   });
+});
+
+// The brand/type/tags form had min-width: 320px, wider than the dialog's content box on a
+// 375px phone, so its fields and buttons ran past the dialog's right edge.
+test("brand, type and tags dialog fits inside a phone", async ({ page }) => {
+  await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+  await page.goto(testRoot);
+  await page.locator(".lpItem .lpTag").first().click();
+  await expect(page.locator(".itemMetaForm")).toBeVisible();
+  const { formRight, dialogRight } = await page.evaluate(() => {
+    const form = document.querySelector(".itemMetaForm").getBoundingClientRect();
+    const modal = document.querySelector("#itemMetaDialog").getBoundingClientRect();
+    return { formRight: form.right, dialogRight: modal.right };
+  });
+  expect(formRight).toBeLessThanOrEqual(dialogRight);
 });
