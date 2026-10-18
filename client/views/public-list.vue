@@ -438,7 +438,7 @@ export default {
         displayItemWeight(item) {
             const qty = Number(item.qty);
             const multiplier = qty === 0 ? 1 : (qty || 1);
-            return weightUtils.MgToWeight((item.weight || 0) * multiplier, this.itemUnit);
+            return weightUtils.MgToItemWeight((item.weight || 0) * multiplier, this.itemUnit);
         },
         isOptionalItem(item) {
             return Number(item.qty) === 0;

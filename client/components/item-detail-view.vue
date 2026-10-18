@@ -156,7 +156,7 @@ export default {
         },
         displayWeight() {
             if (!this.item) return 0;
-            return weightUtils.MgToWeight(this.item.weight, this.itemUnit);
+            return weightUtils.MgToItemWeight(this.item.weight, this.itemUnit);
         },
         itemUnit() {
             const library = this.$store.state.library;

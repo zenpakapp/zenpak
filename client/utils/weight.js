@@ -35,8 +35,33 @@ module.exports = (function () {
         }
     }
 
+    const MG_PER_UNIT = {
+        g: 1000, kg: 1000000, oz: 28349.5, lb: 453592,
+    };
+    // Largest rounding error accepted when showing a single item's weight.
+    const MAX_ITEM_ROUNDING_ERROR = 0.02;
+
+    // Weight of one item as shown to the user. MgToWeight rounds (whole grams, 2 decimals
+    // elsewhere), which shows a 4 g item as 0 kg and turns a re-saved 1 g into 1.13 g. Here the
+    // decimals grow until the shown value is within 2% of the stored one, so exact values keep
+    // their usual display and light items stay visible. Totals keep using MgToWeight.
+    function MgToItemWeight(value, unit) {
+        const perUnit = MG_PER_UNIT[unit];
+        if (!perUnit) return MgToWeight(value, unit);
+
+        const exact = (Number(value) || 0) / perUnit;
+        if (exact === 0) return 0;
+
+        for (let decimals = unit === 'g' ? 0 : 2; decimals < 6; decimals += 1) {
+            const rounded = Number(exact.toFixed(decimals));
+            if (Math.abs(rounded - exact) / exact <= MAX_ITEM_ROUNDING_ERROR) return rounded;
+        }
+        return Number(exact.toFixed(6));
+    }
+
     return {
         WeightToMg,
         MgToWeight,
+        MgToItemWeight,
     };
 }());

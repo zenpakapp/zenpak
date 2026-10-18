@@ -192,8 +192,13 @@ export default {
             const weightFloat = parseFloat(this.displayWeight, 10);
 
             if (!Number.isNaN(weightFloat)) {
-                this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
-                this.saveMeasuredItem();
+                // Retyping what is already shown must not replace the exact stored weight with
+                // its rounded display (28.349 g shown as 0.028 kg would become 28 g).
+                const shown = weightUtils.MgToItemWeight(this.item.weight, this.library.itemUnit);
+                if (weightFloat !== shown) {
+                    this.item.weight = weightUtils.WeightToMg(weightFloat, this.library.itemUnit);
+                    this.saveMeasuredItem();
+                }
                 this.weightError = false;
             } else {
                 this.weightError = true;
@@ -210,7 +215,7 @@ export default {
             }
         },
         setDisplayWeight() {
-            this.displayWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit);
+            this.displayWeight = weightUtils.MgToItemWeight(this.item.weight, this.library.itemUnit);
         },
         openDetail() {
             this.openItemDetail({
@@ -300,7 +305,7 @@ export default {
                 return;
             }
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) + 1;
+            const newWeight = weightUtils.MgToItemWeight(this.item.weight, this.library.itemUnit) + 1;
             this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
             this.saveMeasuredItem();
@@ -312,7 +317,7 @@ export default {
                 return;
             }
 
-            const newWeight = weightUtils.MgToWeight(this.item.weight, this.library.itemUnit) - 1;
+            const newWeight = weightUtils.MgToItemWeight(this.item.weight, this.library.itemUnit) - 1;
             this.item.weight = weightUtils.WeightToMg(newWeight, this.library.itemUnit);
 
             if (this.item.weight < 0) {
