@@ -218,3 +218,73 @@ test("welcome form fields are 16px so iOS does not zoom", async ({ page }) => {
   expect(sizes.length).toBeGreaterThan(3);
   expect(Math.min(...sizes)).toBeGreaterThanOrEqual(16);
 });
+
+// Every text field a user can tap must be 16px on a phone, or iOS zooms the page. This opens
+// the dialogs and popovers (not just the main screens) and checks the fields they show.
+const visibleFieldSizes = (page) =>
+  page.evaluate(() =>
+    [
+      ...document.querySelectorAll(
+        "input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]):not([type=file]):not([type=color]), select, textarea",
+      ),
+    ]
+      .filter((el) => {
+        const b = el.getBoundingClientRect();
+        return (
+          b.width > 0 &&
+          b.height > 0 &&
+          getComputedStyle(el).visibility !== "hidden"
+        );
+      })
+      .map(
+        (el) =>
+          `${el.tagName.toLowerCase()}.${String(el.className).split(" ")[0]}=${parseFloat(getComputedStyle(el).fontSize)}`,
+      ),
+  );
+
+const tooSmall = (sizes) =>
+  sizes.filter((s) => parseFloat(s.split("=")[1]) < 16);
+
+test.describe("dialogs and popovers keep fields at 16px", () => {
+  test.use({ locale: "en-US" });
+
+  test("item dialogs", async ({ page }) => {
+    await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
+    await page.goto(testRoot);
+    await page.locator(".lpItem .lpTag").first().click();
+    await expect(page.locator(".itemMetaForm")).toBeVisible();
+    expect(tooSmall(await visibleFieldSizes(page))).toEqual([]);
+    await page.locator("#itemMetaDialog .lpModalClose").click();
+
+    await page.locator(".lpAddItemWithDetails").click();
+    await expect(page.locator("#itemDetailDialog")).toBeVisible();
+    const sizes = await visibleFieldSizes(page);
+    expect(sizes.length).toBeGreaterThan(3);
+    expect(tooSmall(sizes)).toEqual([]);
+  });
+
+  test("share and account settings", async ({ page }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    await registerUser(
+      page,
+      `mf${now}`,
+      "testtest",
+      `mf${now}@lighterpack.com`,
+    );
+    await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+
+    await page.locator("#header [title='Share']").first().click();
+    await expect(page.locator(".sharePopover")).toBeVisible();
+    const share = await visibleFieldSizes(page);
+    expect(share.length).toBeGreaterThan(1);
+    expect(tooSmall(share)).toEqual([]);
+    await page.mouse.click(5, 400);
+
+    await page.locator(".accountDropdownTarget").click();
+    await page.getByText("Account Settings", { exact: true }).dispatchEvent("click");
+    await expect(page.locator("#accountSettings")).toBeVisible();
+    const account = await visibleFieldSizes(page);
+    expect(account.length).toBeGreaterThan(1);
+    expect(tooSmall(account)).toEqual([]);
+  });
+});
