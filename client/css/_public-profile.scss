@@ -149,10 +149,10 @@
 }
 
 .lpPublicStats {
+    color: $color-text-muted;
     display: flex;
     font-size: 12px;
     gap: 16px;
-    color: $color-text-muted;
 
     strong {
         color: $color-text;
@@ -222,8 +222,8 @@
 
     &:hover .lpPublicListDesc,
     &:focus-visible .lpPublicListDesc {
-        -webkit-line-clamp: 6;
         color: $color-text;
+        -webkit-line-clamp: 6;
     }
 
     &:last-child {
@@ -249,10 +249,10 @@
 
 .lpPublicListDesc {
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
     color: $color-text-muted;
     display: -webkit-box;
     font-size: 12px;
+    -webkit-line-clamp: 2;
     line-height: 1.5;
     // About 630px: a readable line on the 1040px page, not the whole card.
     max-width: 90ch;
@@ -264,8 +264,8 @@
     align-items: center;
     color: $color-text-muted;
     display: flex;
-    font-size: 11px;
     flex-shrink: 0;
+    font-size: 11px;
     gap: 10px;
     line-height: 1.25;
     padding-top: 2px;
