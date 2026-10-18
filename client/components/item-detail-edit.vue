@@ -47,9 +47,9 @@
                 <div class="itemDetailField">
                     <label>{{ $t('item.editLabelWeight') }}</label>
                     <div class="itemDetailUnitRow">
-                        <input v-model="editWeight" type="text" placeholder="0">
+                        <input v-model="editWeight" type="text" placeholder="0" @input="weightTouched = true">
                         <div class="itemDetailSelectWrap itemDetailSelectUnit">
-                            <select v-model="editUnit">
+                            <select v-model="editUnit" @change="convertWeightUnit($event.target.value)">
                                 <option v-for="u in units" :key="u" :value="u">
                                     {{ u }}
                                 </option>
@@ -201,6 +201,11 @@ export default {
             editCategory: '',
             editWeight: '0',
             editUnit: 'g',
+            // The real weight in mg behind the weight field, and whether the field was typed in
+            // since. An untouched field keeps the exact stored weight instead of its rounded display.
+            weightMg: 0,
+            weightTouched: false,
+            shownUnit: 'g',
             editPrice: '0.00',
             editQty: 1,
             editWorn: false,
@@ -255,9 +260,8 @@ export default {
         this.editCategory = this.item.category || '';
         this.editUnit = (this.library && this.library.itemUnit) || 'g';
         this.editWeight = weightUtils.MgToItemWeight(this.item.weight, this.editUnit);
-        // Kept to tell a real weight edit from a save that only touched other fields.
-        this.initialWeight = this.editWeight;
-        this.initialUnit = this.editUnit;
+        this.weightMg = this.item.weight || 0;
+        this.shownUnit = this.editUnit;
         this.editPrice = this.item.price != null ? this.item.price.toFixed(2) : '0.00';
         if (this.categoryItem) {
             this.editQty = this.categoryItem.qty === 0 ? (this.categoryItem.qtyBeforeOptional || 1) : this.categoryItem.qty;
@@ -298,10 +302,19 @@ export default {
                 this.editQty = this.categoryItem?.qtyBeforeOptional || 1;
             }
         },
+        // Changing the unit converts the number, so the item keeps the same real weight
+        // (690 g becomes 24.34 oz, not 690 oz).
+        convertWeightUnit(newUnit) {
+            const mg = this.weightTouched
+                ? weightUtils.WeightToMg(parseFloat(this.editWeight) || 0, this.shownUnit)
+                : this.weightMg;
+            this.weightMg = mg;
+            this.weightTouched = false;
+            this.editWeight = weightUtils.MgToItemWeight(mg, newUnit);
+            this.shownUnit = newUnit;
+        },
         saveEdit() {
             const weightFloat = parseFloat(this.editWeight) || 0;
-            // Saving only a rename must not replace the exact weight with its rounded display.
-            const weightUnchanged = weightFloat === this.initialWeight && this.editUnit === this.initialUnit;
             const tags = normalizeTags(this.editTags, this.tagInput);
             const updatedItem = {
                 ...this.item,
@@ -313,7 +326,7 @@ export default {
                 imageUrl: this.editImageUrl.trim() || undefined,
                 tags,
                 authorUnit: this.editUnit,
-                weight: weightUnchanged ? this.item.weight : weightUtils.WeightToMg(weightFloat, this.editUnit),
+                weight: this.weightTouched ? weightUtils.WeightToMg(weightFloat, this.editUnit) : this.weightMg,
                 price: Math.round((parseFloat(this.editPrice) || 0) * 100) / 100,
             };
             this.editTags = tags;
@@ -379,6 +392,9 @@ export default {
                 if (data.weight != null && !parseFloat(this.editWeight)) {
                     this.editWeight = data.weight;
                     if (data.weightUnit) this.editUnit = data.weightUnit;
+                    // The fetched number is in the fetched unit: take it as typed, no conversion.
+                    this.weightTouched = true;
+                    this.shownUnit = this.editUnit;
                     filled.push('weight');
                 }
                 if (data.imageUrl && !this.item.image && !this.editImageUrl) {
