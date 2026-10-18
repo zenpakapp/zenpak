@@ -47,6 +47,18 @@ test.describe("signed in", () => {
     await registerUser(page, `mh${now}`, "testtest", `mh${now}@lighterpack.com`);
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     await expect(page.locator(".headerCommunityItem")).toBeHidden();
+    // Worst case header: the Wayfarer link and the "unpublished changes" badge.
+    await page.evaluate(() => {
+      const { state } = window.LighterPack.$store;
+      state.library.entitlements = { plan: "creator" };
+      state.hasPendingSave = true;
+      for (const l of Object.values(state.library.lists || {})) {
+        l.visibility = "shareable";
+        l.externalId = "abc123";
+      }
+    });
+    await expect(page.locator(".sharePublishState")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Wayfarer" })).toBeVisible();
     const { scrollW, headerW } = await page.evaluate(() => ({
       scrollW: document.documentElement.scrollWidth,
       headerW: document.getElementById("header").scrollWidth,

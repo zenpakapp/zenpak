@@ -345,8 +345,19 @@
 
     .lpListTitleBlock {
         flex-basis: 120px;
+        min-width: 0;
         padding-left: 0;
         padding-right: 0;
+    }
+
+    // The publish badge shrinks to a dot: its text alone is wider than the header's spare room.
+    #header .sharePublishState {
+        border-radius: 50%;
+        font-size: 0;
+        height: 8px;
+        margin-left: 4px;
+        padding: 0;
+        width: 8px;
     }
 
     #lpListName {
