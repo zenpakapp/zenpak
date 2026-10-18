@@ -350,13 +350,18 @@
         padding-right: 0;
     }
 
-    // The publish badge shrinks to a dot: its text alone is wider than the header's spare room.
+    // The publish badge shrinks to a dot on the corner of the Share icon: its text alone is
+    // wider than the header's spare room, and a dot beside the icon ran into the next button.
     #header .sharePublishState {
         border-radius: 50%;
+        box-shadow: 0 0 0 2px $color-surface;
         font-size: 0;
         height: 8px;
-        margin-left: 4px;
+        margin: 0;
         padding: 0;
+        position: absolute;
+        right: -4px;
+        top: 0;
         width: 8px;
     }
 
@@ -370,6 +375,7 @@
     }
 
     #header .headerCommunityLabel,
+    #header .headerGuideLabel,
     .headerMenuLabel,
     .accountDropdownLead,
     .accountDropdownName {
@@ -382,8 +388,10 @@
         padding-right: 6px;
     }
 
-    .headerTruncateItem {
-        flex: 0 0 30px;
+    // Icons keep their width and the list title absorbs the squeeze. (A plain class rule here
+    // lost to the later `flex: 0 1 auto`, so the icons shrank into each other.)
+    #header .headerTruncateItem {
+        flex: 0 0 auto;
     }
 
     .headerItem .lpPopover .lpContent {
@@ -699,13 +707,15 @@
     vertical-align: middle;
 }
 
-// Community shows its label on desktop and only an icon on phones.
-.headerItem .headerCommunityIcon {
+// Community and Wayfarer show their label on desktop and only an icon on phones.
+.headerItem .headerCommunityIcon,
+.headerItem .headerGuideIcon {
     display: none;
 }
 
 @media (max-width: 768px) {
-    .headerItem .headerCommunityIcon {
+    .headerItem .headerCommunityIcon,
+    .headerItem .headerGuideIcon {
         display: block;
     }
 }

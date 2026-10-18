@@ -67,6 +67,18 @@ test.describe("signed in", () => {
     });
     await expect(page.locator(".sharePublishState")).toBeVisible();
     await expect(page.getByRole("link", { name: "Wayfarer" })).toBeVisible();
+    await expect(page.locator(".headerGuideIcon")).toBeVisible();
+    await expect(page.locator(".headerGuideLabel")).toBeHidden();
+    // The publish dot must not run into the list settings icon next to Share.
+    const dot = await page.locator(".sharePublishState").boundingBox();
+    const icons = page.locator("#header svg.lpHeaderIcon");
+    const shareIcon = await icons.nth((await icons.count()) - 2).boundingBox();
+    const gear = await icons.last().boundingBox();
+    // Header items must not shrink into each other: icons keep their own space.
+    expect(shareIcon.x + shareIcon.width).toBeLessThanOrEqual(gear.x);
+    expect(dot.x + dot.width).toBeLessThanOrEqual(gear.x);
+    const title = await page.locator("#lpListName").boundingBox();
+    expect(title.width).toBeGreaterThanOrEqual(48);
     const { scrollW, headerW } = await page.evaluate(() => ({
       scrollW: document.documentElement.scrollWidth,
       headerW: document.getElementById("header").scrollWidth,
