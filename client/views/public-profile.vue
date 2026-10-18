@@ -78,20 +78,20 @@
                             <span v-for="tag in profile.gearPhilosophy" :key="tag" class="lpPublicTag">{{ tag }}</span>
                         </div>
                     </div>
-                    <button
-                        v-if="isLoggedIn && !isOwnProfile"
-                        class="lpFollowBtn"
-                        :class="{ lpFollowBtnActive: following }"
-                        :disabled="followLoading"
-                        @click="toggleFollow"
-                    >
-                        {{ following ? $t('public.following') : $t('public.follow') }}
-                    </button>
-                    <report-button
-                        v-if="isLoggedIn && !isOwnProfile"
-                        target-type="user"
-                        :target-id="$route.params.username"
-                    />
+                    <div v-if="isLoggedIn && !isOwnProfile" class="lpPublicHeroActions">
+                        <button
+                            class="lpFollowBtn"
+                            :class="{ lpFollowBtnActive: following }"
+                            :disabled="followLoading"
+                            @click="toggleFollow"
+                        >
+                            {{ following ? $t('public.following') : $t('public.follow') }}
+                        </button>
+                        <report-button
+                            target-type="user"
+                            :target-id="$route.params.username"
+                        />
+                    </div>
                 </div>
             </div>
 
