@@ -48,7 +48,12 @@ test.describe("signed in", () => {
 
   test("editor header fits a phone", async ({ page }) => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-    await registerUser(page, `mh${now}`, "testtest", `mh${now}@lighterpack.com`);
+    await registerUser(
+      page,
+      `mh${now}`,
+      "testtest",
+      `mh${now}@lighterpack.com`,
+    );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     // The theme toggle is a line icon like the bell, not a text glyph (emoji on iOS).
     await expect(page.locator(".lpThemeItem svg")).toBeVisible();
@@ -91,7 +96,12 @@ test.describe("signed in", () => {
     page,
   }) => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-    await registerUser(page, `mc${now}`, "testtest", `mc${now}@lighterpack.com`);
+    await registerUser(
+      page,
+      `mc${now}`,
+      "testtest",
+      `mc${now}@lighterpack.com`,
+    );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     const link = page.locator("#header a[href='/community']");
     await expect(link.locator(".headerCommunityIcon")).toBeVisible();
@@ -106,7 +116,12 @@ test.describe("signed in", () => {
   // so it ran off the left edge of the screen.
   test("notifications dropdown stays on screen", async ({ page }) => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-    await registerUser(page, `mn${now}`, "testtest", `mn${now}@lighterpack.com`);
+    await registerUser(
+      page,
+      `mn${now}`,
+      "testtest",
+      `mn${now}@lighterpack.com`,
+    );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     await page.locator(".lpNotifBell").click();
     const dropdown = page.locator(".lpNotifDropdown");
@@ -121,7 +136,12 @@ test.describe("signed in", () => {
     page,
   }) => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-    await registerUser(page, `mz${now}`, "testtest", `mz${now}@lighterpack.com`);
+    await registerUser(
+      page,
+      `mz${now}`,
+      "testtest",
+      `mz${now}@lighterpack.com`,
+    );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     const sizes = await page.evaluate(() =>
       [...document.querySelectorAll("#main input.lpSilent, #lpListName")].map(
@@ -141,8 +161,12 @@ test("brand, type and tags dialog fits inside a phone", async ({ page }) => {
   await page.locator(".lpItem .lpTag").first().click();
   await expect(page.locator(".itemMetaForm")).toBeVisible();
   const { formRight, dialogRight } = await page.evaluate(() => {
-    const form = document.querySelector(".itemMetaForm").getBoundingClientRect();
-    const modal = document.querySelector("#itemMetaDialog").getBoundingClientRect();
+    const form = document
+      .querySelector(".itemMetaForm")
+      .getBoundingClientRect();
+    const modal = document
+      .querySelector("#itemMetaDialog")
+      .getBoundingClientRect();
     return { formRight: form.right, dialogRight: modal.right };
   });
   expect(formRight).toBeLessThanOrEqual(dialogRight);
@@ -163,4 +187,16 @@ test("forgot password dialog fits a phone with stacked forms", async ({
   const first = await halves.nth(0).boundingBox();
   const second = await halves.nth(1).boundingBox();
   expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+});
+
+// The page's modal emits "hide" on the close button and the overlay, but nothing listened,
+// so the only way off the page was the small "back to sign in" link.
+test("forgot password page can be closed", async ({ page }) => {
+  await page.goto(`${testRoot}forgot-password`);
+  await page.locator(".lpModalClose").click();
+  await expect(page).toHaveURL(/\/welcome$/);
+
+  await page.goto(`${testRoot}forgot-password`);
+  await page.locator("#forgotPassword a[href='/signin']").click();
+  await expect(page).toHaveURL(/\/welcome$/);
 });

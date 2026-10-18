@@ -17,7 +17,7 @@
 
 <template>
     <div id="forgotPasswordContainer">
-        <modal id="forgotPassword" :shown="true" :blackout="true">
+        <modal id="forgotPassword" :shown="true" :blackout="true" @hide="$router.push('/welcome')">
             <div class="columns">
                 <div class="lpHalf">
                     <h3>

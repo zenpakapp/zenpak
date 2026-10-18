@@ -32,7 +32,7 @@
 
 <template>
     <div id="verifyEmailContainer">
-        <modal id="verifyEmail" :shown="true" :blackout="true">
+        <modal id="verifyEmail" :shown="true" :blackout="true" @hide="$router.push('/welcome')">
             <template v-if="status === 'success'">
                 <div class="lpVerifyIcon" style="color: var(--color-accent);">
                     ✓
