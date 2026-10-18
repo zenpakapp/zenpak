@@ -14,6 +14,26 @@
     white-space: nowrap;
 }
 
+.accountDropdownAvatar {
+    align-items: center;
+    border-radius: 50%;
+    color: #fff;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    height: 28px;
+    justify-content: center;
+    overflow: hidden;
+    width: 28px;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+}
+
 .accountDropdownName {
     // The account item no longer shrinks with the header, so a long name is cut here.
     max-width: 180px;
@@ -29,6 +49,13 @@
 
 @media (max-width: 1240px) {
     .accountDropdownLead {
+        display: none;
+    }
+}
+
+// On a phone the name is hidden and the avatar is the button: no room for a caret as well.
+@media (max-width: 768px) {
+    .accountDropdownCaret {
         display: none;
     }
 }
@@ -132,7 +159,13 @@ html.lpSigningOut body::before {
     <span class="headerItem hasPopover headerTruncateItem">
         <PopoverHover id="headerPopover" placement="right">
             <template #target>
-                <span class="accountDropdownTarget" :title="username">
+                <span class="accountDropdownTarget" :title="username" :aria-label="accessibleName">
+                    <span class="accountDropdownAvatar" :style="avatarUrl ? null : { background: avatarBackground }">
+                        <img v-if="avatarUrl" :src="avatarUrl" alt="" @error="avatarFailed = true">
+                        <template v-else>
+                            {{ avatarLetter }}
+                        </template>
+                    </span>
                     <strong class="accountDropdownName">{{ navLabel }}</strong>
                     <i class="lpSprite lpExpand accountDropdownCaret" />
                 </span>
@@ -158,7 +191,8 @@ html.lpSigningOut body::before {
 import PopoverHover from './popover-hover.vue';
 import { openDialog } from '../services/dialogs';
 import { redirect } from '../services/navigation';
-import { useTheme } from '../composables/useTheme.js';
+import { useTheme } from '../composables/useTheme';
+import { avatarColor, avatarInitial } from '../utils/avatar';
 
 export default {
     name: 'AccountDropdown',
@@ -169,7 +203,27 @@ export default {
         const { mode, cycleTheme } = useTheme();
         return { mode, cycleTheme };
     },
+    data() {
+        return {
+            // The photo failed to load: show the initial instead.
+            avatarFailed: false,
+        };
+    },
     computed: {
+        avatarUrl() {
+            const profile = this.library && this.library.publicProfile;
+            return (!this.avatarFailed && profile && profile.avatarUrl) || '';
+        },
+        avatarLetter() {
+            return avatarInitial(this.displayName, this.username);
+        },
+        avatarBackground() {
+            return avatarColor(this.username);
+        },
+        // The name can be hidden (header too narrow, phone), so the button carries it too.
+        accessibleName() {
+            return this.displayName ? `${this.displayName} (@${this.username})` : this.username;
+        },
         library() {
             return this.$store.state.library;
         },
@@ -191,6 +245,12 @@ export default {
         },
         themeLabel() {
             return { auto: '⚙ Auto', light: '☀ Light', dark: '☾ Dark' }[this.mode];
+        },
+    },
+    watch: {
+        // A new upload gets its chance to load.
+        'library.publicProfile.avatarUrl': function resetAvatarFailure() {
+            this.avatarFailed = false;
         },
     },
     methods: {

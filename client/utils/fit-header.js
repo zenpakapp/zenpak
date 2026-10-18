@@ -2,12 +2,15 @@
 //
 // Its items do not shrink: the list title absorbs the lack of space. When the title ends up
 // narrower than MIN_TITLE_WIDTH the header is crowded (a long badge, the Wayfarer link, a long
-// translation). First step, `lpHeaderDense`: the publish badge becomes a dot. If that is not
-// enough, second step, `lpHeaderCompact`: Share and List settings drop their labels. Window-width
-// breakpoints cannot tell: the room depends on the sidebar, the plan and the language, not only
-// on the screen.
+// translation). Three steps, each only if the previous one was not enough:
+//   `lpHeaderDense`      the publish badge becomes a dot;
+//   `lpHeaderAvatarOnly` the account shows its avatar without the name;
+//   `lpHeaderCompact`    Share and List settings drop their labels.
+// Window-width breakpoints cannot tell: the room depends on the sidebar, the plan and the
+// language, not only on the screen.
 const MIN_TITLE_WIDTH = 120;
 const DENSE_CLASS = 'lpHeaderDense';
+const AVATAR_ONLY_CLASS = 'lpHeaderAvatarOnly';
 const COMPACT_CLASS = 'lpHeaderCompact';
 
 // Observers of each header, so they can be disconnected when it goes away.
@@ -20,10 +23,13 @@ function isCrowded(el) {
 
 function fitHeader(el) {
     // Measure with the full header, then step down. All in one go, so nothing is painted between.
-    el.classList.remove(DENSE_CLASS, COMPACT_CLASS);
-    if (!isCrowded(el)) return;
-    el.classList.add(DENSE_CLASS);
-    if (isCrowded(el)) el.classList.add(COMPACT_CLASS);
+    el.classList.remove(DENSE_CLASS, AVATAR_ONLY_CLASS, COMPACT_CLASS);
+    const steps = [DENSE_CLASS, AVATAR_ONLY_CLASS, COMPACT_CLASS];
+    steps.every((step) => {
+        if (!isCrowded(el)) return false;
+        el.classList.add(step);
+        return true;
+    });
 }
 
 export default {

@@ -737,10 +737,14 @@
 }
 
 // Set by the fit-header directive (client/utils/fit-header.js) when the list title would be
-// squeezed. Dense: the publish badge becomes a dot. Compact (set together with dense): Share and
-// List settings also keep only their icon.
+// squeezed, cumulatively. Dense: the publish badge becomes a dot. Avatar only: the account drops
+// its name. Compact: Share and List settings also keep only their icon.
 #header.lpHeaderDense {
     @include headerBadgeDot;
+}
+
+#header.lpHeaderAvatarOnly .accountDropdownName {
+    display: none;
 }
 
 #header.lpHeaderCompact .headerMenuLabel {
