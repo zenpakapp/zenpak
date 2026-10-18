@@ -23,14 +23,39 @@ assert.deepStrictEqual(splitLinks(undefined, 3), []);
 const one = splitLinks('see https://example.com/page now', 3);
 assert.deepStrictEqual(one, [
     { type: 'text', value: 'see ' },
-    { type: 'link', value: 'https://example.com/page' },
+    { type: 'link', value: 'https://example.com/page', href: 'https://example.com/page' },
     { type: 'text', value: ' now' },
 ]);
 assert.strictEqual(text(one), 'see https://example.com/page now');
 
-// http and https only; no bare "www.", no other scheme.
+// http and https only; no other scheme.
 assert.deepStrictEqual(links(splitLinks('http://a.example and https://b.example', 3)), ['http://a.example', 'https://b.example']);
-assert.deepStrictEqual(links(splitLinks('javascript:alert(1) data:text/html,x ftp://f.example www.example.com mailto:a@b.c', 3)), []);
+assert.deepStrictEqual(links(splitLinks('javascript:alert(1) data:text/html,x ftp://f.example mailto:a@b.c', 3)), []);
+
+// An address typed without the scheme is a link to https. The text keeps what was typed.
+const hrefs = (segments) => segments.filter((s) => s.type === 'link').map((s) => s.href);
+const bare = splitLinks('Follow @instagram.com/kinredgta) and www.example.com/page.', 3);
+assert.deepStrictEqual(links(bare), ['instagram.com/kinredgta', 'www.example.com/page']);
+assert.deepStrictEqual(hrefs(bare), ['https://instagram.com/kinredgta', 'https://www.example.com/page']);
+assert.strictEqual(text(bare), 'Follow @instagram.com/kinredgta) and www.example.com/page.', 'the text is rebuilt as typed');
+assert.deepStrictEqual(hrefs(splitLinks('see www.example.com now', 3)), ['https://www.example.com'], 'www. alone is enough');
+assert.deepStrictEqual(hrefs(splitLinks('youtube.com/@kinred', 3)), ['https://youtube.com/@kinred']);
+assert.deepStrictEqual(hrefs(splitLinks('a.b.example.org/x/y?z=1', 3)), ['https://a.b.example.org/x/y?z=1'], 'subdomains');
+// A full URL keeps its own scheme, and is not matched twice for the "www." inside it.
+assert.deepStrictEqual(hrefs(splitLinks('http://www.example.com/a', 3)), ['http://www.example.com/a']);
+assert.strictEqual(links(splitLinks('https://www.youtube.com/@kinred', 3)).length, 1);
+
+// What looks like an address but is not one stays text: no path, unknown ending, e-mail, number.
+assert.deepStrictEqual(links(splitLinks('example.com and tent.png and e.g. v1.2/3 and 3.5.com', 3)), []);
+assert.deepStrictEqual(links(splitLinks('write to name@example.com/x or a@b.com', 3)), []);
+assert.deepStrictEqual(links(splitLinks('see file.txt/backup and notes.docx/x', 3)), []);
+// Glued to something on its left, it is not the start of an address.
+assert.deepStrictEqual(links(splitLinks('name@example.com/x', 3)), []);
+assert.deepStrictEqual(links(splitLinks('path/www.example.com/x', 3)), []);
+
+// Scheme-less addresses count toward the limit too.
+const mixed = splitLinks('https://1.example www.2.example/a instagram.com/3 youtube.com/4', 3);
+assert.deepStrictEqual(links(mixed), ['https://1.example', 'www.2.example/a', 'instagram.com/3']);
 
 // Trailing punctuation and closing brackets are not part of the URL.
 assert.deepStrictEqual(links(splitLinks('Source: https://a.example/x, then https://b.example/y.', 3)), ['https://a.example/x', 'https://b.example/y']);
