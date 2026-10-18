@@ -51,6 +51,9 @@ test.describe("signed in", () => {
     await registerUser(page, `mh${now}`, "testtest", `mh${now}@lighterpack.com`);
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
     await expect(page.locator(".headerCommunityItem")).toBeHidden();
+    // The theme toggle is a line icon like the bell, not a text glyph (emoji on iOS).
+    await expect(page.locator(".lpThemeItem svg")).toBeVisible();
+    await expect(page.locator(".lpThemeItem")).toHaveText("");
     // Worst case header: the Wayfarer link and the "unpublished changes" badge.
     await page.evaluate(() => {
       const { state } = window.LighterPack.$store;
