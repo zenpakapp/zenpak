@@ -120,7 +120,7 @@
                 </select>
             </div>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">
-                {{ list.summary || list.description }}
+                <linkified-text :text="list.summary || list.description" />
             </p>
 
             <!-- Chart + tableau catégories -->
@@ -178,7 +178,7 @@
                     <strong>{{ $t('public.creatorCodes') }}</strong>
                     <ul>
                         <li v-for="cc in creatorCodes" :key="cc.code">
-                            <a v-if="cc.url" :href="cc.url" target="_blank" rel="noopener noreferrer"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
+                            <a v-if="cc.url" :href="cc.url" target="_blank" :rel="sponsoredRel"><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></a>
                             <span v-else><span v-if="cc.name">{{ cc.name }}: </span><strong>{{ cc.code }}</strong><span v-if="cc.label"> — {{ cc.label }}</span></span>
                         </li>
                     </ul>
@@ -215,7 +215,7 @@
                         </div>
                         <span v-if="publicFields.price" class="lpPublicListItemPrice">{{ item.price ? `${currencySymbol}${formatPrice(item.price)}` : '' }}</span>
                         <span class="lpPublicListItemWeight">{{ displayItemWeight(item) }} {{ itemUnit }}<span v-if="item.qty > 1" class="lpPublicListItemQty"> ×{{ item.qty }}</span></span>
-                        <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" rel="noopener noreferrer" class="lpPublicListItemLink" @click="trackItemClick(item)">{{ $t('public.getItArrow') }}</a>
+                        <a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" :rel="item.hasAffiliateLink ? sponsoredRel : ugcRel" class="lpPublicListItemLink" @click="trackItemClick(item)">{{ $t('public.getItArrow') }}</a>
                         <span v-else />
                     </div>
                 </div>
@@ -236,6 +236,8 @@ import { tierLabel } from '../services/tier-labels';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
 import ReportButton from '../components/report-button.vue';
+import LinkifiedText from '../components/linkified-text.vue';
+import { UGC_REL, SPONSORED_REL } from '../utils/linkify';
 
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
@@ -257,12 +259,14 @@ async function loadChart() {
 
 export default {
     name: 'PublicList',
-    components: { ReportButton },
+    components: { ReportButton, LinkifiedText },
     setup() {
         useTheme();
         const router = useRouter();
         const { backTo } = useBackNav();
-        return { router, backTo };
+        return {
+            router, backTo, sponsoredRel: SPONSORED_REL, ugcRel: UGC_REL,
+        };
     },
     data() {
         return {

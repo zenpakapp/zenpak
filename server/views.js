@@ -23,6 +23,7 @@ const config = require('config');
 const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvField } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
+const { clipDescription } = require('./text-limits.js');
 
 const db = require('./db.js');
 const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
@@ -184,7 +185,7 @@ router.get('/r/:id', (req, res) => {
             renderedCategories,
             renderedTotals,
             optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(list.description),
+            renderedDescription: markdown.toHTML(clipDescription(list.description)),
             scripts: shareScriptsHtml,
             styles: shareStylesHtml,
             t,
@@ -218,7 +219,7 @@ router.get('/e/:id', (req, res) => {
             categoryTemplate: templates.t_categoryShare,
             optionalFields: library.optionalFields,
             unitSelectTemplate: templates.t_unitSelect,
-            renderedDescription: markdown.toHTML(list.description),
+            renderedDescription: markdown.toHTML(clipDescription(list.description)),
             currencySymbol: library.currencySymbol,
         });
 
@@ -232,7 +233,7 @@ router.get('/e/:id', (req, res) => {
             renderedCategories,
             renderedTotals,
             optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(list.description),
+            renderedDescription: markdown.toHTML(clipDescription(list.description)),
             baseUrl: getDeployUrl(req),
             styles: shareStylesLinks,
             scripts: shareScriptsLinks,

@@ -43,3 +43,46 @@ test("Follow and Report are stacked and aligned on a public profile", async ({
   expect(Math.abs(followCenter - reportCenter)).toBeLessThanOrEqual(2);
   expect(report.x + report.width).toBeLessThanOrEqual(hero.x + hero.width);
 });
+
+// The list description was capped at 58ch, sized for the old 680px column: on the 1040px page
+// it left more than half of the card empty.
+test("a list description uses the width of its card on a public profile", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await page.setViewportSize({ width: 1600, height: 900 });
+  const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+  await registerUser(page, `pt${now}`, "testtest", `pt+${now}@lighterpack.com`);
+  await expect(page.locator(".accountDropdownName")).toBeVisible({
+    timeout: 35000,
+  });
+
+  await page.route("**/api/public/profile/*", (route) =>
+    route.fulfill({
+      json: {
+        username: "someoneelse",
+        profile: { displayName: "Someone Else", visibility: "public" },
+        entitlements: { plan: "free" },
+        lists: [
+          {
+            externalId: "abc123",
+            name: "A long list",
+            description: "A description that goes on and on about the gear, ".repeat(12),
+            totalBaseWeight: 3300000,
+            totalQty: 46,
+          },
+        ],
+        followerCount: 0,
+        followingCount: 0,
+      },
+    }),
+  );
+  await page.goto(`${testRoot}u/someoneelse`);
+  await expect(page.locator(".lpPublicListDesc")).toBeVisible({ timeout: 15000 });
+
+  const card = await page.locator(".lpPublicListCard").boundingBox();
+  const description = await page.locator(".lpPublicListDesc").boundingBox();
+  // More than 58ch (about 410px), but still a readable line, not the whole 1000px.
+  expect(description.width).toBeGreaterThan(560);
+  expect(description.width).toBeLessThan(card.width - 100);
+});
