@@ -56,6 +56,11 @@ $shadow-soft: var(--shadow-soft);
 $shadow-popover: var(--shadow-popover);
 $shadow-modal: var(--shadow-modal);
 
+/* design system — largeurs de page : trois tailles, pour que passer d'un écran à l'autre ne change pas la largeur du contenu */
+$width-reading: 720px; /* pages de texte : À propos, Guide, Fil d'activité */
+$width-content: 1040px; /* pages de consultation : Discover, liste publiée, profil public */
+$width-app: 1200px; /* écrans de travail : éditeur, modération */
+
 /* design system — typographie */
 $font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 $fontSize-xs: 11px;

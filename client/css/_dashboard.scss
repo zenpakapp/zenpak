@@ -727,7 +727,7 @@
 // The editor column is 1200px at most (see _list.scss), so the header is never wider than that.
 // Hidden-sidebar layout: centred, same cap as with the sidebar open.
 #main:not(.lpHasSidebar) {
-    max-width: 1200px;
+    max-width: $width-app;
 }
 
 // Only the list title absorbs a lack of room: Share, List settings and the account keep their
