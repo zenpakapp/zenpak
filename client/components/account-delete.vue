@@ -1,6 +1,6 @@
 <style lang="scss">
 #deleteAccount {
-    width: 400px;
+    width: min(400px, calc(100vw - 32px));
 }
 </style>
 

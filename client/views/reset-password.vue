@@ -1,6 +1,6 @@
 <style lang="scss">
 #resetPassword {
-    width: 420px;
+    width: min(420px, calc(100vw - 32px));
 }
 </style>
 

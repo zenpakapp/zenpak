@@ -135,3 +135,20 @@ test("brand, type and tags dialog fits inside a phone", async ({ page }) => {
   });
   expect(formRight).toBeLessThanOrEqual(dialogRight);
 });
+
+// Dialogs with a fixed pixel width (620px here) overrode the modal's min(560px, 100vw - 32px)
+// and, centred with translateX(-50%), ran off both sides of a phone.
+test("forgot password dialog fits a phone with stacked forms", async ({
+  page,
+}) => {
+  await page.goto(`${testRoot}forgot-password`);
+  const dialog = page.locator("#forgotPassword");
+  await expect(dialog).toBeVisible();
+  const box = await dialog.boundingBox();
+  expect(box.x).toBeGreaterThanOrEqual(0);
+  expect(box.x + box.width).toBeLessThanOrEqual(375);
+  const halves = page.locator("#forgotPassword .lpHalf");
+  const first = await halves.nth(0).boundingBox();
+  const second = await halves.nth(1).boundingBox();
+  expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+});

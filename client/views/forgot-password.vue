@@ -1,7 +1,16 @@
 <style lang="scss">
 
 #forgotPassword {
-    width: 620px;
+    width: min(620px, calc(100vw - 32px));
+
+    // The two forms sit side by side only when there is room for both.
+    @media (max-width: 640px) {
+        .lpHalf {
+            float: none;
+            padding: 0;
+            width: 100%;
+        }
+    }
 }
 
 </style>
