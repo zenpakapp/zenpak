@@ -50,10 +50,11 @@ test.describe("signed in", () => {
     const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
     await registerUser(page, `mh${now}`, "testtest", `mh${now}@lighterpack.com`);
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
-    await expect(page.locator(".headerCommunityItem")).toBeHidden();
     // The theme toggle is a line icon like the bell, not a text glyph (emoji on iOS).
     await expect(page.locator(".lpThemeItem svg")).toBeVisible();
     await expect(page.locator(".lpThemeItem")).toHaveText("");
+    // Share and list settings use line icons too, not the old black sprite images.
+    await expect(page.locator("#header svg.lpHeaderIcon")).toHaveCount(3);
     // Worst case header: the Wayfarer link and the "unpublished changes" badge.
     await page.evaluate(() => {
       const { state } = window.LighterPack.$store;
@@ -73,6 +74,22 @@ test.describe("signed in", () => {
     expect(scrollW).toBeLessThanOrEqual(375);
     expect(headerW).toBeLessThanOrEqual(375);
   });
+  // Community is an icon-only link on phones (the label does not fit) and text on desktop.
+  test("community link is an icon on a phone and text on desktop", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    await registerUser(page, `mc${now}`, "testtest", `mc${now}@lighterpack.com`);
+    await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+    const link = page.locator("#header a[href='/community']");
+    await expect(link.locator(".headerCommunityIcon")).toBeVisible();
+    await expect(link.locator(".headerCommunityLabel")).toBeHidden();
+    await expect(link).toHaveAttribute("aria-label", /\S/);
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(link.locator(".headerCommunityLabel")).toBeVisible();
+    await expect(link.locator(".headerCommunityIcon")).toBeHidden();
+  });
+
   // The dropdown is 300px wide and anchored to the bell, which sits mid-header on a phone,
   // so it ran off the left edge of the screen.
   test("notifications dropdown stays on screen", async ({ page }) => {

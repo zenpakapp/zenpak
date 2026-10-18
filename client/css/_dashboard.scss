@@ -369,7 +369,7 @@
         display: none;
     }
 
-    #header .headerCommunityItem,
+    #header .headerCommunityLabel,
     .headerMenuLabel,
     .accountDropdownLead,
     .accountDropdownName {
@@ -692,6 +692,22 @@
     flex: 0 0 auto;
     top: 0;
     vertical-align: middle;
+}
+
+.headerItem .lpHeaderIcon {
+    flex: 0 0 auto;
+    vertical-align: middle;
+}
+
+// Community shows its label on desktop and only an icon on phones.
+.headerItem .headerCommunityIcon {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .headerItem .headerCommunityIcon {
+        display: block;
+    }
 }
 
 @media (max-width: 1240px) {
