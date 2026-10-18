@@ -24,14 +24,23 @@ const publicListsDb = {
         return Promise.resolve();
     },
 };
+const ownersForBackfill = [];
+publicListsDb.findMany = (query) => Promise.resolve(
+    projections.filter((p) => !(query.searchTokens && query.searchTokens.$exists === false) || !Array.isArray(p.searchTokens)),
+);
 stubServerModule('db.js', {
+    users: {
+        findMany: (query) => Promise.resolve(
+            ownersForBackfill.filter((u) => query._id.$in.some((id) => String(id) === String(u._id))),
+        ),
+    },
     listVersions: listVersionsDb,
     publicLists: publicListsDb,
     publicListStats: { findOne() { return Promise.resolve(null); } },
 });
 
 const { publishVersion } = require('../server/list-versions.js');
-const { syncUserPublicLists, buildPublicListProjection } = require('../server/public-list-projections.js');
+const { syncUserPublicLists, buildPublicListProjection, reindexMissingSearchTokens } = require('../server/public-list-projections.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {
@@ -49,6 +58,11 @@ async function run() {
     await syncUserPublicLists(owner);
     assert('after publish the list is projected', projections.length === 1 && projections[0].externalId === 'abc123');
     assert('projection totals come from the snapshot', projections[0].totalQty === 3 && projections[0].totalBaseWeight === 1100000);
+
+    const tokens = projections[0].searchTokens || [];
+    assert('projection has search tokens for the list name and its author', tokens.includes('pct') && tokens.includes('alice'));
+    assert('projection has search tokens for item names and brands', ['tent', 'zpacks', 'stove', 'brs'].every((t) => tokens.includes(t)));
+    assert('items of another list are not in the search tokens', !tokens.includes('unrelated'));
 
     owner.library.lists[0].name = 'LIVE EDIT';
     owner.library.items[0].weight = 1;
@@ -69,6 +83,21 @@ async function run() {
 
     const live = buildPublicListProjection(buildOwnerUser(), buildOwnerUser().library.lists[0], {}, null);
     assert('without a version the projection still builds from the live list (backward compatible)', live.name === 'PCT' && live.externalId === 'abc123');
+    assert('a live projection also gets search tokens from the owner library', Array.isArray(live.searchTokens) && live.searchTokens.includes('tent') && !live.searchTokens.includes('unrelated'));
+
+    // Projections written before search existed get their tokens at startup.
+    const legacyOwner = buildOwnerUser({ username: 'legacy' });
+    legacyOwner.library.lists[0].externalId = 'legacy1';
+    legacyOwner.library.lists[0].name = 'Legacy list';
+    await publishVersion(legacyOwner, 'legacy1', '');
+    await syncUserPublicLists(legacyOwner);
+    const legacyProjection = projections.find((p) => p.externalId === 'legacy1');
+    delete legacyProjection.searchTokens;
+    ownersForBackfill.push(legacyOwner);
+    const reindexed = await reindexMissingSearchTokens();
+    assert('reindex reports how many projections it filled', reindexed === 1);
+    assert('a legacy projection without tokens gets them', projections.find((p) => p.externalId === 'legacy1').searchTokens.includes('legacy'));
+    assert('a second reindex finds nothing to do', await reindexMissingSearchTokens() === 0);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);

@@ -20,6 +20,7 @@ const {
     publicDisplayName,
     syncUserPublicLists,
 } = require('./public-list-projections.js');
+const { parseQuery, prefixPatterns, scoreProjection } = require('./search-text.js');
 
 // In-memory rate limiter: max 5 copies/hour per userId or IP
 const COPY_RATE_LIMIT = 5;
@@ -54,16 +55,47 @@ function normalizeCopiedQuantity(value) {
     return Number.isFinite(quantity) ? quantity : 1;
 }
 
-function projectionMatchesFilters(list, filters) {
-    if (filters.q && !String(`${list.name || ''} ${list.description || ''} ${list.ownerDisplayName || ''}`).toLowerCase().includes(filters.q)) return false;
-    const totalBaseWeight = Number(list.totalBaseWeight) || 0;
-    if (filters.minWeight !== null && totalBaseWeight < filters.minWeight) return false;
-    if (filters.maxWeight !== null && totalBaseWeight > filters.maxWeight) return false;
-    const seasons = normalizeTagArray(list.seasons);
-    const listTypes = normalizeTagArray(list.listTypes);
-    if (filters.season && !seasons.includes(filters.season)) return false;
-    if (filters.type && !listTypes.includes(filters.type)) return false;
-    return true;
+const DISCOVER_PAGE_SIZE = 20;
+// Matches of a search that get ranked by relevance; the rest is cut off.
+const SEARCH_CANDIDATE_LIMIT = 300;
+const SEARCH_CURSOR = /^o:(\d+)$/;
+
+// Everything but the date cursor runs in the database query, before any limit: filtering a
+// pre-cut list of the newest 200 would hide every older list from the search and the filters.
+function buildDiscoverQuery(filters, words) {
+    const query = { visibility: { $in: ['discoverable', 'indexable'] } };
+    if (filters.season) query.seasons = filters.season;
+    if (filters.type) query.listTypes = filters.type;
+    if (filters.minWeight !== null || filters.maxWeight !== null) {
+        query.totalBaseWeight = {};
+        if (filters.minWeight !== null) query.totalBaseWeight.$gte = filters.minWeight;
+        if (filters.maxWeight !== null) query.totalBaseWeight.$lte = filters.maxWeight;
+    }
+    if (words.length) {
+        query.$and = prefixPatterns(words).map((pattern) => ({ searchTokens: pattern }));
+    }
+    return query;
+}
+
+// A search returns the most relevant lists first, the newest first among equals. The cursor is
+// an offset into that ranking.
+async function discoverSearch(filters, words, cursor, pageSize) {
+    const candidates = await db.publicLists.findSorted(
+        buildDiscoverQuery(filters, words),
+        { updatedAt: -1 },
+        SEARCH_CANDIDATE_LIMIT,
+    );
+    const ranked = candidates
+        .map((list) => ({ list, score: scoreProjection(list, words) }))
+        .filter((entry) => entry.score > 0)
+        .sort((a, b) => b.score - a.score || new Date(b.list.updatedAt) - new Date(a.list.updatedAt));
+
+    const offset = cursor ? Number(cursor.match(SEARCH_CURSOR)[1]) : 0;
+    const end = offset + pageSize;
+    return {
+        lists: ranked.slice(offset, end).map((entry) => projectionToDiscoverItem(entry.list)),
+        nextCursor: end < ranked.length ? `o:${end}` : null,
+    };
 }
 
 // POST /api/community/follow/:username
@@ -223,15 +255,19 @@ router.get('/feed', (req, res) => {
     });
 });
 
-// GET /api/community/discover?sort=recent|popular&cursor=<ISO>
+// GET /api/community/discover?sort=recent|popular&q=<text>&cursor=<ISO date | o:offset>
+// With a search text the lists come by relevance (cursor `o:<offset>`), otherwise by `sort`
+// (cursor: the ISO date of the last list of the page).
 router.get('/discover', async (req, res) => {
     const sort = req.query.sort === 'popular' ? 'popular' : 'recent';
     const cursor = req.query.cursor || null;
-    if (cursor && isNaN(Date.parse(cursor))) {
+    const isSearchCursor = Boolean(cursor) && SEARCH_CURSOR.test(cursor);
+    if (cursor && !isSearchCursor && Number.isNaN(Date.parse(cursor))) {
         return res.status(400).json({ message: 'Invalid cursor' });
     }
+    const rawQuery = String(req.query.q || '').trim();
+    const words = parseQuery(rawQuery.slice(0, 100));
     const filters = {
-        q: String(req.query.q || '').trim().toLowerCase().slice(0, 100),
         minWeight: parseNumberParam(req.query.minWeight),
         maxWeight: parseNumberParam(req.query.maxWeight),
         season: String(req.query.season || '').trim().toLowerCase().slice(0, 40),
@@ -239,21 +275,28 @@ router.get('/discover', async (req, res) => {
     };
 
     try {
-        const PAGE_SIZE = Math.min(parseNumberParam(req.query.limit) || 20, 20);
-        const query = { visibility: { $in: ['discoverable', 'indexable'] } };
-        if (sort === 'recent' && cursor) {
-            query.updatedAt = { $lt: new Date(cursor) };
+        const pageSize = Math.min(parseNumberParam(req.query.limit) || DISCOVER_PAGE_SIZE, DISCOVER_PAGE_SIZE);
+
+        // A text with no usable word ("x") matches nothing, rather than everything.
+        if (rawQuery && !words.length) {
+            return res.json({ lists: [], nextCursor: null });
+        }
+        if (words.length) {
+            return res.json(await discoverSearch(filters, words, isSearchCursor ? cursor : null, pageSize));
         }
 
-        let projections = await db.publicLists.findSorted(
+        const query = buildDiscoverQuery(filters, words);
+        if (sort === 'recent' && cursor && !isSearchCursor) {
+            query.updatedAt = { $lt: new Date(cursor) };
+        }
+        const projections = await db.publicLists.findSorted(
             query,
             sort === 'popular' ? { viewCount: -1, updatedAt: -1 } : { updatedAt: -1 },
-            200,
+            pageSize,
         );
-        projections = projections.filter((list) => projectionMatchesFilters(list, filters));
 
-        const page = projections.slice(0, PAGE_SIZE).map(projectionToDiscoverItem);
-        const nextCursor = sort === 'recent' && page.length === PAGE_SIZE ? page[page.length - 1].updatedAt : null;
+        const page = projections.map(projectionToDiscoverItem);
+        const nextCursor = sort === 'recent' && page.length === pageSize ? page[page.length - 1].updatedAt : null;
 
         return res.json({ lists: page, nextCursor });
     } catch (err) {
