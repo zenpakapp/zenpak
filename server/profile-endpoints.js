@@ -92,17 +92,15 @@ function uploadImage(req, res, {
 }
 
 router.post('/imageUpload', (req, res) => {
-    authenticateUser(req, res, imageUpload);
-});
-
-function imageUpload(req, res) {
-    uploadImage(req, res, {
-        maxBytes: 5 * 1024 * 1024,
-        folder: 'lighterpack',
-        transformation: 'w_800,f_auto,q_auto',
-        onStored: async (stored) => res.json({ data: { id: stored.public_id, url: stored.secure_url } }),
+    authenticateUser(req, res, (authedReq, authedRes) => {
+        uploadImage(authedReq, authedRes, {
+            maxBytes: 5 * 1024 * 1024,
+            folder: 'lighterpack',
+            transformation: 'w_800,f_auto,q_auto',
+            onStored: async (stored) => authedRes.json({ data: { id: stored.public_id, url: stored.secure_url } }),
+        });
     });
-}
+});
 
 router.put('/api/profile', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
