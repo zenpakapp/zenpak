@@ -320,7 +320,7 @@ router.get('/csv/:id', (req, res) => {
                         itemRow.push(item.description);
                         itemRow.push(`${categoryItem.qty}`);
                         const exportUnit = itemUnit || item.authorUnit;
-                        itemRow.push(`${weightUtils.MgToWeight(item.weight, exportUnit)}`);
+                        itemRow.push(`${weightUtils.MgToItemWeight(item.weight, exportUnit)}`);
                         itemRow.push(fullUnits[exportUnit]);
                         itemRow.push(item.url);
                         itemRow.push(`${item.price}`);
@@ -436,7 +436,7 @@ const renderItem = function (item, args) {
     let unit = args.itemUnit || item.authorUnit;
     if (args.unit) unit = args.unit;
 
-    const displayWeight = weightUtils.MgToWeight(item.weight, unit);
+    const displayWeight = weightUtils.MgToItemWeight(item.weight, unit);
 
     const displayPrice = formatDisplayPrice(item.price || 0, args.currencySymbol);
 

@@ -254,7 +254,10 @@ export default {
         this.editBrand = this.item.brand || '';
         this.editCategory = this.item.category || '';
         this.editUnit = (this.library && this.library.itemUnit) || 'g';
-        this.editWeight = weightUtils.MgToWeight(this.item.weight, this.editUnit);
+        this.editWeight = weightUtils.MgToItemWeight(this.item.weight, this.editUnit);
+        // Kept to tell a real weight edit from a save that only touched other fields.
+        this.initialWeight = this.editWeight;
+        this.initialUnit = this.editUnit;
         this.editPrice = this.item.price != null ? this.item.price.toFixed(2) : '0.00';
         if (this.categoryItem) {
             this.editQty = this.categoryItem.qty === 0 ? (this.categoryItem.qtyBeforeOptional || 1) : this.categoryItem.qty;
@@ -297,6 +300,8 @@ export default {
         },
         saveEdit() {
             const weightFloat = parseFloat(this.editWeight) || 0;
+            // Saving only a rename must not replace the exact weight with its rounded display.
+            const weightUnchanged = weightFloat === this.initialWeight && this.editUnit === this.initialUnit;
             const tags = normalizeTags(this.editTags, this.tagInput);
             const updatedItem = {
                 ...this.item,
@@ -308,7 +313,7 @@ export default {
                 imageUrl: this.editImageUrl.trim() || undefined,
                 tags,
                 authorUnit: this.editUnit,
-                weight: weightUtils.WeightToMg(weightFloat, this.editUnit),
+                weight: weightUnchanged ? this.item.weight : weightUtils.WeightToMg(weightFloat, this.editUnit),
                 price: Math.round((parseFloat(this.editPrice) || 0) * 100) / 100,
             };
             this.editTags = tags;
