@@ -11,7 +11,7 @@
 </style>
 
 <template>
-    <span class="lpLinkifiedText"><template v-for="(segment, index) in segments"><a v-if="segment.type === 'link'" :key="`link-${index}`" class="lpLinkifiedLink" :href="segment.value" target="_blank" :rel="rel">{{ segment.value }}</a><span v-else :key="`text-${index}`">{{ segment.value }}</span></template></span>
+    <span class="lpLinkifiedText"><template v-for="(segment, index) in segments"><a v-if="segment.type === 'link'" :key="`link-${index}`" class="lpLinkifiedLink" :href="segment.href" target="_blank" :rel="rel">{{ segment.value }}</a><span v-else :key="`text-${index}`">{{ segment.value }}</span></template></span>
 </template>
 
 <script>

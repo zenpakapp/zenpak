@@ -14,7 +14,17 @@ export const MAX_DESCRIPTION_LINKS = 3;
 // What the editor lets an author type, and what the public sees (server/text-limits.js).
 export const MAX_DESCRIPTION_LENGTH = 1000;
 
-const URL_PATTERN = /https?:\/\/[^\s<>"']+/g;
+// An address typed without "https://" is still a link, but only when it is clearly one:
+// "www." or a known ending followed by a path ("instagram.com/name"). A bare "example.com", a
+// file name ("tent.png") or an e-mail address stays text. Not glued to a word on its left.
+const KNOWN_ENDINGS = 'com|org|net|io|co|app|dev|fr|de|es|it|nl|be|ch|uk|eu|ca|us|info|me|tv|ly|gg|cc|xyz|ai';
+const NOT_GLUED = '(?<![\\w./-])(?<!\\w@)';
+const REST_OF_URL = '[^\\s<>"\']';
+const URL_PATTERN = new RegExp([
+    `https?:\\/\\/${REST_OF_URL}+`,
+    `${NOT_GLUED}www\\.(?:[a-z0-9-]+\\.)+[a-z]{2,}(?:\\/${REST_OF_URL}*)?`,
+    `${NOT_GLUED}(?:[a-z0-9-]+\\.)+(?:${KNOWN_ENDINGS})\\/${REST_OF_URL}+`,
+].join('|'), 'gi');
 
 const countOf = (text, character) => text.split(character).length - 1;
 
@@ -41,8 +51,12 @@ function isHttpUrl(value) {
     }
 }
 
-// Cuts a text into `{ type: 'text' | 'link', value }` pieces that rebuild it. The template renders
-// each piece as text or as an anchor, so the text is never interpreted as HTML.
+// Where a link goes: an address typed without a scheme goes to https.
+const hrefOf = (url) => (/^https?:\/\//i.test(url) ? url : `https://${url}`);
+
+// Cuts a text into `{ type: 'text' | 'link', value }` pieces that rebuild it, a link also
+// carrying its `href`. The template renders each piece as text or as an anchor, so the text is
+// never interpreted as HTML.
 export function splitLinks(text, maxLinks = MAX_DESCRIPTION_LINKS) {
     const source = typeof text === 'string' ? text : '';
     if (!source) return [];
@@ -53,11 +67,11 @@ export function splitLinks(text, maxLinks = MAX_DESCRIPTION_LINKS) {
     [...source.matchAll(URL_PATTERN)].forEach((match) => {
         if (linkCount >= maxLinks) return;
         const url = trimUrl(match[0]);
-        if (!isHttpUrl(url)) return;
+        if (!isHttpUrl(hrefOf(url))) return;
         if (match.index > position) {
             segments.push({ type: 'text', value: source.slice(position, match.index) });
         }
-        segments.push({ type: 'link', value: url });
+        segments.push({ type: 'link', value: url, href: hrefOf(url) });
         linkCount += 1;
         position = match.index + url.length;
     });

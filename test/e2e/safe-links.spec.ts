@@ -33,7 +33,7 @@ const DESCRIPTION =
   "Source: https://one.example/a, see https://two.example/b. Also (https://three.example/c) " +
   "and https://four.example/d plus https://five.example/e and javascript:alert(1)";
 
-async function openList(page) {
+async function openList(page, description = DESCRIPTION) {
   await page.route("**/api/public/list/*", (route) =>
     route.fulfill({
       json: {
@@ -45,7 +45,7 @@ async function openList(page) {
           externalId: "abc123",
           name: "Links list",
           summary: "",
-          description: DESCRIPTION,
+          description,
           visibility: "shareable",
           copyable: false,
           totalWeight: 2000,
@@ -205,4 +205,24 @@ test("links and promo codes on a public profile carry the right rel", async ({
   const promoRel = (await promo.getAttribute("rel")).split(" ");
   expect(promoRel).toContain("sponsored");
   expect(promoRel).toContain("nofollow");
+});
+
+test("an address typed without https is a link, the text stays as typed", async ({
+  page,
+}) => {
+  await openList(
+    page,
+    "Community adaptation shared by Kinred (https://www.youtube.com/@kinred, @instagram.com/kinredgta). " +
+      "Notes in tent.png and example.com stay plain.",
+  );
+  const summary = page.locator(".lpPublicListSummary");
+  const links = summary.locator("a");
+  await expect(links).toHaveCount(2);
+  expect(
+    await links.evaluateAll((els) => els.map((el) => el.getAttribute("href"))),
+  ).toEqual(["https://www.youtube.com/@kinred", "https://instagram.com/kinredgta"]);
+  // The link is the address; the "@" in front of it and the ")" after it are not part of it.
+  await expect(links.nth(1)).toHaveText("instagram.com/kinredgta");
+  await expect(summary).toContainText("@instagram.com/kinredgta).");
+  await expect(summary).toContainText("tent.png and example.com stay plain");
 });
