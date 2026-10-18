@@ -244,6 +244,7 @@ import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import { isReservedDisplayName } from '../utils/reserved-names';
+import { AVATAR_MAX_BYTES, checkImageFile, uploadErrorMessage } from '../utils/upload-errors';
 import LpSelect from './lp-select.vue';
 
 export default {
@@ -359,17 +360,24 @@ export default {
         async uploadAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
-            this.avatarUploading = true;
+            const translate = (key, params) => this.$t(key, params);
             this.avatarError = null;
+            const problem = checkImageFile(file, AVATAR_MAX_BYTES);
+            if (problem) {
+                this.avatarError = uploadErrorMessage(translate, problem);
+                event.target.value = '';
+                return;
+            }
+            this.avatarUploading = true;
             try {
                 const formData = new FormData();
                 formData.append('image', file);
                 const res = await fetch('/api/profile/avatar', { method: 'POST', body: formData });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Upload failed');
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw Object.assign(new Error('Upload refused'), data);
                 this.$store.commit('updatePublicProfile', { avatarUrl: data.avatarUrl });
             } catch (e) {
-                this.avatarError = e.message || 'Upload failed';
+                this.avatarError = uploadErrorMessage(translate, e);
             } finally {
                 this.avatarUploading = false;
                 event.target.value = '';

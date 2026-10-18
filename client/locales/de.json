@@ -491,6 +491,18 @@
     "ariaMaxWeight": "Maximales Basisgewicht in Kilogramm",
     "ariaPopularPacks": "Beliebte Packs"
   },
+  "upload": {
+    "tooLarge": "Dieses Bild ist zu groß. Die maximale Größe beträgt {max}.",
+    "unsupportedType": "Diese Datei ist kein unterstütztes Bild. Verwende eine PNG-, JPG-, GIF- oder WebP-Datei.",
+    "invalidImage": "Dieses Bild konnte nicht gelesen werden. Versuche es mit einer anderen Datei.",
+    "emptyFile": "Diese Datei ist leer.",
+    "noFile": "Es wurde kein Bild gesendet.",
+    "tooManyFiles": "Bitte lade jeweils nur ein Bild hoch.",
+    "malformed": "Der Upload konnte nicht gelesen werden. Bitte versuche es erneut.",
+    "storageUnavailable": "Bild-Uploads sind derzeit nicht verfügbar.",
+    "storageFailed": "Wir konnten dein Bild gerade nicht speichern. Bitte versuche es gleich noch einmal.",
+    "failed": "Der Upload ist fehlgeschlagen. Bitte versuche es erneut."
+  },
   "misc": {
     "saveDataError": "Beim Speichern deiner Daten ist ein Fehler aufgetreten.",
     "dismissAlert": "Hinweis schließen",

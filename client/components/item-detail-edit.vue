@@ -177,6 +177,7 @@ import ItemBrandInput from './item-brand-input.vue';
 import { openDialog } from '../services/dialogs';
 import { GEAR_CATEGORIES } from '../data/gear-categories';
 import { normalizeTag, normalizeTags } from '../services/item-tags';
+import { uploadErrorMessage } from '../utils/upload-errors';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -449,11 +450,11 @@ export default {
                 formData.append('image', file);
                 const res = await fetch('/imageUpload', { method: 'POST', body: formData, credentials: 'same-origin' });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.message || 'Upload failed');
+                if (!res.ok) throw Object.assign(new Error('Upload refused'), data);
                 this.editImageUrl = data.data.url;
                 this.$store.commit('updateItemImageUrl', { imageUrl: data.data.url, item: this.item });
             } catch (err) {
-                this.imageUploadError = err.message;
+                this.imageUploadError = uploadErrorMessage((key, params) => this.$t(key, params), err);
             } finally {
                 this.editImageUploading = false;
             }

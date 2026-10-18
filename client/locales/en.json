@@ -491,6 +491,18 @@
     "ariaMaxWeight": "Maximum base weight in kilograms",
     "ariaPopularPacks": "Popular packs"
   },
+  "upload": {
+    "tooLarge": "This image is too large. The maximum size is {max}.",
+    "unsupportedType": "This file is not a supported image. Use a PNG, JPG, GIF or WebP file.",
+    "invalidImage": "This image could not be read. Try another file.",
+    "emptyFile": "This file is empty.",
+    "noFile": "No image was sent.",
+    "tooManyFiles": "Please upload one image at a time.",
+    "malformed": "The upload could not be read. Please try again.",
+    "storageUnavailable": "Image uploads are not available right now.",
+    "storageFailed": "We could not store your image right now. Please try again in a moment.",
+    "failed": "The upload failed. Please try again."
+  },
   "misc": {
     "saveDataError": "An error occurred while attempting to save your data.",
     "dismissAlert": "Dismiss alert",
