@@ -7,6 +7,7 @@ const { detectVisibilityChanges } = require('./save-library-feed.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
+const { clipDescription } = require('./text-limits.js');
 
 const Library = dataTypes.Library;
 
@@ -79,6 +80,10 @@ function saveLibrary(req, res, user) {
     if (library && library.lists) {
         library.lists.forEach((list) => {
             if (!list.updatedAt) list.updatedAt = now;
+            // Bounded where it is stored, so the CSV export, copies and version comparisons
+            // are bounded too, not only what the public page shows.
+            if (typeof list.description === 'string') list.description = clipDescription(list.description);
+            if (typeof list.summary === 'string') list.summary = clipDescription(list.summary);
         });
     }
 
