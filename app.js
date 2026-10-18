@@ -183,7 +183,7 @@ app.use('/api/billing', billingEndpoints);
 app.use('/', views);
 app.use(errorHandler);
 
-logger.info('Starting up Lighterpack...');
+logger.info('Starting up ZenPak...');
 
 let webpackConfig;
 
