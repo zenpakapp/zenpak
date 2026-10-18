@@ -89,6 +89,7 @@ import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { showGlobalAlert } from '../services/user-feedback';
 import { fetchJson } from '../utils/utils';
+import { uploadErrorMessage } from '../utils/upload-errors';
 
 export default {
     name: 'ItemImage',
@@ -162,9 +163,9 @@ export default {
                     this.$store.commit('updateItemImageUrl', { imageUrl: response.data.url, item: this.item });
                     this.shown = false;
                 })
-                .catch(() => {
+                .catch((error) => {
                     this.uploading = false;
-                    showGlobalAlert(this.$t('item.imageErrorUpload'));
+                    showGlobalAlert(uploadErrorMessage((key, params) => this.$t(key, params), error));
                 });
         },
         removeItemImage() {

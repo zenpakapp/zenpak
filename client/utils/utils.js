@@ -11,6 +11,9 @@ class lpError extends Error {
         this.metadata = null;
         this.limit = response.limit || null;
         this.retryAfterMinutes = response.retryAfterMinutes || null;
+        // Set by the image upload routes: why it failed, and the size limit when it is too large.
+        this.code = response.code || null;
+        this.maxBytes = response.maxBytes || null;
 
         if (response.message) {
             this.message = response.message;
@@ -34,7 +37,10 @@ export function fetchJson(url, options) {
         Object.assign(fetchOptions, options);
     }
 
-    if (!fetchOptions.headers['Content-Type']) {
+    // A FormData body needs the browser's own multipart Content-Type, which carries the boundary:
+    // forcing JSON here made every file upload unreadable for the server.
+    const isFormData = typeof FormData !== 'undefined' && fetchOptions.body instanceof FormData;
+    if (!isFormData && !fetchOptions.headers['Content-Type']) {
         fetchOptions.headers['Content-Type'] = 'application/json';
     }
 

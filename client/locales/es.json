@@ -491,6 +491,18 @@
     "ariaMaxWeight": "Peso base máximo en kilogramos",
     "ariaPopularPacks": "Mochilas populares"
   },
+  "upload": {
+    "tooLarge": "Esta imagen es demasiado grande. El tamaño máximo es {max}.",
+    "unsupportedType": "Este archivo no es una imagen compatible. Usa un archivo PNG, JPG, GIF o WebP.",
+    "invalidImage": "No se pudo leer esta imagen. Prueba con otro archivo.",
+    "emptyFile": "Este archivo está vacío.",
+    "noFile": "No se envió ninguna imagen.",
+    "tooManyFiles": "Sube una imagen a la vez.",
+    "malformed": "No se pudo leer la subida. Inténtalo de nuevo.",
+    "storageUnavailable": "La subida de imágenes no está disponible ahora.",
+    "storageFailed": "No pudimos guardar tu imagen ahora. Inténtalo de nuevo en un momento.",
+    "failed": "La subida falló. Inténtalo de nuevo."
+  },
   "misc": {
     "saveDataError": "Se produjo un error al intentar guardar tus datos.",
     "dismissAlert": "Cerrar alerta",
