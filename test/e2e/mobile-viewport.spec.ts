@@ -200,3 +200,21 @@ test("forgot password page can be closed", async ({ page }) => {
   await page.locator("#forgotPassword a[href='/signin']").click();
   await expect(page).toHaveURL(/\/welcome$/);
 });
+
+// A field under 16px zooms the page when tapped on iOS. The editor opens without a page
+// reload, so a zoom triggered on the welcome form stayed after signing in.
+test("welcome form fields are 16px so iOS does not zoom", async ({ page }) => {
+  await page.goto(`${testRoot}welcome`);
+  await page.locator("input[name='username']").first().waitFor();
+  const sizes = await page.evaluate(() =>
+    [
+      ...document.querySelectorAll(
+        "input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]), select, textarea",
+      ),
+    ]
+      .filter((el) => el.getBoundingClientRect().width > 0)
+      .map((el) => parseFloat(getComputedStyle(el).fontSize)),
+  );
+  expect(sizes.length).toBeGreaterThan(3);
+  expect(Math.min(...sizes)).toBeGreaterThanOrEqual(16);
+});

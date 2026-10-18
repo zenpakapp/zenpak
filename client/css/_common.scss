@@ -516,3 +516,13 @@
         color: $color-text;
     }
 }
+
+// iOS Safari zooms the page when a field under 16px is tapped, and the zoom survives SPA
+// navigation (welcome form -> editor). Keep every text field at 16px on phones.
+@media (max-width: 768px) {
+    input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="submit"], [type="button"], [type="file"], [type="color"]),
+    select,
+    textarea {
+        font-size: 16px;
+    }
+}
