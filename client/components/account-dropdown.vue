@@ -15,6 +15,8 @@
 }
 
 .accountDropdownName {
+    // The account item no longer shrinks with the header, so a long name is cut here.
+    max-width: 180px;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
