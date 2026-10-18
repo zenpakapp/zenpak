@@ -115,7 +115,7 @@
                 </div>
             </div>
             <div v-else class="lpReportConfirm">
-                Thanks, we'll review it.
+                {{ $t('misc.reportThanks') }}
             </div>
         </div>
     </div>
@@ -137,13 +137,17 @@ export default {
             submitting: false,
             submitted: false,
             error: null,
-            reasons: [
-                { value: 'spam', label: 'Spam' },
-                { value: 'inappropriate', label: 'Inappropriate content' },
-                { value: 'fake', label: 'Fake or misleading' },
-                { value: 'other', label: 'Other' },
-            ],
         };
+    },
+    computed: {
+        reasons() {
+            return [
+                { value: 'spam', label: this.$t('misc.reportReasonSpam') },
+                { value: 'inappropriate', label: this.$t('misc.reportReasonInappropriate') },
+                { value: 'fake', label: this.$t('misc.reportReasonFake') },
+                { value: 'other', label: this.$t('misc.reportReasonOther') },
+            ];
+        },
     },
     methods: {
         async submit() {
@@ -162,7 +166,7 @@ export default {
                 this.submitted = true;
                 setTimeout(() => { this.open = false; this.submitted = false; }, 2000);
             } catch {
-                this.error = 'Something went wrong.';
+                this.error = this.$t('misc.reportError');
             } finally {
                 this.submitting = false;
             }

@@ -125,7 +125,7 @@
 <template>
     <div class="itemDetailHeader">
         <img v-if="thumbnailImage" class="itemDetailThumb" :src="thumbnailImage" @click="onThumbClick">
-        <div v-else class="itemDetailThumbPlaceholder" aria-label="No item image">
+        <div v-else class="itemDetailThumbPlaceholder" :aria-label="$t('item.noImage')">
             <zenpak-gear-icon />
         </div>
         <div class="itemDetailHeaderInfo">
@@ -137,7 +137,7 @@
             </div>
             <span v-if="category" class="itemDetailCategoryBadge itemDetailCategoryBadgeClickable" @click="$emit('click-category')">{{ category }}</span>
             <button v-else-if="showAddCategory" class="itemDetailAddCategoryInline" @click="$emit('click-category')">
-                + Add type
+                {{ $t('item.addType') }}
             </button>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">

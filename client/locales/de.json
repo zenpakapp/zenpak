@@ -187,6 +187,8 @@
     }
   },
   "share": {
+    "seasonsLabel": "Jahreszeiten",
+    "listTypesLabel": "Listentypen",
     "share": "Teilen",
     "shareLink": "Teilungslink",
     "visibility": "Sichtbarkeit",
@@ -281,6 +283,8 @@
     "creatorCodes": "Creator-Codes"
   },
   "acct": {
+    "deletePasswordRequired": "Bitte gib dein aktuelles Passwort ein.",
+    "deleteConfirmationRequired": "Bitte gib den Bestätigungstext ein.",
     "accountSettings": "Kontoeinstellungen",
     "username": "Benutzername",
     "currentPassword": "Aktuelles Passwort",
@@ -488,6 +492,21 @@
     "ariaPopularPacks": "Beliebte Packs"
   },
   "misc": {
+    "saveDataError": "Beim Speichern deiner Daten ist ein Fehler aufgetreten.",
+    "dismissAlert": "Hinweis schließen",
+    "note": "Hinweis:",
+    "unknownError": "Ein unbekannter Fehler ist aufgetreten.",
+    "genericError": "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.",
+    "reportThanks": "Danke, wir prüfen die Meldung.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Unangemessener Inhalt",
+    "reportReasonFake": "Gefälscht oder irreführend",
+    "reportReasonOther": "Sonstiges",
+    "reportError": "Etwas ist schiefgelaufen.",
+    "avatarAlt": "Avatar",
+    "noPublicLists": "Noch keine öffentlichen Listen.",
+    "loadInsightsError": "Statistiken konnten nicht geladen werden.",
+    "profileSaveFailed": "Profil konnte nicht gespeichert werden",
     "areYouSure": "Bist du sicher?",
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
@@ -708,6 +727,10 @@
     "createList": "+ Erstellen"
   },
   "item": {
+    "addType": "+ Typ hinzufügen",
+    "noImage": "Kein Bild für diesen Gegenstand",
+    "currentImage": "Aktuelles Bild des Gegenstands",
+    "brandExample": "z. B. Sea to Summit",
     "reorderItemTitle": "Diesen Gegenstand neu anordnen",
     "namePlaceholder": "Name",
     "descriptionPlaceholder": "Beschreibung",

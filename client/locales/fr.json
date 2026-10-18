@@ -187,6 +187,8 @@
     }
   },
   "share": {
+    "seasonsLabel": "Saisons",
+    "listTypesLabel": "Types de liste",
     "share": "Partager",
     "shareLink": "Lien de partage",
     "visibility": "Visibilité",
@@ -281,6 +283,8 @@
     "creatorCodes": "Codes promo"
   },
   "acct": {
+    "deletePasswordRequired": "Veuillez saisir votre mot de passe actuel.",
+    "deleteConfirmationRequired": "Veuillez saisir le texte de confirmation.",
     "accountSettings": "Paramètres du compte",
     "username": "Nom d'utilisateur",
     "currentPassword": "Mot de passe actuel",
@@ -488,6 +492,21 @@
     "ariaPopularPacks": "Packs populaires"
   },
   "misc": {
+    "saveDataError": "Une erreur s'est produite lors de l'enregistrement de vos données.",
+    "dismissAlert": "Fermer l'alerte",
+    "note": "Remarque :",
+    "unknownError": "Une erreur inconnue s'est produite.",
+    "genericError": "Une erreur s'est produite, veuillez réessayer plus tard.",
+    "reportThanks": "Merci, nous allons examiner ce signalement.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Contenu inapproprié",
+    "reportReasonFake": "Faux ou trompeur",
+    "reportReasonOther": "Autre",
+    "reportError": "Une erreur s'est produite.",
+    "avatarAlt": "Avatar",
+    "noPublicLists": "Aucune liste publique pour le moment.",
+    "loadInsightsError": "Impossible de charger les statistiques.",
+    "profileSaveFailed": "Échec de l'enregistrement du profil",
     "areYouSure": "Êtes-vous sûr ?",
     "confirm": "Confirmer",
     "cancel": "Annuler",
@@ -708,6 +727,10 @@
     "createList": "+ Créer"
   },
   "item": {
+    "addType": "+ Ajouter un type",
+    "noImage": "Pas d'image pour cet objet",
+    "currentImage": "Image actuelle de l'objet",
+    "brandExample": "ex. Sea to Summit",
     "reorderItemTitle": "Réordonner cet article",
     "namePlaceholder": "Nom",
     "descriptionPlaceholder": "Description",

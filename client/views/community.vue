@@ -11,7 +11,7 @@
         </nav>
 
         <div class="lpCommunityHeader">
-            <h1>Community</h1>
+            <h1>{{ $t('dash.community') }}</h1>
         </div>
 
         <div class="lpCommunityTabs">

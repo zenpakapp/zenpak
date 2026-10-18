@@ -71,7 +71,7 @@
             <button v-if="isVerifyEmailAlert(alert)" class="lpGlobalAlertAction" type="button" @click="resendVerification(alert)">
                 {{ resendLabel(alert) }}
             </button>
-            <button class="lpGlobalAlertDismiss" type="button" aria-label="Dismiss alert" @click="dismiss(alert.id)">
+            <button class="lpGlobalAlertDismiss" type="button" :aria-label="$t('misc.dismissAlert')" @click="dismiss(alert.id)">
                 ×
             </button>
         </li>

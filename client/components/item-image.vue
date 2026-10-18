@@ -16,7 +16,7 @@
                         {{ $t('item.imageSectionCurrent') }}
                     </div>
                     <div class="itemImageCurrentWrap">
-                        <img class="itemImageCurrentThumb" :src="currentThumb" alt="Current item image">
+                        <img class="itemImageCurrentThumb" :src="currentThumb" :alt="$t('item.currentImage')">
                         <span class="itemImageCurrentLabel">{{ $t('item.imageLabelAttached') }}</span>
                         <button class="lpButton lpSmall lpButtonDanger" @click="removeItemImage">
                             {{ $t('item.imageButtonRemove') }}

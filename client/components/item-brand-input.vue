@@ -3,7 +3,7 @@
         <input
             :value="modelValue"
             type="text"
-            placeholder="e.g. Sea to Summit"
+            :placeholder="$t('item.brandExample')"
             autocomplete="off"
             @input="$emit('update:modelValue', $event.target.value)"
             @focus="dropdownOpen = true; activeIndex = -1"

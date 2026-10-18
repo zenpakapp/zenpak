@@ -574,7 +574,7 @@ export default {
                     });
                 })
                 .catch(() => {
-                    this.$store.commit('pushGlobalAlert', { message: 'An error occurred while attempting to save your data.' });
+                    this.$store.commit('pushGlobalAlert', { message: this.$t('misc.saveDataError') });
                 });
         },
         dismissSourceListInfoAction() {
