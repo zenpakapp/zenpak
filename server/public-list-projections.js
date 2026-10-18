@@ -3,6 +3,7 @@ const { ObjectId } = require('mongodb');
 const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
+const { buildSearchTokens } = require('./search-text.js');
 
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
@@ -22,6 +23,21 @@ function isDiscoverableVisibility(visibility) {
     return visibility === 'discoverable' || visibility === 'indexable';
 }
 
+// Names and brands of the items a list actually contains (not the rest of the library).
+function listItemTexts(sourceLibrary, list) {
+    const categories = Array.isArray(sourceLibrary.categories) ? sourceLibrary.categories : [];
+    const items = Array.isArray(sourceLibrary.items) ? sourceLibrary.items : [];
+    const listItems = (list.categoryIds || [])
+        .map((categoryId) => categories.find((c) => c.id === categoryId))
+        .flatMap((category) => (category && category.categoryItems) || [])
+        .map((categoryItem) => items.find((i) => i.id === categoryItem.itemId))
+        .filter(Boolean);
+    return {
+        itemNames: listItems.map((item) => item.name).filter(Boolean),
+        itemBrands: listItems.map((item) => item.brand).filter(Boolean),
+    };
+}
+
 function buildPublicListProjection(user, list, stats = {}, version = null) {
     const library = user.library || {};
     const profile = library.publicProfile || {};
@@ -30,8 +46,18 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
     const totals = version && version.totals;
     const forkedFrom = published.forkedFrom || null;
     const updatedAt = version ? version.publishedAt : (list.updatedAt || list.dateUpdated || new Date(0));
+    const { itemNames, itemBrands } = listItemTexts(version && version.library ? version.library : library, published);
+    const ownerDisplayName = profile.displayName || user.username || '';
 
     return {
+        searchTokens: buildSearchTokens({
+            name: published.name,
+            description: published.description,
+            ownerDisplayName,
+            ownerUsername: user.username,
+            itemNames,
+            itemBrands,
+        }),
         externalId: list.externalId,
         ownerId: new ObjectId(user._id),
         ownerUsername: user.username || '',
@@ -169,12 +195,28 @@ async function rememberPublicListViewer(externalId, viewerKey, limit = 500) {
     }
 }
 
+// Projections written before Discover search existed have no `searchTokens`, so the search
+// would never find them. Rebuild them from their owners; returns how many were missing.
+async function reindexMissingSearchTokens() {
+    if (!db.publicLists || !db.publicLists.findMany || !db.users) return 0;
+    const missing = await db.publicLists.findMany({ searchTokens: { $exists: false } });
+    if (!missing.length) return 0;
+
+    const ownerIds = [...new Set(missing.map((projection) => String(projection.ownerId)))]
+        .map((id) => new ObjectId(id));
+    const owners = await db.users.findMany({ _id: { $in: ownerIds } });
+    // One owner at a time: this runs at startup and must not flood the database.
+    await owners.reduce((previous, owner) => previous.then(() => syncUserPublicLists(owner)), Promise.resolve());
+    return missing.length;
+}
+
 module.exports = {
     buildPublicListProjection,
     incrementPublicListStat,
     normalizeTagArray,
     projectionToDiscoverItem,
     publicDisplayName,
+    reindexMissingSearchTokens,
     rememberPublicListViewer,
     syncUserPublicLists,
 };

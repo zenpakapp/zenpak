@@ -14,6 +14,14 @@ const dbStub = {
             let rows = projectedLists.filter((list) => {
                 if (query.visibility && query.visibility.$in && !query.visibility.$in.includes(list.visibility)) return false;
                 if (query.updatedAt && query.updatedAt.$lt && !(new Date(list.updatedAt) < query.updatedAt.$lt)) return false;
+                // Filters now run in the query, so the stub has to apply them.
+                if (typeof query.seasons === 'string' && !(list.seasons || []).includes(query.seasons)) return false;
+                if (typeof query.listTypes === 'string' && !(list.listTypes || []).includes(query.listTypes)) return false;
+                if (query.totalBaseWeight) {
+                    const weight = Number(list.totalBaseWeight) || 0;
+                    if (query.totalBaseWeight.$gte !== undefined && weight < query.totalBaseWeight.$gte) return false;
+                    if (query.totalBaseWeight.$lte !== undefined && weight > query.totalBaseWeight.$lte) return false;
+                }
                 return true;
             });
             const [[sortKey, sortDir]] = Object.entries(sort);

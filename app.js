@@ -160,8 +160,14 @@ const notificationEndpoints = require('./server/notification-endpoints.js');
 const reportEndpoints = require('./server/report-endpoints.js');
 const oauthEndpoints = require('./server/oauth.js');
 const views = require('./server/views.js');
+const { reindexMissingSearchTokens } = require('./server/public-list-projections.js');
 
-db.ensureIndexes().catch((err) => logger.error('Index creation failed', { err }));
+db.ensureIndexes()
+    .then(() => reindexMissingSearchTokens())
+    .then((count) => {
+        if (count) logger.info(`Added Discover search tokens to ${count} public lists`);
+    })
+    .catch((err) => logger.error('Index creation or Discover reindex failed', { err }));
 
 app.use(passport.initialize());
 app.use('/', endpoints);
