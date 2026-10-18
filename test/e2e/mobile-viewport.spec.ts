@@ -281,10 +281,153 @@ test.describe("dialogs and popovers keep fields at 16px", () => {
     await page.mouse.click(5, 400);
 
     await page.locator(".accountDropdownTarget").click();
-    await page.getByText("Account Settings", { exact: true }).dispatchEvent("click");
+    await page
+      .getByText("Account Settings", { exact: true })
+      .dispatchEvent("click");
     await expect(page.locator("#accountSettings")).toBeVisible();
     const account = await visibleFieldSizes(page);
     expect(account.length).toBeGreaterThan(1);
     expect(tooSmall(account)).toEqual([]);
   });
+});
+
+const longItem = (id, name, brand, description, weight) => ({
+  id,
+  name,
+  brand,
+  description,
+  weight,
+  authorUnit: "g",
+  price: 0,
+  image: "",
+  imageUrl: "",
+  shop: "",
+  tags: [],
+  publicUrl: "",
+  promoCode: "",
+  promoLabel: "",
+  hasAffiliateLink: false,
+  qty: 1,
+  worn: 0,
+  consumable: false,
+  star: 0,
+});
+
+// On a phone the public list squeezed the chart and its table side by side and let long
+// "brand · description" text run under the weight column and off the screen.
+test("public list fits a phone", async ({ page }) => {
+  await page.route("**/api/public/list/*", (route) =>
+    route.fulfill({
+      json: {
+        username: "someone",
+        authorDisplayName: "Someone",
+        authorTier: "free",
+        list: {
+          id: 1,
+          externalId: "abc123",
+          name: "Long list",
+          summary: "",
+          description: "",
+          visibility: "shareable",
+          copyable: false,
+          totalWeight: 1200,
+          totalWornWeight: 0,
+          totalConsumableWeight: 0,
+          totalBaseWeight: 1200,
+          totalPackWeight: 1200,
+          totalPrice: 0,
+          totalConsumablePrice: 0,
+          totalQty: 3,
+          seasons: [],
+          listTypes: [],
+        },
+        forkedFrom: null,
+        totalUnit: "kg",
+        itemUnit: "g",
+        currencySymbol: "€",
+        publicFields: {
+          price: false,
+          links: false,
+          images: false,
+          downloadable: false,
+        },
+        categories: [
+          {
+            id: 1,
+            name: "Shelter",
+            subtotalWeight: 1200,
+            subtotalWornWeight: 0,
+            subtotalConsumableWeight: 0,
+            subtotalPrice: 0,
+            subtotalConsumablePrice: 0,
+            subtotalQty: 3,
+            items: [
+              longItem(
+                1,
+                "Moustiquaire",
+                "Sea to Summit",
+                "Nano Mosquito Pyramid NetTent ultralight",
+                82,
+              ),
+              longItem(
+                2,
+                "Matelas",
+                "Cumulus",
+                "Therm-a-Rest NeoAir X-Lite NXT - R-value 4,5",
+                330,
+              ),
+              longItem(
+                3,
+                "Sac étanche",
+                "Sea to Summit",
+                "Ultra-Sil Dry Bag 3L (électroniques)",
+                30,
+              ),
+            ],
+          },
+          {
+            id: 2,
+            name: "Sleep",
+            subtotalWeight: 100,
+            subtotalWornWeight: 0,
+            subtotalConsumableWeight: 0,
+            subtotalPrice: 0,
+            subtotalConsumablePrice: 0,
+            subtotalQty: 1,
+            items: [longItem(4, "Duvet", "Cumulus", "X-Lite 200", 100)],
+          },
+        ],
+        hasAffiliateLinks: false,
+        creatorCodes: [],
+      },
+    }),
+  );
+  await page.goto(`${testRoot}p/abc123`);
+  await expect(page.locator(".lpPublicListItem").first()).toBeVisible();
+
+  const m = await page.evaluate(() => {
+    const box = (el) => el.getBoundingClientRect();
+    const items = [...document.querySelectorAll(".lpPublicListItem")].map(
+      (row) => {
+        const body = box(row.querySelector(".lpPublicListItemBody"));
+        const weight = box(row.querySelector(".lpPublicListItemWeight"));
+        const meta = row.querySelector(".lpPublicListItemMeta");
+        return {
+          overlap: body.right > weight.left + 0.5,
+          metaRight: meta ? box(meta).right : 0,
+        };
+      },
+    );
+    const canvas = box(document.querySelector(".lpPublicChartCanvas"));
+    const table = box(document.querySelector(".lpPublicChartTable"));
+    return {
+      scrollW: document.documentElement.scrollWidth,
+      items,
+      stacked: table.top >= canvas.bottom - 1,
+    };
+  });
+  expect(m.scrollW).toBeLessThanOrEqual(375);
+  expect(m.items.filter((i) => i.overlap)).toEqual([]);
+  expect(m.items.every((i) => i.metaRight <= 375)).toBe(true);
+  expect(m.stacked).toBe(true);
 });
