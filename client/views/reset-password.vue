@@ -1,12 +1,12 @@
 <style lang="scss">
 #resetPassword {
-    width: 420px;
+    width: min(420px, calc(100vw - 32px));
 }
 </style>
 
 <template>
     <div id="resetPasswordContainer">
-        <modal id="resetPassword" :shown="true" :blackout="true">
+        <modal id="resetPassword" :shown="true" :blackout="true" @hide="$router.push('/welcome')">
             <h3>{{ $t('auth.resetPasswordTitle') }}</h3>
 
             <div v-if="success">

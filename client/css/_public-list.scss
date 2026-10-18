@@ -279,6 +279,27 @@
     }
 }
 
+// A 200px canvas plus the table side by side leaves the table about 110px on a phone.
+@media (max-width: 640px) {
+    .lpPublicChart {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .lpPublicChartCanvas {
+        align-self: center;
+    }
+
+    .lpPublicChartTable {
+        flex: none;
+        width: 100%;
+
+        td {
+            white-space: nowrap;
+        }
+    }
+}
+
 .lpPublicChartSwatch {
     border-radius: 2px;
     display: inline-block;
@@ -385,12 +406,12 @@
     text-transform: uppercase;
 }
 
+// An inline span: it cannot ellipsize, and with nowrap a long "brand · description" ran under
+// the weight column and off the screen. Let it wrap instead.
 .lpPublicListItemMeta {
     color: $color-text-muted;
     font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
 }
 
 .lpPublicListItemWeight {

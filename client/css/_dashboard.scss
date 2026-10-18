@@ -345,8 +345,24 @@
 
     .lpListTitleBlock {
         flex-basis: 120px;
+        min-width: 0;
         padding-left: 0;
         padding-right: 0;
+    }
+
+    // The publish badge shrinks to a dot on the corner of the Share icon: its text alone is
+    // wider than the header's spare room, and a dot beside the icon ran into the next button.
+    #header .sharePublishState {
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px $color-surface;
+        font-size: 0;
+        height: 8px;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        right: -4px;
+        top: 0;
+        width: 8px;
     }
 
     #lpListName {
@@ -358,7 +374,8 @@
         display: none;
     }
 
-    .headerCommunityItem,
+    #header .headerCommunityLabel,
+    #header .headerGuideLabel,
     .headerMenuLabel,
     .accountDropdownLead,
     .accountDropdownName {
@@ -371,8 +388,10 @@
         padding-right: 6px;
     }
 
-    .headerTruncateItem {
-        flex: 0 0 30px;
+    // Icons keep their width and the list title absorbs the squeeze. (A plain class rule here
+    // lost to the later `flex: 0 1 auto`, so the icons shrank into each other.)
+    #header .headerTruncateItem {
+        flex: 0 0 auto;
     }
 
     .headerItem .lpPopover .lpContent {
@@ -395,6 +414,24 @@
 
     .headerItem .lpPopover .lpContent::before {
         display: none;
+    }
+
+    // iOS Safari zooms the page when a field under 16px gets focus.
+    #header #lpListName,
+    #main .lpList input.lpSilent {
+        font-size: 16px;
+    }
+
+    // Same treatment as the header popovers: the 300px dropdown is anchored to the bell,
+    // which is mid-header on a phone, so pin it to the screen instead.
+    #header .lpNotifDropdown {
+        box-sizing: border-box;
+        left: 12px;
+        max-height: calc(100vh - 84px);
+        position: fixed;
+        right: 12px;
+        top: 60px;
+        width: auto;
     }
 
     .headerItem .lpPopoverRight {
@@ -663,6 +700,24 @@
     flex: 0 0 auto;
     top: 0;
     vertical-align: middle;
+}
+
+.headerItem .lpHeaderIcon {
+    flex: 0 0 auto;
+    vertical-align: middle;
+}
+
+// Community and Wayfarer show their label on desktop and only an icon on phones.
+.headerItem .headerCommunityIcon,
+.headerItem .headerGuideIcon {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .headerItem .headerCommunityIcon,
+    .headerItem .headerGuideIcon {
+        display: block;
+    }
 }
 
 @media (max-width: 1240px) {

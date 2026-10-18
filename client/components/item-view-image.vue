@@ -1,7 +1,7 @@
 <style lang="scss">
 
 #itemImageDialog {
-    width: 640px;
+    width: min(640px, calc(100vw - 32px));
 
     .imageUploadDescription {
         margin-bottom: 19px;

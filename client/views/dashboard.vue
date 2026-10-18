@@ -79,10 +79,16 @@
                     <notifications />
                 </span>
                 <span v-if="isSignedIn" class="headerItem headerCommunityItem">
-                    <router-link to="/community" class="lpTarget">{{ $t('dash.community') }}</router-link>
+                    <router-link to="/community" class="lpTarget" :title="$t('dash.community')" :aria-label="$t('dash.community')">
+                        <svg class="lpHeaderIcon headerCommunityIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                        <span class="headerCommunityLabel">{{ $t('dash.community') }}</span>
+                    </router-link>
                 </span>
                 <span v-if="isGuide" class="headerItem">
-                    <router-link to="/guide" class="lpTarget">{{ $t('dash.guide') }}</router-link>
+                    <router-link to="/guide" class="lpTarget" :title="$t('dash.guide')" :aria-label="$t('dash.guide')">
+                        <svg class="lpHeaderIcon headerGuideIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></svg>
+                        <span class="headerGuideLabel">{{ $t('dash.guide') }}</span>
+                    </router-link>
                 </span>
                 <share />
                 <listSettings />
