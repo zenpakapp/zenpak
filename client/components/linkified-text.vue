@@ -1,4 +1,9 @@
 <style lang="scss">
+// Line breaks typed in the description are kept; runs of spaces still collapse.
+.lpLinkifiedText {
+    white-space: pre-line;
+}
+
 .lpLinkifiedLink {
     color: inherit;
     overflow-wrap: anywhere;

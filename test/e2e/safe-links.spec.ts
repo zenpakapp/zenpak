@@ -226,3 +226,18 @@ test("an address typed without https is a link, the text stays as typed", async 
   await expect(summary).toContainText("@instagram.com/kinredgta).");
   await expect(summary).toContainText("tent.png and example.com stay plain");
 });
+
+test("line breaks in a description are kept on the public list", async ({
+  page,
+}) => {
+  await openList(
+    page,
+    "First line (https://one.example/a)\nSecond line\n\nThird paragraph after a blank line",
+  );
+  const summary = page.locator(".lpPublicListSummary");
+  // innerText follows the rendering: collapsed newlines would come out as spaces.
+  const rendered = await summary.innerText();
+  expect(rendered).toContain("First line (https://one.example/a)\nSecond line");
+  expect(rendered).toMatch(/Second line\n+Third paragraph/);
+  await expect(summary.locator("a")).toHaveCount(1);
+});
