@@ -66,4 +66,17 @@ test.describe("signed in", () => {
     expect(scrollW).toBeLessThanOrEqual(375);
     expect(headerW).toBeLessThanOrEqual(375);
   });
+  // The dropdown is 300px wide and anchored to the bell, which sits mid-header on a phone,
+  // so it ran off the left edge of the screen.
+  test("notifications dropdown stays on screen", async ({ page }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    await registerUser(page, `mn${now}`, "testtest", `mn${now}@lighterpack.com`);
+    await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+    await page.locator(".lpNotifBell").click();
+    const dropdown = page.locator(".lpNotifDropdown");
+    await expect(dropdown).toBeVisible();
+    const box = await dropdown.boundingBox();
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(375);
+  });
 });

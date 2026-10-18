@@ -408,6 +408,18 @@
         display: none;
     }
 
+    // Same treatment as the header popovers: the 300px dropdown is anchored to the bell,
+    // which is mid-header on a phone, so pin it to the screen instead.
+    #header .lpNotifDropdown {
+        box-sizing: border-box;
+        left: 12px;
+        max-height: calc(100vh - 84px);
+        position: fixed;
+        right: 12px;
+        top: 60px;
+        width: auto;
+    }
+
     .headerItem .lpPopoverRight {
         right: 5px;
     }
