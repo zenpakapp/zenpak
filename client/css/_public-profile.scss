@@ -254,7 +254,8 @@
     display: -webkit-box;
     font-size: 12px;
     line-height: 1.5;
-    max-width: 58ch;
+    // About 630px: a readable line on the 1040px page, not the whole card.
+    max-width: 90ch;
     overflow: hidden;
     transition: color $transitionDurationFast ease;
 }
