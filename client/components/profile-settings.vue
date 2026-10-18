@@ -187,7 +187,7 @@
             <span class="profileSettingsLabel">{{ $t('acct.avatar') }}</span>
             <div class="profileSettingsAvatar">
                 <div class="profileSettingsAvatarPreview" :class="{ profileSettingsAvatarPreviewImage: storeProfile.avatarUrl }">
-                    <img v-if="storeProfile.avatarUrl" :src="storeProfile.avatarUrl" alt="avatar">
+                    <img v-if="storeProfile.avatarUrl" :src="storeProfile.avatarUrl" :alt="$t('misc.avatarAlt')">
                     <span v-else :style="{ background: avatarBgColor, color: '#fff' }">{{ avatarLetter }}</span>
                 </div>
                 <template v-if="hasProfileCustomization">
@@ -400,7 +400,7 @@ export default {
                 this.profileSaved = true;
                 setTimeout(() => { this.profileSaved = false; }, 2000);
             } catch (error) {
-                this.profileError = error && error.message ? error.message : 'Failed to save profile';
+                this.profileError = error && error.message ? error.message : this.$t('misc.profileSaveFailed');
             } finally {
                 this.profileSaving = false;
             }

@@ -56,7 +56,7 @@ export default {
                 }
             }
 
-            return [{ message: 'An unknown error occurred.' }];
+            return [{ message: this.$t('misc.unknownError') }];
         },
     },
 };

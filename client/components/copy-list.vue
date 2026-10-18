@@ -22,7 +22,7 @@
                 </select>
             </div>
             <p class="lpWarning">
-                <b>Note:</b> {{ $t('misc.copyingWarning') }}
+                <b>{{ $t('misc.note') }}</b> {{ $t('misc.copyingWarning') }}
             </p>
             <div class="lpModalActions">
                 <a class="lpButton close" role="button" tabindex="0" @click="shown = false" @keydown.enter="shown = false" @keydown.space.prevent="shown = false">{{ $t('misc.cancel') }}</a>

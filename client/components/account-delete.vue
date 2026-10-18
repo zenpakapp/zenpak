@@ -69,11 +69,11 @@ export default {
             this.errors = [];
 
             if (!this.currentPassword) {
-                this.errors.push({ field: 'currentPassword', message: 'Please enter your current password.' });
+                this.errors.push({ field: 'currentPassword', message: this.$t('acct.deletePasswordRequired') });
             }
 
             if (!this.isConfirmationComplete) {
-                this.errors.push({ field: 'confirmationText', message: 'Please enter the confirmation text.' });
+                this.errors.push({ field: 'confirmationText', message: this.$t('acct.deleteConfirmationRequired') });
             }
 
             if (this.errors.length) {

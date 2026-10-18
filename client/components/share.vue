@@ -49,7 +49,7 @@
 
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.communityTags') }}</div>
-                        <div class="shareTagGroup" aria-label="Seasons">
+                        <div class="shareTagGroup" :aria-label="$t('share.seasonsLabel')">
                             <label v-for="season in seasonOptions" :key="season.value" class="shareTagCheckbox">
                                 <input
                                     type="checkbox"
@@ -59,7 +59,7 @@
                                 {{ season.label }}
                             </label>
                         </div>
-                        <div class="shareTagGroup" aria-label="List types">
+                        <div class="shareTagGroup" :aria-label="$t('share.listTypesLabel')">
                             <label v-for="listType in listTypeOptions" :key="listType.value" class="shareTagCheckbox">
                                 <input
                                     type="checkbox"

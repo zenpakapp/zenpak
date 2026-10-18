@@ -187,6 +187,8 @@
     }
   },
   "share": {
+    "seasonsLabel": "Estaciones",
+    "listTypesLabel": "Tipos de lista",
     "share": "Compartir",
     "shareLink": "Enlace para compartir",
     "visibility": "Visibilidad",
@@ -281,6 +283,8 @@
     "creatorCodes": "Códigos de creador"
   },
   "acct": {
+    "deletePasswordRequired": "Introduce tu contraseña actual.",
+    "deleteConfirmationRequired": "Introduce el texto de confirmación.",
     "accountSettings": "Configuración de la cuenta",
     "username": "Nombre de usuario",
     "currentPassword": "Contraseña actual",
@@ -488,6 +492,21 @@
     "ariaPopularPacks": "Mochilas populares"
   },
   "misc": {
+    "saveDataError": "Se produjo un error al intentar guardar tus datos.",
+    "dismissAlert": "Cerrar alerta",
+    "note": "Nota:",
+    "unknownError": "Se produjo un error desconocido.",
+    "genericError": "Se produjo un error, inténtalo de nuevo más tarde.",
+    "reportThanks": "Gracias, revisaremos el aviso.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Contenido inapropiado",
+    "reportReasonFake": "Falso o engañoso",
+    "reportReasonOther": "Otro",
+    "reportError": "Algo salió mal.",
+    "avatarAlt": "Avatar",
+    "noPublicLists": "Aún no hay listas públicas.",
+    "loadInsightsError": "No se pudieron cargar las estadísticas.",
+    "profileSaveFailed": "No se pudo guardar el perfil",
     "areYouSure": "¿Estás seguro?",
     "confirm": "Confirmar",
     "cancel": "Cancelar",
@@ -708,6 +727,10 @@
     "createList": "+ Crear"
   },
   "item": {
+    "addType": "+ Añadir tipo",
+    "noImage": "Sin imagen del artículo",
+    "currentImage": "Imagen actual del artículo",
+    "brandExample": "p. ej. Sea to Summit",
     "reorderItemTitle": "Reordenar este artículo",
     "namePlaceholder": "Nombre",
     "descriptionPlaceholder": "Descripción",

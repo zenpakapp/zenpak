@@ -187,6 +187,8 @@
     }
   },
   "share": {
+    "seasonsLabel": "Seasons",
+    "listTypesLabel": "List types",
     "share": "Share",
     "shareLink": "Share link",
     "visibility": "Visibility",
@@ -281,6 +283,8 @@
     "creatorCodes": "Promo codes"
   },
   "acct": {
+    "deletePasswordRequired": "Please enter your current password.",
+    "deleteConfirmationRequired": "Please enter the confirmation text.",
     "accountSettings": "Account Settings",
     "username": "Username",
     "currentPassword": "Current password",
@@ -488,6 +492,21 @@
     "ariaPopularPacks": "Popular packs"
   },
   "misc": {
+    "saveDataError": "An error occurred while attempting to save your data.",
+    "dismissAlert": "Dismiss alert",
+    "note": "Note:",
+    "unknownError": "An unknown error occurred.",
+    "genericError": "An error occurred, please try again later.",
+    "reportThanks": "Thanks, we'll review it.",
+    "reportReasonSpam": "Spam",
+    "reportReasonInappropriate": "Inappropriate content",
+    "reportReasonFake": "Fake or misleading",
+    "reportReasonOther": "Other",
+    "reportError": "Something went wrong.",
+    "avatarAlt": "Avatar",
+    "noPublicLists": "No public lists yet.",
+    "loadInsightsError": "Unable to load insights.",
+    "profileSaveFailed": "Failed to save profile",
     "areYouSure": "Are you sure?",
     "confirm": "Confirm",
     "cancel": "Cancel",
@@ -823,6 +842,10 @@
     "gearPickerCreatePrefix": "+ Create new item"
   },
   "item": {
+    "addType": "+ Add type",
+    "noImage": "No item image",
+    "currentImage": "Current item image",
+    "brandExample": "e.g. Sea to Summit",
     "reorderItemTitle": "Reorder this item",
     "namePlaceholder": "Name",
     "descriptionPlaceholder": "Description",

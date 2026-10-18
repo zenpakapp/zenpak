@@ -107,7 +107,7 @@
                 </tbody>
             </table>
             <p v-else style="color: var(--color-text-muted); font-size: 13px;">
-                No public lists yet.
+                {{ $t('misc.noPublicLists') }}
             </p>
         </template>
     </div>
@@ -124,7 +124,7 @@ export default {
     created() {
         fetchJson('/api/community/insights')
             .then((d) => { this.data = d; })
-            .catch(() => { this.error = 'Unable to load insights.'; })
+            .catch(() => { this.error = this.$t('misc.loadInsightsError'); })
             .finally(() => { this.loading = false; });
     },
 };
