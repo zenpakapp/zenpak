@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { registerUser } from "./auth-utils";
 import { testRoot } from "./utils";
 
 test.use({
@@ -32,4 +33,25 @@ test("welcome page does not scroll horizontally on a phone", async ({
   }));
   expect(inner).toBe(375);
   expect(scrollW).toBeLessThanOrEqual(375);
+});
+
+// Signed in, the header also holds the bell and the Community link. The Community link
+// was meant to be hidden on phones but a later, more specific rule showed it again, so
+// the header was wider than the screen and its items overlapped.
+test.describe("signed in", () => {
+  // registerUser clicks the English "Register" button.
+  test.use({ locale: "en-US" });
+
+  test("editor header fits a phone", async ({ page }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    await registerUser(page, `mh${now}`, "testtest", `mh${now}@lighterpack.com`);
+    await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+    await expect(page.locator(".headerCommunityItem")).toBeHidden();
+    const { scrollW, headerW } = await page.evaluate(() => ({
+      scrollW: document.documentElement.scrollWidth,
+      headerW: document.getElementById("header").scrollWidth,
+    }));
+    expect(scrollW).toBeLessThanOrEqual(375);
+    expect(headerW).toBeLessThanOrEqual(375);
+  });
 });
