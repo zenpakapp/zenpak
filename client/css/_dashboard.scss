@@ -408,6 +408,12 @@
         display: none;
     }
 
+    // iOS Safari zooms the page when a field under 16px gets focus.
+    #header #lpListName,
+    #main .lpList input.lpSilent {
+        font-size: 16px;
+    }
+
     // Same treatment as the header popovers: the 300px dropdown is anchored to the bell,
     // which is mid-header on a phone, so pin it to the screen instead.
     #header .lpNotifDropdown {

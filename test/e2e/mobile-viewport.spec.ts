@@ -79,4 +79,20 @@ test.describe("signed in", () => {
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(375);
   });
+  // iOS Safari zooms the page when a field under 16px gets focus, which shifts the whole
+  // layout (and made the notifications dropdown look cut off).
+  test("editor fields are 16px so iOS does not zoom on focus", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    await registerUser(page, `mz${now}`, "testtest", `mz${now}@lighterpack.com`);
+    await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+    const sizes = await page.evaluate(() =>
+      [...document.querySelectorAll("#main input.lpSilent, #lpListName")].map(
+        (el) => parseFloat(getComputedStyle(el).fontSize),
+      ),
+    );
+    expect(sizes.length).toBeGreaterThan(1);
+    expect(Math.min(...sizes)).toBeGreaterThanOrEqual(16);
+  });
 });
