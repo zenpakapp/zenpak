@@ -2,7 +2,9 @@
 
 .lpList {
     background: inherit;
-    max-width: 960px;
+    // The editor column is capped at 1200px with the sidebar hidden or open, so hiding the
+    // sidebar never narrows it. Open, it is centred in the space the 320px sidebar leaves.
+    max-width: $width-app;
     min-height: 100%;
     padding: 0 20px;
     position: relative;
@@ -10,8 +12,9 @@
     z-index: $aboveSidebar;
 
     .lpHasSidebar & {
-        margin-left: 320px;
-        max-width: calc(100vw - 320px);
+        // The centre of the space right of the 320px sidebar, minus half the column.
+        margin-left: max(320px, calc(50vw - #{$width-app * 0.5 - 160px}));
+        max-width: min(#{$width-app}, calc(100vw - 320px));
     }
 
     @media (max-width: 768px) {

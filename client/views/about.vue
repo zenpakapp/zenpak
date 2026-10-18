@@ -3,7 +3,7 @@
 
 .lpAbout {
     margin: 0 auto;
-    max-width: 600px;
+    max-width: $width-reading;
     padding: 40px 20px 80px;
 
     h1 {

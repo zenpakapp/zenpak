@@ -4,7 +4,7 @@
 .lpPublicProfile {
     background: $color-bg;
     margin: 0 auto;
-    max-width: 680px;
+    max-width: $width-content;
     padding: 20px 20px 40px;
 }
 
@@ -99,6 +99,21 @@
 .lpPublicHeroMeta {
     flex: 1;
     min-width: 0;
+}
+
+// Follow and Report form one column, so the Report link lines up under the Follow button
+// instead of sitting beside it.
+.lpPublicHeroActions {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 6px;
+    margin-top: 12px;
+
+    .lpFollowBtn {
+        margin-top: 0;
+    }
 }
 
 .lpPublicNameRow {

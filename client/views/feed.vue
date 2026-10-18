@@ -3,7 +3,7 @@
 
 .lpFeed {
     margin: 0 auto;
-    max-width: 640px;
+    max-width: $width-reading;
     padding: 32px 20px;
 }
 

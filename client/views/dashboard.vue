@@ -39,7 +39,7 @@
         <sidebar v-if="sidebarReady" @open-gear-room="openGearRoom" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
-            <div id="header" class="clearfix">
+            <div id="header" v-fit-header class="clearfix">
                 <span class="headerItem">
                     <a id="hamburger" class="lpTransition" role="button" tabindex="0" :aria-label="$t('dash.toggleSidebar')" @click="toggleSidebar" @keydown.enter="toggleSidebar" @keydown.space.prevent="toggleSidebar">
                         <span class="lpHamburgerLine" />
@@ -207,6 +207,7 @@ import { registerDialogLoader, unregisterDialogLoader, openDialog } from '../ser
 
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 import { clearSpeedbumpLoader, setSpeedbumpLoader } from '../services/speedbump';
+import fitHeaderDirective from '../utils/fit-header';
 
 const accountDropdown = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-account-dropdown" */ '../components/account-dropdown.vue'));
 const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
@@ -251,6 +252,9 @@ function scheduleIdle(callback) {
 
 export default {
     name: 'Dashboard',
+    directives: {
+        fitHeader: fitHeaderDirective,
+    },
     components: {
         sidebar,
         themeToggle,

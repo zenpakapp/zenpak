@@ -1,5 +1,22 @@
 @import "globals";
 
+// The publish badge shrinks to a dot on the corner of the Share icon: its text alone is wider
+// than the header's spare room, and a dot beside the icon ran into the next button.
+@mixin headerBadgeDot {
+    .sharePublishState {
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px $color-surface;
+        font-size: 0;
+        height: 8px;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        right: -4px;
+        top: 0;
+        width: 8px;
+    }
+}
+
 .lpEditorLoading {
     background: $color-surface;
     display: grid;
@@ -341,6 +358,8 @@
         margin-left: -12px;
         padding: 0 10px 0 8px;
         width: calc(100% + 24px);
+
+        @include headerBadgeDot;
     }
 
     .lpListTitleBlock {
@@ -348,21 +367,6 @@
         min-width: 0;
         padding-left: 0;
         padding-right: 0;
-    }
-
-    // The publish badge shrinks to a dot on the corner of the Share icon: its text alone is
-    // wider than the header's spare room, and a dot beside the icon ran into the next button.
-    #header .sharePublishState {
-        border-radius: 50%;
-        box-shadow: 0 0 0 2px $color-surface;
-        font-size: 0;
-        height: 8px;
-        margin: 0;
-        padding: 0;
-        position: absolute;
-        right: -4px;
-        top: 0;
-        width: 8px;
     }
 
     #lpListName {
@@ -718,6 +722,29 @@
     .headerItem .headerGuideIcon {
         display: block;
     }
+}
+
+// The editor column is 1200px at most (see _list.scss), so the header is never wider than that.
+// Hidden-sidebar layout: centred, same cap as with the sidebar open.
+#main:not(.lpHasSidebar) {
+    max-width: $width-app;
+}
+
+// Only the list title absorbs a lack of room: Share, List settings and the account keep their
+// width instead of shrinking into each other.
+#header .headerTruncateItem {
+    flex: 0 0 auto;
+}
+
+// Set by the fit-header directive (client/utils/fit-header.js) when the list title would be
+// squeezed. Dense: the publish badge becomes a dot. Compact (set together with dense): Share and
+// List settings also keep only their icon.
+#header.lpHeaderDense {
+    @include headerBadgeDot;
+}
+
+#header.lpHeaderCompact .headerMenuLabel {
+    display: none;
 }
 
 @media (max-width: 1240px) {
