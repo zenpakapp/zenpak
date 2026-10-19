@@ -284,6 +284,7 @@
     "creatorCodes": "Codes promo"
   },
   "acct": {
+    "planOffered": "Offert par ZenPak jusqu'au {date}.",
     "deletePasswordRequired": "Veuillez saisir votre mot de passe actuel.",
     "deleteConfirmationRequired": "Veuillez saisir le texte de confirmation.",
     "accountSettings": "Paramètres du compte",
@@ -464,6 +465,11 @@
     }
   },
   "community": {
+    "moderationOfferTitle": "Offrir un plan",
+    "moderationOfferPlan": "Plan",
+    "moderationOfferMonths": "Mois (1 à 12)",
+    "moderationOfferButton": "Offrir",
+    "moderationOfferDone": "{plan} offert jusqu'au {date}.",
     "tabDiscover": "Découvrir",
     "tabFeed": "Mon fil",
     "tabPeople": "Personnes",

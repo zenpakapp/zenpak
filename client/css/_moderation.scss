@@ -207,3 +207,33 @@
         &:hover { background: #dc3545; color: #fff; }
     }
 }
+
+// Offer a plan to the inspected account.
+.lp-moderation-offer {
+    align-items: flex-end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 16px 0;
+
+    h3 {
+        flex: 0 0 100%;
+        margin: 0;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        font-size: $fontSize-sm;
+        gap: 4px;
+    }
+
+    .lp-moderation-offer-months {
+        width: 90px;
+    }
+
+    .lp-moderation-offer-result {
+        flex: 0 0 100%;
+        margin: 0;
+    }
+}

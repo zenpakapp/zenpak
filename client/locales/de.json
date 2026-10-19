@@ -284,6 +284,7 @@
     "creatorCodes": "Creator-Codes"
   },
   "acct": {
+    "planOffered": "Von ZenPak geschenkt bis {date}.",
     "deletePasswordRequired": "Bitte gib dein aktuelles Passwort ein.",
     "deleteConfirmationRequired": "Bitte gib den Bestätigungstext ein.",
     "accountSettings": "Kontoeinstellungen",
@@ -464,6 +465,11 @@
     }
   },
   "community": {
+    "moderationOfferTitle": "Einen Plan schenken",
+    "moderationOfferPlan": "Plan",
+    "moderationOfferMonths": "Monate (1 bis 12)",
+    "moderationOfferButton": "Schenken",
+    "moderationOfferDone": "{plan} geschenkt bis {date}.",
     "tabDiscover": "Entdecken",
     "tabFeed": "Mein Feed",
     "tabPeople": "Personen",

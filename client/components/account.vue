@@ -144,7 +144,14 @@
                 </div>
             </div>
 
-            <div v-if="billing.plan === 'supporter'" class="accountBillingManage">
+            <div v-if="billing.provider === 'comp' && billing.plan !== 'free'" class="accountBillingOffer">
+                <p class="accountSectionText">
+                    {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
+                    {{ $t('acct.planOffered', { date: formatDate(billing.currentPeriodEnd) }) }}
+                </p>
+            </div>
+
+            <div v-if="billing.plan === 'supporter' && billing.provider !== 'comp'" class="accountBillingManage">
                 <p class="accountSectionText">
                     {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>
@@ -159,7 +166,7 @@
                 </div>
             </div>
 
-            <div v-if="billing.plan === 'creator'" class="accountBillingManage">
+            <div v-if="billing.plan === 'creator' && billing.provider !== 'comp'" class="accountBillingManage">
                 <p class="accountSectionText">
                     {{ $t('acct.currentPlan') }}<strong>{{ planLabel }}</strong>
                     <span v-if="billing.cancelAtPeriodEnd">{{ $t('acct.cancels') }}{{ formatDate(billing.currentPeriodEnd) }}</span>

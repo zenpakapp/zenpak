@@ -8,6 +8,8 @@ const { logWithRequest } = require('./log.js');
 const db = require('./db.js');
 
 const { authenticateModerator } = require('./auth.js');
+const { applyOffer, OfferError } = require('./plan-offers.js');
+const { syncUserPublicLists } = require('./public-list-projections.js');
 
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -107,6 +109,53 @@ function clearSession(req, res) {
 
 router.post('/moderation/clear-session', (req, res) => {
     authenticateModerator(req, res, clearSession);
+});
+
+const DEFAULT_OFFER_MONTHS = 3;
+const OFFER_ERROR_STATUS = { 'invalid-plan': 400, 'invalid-months': 400, 'active-subscription': 409 };
+
+// Gives an account Wayfarer or Kin for a few months (a creator invited to the beta). It never sits
+// on top of a Stripe subscription, and it ends by itself (see plan-offers.js).
+async function offerPlan(req, res, moderator) {
+    const username = String(req.body.username || '').toLowerCase().trim();
+    const plan = req.body.plan;
+    const months = typeof req.body.months === 'undefined' ? DEFAULT_OFFER_MONTHS : Number(req.body.months);
+    logWithRequest(req, {
+        message: 'MODERATION Offer plan start', username, plan, months, by: moderator.username,
+    });
+
+    try {
+        const user = username ? await db.users.findOne({ username }) : null;
+        if (!user) {
+            return res.status(404).json({ message: 'Unknown user.', code: 'unknown-user' });
+        }
+
+        let offer;
+        try {
+            offer = applyOffer(user, {
+                plan, months, offeredBy: moderator.username,
+            });
+        } catch (error) {
+            if (error instanceof OfferError) {
+                return res.status(OFFER_ERROR_STATUS[error.code] || 400).json({ message: error.message, code: error.code });
+            }
+            throw error;
+        }
+
+        await db.users.save(user);
+        syncUserPublicLists(user).catch(() => {});
+        logWithRequest(req, {
+            message: 'MODERATION Offer plan succeeded', username, plan, until: offer.currentPeriodEnd, by: moderator.username,
+        });
+        return res.json({ ok: true, plan: offer.plan, currentPeriodEnd: offer.currentPeriodEnd });
+    } catch (error) {
+        logWithRequest(req, { message: 'MODERATION Offer plan error', username, error: error.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+}
+
+router.post('/moderation/offer-plan', (req, res) => {
+    authenticateModerator(req, res, (authedReq, authedRes, moderator) => offerPlan(authedReq, authedRes, moderator));
 });
 
 module.exports = router;

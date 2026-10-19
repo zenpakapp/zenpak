@@ -32,6 +32,26 @@
                     <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
                 </template>
             </section>
+            <section class="lp-moderation-offer">
+                <h3>{{ $t('community.moderationOfferTitle') }}</h3>
+                <label>
+                    {{ $t('community.moderationOfferPlan') }}
+                    <select v-model="offerPlanName" class="lp-moderation-offer-plan">
+                        <option value="creator">Wayfarer</option>
+                        <option value="supporter">Kin</option>
+                    </select>
+                </label>
+                <label>
+                    {{ $t('community.moderationOfferMonths') }}
+                    <input v-model.number="offerMonths" type="number" min="1" max="12" class="lp-moderation-offer-months">
+                </label>
+                <button class="lp-moderation-offer-submit" @click="offerPlan(userToInspect)">
+                    {{ $t('community.moderationOfferButton') }}
+                </button>
+                <p v-if="offerResult" class="lp-moderation-offer-result">
+                    {{ offerResult }}
+                </p>
+            </section>
             <section>
                 <textarea id="lp-moderation-user-library-json" v-model="editableLibrary" />
             </section>
@@ -88,6 +108,7 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
+import { planLabel } from '../services/tier-labels';
 
 export default {
     name: 'Admin',
@@ -98,6 +119,9 @@ export default {
             userToInspect: null,
             editableLibrary: null,
             newPassword: null,
+            offerPlanName: 'creator',
+            offerMonths: 3,
+            offerResult: null,
             reports: [],
             error: null,
         };
@@ -141,6 +165,31 @@ export default {
             })
                 .catch(() => {
                     this.error = 'Unable to clear session.';
+                });
+        },
+        // Gives the account a plan for a few months (a creator invited to the beta). The server
+        // refuses an account that pays for a subscription, and says why.
+        offerPlan(user) {
+            this.error = null;
+            this.offerResult = null;
+            fetchJson('/moderation/offer-plan', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: user.username, plan: this.offerPlanName, months: this.offerMonths }),
+            })
+                .then((response) => {
+                    this.offerResult = this.$t('community.moderationOfferDone', {
+                        plan: planLabel(response.plan),
+                        date: new Date(response.currentPeriodEnd).toLocaleDateString(this.$i18n.locale, {
+                            year: 'numeric', month: 'long', day: 'numeric',
+                        }),
+                    });
+                })
+                .catch((error) => {
+                    this.error = error.message || 'Unable to offer the plan.';
                 });
         },
         resetPassword(user) {

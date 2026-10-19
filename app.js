@@ -161,6 +161,7 @@ const reportEndpoints = require('./server/report-endpoints.js');
 const oauthEndpoints = require('./server/oauth.js');
 const views = require('./server/views.js');
 const { reindexMissingSearchTokens } = require('./server/public-list-projections.js');
+const { sweepLapsedPlans } = require('./server/plan-offers.js');
 
 db.ensureIndexes()
     .then(() => reindexMissingSearchTokens())
@@ -168,6 +169,20 @@ db.ensureIndexes()
         if (count) logger.info(`Added Discover search tokens to ${count} public lists`);
     })
     .catch((err) => logger.error('Index creation or Discover reindex failed', { err }));
+
+// Offered plans and Ko-fi donations end on a date we fixed ourselves, which no payment event
+// enforces (Stripe ends its own subscriptions): send the lapsed ones back to the free plan, now
+// and every hour.
+const LAPSED_PLANS_INTERVAL_MS = 60 * 60 * 1000;
+function endLapsedPlans() {
+    sweepLapsedPlans()
+        .then((count) => {
+            if (count) logger.info(`Sent ${count} lapsed plans back to the free plan`);
+        })
+        .catch((err) => logger.error('Ending lapsed plans failed', { err }));
+}
+db.ensureIndexes().then(endLapsedPlans).catch(() => {});
+setInterval(endLapsedPlans, LAPSED_PLANS_INTERVAL_MS).unref();
 
 app.use(passport.initialize());
 app.use('/', endpoints);
