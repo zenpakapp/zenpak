@@ -375,7 +375,7 @@
     "rulePromoLabelPlaceholder": "e.g. 10% off",
     "ruleHelp": {
       "brand": "Applies to items whose brand is exactly this name, for example Zpacks. Capitals do not matter.",
-      "shop": "Applies to items whose shop is exactly this name, for example REI. Capitals do not matter.",
+      "shop": "Applies to items bought from this shop: its name is found in the item's link, for example REI for www.rei.com. Capitals, spaces and dashes do not matter.",
       "domain": "Applies to items whose link goes to this website, for example zpacks.com. Write it as you like: https:// and www. are ignored."
     },
     "ruleDomainWarning": "This does not look like a domain (for example zpacks.com): it will not match any item link, and its promo code will show without a link.",

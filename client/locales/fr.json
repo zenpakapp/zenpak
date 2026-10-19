@@ -375,7 +375,7 @@
     "rulePromoLabelPlaceholder": "ex. 10 % de réduction",
     "ruleHelp": {
       "brand": "S'applique aux objets dont la marque est exactement ce nom, par exemple Zpacks. Les majuscules ne comptent pas.",
-      "shop": "S'applique aux objets dont la boutique est exactement ce nom, par exemple REI. Les majuscules ne comptent pas.",
+      "shop": "S'applique aux objets achetés dans cette boutique : son nom se retrouve dans le lien de l'objet, par exemple REI pour www.rei.com. Les majuscules, espaces et tirets ne comptent pas.",
       "domain": "S'applique aux objets dont le lien mène à ce site, par exemple zpacks.com. Écrivez-le comme vous voulez : https:// et www. sont ignorés."
     },
     "ruleDomainWarning": "Cela ne ressemble pas à un domaine (par exemple zpacks.com) : la règle ne correspondra à aucun lien d'objet, et son code promo s'affichera sans lien.",

@@ -40,4 +40,28 @@ function ruleHostname(rule) {
     }
 }
 
-module.exports = { promoLinkUrl, ruleHostname };
+// Capitals, spaces, dashes and other punctuation do not count when comparing names.
+function squash(text) {
+    return String(text || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+// Whether an item belongs to the shop named by a "shop" rule: either its own "shop" field is
+// that name, or the shop name is one of the words of its link's website ("rei" in www.rei.com,
+// "garagegrowngear" in garage-grown-gear.com). The "shop" field alone is not enough: no form lets
+// anyone fill it in, so a rule relying on it never applied. One word of the hostname, not any text
+// of the link, so "rei" does not match reiter.com nor a path that merely mentions it.
+function itemMatchesShop(item, match) {
+    const wanted = squash(match);
+    if (wanted.length < 2 || !item) return false;
+    if (squash(item.shop) === wanted) return true;
+
+    let hostname = '';
+    try {
+        hostname = new URL(String(item.url || '').trim()).hostname;
+    } catch (error) {
+        return false;
+    }
+    return hostname.split('.').some((word) => squash(word) === wanted);
+}
+
+module.exports = { promoLinkUrl, ruleHostname, itemMatchesShop };

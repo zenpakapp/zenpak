@@ -43,4 +43,23 @@ assert.strictEqual(promo(['zpacks', 'brand']), 'ZEN10', 'brand is compared whole
 assert.strictEqual(promo(['zpa', 'brand']), '');
 assert.strictEqual(promo(['REI', 'shop'], { shop: 'rei' }), 'ZEN10');
 
+// A shop rule also applies to items whose link goes to that shop, so it works without a "shop"
+// field on the item (nobody can fill it in): the shop name is one of the words of the link's
+// website, ignoring capitals, spaces and dashes.
+const shopLink = (name, url, overrides = {}) => promo([name, 'shop'], { shop: '', url, ...overrides });
+assert.strictEqual(shopLink('REI', 'https://www.rei.com/product/1'), 'ZEN10');
+assert.strictEqual(shopLink('rei', 'https://REI.com/x'), 'ZEN10');
+assert.strictEqual(shopLink('amazon', 'https://smile.amazon.co.uk/dp/x'), 'ZEN10', 'any word of the hostname');
+assert.strictEqual(shopLink('Garage Grown Gear', 'https://www.garagegrowngear.com/x'), 'ZEN10', 'spaces in the name');
+assert.strictEqual(shopLink('Garage Grown Gear', 'https://garage-grown-gear.com/x'), 'ZEN10', 'dashes in the site');
+assert.strictEqual(shopLink('rei', 'https://www.reiter.com/x'), '', 'a word of the site, not any text inside it');
+assert.strictEqual(shopLink('amazon', 'https://example.com/amazon/tent'), '', 'not the path of another site');
+assert.strictEqual(shopLink('rei', ''), '', 'an item with no link and no shop');
+assert.strictEqual(shopLink('', 'https://www.rei.com/x'), '');
+assert.strictEqual(shopLink('r', 'https://r.example/x'), '', 'a one-letter name is too vague');
+assert.strictEqual(shopLink('rei', 'not a url'), '');
+// The shop field of an item still counts, when it is there.
+assert.strictEqual(shopLink('REI', '', { shop: ' rei ' }), 'ZEN10');
+assert.strictEqual(shopLink('REI', 'https://other.example/x', { shop: 'Backcountry' }), '');
+
 console.log('ok');

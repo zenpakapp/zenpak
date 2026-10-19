@@ -6,7 +6,7 @@ const auth = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
-const { ruleHostname } = require('../client/utils/promo-link.js');
+const { itemMatchesShop, ruleHostname } = require('../client/utils/promo-link.js');
 
 function isGuide(user) {
     const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
@@ -111,7 +111,7 @@ router.get('/items', (req, res) => {
                 if (rule.type === 'brand' && item.brand && item.brand.toLowerCase() === matchLower) {
                     return `brand:${rule.match}`;
                 }
-                if (rule.type === 'shop' && item.url && item.url.toLowerCase().includes(matchLower)) {
+                if (rule.type === 'shop' && itemMatchesShop(item, rule.match)) {
                     return `shop:${rule.match}`;
                 }
                 if (rule.type === 'domain' && item.url) {
