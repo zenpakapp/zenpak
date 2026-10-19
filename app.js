@@ -1,6 +1,9 @@
 const crypto = require('crypto');
 const webpack = require('webpack');
+// Only loaded outside production, where the dev dependencies are installed.
+// eslint-disable-next-line import/no-extraneous-dependencies
 const WebpackDevServer = require('webpack-dev-server');
+const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const config = require('config');
@@ -152,7 +155,6 @@ app.use('/dist', express.static(`${__dirname}/public/dist/`, {
     maxAge: runtimeEnvironment === 'production' ? oneYear : oneDay,
 }));
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
-const passport = require('passport');
 const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
@@ -203,15 +205,17 @@ logger.info('Starting up ZenPak...');
 let webpackConfig;
 
 if (runtimeEnvironment === 'production') {
+    // eslint-disable-next-line global-require
     webpackConfig = require('./webpack.config');
 } else {
+    // eslint-disable-next-line global-require
     webpackConfig = require('./webpack.development.config');
 }
 
 const webpackCompiler = webpack(webpackConfig);
 
 // Default port is 3000; we can have multiple bindings
-config.get('bindings').map(
+config.get('bindings').forEach(
     (bind) => {
         app.listen(appPort, bind);
         logger.info(`Listening on [${bind}]:${appPort}`);

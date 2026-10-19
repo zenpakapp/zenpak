@@ -41,11 +41,6 @@ async function runLegacyView(req, res, view) {
 
 const weightUtils = require('../client/utils/weight.js');
 const { formatDisplayPrice } = require('../client/utils/currency.js');
-const dataTypes = require('../client/dataTypes.js');
-
-const Item = dataTypes.Item;
-const Category = dataTypes.Category;
-const List = dataTypes.List;
 
 function getDeployUrl(req) {
     return resolvePublicOrigin(req, {
@@ -341,11 +336,11 @@ router.get('/csv/:id', (req, res) => {
 
         let filename = list.name;
         if (!filename) filename = id;
-        filename = filename.replace(/[^a-z0-9\-]/gi, '_');
+        filename = filename.replace(/[^a-z0-9-]/gi, '_');
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
-        res.send(`﻿${out}`);
+        res.send(`\uFEFF${out}`);
     });
 });
 
@@ -359,7 +354,7 @@ function init() {
             logger.info('Error loading templates');
             logger.info(err);
         }
-        files.filter((file) => (file.substr(0, 2) == 't_' && file.substr(-9) == '.mustache')).forEach((file) => {
+        files.filter((file) => (file.substr(0, 2) === 't_' && file.substr(-9) === '.mustache')).forEach((file) => {
             const fileShort = file.substr(0, file.length - 9);
             const data = fs.readFileSync(path.join(__dirname, '../templates/', file));
             templates[fileShort] = data.toString();
@@ -555,7 +550,7 @@ var renderLibraryTotals = function (library, totalsTemplate, unitSelectTemplate,
 };
 
 function renderUnitSelect(unit, unitSelectTemplate, weight) {
-    const temp = { unit, units: [{ unit: 'oz', selected: (unit == 'oz') }, { unit: 'lb', selected: (unit == 'lb') }, { unit: 'g', selected: (unit == 'g') }, { unit: 'kg', selected: (unit == 'kg') }], weight };
+    const temp = { unit, units: [{ unit: 'oz', selected: (unit === 'oz') }, { unit: 'lb', selected: (unit === 'lb') }, { unit: 'g', selected: (unit === 'g') }, { unit: 'kg', selected: (unit === 'kg') }], weight };
     return Mustache.render(unitSelectTemplate, temp);
 }
 
