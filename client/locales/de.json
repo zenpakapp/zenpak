@@ -358,6 +358,27 @@
     "languageAuto": "Auto (Browser)"
   },
   "guide": {
+    "ruleFieldType": "Gilt für",
+    "ruleFieldMatch": {
+      "brand": "Markenname",
+      "shop": "Shopname",
+      "domain": "Website"
+    },
+    "ruleMatchPlaceholder": {
+      "brand": "z. B. Zpacks",
+      "shop": "z. B. REI",
+      "domain": "z. B. zpacks.com"
+    },
+    "ruleFieldCode": "Promo-Code",
+    "rulePromoCodePlaceholder": "z. B. ZEN10",
+    "ruleFieldLabel": "Angezeigter Text",
+    "rulePromoLabelPlaceholder": "z. B. 10 % Rabatt",
+    "ruleHelp": {
+      "brand": "Gilt für Gegenstände, deren Marke genau diesem Namen entspricht, zum Beispiel Zpacks. Groß- und Kleinschreibung spielt keine Rolle.",
+      "shop": "Gilt für Gegenstände aus diesem Shop: Sein Name steht im Link des Gegenstands, zum Beispiel REI für www.rei.com. Groß- und Kleinschreibung, Leerzeichen und Bindestriche spielen keine Rolle.",
+      "domain": "Gilt für Gegenstände, deren Link auf diese Website führt, zum Beispiel zpacks.com. Schreibe sie, wie du möchtest: https:// und www. werden ignoriert."
+    },
+    "ruleDomainWarning": "Das sieht nicht wie eine Domain aus (zum Beispiel zpacks.com): Die Regel passt zu keinem Gegenstands-Link, und ihr Promo-Code wird ohne Link angezeigt.",
     "viewProfile": "Profil anzeigen →",
     "title": "Wayfarer-Einstellungen",
     "publicProfile": "Öffentliches Profil",
@@ -375,7 +396,7 @@
     "saveChanges": "Änderungen speichern",
     "profileSaved": "Profil gespeichert ✓",
     "affiliateRules": "Affiliate-Regeln",
-    "affiliateRulesHint": "Regeln werden automatisch auf alle deine öffentlichen Listengegenstände angewendet. Eine Überschreibung auf Elementebene (unten) hat Vorrang.",
+    "affiliateRulesHint": "Jede Regel fügt den öffentlichen Gegenständen, für die sie gilt, einen Promo-Code hinzu. Um den Link eines einzelnen Gegenstands zu ersetzen, nutze die Liste unten.",
     "ruleTypeBrand": "Marke",
     "ruleTypeShop": "Shop",
     "ruleTypeDomain": "Domain",

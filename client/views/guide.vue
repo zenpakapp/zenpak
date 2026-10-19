@@ -63,28 +63,46 @@
             <p class="lpGuideHint">
                 {{ $t('guide.affiliateRulesHint') }}
             </p>
-            <div v-for="(rule, i) in affiliateRules" :key="i" class="lpGuideRuleRow">
-                <select v-model="rule.type" class="lpGuideSelect">
-                    <option value="brand">
-                        {{ $t('guide.ruleTypeBrand') }}
-                    </option>
-                    <option value="shop">
-                        {{ $t('guide.ruleTypeShop') }}
-                    </option>
-                    <option value="domain">
-                        {{ $t('guide.ruleTypeDomain') }}
-                    </option>
-                </select>
-                <input v-model="rule.match" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.ruleMatch')" maxlength="200">
-                <input v-model="rule.affiliateUrl" class="lpGuideInput" :placeholder="$t('guide.ruleAffiliateUrl')" maxlength="500">
-                <input v-model="rule.appendParam" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.ruleAppendParam')" maxlength="200">
-                <input v-model="rule.promoCode" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoCode')" maxlength="100">
-                <input v-model="rule.promoLabel" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoLabel')" maxlength="100">
-                <button class="lpGuideRemove" @click="removeRule(i)">
-                    {{ $t('guide.removeButton') }}
-                </button>
+            <div v-for="(rule, i) in affiliateRules" :key="i" class="lpGuideRule">
+                <div class="lpGuideRuleRow">
+                    <label class="lpGuideRuleField">
+                        <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldType') }}</span>
+                        <select v-model="rule.type" class="lpGuideSelect">
+                            <option value="brand">
+                                {{ $t('guide.ruleTypeBrand') }}
+                            </option>
+                            <option value="shop">
+                                {{ $t('guide.ruleTypeShop') }}
+                            </option>
+                            <option value="domain">
+                                {{ $t('guide.ruleTypeDomain') }}
+                            </option>
+                        </select>
+                    </label>
+                    <label class="lpGuideRuleField lpGuideRuleFieldWide">
+                        <span class="lpGuideRuleFieldLabel">{{ $t(`guide.ruleFieldMatch.${rule.type}`) }}</span>
+                        <input v-model="rule.match" class="lpGuideInput" :placeholder="$t(`guide.ruleMatchPlaceholder.${rule.type}`)" maxlength="200">
+                    </label>
+                    <label class="lpGuideRuleField">
+                        <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldCode') }}</span>
+                        <input v-model="rule.promoCode" class="lpGuideInput" :placeholder="$t('guide.rulePromoCodePlaceholder')" maxlength="100">
+                    </label>
+                    <label class="lpGuideRuleField lpGuideRuleFieldWide">
+                        <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldLabel') }}</span>
+                        <input v-model="rule.promoLabel" class="lpGuideInput" :placeholder="$t('guide.rulePromoLabelPlaceholder')" maxlength="100">
+                    </label>
+                    <button class="lpGuideRemove" @click="removeRule(i)">
+                        {{ $t('guide.removeButton') }}
+                    </button>
+                </div>
+                <p class="lpGuideRuleHelp">
+                    {{ $t(`guide.ruleHelp.${rule.type}`) }}
+                </p>
+                <p v-if="hasDomainProblem(rule)" class="lpGuideRuleWarning" role="alert">
+                    {{ $t('guide.ruleDomainWarning') }}
+                </p>
             </div>
-            <button class="lpGuideAdd" @click="addRule">
+            <button class="lpGuideAdd lpGuideAddRule" @click="addRule">
                 {{ $t('guide.addRuleButton') }}
             </button>
             <div class="lpGuideField lpGuideFieldTop">
@@ -146,6 +164,7 @@ import { useGuide } from '../composables/useGuide.js';
 import { useBackNav } from '../composables/useBackNav.js';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { push } from '../services/navigation.js';
+import promoLink from '../utils/promo-link';
 
 export default {
     name: 'GuideView',
@@ -163,6 +182,15 @@ export default {
         },
         username() {
             return this.$store && this.$store.state && this.$store.state.loggedIn;
+        },
+    },
+    methods: {
+        // A "domain" rule needs a web address, or it matches no item link. An empty value is
+        // not flagged: the row is simply unfinished.
+        hasDomainProblem(rule) {
+            return rule.type === 'domain'
+                && String(rule.match || '').trim() !== ''
+                && !promoLink.ruleHostname(rule);
         },
     },
     watch: {

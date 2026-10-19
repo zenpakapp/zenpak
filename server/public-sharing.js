@@ -6,6 +6,7 @@ const { normalizeTier } = require('./tier-policy.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 const { clipDescription } = require('./text-limits.js');
+const { itemMatchesShop, promoLinkUrl, ruleHostname } = require('../client/utils/promo-link.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -162,8 +163,8 @@ function resolvePublicItemLink(item, creator) {
     const rules = creator && Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [];
     const hostname = normalizeHostname(item.url);
     const hasPromo = (r) => r && (normalizeString(r.promoCode) || normalizeString(r.promoLabel));
-    const shopRule = rules.find((r) => hasPromo(r) && r.type === 'shop' && matchesText(item.shop, r.match));
-    const domainRule = rules.find((r) => hasPromo(r) && r.type === 'domain' && hostname && matchesText(hostname, r.match));
+    const shopRule = rules.find((r) => hasPromo(r) && r.type === 'shop' && itemMatchesShop(item, r.match));
+    const domainRule = rules.find((r) => hasPromo(r) && r.type === 'domain' && hostname && ruleHostname(r) === hostname);
     const brandRule = rules.find((r) => hasPromo(r) && r.type === 'brand' && matchesText(item.brand, r.match));
     const rule = shopRule || domainRule || brandRule;
 
@@ -269,11 +270,8 @@ async function buildPublicProfile(user) {
         const label = normalizeString(rule.promoLabel);
         if (code && !seenCodes.has(code)) {
             seenCodes.add(code);
-            const url = rule.type === 'domain' && normalizeString(rule.match)
-                ? `https://${normalizeString(rule.match)}`
-                : '';
             creatorCodes.push({
-                name: normalizeString(rule.match), code, label, url,
+                name: normalizeString(rule.match), code, label, url: promoLinkUrl(rule),
             });
         }
     }

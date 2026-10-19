@@ -193,6 +193,64 @@
     margin-bottom: 16px;
 }
 
+// An affiliate rule: labelled fields on one row, then what it applies to, then a warning if its
+// value is not what the type needs.
+.lpGuideRule {
+    border-bottom: 1px solid $color-border;
+    padding: 12px 0;
+
+    .lpGuideRuleRow {
+        align-items: flex-end;
+        margin-bottom: 6px;
+    }
+}
+
+.lpGuideRuleField {
+    display: flex;
+    flex: 0 0 150px;
+    flex-direction: column;
+    gap: 4px;
+
+    // The shared select and input sizes are widths in a row: here the field is a column.
+    .lpGuideSelect,
+    .lpGuideInput {
+        box-sizing: border-box;
+        flex: none;
+        width: 100%;
+    }
+}
+
+.lpGuideRuleFieldWide {
+    flex: 1 1 200px;
+    min-width: 160px;
+}
+
+.lpGuideRuleFieldLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: $letterSpacing-caps;
+    text-transform: uppercase;
+}
+
+.lpGuideRuleHelp,
+.lpGuideRuleWarning {
+    font-size: $fontSize-sm;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.lpGuideRuleHelp {
+    color: $color-text-muted;
+}
+
+.lpGuideRuleWarning {
+    border-left: 3px solid var(--color-warning, #d97706);
+    color: $color-text;
+    margin-top: 6px;
+    padding-left: 10px;
+}
+
 .lpGuideLoading,
 .lpGuideEmpty {
     color: $color-text-muted;
