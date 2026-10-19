@@ -5,14 +5,23 @@
 //   mongosh lighterpack --file scripts/purge-test-data.js                          (count)
 //   mongosh lighterpack --eval 'var APPLY=true' --file scripts/purge-test-data.js  (delete)
 // Back up first: mongodump --db lighterpack --out /tmp/zenpak-backup
-// Edit KEEP and NAMED below: KEEP is never touched, NAMED are test accounts without a long number.
+//
+// An account is a test account when its name holds a run of 9 digits or more AND its e-mail is
+// on a test domain. Names you want to protect, or older test accounts that do not fit, are given
+// in the environment, never in this file:
+//   PURGE_KEEP=alice,bob     never touched, whatever they look like
+//   PURGE_NAMED=test,test1   also removed, by name
+const list = (value) => (value || '').split(',').map((name) => name.trim()).filter(Boolean);
 const DRY = typeof APPLY === 'undefined' || !APPLY;
-const KEEP = ['fxbenard', 'zenpak', 'demozenpakdoc', 'demozenpakguide', 'seed_base', 'seed_trail', 'seed_guide'];
-const NAMED = ['testemail', 'testemail2', 'testemail3', 'testuser', 'test', 'test1', 'e2edebug2', 'vischeck',
-  'unitfixmt74dm09', 'qaunit11866', 'curltest17341', 'qa1b', 'francoispignon'];
+const KEEP = list(process.env.PURGE_KEEP);
+const NAMED = list(process.env.PURGE_NAMED);
+const TEST_EMAIL = /@(lighterpack\.com|lighterpack\.test|example\.com|test\.com|test\.local)$/i;
 
 const targets = db.users.find({
-  $or: [{ username: { $regex: /\d{9,}/ } }, { username: { $in: NAMED } }],
+  $or: [
+    { username: { $regex: /\d{9,}/ }, email: { $regex: TEST_EMAIL } },
+    { username: { $in: NAMED } },
+  ],
   username: { $nin: KEEP },
 }, { username: 1, 'library.lists.externalId': 1 }).toArray();
 
