@@ -181,6 +181,8 @@ async function searchLists(req, res) {
         const pattern = new RegExp(escapeRegExp(text), 'i');
         query.$or = [{ name: pattern }, { ownerUsername: pattern }];
     }
+    // Only the featured lists, to manage them.
+    if (req.query.featured === '1') query.featured = true;
 
     try {
         const lists = await db.publicLists.findSorted(query, { updatedAt: -1 }, LIST_SEARCH_LIMIT);

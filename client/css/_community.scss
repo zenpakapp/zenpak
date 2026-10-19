@@ -637,6 +637,14 @@
     margin-bottom: 16px;
 }
 
+.lpModerationFilter {
+    align-items: center;
+    display: flex;
+    font-size: $fontSize-sm;
+    gap: 6px;
+    white-space: nowrap;
+}
+
 .lpModerationListRows {
     list-style: none;
     margin: 0;

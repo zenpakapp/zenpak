@@ -13,6 +13,10 @@
             <button class="lpButton lpSmall">
                 {{ $t('community.moderationSearchButton') }}
             </button>
+            <label class="lpModerationFilter">
+                <input v-model="featuredOnly" type="checkbox" class="lp-moderation-list-featured-only" @change="searchLists">
+                {{ $t('community.moderationFeaturedOnly') }}
+            </label>
         </form>
         <p v-if="error" class="lpCommunityEmpty lp-moderation-list-error">
             {{ error }}
@@ -48,6 +52,7 @@ export default {
     data() {
         return {
             searchQuery: '',
+            featuredOnly: false,
             lists: [],
             searched: false,
             error: null,
@@ -61,7 +66,8 @@ export default {
         async searchLists() {
             this.error = null;
             try {
-                const response = await fetchJson(`/moderation/search-lists?q=${encodeURIComponent(this.searchQuery)}`, {
+                const featured = this.featuredOnly ? '&featured=1' : '';
+                const response = await fetchJson(`/moderation/search-lists?q=${encodeURIComponent(this.searchQuery)}${featured}`, {
                     method: 'GET',
                     credentials: 'same-origin',
                 });
@@ -76,6 +82,10 @@ export default {
             try {
                 const response = await fetchJson(`/api/reports/feature/${list.externalId}`, { method: 'POST' });
                 list.featured = response.featured;
+                // In the featured view, a list that is no longer featured leaves it.
+                if (this.featuredOnly && !list.featured) {
+                    this.lists = this.lists.filter((l) => l.externalId !== list.externalId);
+                }
             } catch {
                 this.error = 'Unable to update featured list.';
             }

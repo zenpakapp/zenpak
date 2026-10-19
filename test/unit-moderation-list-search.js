@@ -36,8 +36,9 @@ stubServerModule('db.js', {
     publicLists: {
         findSorted(query, sort, limit) {
             calls.push({ query, sort, limit });
-            const matches = (list) => !query.$or || query.$or.some((clause) => Object.entries(clause)
-                .every(([field, pattern]) => pattern.test(list[field])));
+            const matches = (list) => (!query.$or || query.$or.some((clause) => Object.entries(clause)
+                .every(([field, pattern]) => pattern.test(list[field]))))
+                && (query.featured === undefined || list.featured === query.featured);
             return Promise.resolve(lists.filter(matches).sort((a, b) => b.updatedAt - a.updatedAt).slice(0, limit));
         },
     },
@@ -53,14 +54,14 @@ const router = require('../server/moderation-endpoints.js');
 const layer = router.stack.find((l) => l.route && l.route.path === '/moderation/search-lists' && l.route.methods.get);
 assert.ok(layer, 'the route exists');
 
-function search(q) {
+function search(q, featured) {
     return new Promise((resolve) => {
         const res = {
             statusCode: 200,
             status(code) { this.statusCode = code; return this; },
             json(data) { resolve({ status: this.statusCode, data }); },
         };
-        layer.route.stack[0].handle({ query: q === undefined ? {} : { q }, cookies: {} }, res);
+        layer.route.stack[0].handle({ query: { ...(q === undefined ? {} : { q }), ...(featured ? { featured: '1' } : {}) }, cookies: {} }, res);
     });
 }
 
@@ -84,6 +85,14 @@ function search(q) {
     assert.deepStrictEqual(result.data.results.map((r) => r.externalId), ['b2', 'a1', 'c3']);
     result = await search();
     assert.strictEqual(result.data.results.length, 3);
+
+    // Only the featured lists, to manage them: with or without a search.
+    result = await search('', true);
+    assert.deepStrictEqual(result.data.results.map((r) => r.externalId), ['a1']);
+    result = await search('bob', true);
+    assert.deepStrictEqual(result.data.results, [], 'bob has no featured list');
+    result = await search('zenpak', true);
+    assert.deepStrictEqual(result.data.results.map((r) => r.externalId), ['a1']);
 
     // What the user typed is text, not a pattern: a bracket must not break the search.
     result = await search('(light');

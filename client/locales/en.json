@@ -509,6 +509,7 @@
     "moderationLists": "Lists",
     "moderationListSearchPlaceholder": "Search a list by name or author...",
     "moderationNoLists": "No list found.",
+    "moderationFeaturedOnly": "Featured only",
     "moderationUnfeature": "★ Unfeature",
     "moderationLibrary": "Library (JSON)",
     "moderationSearchUserPlaceholder": "Search for a user...",
