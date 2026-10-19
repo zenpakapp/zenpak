@@ -96,6 +96,7 @@ test.describe("Billing — Checkout redirect", () => {
 let localConfig: {
   stripeWebhookSecret?: string;
   stripePriceIdTrailAnnual?: string;
+  stripePriceIdGuideAnnual?: string;
   stripeSecretKey?: string;
 } = {};
 try {
@@ -110,6 +111,7 @@ const WEBHOOK_SECRET =
   localConfig.stripeWebhookSecret ||
   "";
 const KIN_PRICE_ID = localConfig.stripePriceIdTrailAnnual || "";
+const WAYFARER_PRICE_ID = localConfig.stripePriceIdGuideAnnual || "";
 const STRIPE_SECRET_KEY = localConfig.stripeSecretKey || "";
 
 function signEvent(secret: string, eventObject: unknown) {
@@ -283,5 +285,154 @@ test.describe("Billing — portal redirect", () => {
 
     await page.waitForURL(/billing\.stripe\.com/, { timeout: 15000 });
     expect(page.url()).toContain("billing.stripe.com");
+  });
+});
+
+// The life of a real Stripe test-mode subscription, as the account sees it: the end of the paid
+// period, a cancellation at the end of the period, the return from the portal, and the end.
+test.describe("Billing — period end and cancellation", () => {
+  test.skip(
+    !WEBHOOK_SECRET || !STRIPE_SECRET_KEY || !KIN_PRICE_ID,
+    "Stripe test-mode config not available — skipping live webhook seed test",
+  );
+
+  test("the end date follows the subscription, a cancellation keeps access until then, then the account is free", async ({
+    page,
+    request,
+  }) => {
+    test.setTimeout(120000);
+    const username = `billing_end_${Date.now()}`;
+    await registerUser(
+      page,
+      username,
+      "testtest",
+      `${username}@lighterpack.com`,
+    );
+    await page.locator(".accountDropdownName").waitFor();
+
+    const liveStripe = new Stripe(STRIPE_SECRET_KEY);
+    const customer = await liveStripe.customers.create({
+      email: `${username}@lighterpack.com`,
+    });
+    const paymentMethod = await liveStripe.paymentMethods.attach(
+      "pm_card_visa",
+      { customer: customer.id },
+    );
+    await liveStripe.customers.update(customer.id, {
+      invoice_settings: { default_payment_method: paymentMethod.id },
+    });
+    const subscription = await liveStripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: KIN_PRICE_ID }],
+      default_payment_method: paymentMethod.id,
+    });
+    const paidUntil = new Date(
+      subscription.current_period_end * 1000,
+    ).toISOString();
+
+    async function sendWebhook(type: string, object: Record<string, unknown>) {
+      const event = signEvent(WEBHOOK_SECRET, {
+        id: `evt_e2e_end_${type}_${Date.now()}`,
+        type,
+        data: { object },
+      });
+      const response = await request.post(`${testRoot}api/webhooks/stripe`, {
+        data: event.body,
+        headers: {
+          "stripe-signature": event.signature,
+          "content-type": "application/json",
+        },
+      });
+      expect(response.ok()).toBe(true);
+    }
+    async function billingOfAccount() {
+      const response = await page.request.get(`${testRoot}api/billing/me`);
+      expect(response.ok()).toBe(true);
+      return response.json();
+    }
+
+    await sendWebhook("checkout.session.completed", {
+      metadata: { username },
+      customer: customer.id,
+      consent: { terms_of_service: "accepted" },
+    });
+    await sendWebhook("customer.subscription.created", {
+      id: subscription.id,
+      customer: customer.id,
+    });
+
+    // The account holds Kin, until the end of the period Stripe gave.
+    let billing = await billingOfAccount();
+    expect(billing.plan).toBe("supporter");
+    expect(billing.status).toBe("active");
+    expect(billing.cancelAtPeriodEnd).toBe(false);
+    expect(billing.currentPeriodEnd).toBe(paidUntil);
+
+    // An upgrade to Wayfarer, then back to Kin, as the portal does it: the plan follows the price,
+    // and the end date is the one Stripe reports after the change.
+    async function changePrice(priceId: string) {
+      const current = await liveStripe.subscriptions.retrieve(subscription.id);
+      const changed = await liveStripe.subscriptions.update(subscription.id, {
+        items: [{ id: current.items.data[0].id, price: priceId }],
+        proration_behavior: "none",
+      });
+      await sendWebhook("customer.subscription.updated", {
+        id: subscription.id,
+        customer: customer.id,
+      });
+      return changed;
+    }
+    if (WAYFARER_PRICE_ID) {
+      const upgraded = await changePrice(WAYFARER_PRICE_ID);
+      billing = await billingOfAccount();
+      expect(billing.plan).toBe("creator");
+      expect(billing.currentPeriodEnd).toBe(
+        new Date(upgraded.current_period_end * 1000).toISOString(),
+      );
+      const downgraded = await changePrice(KIN_PRICE_ID);
+      billing = await billingOfAccount();
+      expect(billing.plan).toBe("supporter");
+      expect(billing.currentPeriodEnd).toBe(
+        new Date(downgraded.current_period_end * 1000).toISOString(),
+      );
+    }
+
+    // The user cancels in the portal: the subscription runs to the end of the period.
+    await liveStripe.subscriptions.update(subscription.id, {
+      cancel_at_period_end: true,
+    });
+    await sendWebhook("customer.subscription.updated", {
+      id: subscription.id,
+      customer: customer.id,
+    });
+    billing = await billingOfAccount();
+    expect(billing.cancelAtPeriodEnd).toBe(true);
+    expect(billing.plan).toBe("supporter");
+    expect(billing.currentPeriodEnd).toBe(paidUntil);
+
+    // Back from the portal: the banner says so, and the account says when it ends.
+    await page.goto(`${testRoot}?billing=managed`);
+    await expect(page.locator(".lpBillingSuccessBanner")).toContainText(
+      "Subscription updated",
+    );
+    await page.locator(".accountDropdownTarget").hover();
+    await page
+      .getByText("Account Settings", { exact: true })
+      .dispatchEvent("click");
+    await expect(page.getByText(/cancels/i).first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // The subscription ends: the account is free, and nothing is left to manage.
+    await liveStripe.subscriptions.cancel(subscription.id);
+    await sendWebhook("customer.subscription.deleted", {
+      id: subscription.id,
+      customer: customer.id,
+    });
+    billing = await billingOfAccount();
+    expect(billing.plan).toBe("free");
+    expect(billing.status).toBe("canceled");
+    expect(billing.currentPeriodEnd).toBeNull();
+    expect(billing.cancelAtPeriodEnd).toBe(false);
   });
 });
