@@ -109,7 +109,8 @@ router.post('/follow/:username', (req, res) => {
         const mode = req.body && req.body.mode === 'new-only' ? 'new-only' : 'all';
 
         const target = await db.users.findOne({ username: targetUsername });
-        if (!target) {
+        // A banned account cannot be followed: it does not exist for the community.
+        if (!target || target.banned) {
             return res.status(404).json({ message: 'User not found' });
         }
 
@@ -173,7 +174,7 @@ router.get('/follow-status/:username', (req, res) => {
 
         try {
             const target = await db.users.findOne({ username: targetUsername });
-            if (!target) {
+            if (!target || target.banned) {
                 return res.json({ following: false, mode: null });
             }
 
@@ -214,7 +215,11 @@ router.get('/feed', (req, res) => {
 
             // Resolve usernames for event authors
             const authorIds = [...new Set(events.map((e) => e.userId.toString()))];
-            const authors = await db.users.findMany({ _id: { $in: authorIds.map((id) => new ObjectId(id)) } });
+            const allAuthors = await db.users.findMany({ _id: { $in: authorIds.map((id) => new ObjectId(id)) } });
+            // What a banned account published leaves the feed. Its follows stay stored, so it comes
+            // back if the account is reinstated.
+            const bannedIds = new Set(allAuthors.filter((a) => a.banned).map((a) => a._id.toString()));
+            const authors = allAuthors.filter((a) => !a.banned);
             const authorMap = Object.fromEntries(authors.map((a) => [a._id.toString(), a.username]));
             const avatarMap = Object.fromEntries(authors.map((a) => [
                 a._id.toString(),
@@ -236,7 +241,7 @@ router.get('/feed', (req, res) => {
                 }
             }
 
-            const enriched = events.map((e) => ({
+            const enriched = events.filter((e) => !bannedIds.has(e.userId.toString())).map((e) => ({
                 _id: e._id,
                 type: e.type,
                 createdAt: e.createdAt,
