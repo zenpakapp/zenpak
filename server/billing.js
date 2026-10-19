@@ -105,9 +105,12 @@ async function syncUserBilling(user, subscription, status) {
         user.billing.plan = plan;
         user.billing.status = status || subscription.status;
         user.billing.cancelAtPeriodEnd = subscription.cancel_at_period_end || false;
-        user.billing.currentPeriodEnd = subscription.current_period_end
-            ? new Date(subscription.current_period_end * 1000).toISOString()
-            : null;
+        // The end of the paid period sits on the subscription in older Stripe API versions, and on
+        // its item in newer ones: read both, so upgrading the library cannot lose the date.
+        const periodEnd = subscription.current_period_end
+            || (subscription.items && subscription.items.data && subscription.items.data[0]
+                && subscription.items.data[0].current_period_end);
+        user.billing.currentPeriodEnd = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
         user.billing.lastSyncedAt = now;
         user.billing.legalEntityVersion = LEGAL_ENTITY_VERSION;
         if (existingTermsAccepted) user.billing.termsVersionAccepted = existingTermsAccepted;

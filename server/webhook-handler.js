@@ -81,9 +81,8 @@ async function handleEvent(event) {
     case 'customer.subscription.updated': {
         const user = await findUserByCustomerId(obj.customer);
         if (!user) return;
-        // Retrieve fresh to use our pinned API version (2024-04-10) — webhook
-        // events arrive in the CLI/dashboard API version which may omit fields
-        // like current_period_end present in older versions.
+        // Retrieve fresh to use the API version the stripe library pins — webhook events arrive in
+        // the dashboard's API version, which may omit fields like current_period_end.
         const stripe = getStripe();
         const subscription = await stripe.subscriptions.retrieve(obj.id);
         await syncUserBilling(user, subscription, subscription.status);
