@@ -87,6 +87,17 @@ require.cache[require.resolve('../server/feed-events.js')] = {
     filename: require.resolve('../server/feed-events.js'), loaded: true, children: [], paths: [],
 };
 
+// What the list's author is told about a copy.
+const alerts = [];
+require.cache[require.resolve('../server/notifications.js')] = {
+    exports: { createNotification: async (alert) => { alerts.push(alert); } },
+    id: require.resolve('../server/notifications.js'),
+    filename: require.resolve('../server/notifications.js'),
+    loaded: true,
+    children: [],
+    paths: [],
+};
+
 const { buildFrozenLibrary } = require('../server/list-versions.js');
 
 const publishedRow = {
@@ -126,6 +137,9 @@ async function run() {
     });
 
     assert('returns source list name', responseData && responseData.listName === 'PCT Section J');
+    assert('the author is alerted once of the copy', alerts.length === 1);
+    assert('the alert goes to the list\'s author', alerts[0] && String(alerts[0].userId) === String(ownerUser._id));
+    assert('the alert is a copy alert naming the list and the copier', alerts[0] && alerts[0].type === 'copy' && alerts[0].listName === 'PCT Section J' && alerts[0].actorUsername === copyUser.username);
     assert('returns source currency symbol', responseData && responseData.sourceCurrencySymbol === '€');
     assert('saves source owner for copy count', savedUsers.some(u => u.username === 'alice'));
     assert('returns categories payload', responseData.categories && responseData.categories.length === 1);
