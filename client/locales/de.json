@@ -1001,6 +1001,10 @@
       "4-season-backpacking": {
         "name": "4-Jahreszeiten-Tour",
         "description": "30 Gegenstände für Winter/Alpin — stabiles Zelt, warmer Schlaf, Schutzschichten"
+      },
+      "bikepacking": {
+        "name": "Bikepacking",
+        "description": "34 Gegenstände für eine mehrtägige Radreise — leichtes Zelt, warmer Schlaf, Kleidung, Reparatur und Elektronik"
       }
     },
     "gearPickerTitle": "Ausrüstung hinzufügen",

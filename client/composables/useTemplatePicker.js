@@ -7,6 +7,7 @@ const backpackingData = require('../data/templates/3-day-backpacking.json');
 const ultralightData = require('../data/templates/weekend-ultralight.json');
 const thruHikeData = require('../data/templates/thru-hike-pct.json');
 const fourSeasonData = require('../data/templates/4-season-backpacking.json');
+const bikepackingData = require('../data/templates/bikepacking.json');
 
 const SUBTOTAL_WEIGHT_FIELDS = ['subtotalWeight', 'subtotalWornWeight', 'subtotalConsumableWeight'];
 
@@ -57,6 +58,12 @@ const templates = [
         data: toLibraryData(fourSeasonData),
         listTypes: ['trek'],
         seasons: ['4-season', 'winter'],
+    },
+    {
+        id: 'bikepacking',
+        data: toLibraryData(bikepackingData),
+        listTypes: ['bikepacking'],
+        seasons: ['3-season', 'summer'],
     },
 ];
 

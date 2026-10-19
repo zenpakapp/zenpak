@@ -1,0 +1,752 @@
+{
+  "version": "0.3",
+  "totalUnit": "g",
+  "itemUnit": "g",
+  "defaultListId": 41,
+  "sequence": 200,
+  "showSidebar": true,
+  "optionalFields": {
+    "price": false,
+    "consumable": true,
+    "worn": true
+  },
+  "currencySymbol": "€",
+  "items": [
+    {
+      "id": 1,
+      "name": "Hogan SUL 2P tent",
+      "brand": "VAUDE",
+      "description": "2-person ultralight tent",
+      "weight": 1450,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 2,
+      "name": "Tent footprint",
+      "brand": "VAUDE",
+      "description": "Ground sheet for the tent",
+      "weight": 420,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 3,
+      "name": "NeoAir XTherm NXT (Regular)",
+      "brand": "Therm-a-Rest",
+      "description": "Insulated inflatable pad, R-value 7.3",
+      "weight": 440,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 4,
+      "name": "X-Lite 300 down sleeping bag",
+      "brand": "Cumulus",
+      "description": "Light 3-season down bag",
+      "weight": 465,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 5,
+      "name": "Silk travel sheet",
+      "brand": "Cocoon",
+      "description": "Liner that keeps the bag clean",
+      "weight": 160,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 6,
+      "name": "Aeros Premium pillow",
+      "brand": "Sea to Summit",
+      "description": "Inflatable pillow",
+      "weight": 99,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 7,
+      "name": "Merino boxer briefs",
+      "brand": "Smartwool",
+      "description": "Odour-resistant merino underwear",
+      "weight": 95,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 8,
+      "name": "Cool Merino T-shirt",
+      "brand": "Patagonia",
+      "description": "Merino blend base layer",
+      "weight": 111,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 9,
+      "name": "Cycling socks",
+      "description": "Pair of cycling socks",
+      "weight": 40,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 10,
+      "name": "Merino socks",
+      "description": "Pair of merino socks for the evening",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 11,
+      "name": "Gravel pants",
+      "brand": "Ekoï",
+      "description": "Pants worn on the bike",
+      "weight": 350,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 12,
+      "name": "Micro Puff jacket",
+      "brand": "Patagonia",
+      "description": "Light synthetic insulated jacket",
+      "weight": 295,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 13,
+      "name": "Torrentshell 3L rain jacket",
+      "brand": "Patagonia",
+      "description": "Waterproof shell",
+      "weight": 400,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 14,
+      "name": "Thermal leggings",
+      "description": "Evening layer",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 15,
+      "name": "Rain pants",
+      "brand": "B'Twin",
+      "description": "Waterproof over-pants",
+      "weight": 250,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 16,
+      "name": "Dual-Gel gloves",
+      "brand": "Specialized",
+      "description": "Padded cycling gloves",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 17,
+      "name": "Merino neck gaiter and beanie",
+      "brand": "Icebreaker",
+      "description": "Thin merino headwear",
+      "weight": 90,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 18,
+      "name": "Mesh stuff sacks",
+      "brand": "Sea to Summit",
+      "description": "Storage nets to organise the bags",
+      "weight": 40,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 19,
+      "name": "SteriPEN Ultra",
+      "brand": "Katadyn",
+      "description": "UV water purifier",
+      "weight": 140,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 20,
+      "name": "PocketRocket 2 stove",
+      "brand": "MSR",
+      "description": "Canister stove",
+      "weight": 73,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 21,
+      "name": "Frontier UL collapsible cup",
+      "brand": "Sea to Summit",
+      "description": "Folding cup",
+      "weight": 54,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 22,
+      "name": "Frontier UL cutlery set",
+      "brand": "Sea to Summit",
+      "description": "Fork, spoon and knife",
+      "weight": 26,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 23,
+      "name": "Snacks",
+      "description": "Food for the day",
+      "weight": 300,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 24,
+      "name": "Tek Towel (M)",
+      "brand": "Sea to Summit",
+      "description": "Quick-dry towel",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 25,
+      "name": "Soap and sponge",
+      "description": "Solid soap and a small sponge",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 26,
+      "name": "Toiletry kit",
+      "description": "Toothbrush, paste and basics",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 27,
+      "name": "Toilet paper",
+      "description": "Roll or flat pack",
+      "weight": 40,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 28,
+      "name": "Emergency blanket",
+      "description": "Foil survival blanket",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 29,
+      "name": "Rider 750 GPS",
+      "brand": "Bryton",
+      "description": "Bike computer with navigation",
+      "weight": 93,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 30,
+      "name": "Power bank 10,000 mAh",
+      "description": "Recharges the GPS and lights",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 31,
+      "name": "MH4 headlamp",
+      "brand": "Ledlenser",
+      "description": "AA headlamp",
+      "weight": 92,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 32,
+      "name": "Reflective straps and rechargeable lights",
+      "description": "Visibility kit",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 33,
+      "name": "Repair kit and pump",
+      "description": "Tubes, patches, tools and a mini pump",
+      "weight": 300,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 34,
+      "name": "Saddle rain cover",
+      "brand": "Brooks",
+      "description": "Keeps a leather saddle dry",
+      "weight": 23,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    }
+  ],
+  "categories": [
+    {
+      "id": 101,
+      "name": "Shelter",
+      "categoryItems": [
+        {
+          "itemId": 1,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 2,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1870,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 102,
+      "name": "Sleep System",
+      "categoryItems": [
+        {
+          "itemId": 3,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 4,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 5,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 6,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1164,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 4
+    },
+    {
+      "id": 103,
+      "name": "Clothing & Footwear",
+      "categoryItems": [
+        {
+          "itemId": 7,
+          "qty": 3,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 8,
+          "qty": 2,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 9,
+          "qty": 2,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 10,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 11,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 12,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 13,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 14,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 15,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 16,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 17,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 18,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 2372,
+      "subtotalWornWeight": 450,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 16
+    },
+    {
+      "id": 104,
+      "name": "Water",
+      "categoryItems": [
+        {
+          "itemId": 19,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 140,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 1
+    },
+    {
+      "id": 105,
+      "name": "Cook & Food",
+      "categoryItems": [
+        {
+          "itemId": 20,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 21,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 22,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 23,
+          "qty": 1,
+          "worn": false,
+          "consumable": true,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 453,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 300,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 4
+    },
+    {
+      "id": 106,
+      "name": "Hygiene & Health",
+      "categoryItems": [
+        {
+          "itemId": 24,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 25,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 26,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 27,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 450,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 4
+    },
+    {
+      "id": 107,
+      "name": "Safety & Navigation",
+      "categoryItems": [
+        {
+          "itemId": 28,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 60,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 1
+    },
+    {
+      "id": 108,
+      "name": "Electronics & Essentials",
+      "categoryItems": [
+        {
+          "itemId": 29,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 30,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 31,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 32,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 535,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 4
+    },
+    {
+      "id": 109,
+      "name": "Bike & Repair",
+      "categoryItems": [
+        {
+          "itemId": 33,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 34,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 323,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    }
+  ],
+  "lists": [
+    {
+      "id": 41,
+      "name": "Bikepacking",
+      "categoryIds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109
+      ],
+      "totalWeight": 7367,
+      "totalWornWeight": 450,
+      "totalConsumableWeight": 300,
+      "totalBaseWeight": 6617,
+      "totalPackWeight": 6917,
+      "totalPrice": 0,
+      "totalConsumablePrice": 0,
+      "totalQty": 38
+    }
+  ]
+}

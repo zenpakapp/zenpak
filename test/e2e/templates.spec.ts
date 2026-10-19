@@ -27,6 +27,7 @@ test.describe("Template picker", () => {
     await expect(
       page.getByText("4-season hiking", { exact: true }),
     ).toBeVisible();
+    await expect(page.getByText("Bikepacking", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Create my list" }),
     ).toBeVisible();
@@ -61,6 +62,41 @@ test.describe("Template picker", () => {
     await expect(page.locator("input.lpCategoryName").first()).toBeVisible();
     await expect(
       page.locator('input.lpCategoryName[value="Shelter"]'),
+    ).toHaveCount(1);
+  });
+
+  test("the bikepacking template builds a list in the bikepacking taxonomy", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    let libraryPayload: string | null = null;
+    await page.route("**/register", async (route) => {
+      libraryPayload = route.request().postDataJSON()?.library ?? null;
+      await route.continue();
+    });
+
+    await registerUserWithTemplate(
+      page,
+      `tpl${now}`,
+      "testtest",
+      `tpl+${now}@lighterpack.com`,
+      "Bikepacking",
+    );
+    await expect(page.locator(".accountDropdownName")).toHaveText(`tpl${now}`);
+
+    const library = JSON.parse(libraryPayload!);
+    expect(library.lists[0].name).toBe("Bikepacking");
+    expect(library.items.length).toBe(34);
+    // Weights are stored in milligrams: the 1,450 g tent is 1,450,000 mg.
+    const tent = library.items.find((i) => i.name === "Hogan SUL 2P tent");
+    expect(tent.brand).toBe("VAUDE");
+    expect(tent.weight).toBe(1450000);
+
+    await expect(
+      page.locator('input.lpCategoryName[value="Bike & Repair"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('input.lpCategoryName[value="Sleep System"]'),
     ).toHaveCount(1);
   });
 
