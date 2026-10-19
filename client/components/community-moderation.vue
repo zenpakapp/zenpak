@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../utils/utils';
 import CommunityAccounts from './community-accounts.vue';
 import CommunityLists from './community-lists.vue';
 
@@ -98,7 +98,8 @@ export default {
         },
         async ban(report) {
             const username = this.banTarget(report);
-            if (!username || !confirm(`Ban @${username}?`)) return;
+            // eslint-disable-next-line no-alert
+            if (!username || !window.confirm(`Ban @${username}?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
@@ -108,7 +109,8 @@ export default {
             }
         },
         async unpublish(report) {
-            if (!confirm(`Unpublish "${report.targetId}"?`)) return;
+            // eslint-disable-next-line no-alert
+            if (!window.confirm(`Unpublish "${report.targetId}"?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });

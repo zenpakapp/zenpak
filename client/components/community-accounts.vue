@@ -76,8 +76,8 @@
 </template>
 
 <script>
-import { fetchJson } from '../utils/utils.js';
-import { planLabel } from '../services/tier-labels.js';
+import { fetchJson } from '../utils/utils';
+import { planLabel } from '../services/tier-labels';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
