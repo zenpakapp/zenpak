@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2 style="font-size:14px;font-weight:700;margin-bottom:16px">
+        <community-accounts />
+        <h2 class="lpModerationHeading">
             {{ $t('community.moderationReports') }} ({{ reports.length }} pending)
         </h2>
         <p v-if="error" class="lpCommunityEmpty">
@@ -47,9 +48,11 @@
 
 <script>
 import { fetchJson } from '../utils/utils.js';
+import CommunityAccounts from './community-accounts.vue';
 
 export default {
     name: 'CommunityModeration',
+    components: { CommunityAccounts },
     emits: ['feature-list'],
     data() {
         return {

@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 import { registerUser } from "./auth-utils";
 import { testRoot } from "./utils";
 
-// A moderator can offer Wayfarer or Kin for a few months from the moderation page, and an
+// A moderator can offer Wayfarer or Kin for a few months from the moderation tab, and an
 // account holding an offered plan sees it as an offer, with its end date, instead of a
 // Stripe subscription it could manage.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
@@ -14,10 +14,15 @@ async function signUp(page) {
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
 }
 
-test("a moderator offers a plan from the moderation page", async ({ page }) => {
+test("a moderator offers a plan from the moderation tab", async ({ page }) => {
   test.setTimeout(60000);
   await signUp(page);
 
+  await page.route("**/api/auth/me", async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    await route.fulfill({ response, json: { ...body, isModerator: true } });
+  });
   await page.route("**/api/reports", (route) =>
     route.fulfill({ json: { reports: [] } }),
   );
@@ -44,10 +49,11 @@ test("a moderator offers a plan from the moderation page", async ({ page }) => {
     return route.fulfill(answer);
   });
 
-  await page.goto(`${testRoot}moderation`);
-  await page.locator("#lp-moderation form input").fill("alice");
-  await page.locator("#lp-moderation form button").click();
-  await page.getByText("alice", { exact: true }).first().click();
+  await page.evaluate(() => (window as any).LighterPack.$router.push("/community"));
+  await page.locator(".lpCommunityTab").filter({ hasText: "Moderation" }).click();
+  await page.locator(".lp-moderation-search").fill("alice");
+  await page.locator(".lpModerationSearch button").click();
+  await page.locator(".lp-moderation-search-results").getByText("alice").click();
 
   const offer = page.locator(".lp-moderation-offer");
   await expect(offer).toBeVisible();

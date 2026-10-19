@@ -496,7 +496,7 @@
     "feedLoadMore": "Load more",
     "feedActivityTitle": "Activity",
     "feedEmptyNone": "Nothing here yet. Follow some users to see their list activity.",
-    "moderationTitle": "Admin panel",
+    "moderationAccounts": "Accounts",
     "moderationSearchUserPlaceholder": "Search for a user...",
     "moderationSearchButton": "Search",
     "moderationClearSession": "Clear session",

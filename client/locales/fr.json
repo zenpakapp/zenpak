@@ -496,7 +496,7 @@
     "feedLoadMore": "Charger plus",
     "feedActivityTitle": "Activité",
     "feedEmptyNone": "Rien ici pour le moment. Suivez des utilisateurs pour voir leur activité de liste.",
-    "moderationTitle": "Panneau d'administration",
+    "moderationAccounts": "Comptes",
     "moderationSearchUserPlaceholder": "Rechercher un utilisateur...",
     "moderationSearchButton": "Rechercher",
     "moderationClearSession": "Effacer la session",

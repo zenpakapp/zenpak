@@ -630,3 +630,82 @@
     flex-wrap: wrap;
     gap: 6px;
 }
+
+.lpModerationHeading {
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 16px;
+}
+
+.lpModerationAccounts {
+    border-bottom: 1px solid $color-border;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+}
+
+.lpModerationSearch {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.lpModerationResults {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+
+    button {
+        background: $color-control-muted;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        color: $color-text;
+        cursor: pointer;
+        font-size: $fontSize-sm;
+        padding: 4px 10px;
+
+        &:hover { border-color: $color-accent; }
+    }
+}
+
+.lpModerationAccount h3 {
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 10px;
+}
+
+.lpModerationRow {
+    align-items: flex-end;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-sm;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .lp-moderation-offer-months { width: 90px; }
+
+    .lp-moderation-offer-result {
+        flex: 0 0 100%;
+        margin: 0;
+    }
+}
+
+.lpModerationLibrary {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-family: monospace;
+    font-size: 12px;
+    height: 12em;
+    padding: 8px;
+    width: 100%;
+}

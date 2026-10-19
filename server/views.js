@@ -77,7 +77,6 @@ const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/register' },
     { path: '/forgot-password' },
     { path: '/reset-password' },
-    { path: '/moderation' },
     { path: '/feed' },
     { path: '/community' },
     { path: '/community/feed' },
