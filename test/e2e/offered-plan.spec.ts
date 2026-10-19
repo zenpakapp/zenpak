@@ -113,6 +113,80 @@ test("a moderator offers a plan from the moderation tab", async ({ page }) => {
   await expect(offer.locator(".lp-moderation-offer-result")).toHaveCount(0);
 });
 
+test("a moderator withdraws a running offer", async ({ page }) => {
+  test.setTimeout(60000);
+  await signUp(page);
+
+  await page.route("**/api/auth/me", async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    await route.fulfill({ response, json: { ...body, isModerator: true } });
+  });
+  await page.route("**/api/reports", (route) =>
+    route.fulfill({ json: { reports: [] } }),
+  );
+  await page.route("**/moderation/search*", (route) =>
+    route.fulfill({
+      json: {
+        results: [
+          {
+            username: "alice",
+            email: "alice@example.com",
+            library: {},
+            offer: {
+              plan: "creator",
+              currentPeriodEnd: "2027-01-19T12:00:00.000Z",
+            },
+          },
+          {
+            username: "bob",
+            email: "bob@example.com",
+            library: {},
+            offer: null,
+          },
+        ],
+      },
+    }),
+  );
+  const bodies = [];
+  await page.route("**/moderation/revoke-offer", (route) => {
+    bodies.push(route.request().postDataJSON());
+    return route.fulfill({ json: { ok: true, plan: "creator" } });
+  });
+
+  await page.evaluate(() =>
+    (window as any).LighterPack.$router.push("/community"),
+  );
+  await page
+    .locator(".lpCommunityTab")
+    .filter({ hasText: "Moderation" })
+    .click();
+  await page.locator(".lp-moderation-search").fill("a");
+  await page.locator(".lpModerationSearch button").click();
+
+  // An account with no offer has nothing to withdraw.
+  const offer = page.locator(".lp-moderation-offer");
+  await page.locator(".lp-moderation-search-results").getByText("bob").click();
+  await expect(offer).toBeVisible();
+  await expect(offer.locator(".lp-moderation-offer-revoke")).toHaveCount(0);
+
+  // An account on an offer shows it, and the offer can be withdrawn.
+  await page
+    .locator(".lp-moderation-search-results")
+    .getByText("alice")
+    .click();
+  const current = offer.locator(".lp-moderation-offer-current");
+  await expect(current).toContainText("Wayfarer");
+  await expect(current).toContainText("2027");
+  await offer.locator(".lp-moderation-offer-revoke").click();
+
+  await expect(offer.locator(".lp-moderation-offer-result")).toContainText(
+    "withdrawn",
+  );
+  await expect(current).toHaveCount(0);
+  expect(bodies).toEqual([{ username: "alice" }]);
+});
+
 test("an offered plan shows as an offer with its end date", async ({
   page,
 }) => {

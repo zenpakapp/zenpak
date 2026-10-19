@@ -99,6 +99,21 @@ function isLapsed(user, now = new Date()) {
     return new Date(billing.currentPeriodEnd) <= now;
 }
 
+// Withdraws a running offer before its date: the account goes back to the free plan at once.
+// Returns the plan that ended. Anything that is not a running offer is refused.
+function revokeOffer(user, { revokedBy, now = new Date() }) {
+    if (!isOfferActive(user, now) || entitlementPlan(user) === 'free') {
+        throw new OfferError('no-offer', 'This account has no offered plan to withdraw.');
+    }
+    const ended = user.billing.plan;
+    user.library.entitlements.plan = 'free';
+    user.billing.plan = 'free';
+    user.billing.status = 'revoked';
+    user.billing.revokedBy = revokedBy;
+    user.billing.revokedAt = now.toISOString();
+    return ended;
+}
+
 function expireLapsedPlan(user, now = new Date()) {
     if (!isLapsed(user, now)) return false;
     user.library.entitlements.plan = 'free';
@@ -137,5 +152,6 @@ module.exports = {
     expireLapsedPlan,
     isLapsed,
     isOfferActive,
+    revokeOffer,
     sweepLapsedPlans,
 };

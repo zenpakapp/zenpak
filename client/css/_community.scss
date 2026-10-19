@@ -730,6 +730,14 @@
 
     .lp-moderation-offer-months { width: 90px; }
 
+    .lp-moderation-offer-current {
+        align-items: center;
+        display: flex;
+        flex: 0 0 100%;
+        gap: 12px;
+        margin: 0;
+    }
+
     .lp-moderation-offer-result,
     .lp-moderation-offer-error {
         flex: 0 0 100%;
