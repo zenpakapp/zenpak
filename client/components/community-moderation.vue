@@ -38,8 +38,8 @@
                     <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublish(r)">
                         {{ $t('community.moderationUnpublish') }}
                     </button>
-                    <button class="lpButton lpSmall lpButtonDanger" @click="ban(r)">
-                        {{ $t('community.moderationBan') }}
+                    <button v-if="banTarget(r)" class="lpButton lpSmall lpButtonDanger lp-moderation-ban" @click="ban(r)">
+                        {{ $t('community.moderationBan') }} @{{ banTarget(r) }}
                     </button>
                 </div>
             </div>
@@ -92,9 +92,13 @@ export default {
                 this.error = 'Unable to update report.';
             }
         },
+        // The account a report is about: the reported user, or the author of the reported list.
+        banTarget(report) {
+            return report.targetType === 'user' ? report.targetId : report.targetOwnerUsername;
+        },
         async ban(report) {
-            const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
-            if (!username || !confirm(`Ban "${username}"?`)) return;
+            const username = this.banTarget(report);
+            if (!username || !confirm(`Ban @${username}?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });

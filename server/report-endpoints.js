@@ -59,7 +59,14 @@ router.get('/', (req, res) => {
         try {
             const reports = await db.reports.findMany({ status: 'pending' });
             reports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            return res.json({ reports });
+            // A list report names its author, so the moderator can ban them without typing a name.
+            // The stored report is left as it is; null when the list is no longer published.
+            const withOwner = await Promise.all(reports.map(async (report) => {
+                if (report.targetType !== 'list') return report;
+                const owner = await getPublishedOwner(report.targetId).catch(() => null);
+                return { ...report, targetOwnerUsername: owner ? owner.username : null };
+            }));
+            return res.json({ reports: withOwner });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
         }
