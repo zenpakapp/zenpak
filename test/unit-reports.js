@@ -372,6 +372,27 @@ async function run() {
         assert('POST /unpublish does not touch the impostor\'s colliding list', impostorList.visibility !== 'private');
     }
 
+    // --- GET / : a list report names the author, so the moderator can ban them in one click ---
+    {
+        usersStore.length = 0;
+        const owner = buildOwnerUser({ username: 'owner3', externalId: 'named1' });
+        const impostor = buildOwnerUser({ username: 'mallory', externalId: 'named1' });
+        usersStore.push(impostor, owner);
+        await publishVersion(owner, 'named1', '');
+        const reportOf = (targetType, targetId) => ({
+            ...existingReport, _id: new ObjectId(), targetType, targetId,
+        });
+        reportsStore = [reportOf('list', 'named1'), reportOf('list', 'ghost'), reportOf('user', 'owner3')];
+        const { data } = await new Promise(resolve => {
+            getRoute.route.stack[0].handle({ body: {} }, makeRes(resolve), () => {});
+        });
+        const byTarget = (id) => data.reports.find(r => r.targetId === id);
+        assert('GET / names the published author of a reported list', byTarget('named1').targetOwnerUsername === 'owner3');
+        assert('GET / has no author for a list that is no longer published', byTarget('ghost').targetOwnerUsername === null);
+        assert('GET / leaves a user report as it is', !('targetOwnerUsername' in byTarget('owner3')));
+        assert('GET / does not alter the stored report', !('targetOwnerUsername' in reportsStore[0]));
+    }
+
     // --- summary ---
     console.log(`\n${passed} passed, ${failed} failed`);
     if (failed > 0) process.exit(1);

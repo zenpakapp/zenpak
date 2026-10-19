@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../utils/utils';
 
 export default {
     name: 'CommunityLists',
@@ -91,7 +91,8 @@ export default {
             }
         },
         async unpublish(list) {
-            if (!confirm(`Unpublish "${list.name || list.externalId}"?`)) return;
+            // eslint-disable-next-line no-alert
+            if (!window.confirm(`Unpublish "${list.name || list.externalId}"?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${list.externalId}`, { method: 'POST' });

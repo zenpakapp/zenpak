@@ -1,8 +1,8 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const express = require('express');
 
 const router = express.Router();
-const config = require('config');
 const { logWithRequest } = require('./log.js');
 
 const db = require('./db.js');
@@ -74,7 +74,7 @@ function resetPassword(req, res) {
             logWithRequest(req, { message: 'MODERATION Reset password for unknown', username });
             return res.status(500).json({ message: 'An error occurred.' });
         }
-        require('crypto').randomBytes(12, (ex, buf) => {
+        crypto.randomBytes(12, (ex, buf) => {
             const newPassword = buf.toString('hex');
 
             bcrypt.genSalt(10, (err, salt) => {

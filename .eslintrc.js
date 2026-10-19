@@ -24,6 +24,7 @@ module.exports = {
         'max-len': 'off', // TODO
         'no-shadow': 'off', // TODO
         'no-param-reassign': 'off', // TODO
+        'no-underscore-dangle': ['error', { allow: ['_id'] }], // MongoDB's document id
         'no-plusplus': 'off', // TODO
         'prefer-destructuring': 'off', // TODO
         'vue/html-indent': ['error', 4], // Stylistic preference

@@ -38,8 +38,8 @@
                     <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublish(r)">
                         {{ $t('community.moderationUnpublish') }}
                     </button>
-                    <button class="lpButton lpSmall lpButtonDanger" @click="ban(r)">
-                        {{ $t('community.moderationBan') }}
+                    <button v-if="banTarget(r)" class="lpButton lpSmall lpButtonDanger lp-moderation-ban" @click="ban(r)">
+                        {{ $t('community.moderationBan') }} @{{ banTarget(r) }}
                     </button>
                 </div>
             </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../utils/utils';
 import CommunityAccounts from './community-accounts.vue';
 import CommunityLists from './community-lists.vue';
 
@@ -92,9 +92,14 @@ export default {
                 this.error = 'Unable to update report.';
             }
         },
+        // The account a report is about: the reported user, or the author of the reported list.
+        banTarget(report) {
+            return report.targetType === 'user' ? report.targetId : report.targetOwnerUsername;
+        },
         async ban(report) {
-            const username = report.targetType === 'user' ? report.targetId : prompt('Username to ban?');
-            if (!username || !confirm(`Ban "${username}"?`)) return;
+            const username = this.banTarget(report);
+            // eslint-disable-next-line no-alert
+            if (!username || !window.confirm(`Ban @${username}?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
@@ -104,7 +109,8 @@ export default {
             }
         },
         async unpublish(report) {
-            if (!confirm(`Unpublish "${report.targetId}"?`)) return;
+            // eslint-disable-next-line no-alert
+            if (!window.confirm(`Unpublish "${report.targetId}"?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });

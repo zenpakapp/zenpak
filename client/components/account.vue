@@ -201,8 +201,7 @@ import spinner from './spinner.vue';
 import LpSelect from './lp-select.vue';
 import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { fetchJson } from '../utils/utils';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
-import { planLabel as planTierLabel, tierLabel } from '../services/tier-labels.js';
+import { planLabel as planTierLabel, tierLabel } from '../services/tier-labels';
 import { setLocale } from '../i18n';
 
 const profileSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-profile" */ './profile-settings.vue'));
@@ -333,7 +332,7 @@ export default {
                 this.errors.push({ field: 'currentPassword', message: this.$t('acct.errorCurrentPassword') });
             }
 
-            if (this.newPassword && this.newPassword != this.confirmNewPassword) {
+            if (this.newPassword && this.newPassword !== this.confirmNewPassword) {
                 this.errors.push({ field: 'newPassword', message: this.$t('acct.errorPasswordsNoMatch') });
             }
 
@@ -371,7 +370,7 @@ export default {
                 credentials: 'same-origin',
                 body: JSON.stringify(data),
             })
-                .then((response) => {
+                .then(() => {
                     this.saving = false;
                     this.shown = false;
                 })
