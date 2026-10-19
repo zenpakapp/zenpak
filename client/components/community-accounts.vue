@@ -38,8 +38,8 @@
                     <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
                 </template>
             </div>
-            <div class="lpModerationRow lp-moderation-offer">
-                <strong>{{ $t('community.moderationOfferTitle') }}</strong>
+            <div class="lpModerationOffer lp-moderation-offer">
+                <h4>{{ $t('community.moderationOfferTitle') }}</h4>
                 <label>
                     {{ $t('community.moderationOfferPlan') }}
                     <select v-model="offerPlanName" class="lp-moderation-offer-plan">
@@ -58,7 +58,10 @@
                     {{ offerResult }}
                 </p>
             </div>
-            <textarea v-model="editableLibrary" class="lpModerationLibrary" readonly />
+            <details class="lpModerationLibraryBox">
+                <summary>{{ $t('community.moderationLibrary') }}</summary>
+                <textarea v-model="editableLibrary" class="lpModerationLibrary" readonly />
+            </details>
         </div>
     </section>
 </template>
@@ -100,7 +103,7 @@ export default {
         },
         setUser(user) {
             this.userToInspect = user;
-            this.editableLibrary = JSON.stringify(user.library);
+            this.editableLibrary = JSON.stringify(user.library, null, 2);
             this.newPassword = null;
             this.offerResult = null;
         },

@@ -497,6 +497,7 @@
     "feedActivityTitle": "Activity",
     "feedEmptyNone": "Nothing here yet. Follow some users to see their list activity.",
     "moderationAccounts": "Accounts",
+    "moderationLibrary": "Library (JSON)",
     "moderationSearchUserPlaceholder": "Search for a user...",
     "moderationSearchButton": "Search",
     "moderationClearSession": "Clear session",

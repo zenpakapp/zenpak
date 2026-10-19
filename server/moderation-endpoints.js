@@ -37,7 +37,9 @@ function search(req, res) {
 
     Promise.all([nameSearch, emailSearch])
         .then(([nameResult, emailResult]) => {
+            const seen = new Set();
             const allResults = [].concat(nameResult).concat(emailResult)
+                .filter((user) => !seen.has(user.username) && seen.add(user.username))
                 .map((user) => ({
                     username: user.username,
                     library: user.library,
