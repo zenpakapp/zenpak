@@ -49,11 +49,19 @@ test("a moderator offers a plan from the moderation tab", async ({ page }) => {
     return route.fulfill(answer);
   });
 
-  await page.evaluate(() => (window as any).LighterPack.$router.push("/community"));
-  await page.locator(".lpCommunityTab").filter({ hasText: "Moderation" }).click();
+  await page.evaluate(() =>
+    (window as any).LighterPack.$router.push("/community"),
+  );
+  await page
+    .locator(".lpCommunityTab")
+    .filter({ hasText: "Moderation" })
+    .click();
   await page.locator(".lp-moderation-search").fill("alice");
   await page.locator(".lpModerationSearch button").click();
-  await page.locator(".lp-moderation-search-results").getByText("alice").click();
+  await page
+    .locator(".lp-moderation-search-results")
+    .getByText("alice")
+    .click();
 
   const offer = page.locator(".lp-moderation-offer");
   await expect(offer).toBeVisible();
@@ -99,7 +107,7 @@ test("a moderator offers a plan from the moderation tab", async ({ page }) => {
     },
   };
   await offer.locator(".lp-moderation-offer-submit").click();
-  await expect(page.locator(".lp-moderation-error")).toContainText(
+  await expect(offer.locator(".lp-moderation-offer-error")).toContainText(
     "active subscription",
   );
   await expect(offer.locator(".lp-moderation-offer-result")).toHaveCount(0);

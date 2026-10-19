@@ -730,11 +730,15 @@
 
     .lp-moderation-offer-months { width: 90px; }
 
-    .lp-moderation-offer-result {
-        color: $color-accent;
+    .lp-moderation-offer-result,
+    .lp-moderation-offer-error {
         flex: 0 0 100%;
         margin: 0;
     }
+
+    .lp-moderation-offer-result { color: $color-accent; }
+
+    .lp-moderation-offer-error { color: #dc3545; }
 }
 
 .lpModerationLibraryBox {

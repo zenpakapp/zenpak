@@ -57,6 +57,9 @@
                 <p v-if="offerResult" class="lp-moderation-offer-result">
                     {{ offerResult }}
                 </p>
+                <p v-if="offerError" class="lp-moderation-offer-error">
+                    {{ offerError }}
+                </p>
             </div>
             <details class="lpModerationLibraryBox">
                 <summary>{{ $t('community.moderationLibrary') }}</summary>
@@ -84,6 +87,7 @@ export default {
             offerPlanName: 'creator',
             offerMonths: 3,
             offerResult: null,
+            offerError: null,
             error: null,
         };
     },
@@ -106,6 +110,7 @@ export default {
             this.editableLibrary = JSON.stringify(user.library, null, 2);
             this.newPassword = null;
             this.offerResult = null;
+            this.offerError = null;
         },
         clearSession(user) {
             this.error = null;
@@ -122,7 +127,7 @@ export default {
         // Gives the account a plan for a few months (a creator invited to the beta). The server
         // refuses an account that pays for a subscription, and says why.
         offerPlan(user) {
-            this.error = null;
+            this.offerError = null;
             this.offerResult = null;
             fetchJson('/moderation/offer-plan', {
                 method: 'POST',
@@ -139,7 +144,8 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    this.error = error.message || 'Unable to offer the plan.';
+                    const key = `community.moderationOfferError_${error.code}`;
+                    this.offerError = this.$te(key) ? this.$t(key) : (error.message || 'Unable to offer the plan.');
                 });
         },
         resetPassword(user) {
