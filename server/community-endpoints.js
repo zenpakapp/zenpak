@@ -499,7 +499,7 @@ router.get('/users', async (req, res) => {
         if (!q) {
             // Default: discoverable/indexable profiles sorted by most recent public list
             pipeline = [
-                { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] } } },
+                { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] }, banned: { $ne: true } } },
                 {
                     $addFields: {
                         _latestList: {
@@ -532,6 +532,7 @@ router.get('/users', async (req, res) => {
                             { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
                         ],
                         'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
+                        banned: { $ne: true },
                     },
                 },
                 { $limit: PAGE_SIZE },

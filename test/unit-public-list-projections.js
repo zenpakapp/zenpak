@@ -18,7 +18,8 @@ const publicListsDb = {
         return Promise.resolve();
     },
     deleteMany(filter) {
-        const keep = projections.filter((p) => String(p.ownerId) !== String(filter.ownerId) || filter.externalId.$nin.includes(p.externalId));
+        const keep = projections.filter((p) => String(p.ownerId) !== String(filter.ownerId)
+            || (filter.externalId && filter.externalId.$nin.includes(p.externalId)));
         projections.length = 0;
         projections.push(...keep);
         return Promise.resolve();
@@ -98,6 +99,18 @@ async function run() {
     assert('reindex reports how many projections it filled', reindexed === 1);
     assert('a legacy projection without tokens gets them', projections.find((p) => p.externalId === 'legacy1').searchTokens.includes('legacy'));
     assert('a second reindex finds nothing to do', await reindexMissingSearchTokens() === 0);
+
+    // A banned account has no public list in Discover or search, and gets them back when reinstated.
+    const bannedOwner = buildOwnerUser({ externalId: 'ban1', username: 'spammer' });
+    await publishVersion(bannedOwner, 'ban1', '');
+    await syncUserPublicLists(bannedOwner);
+    assert('a published list is projected before the ban', projections.some((p) => p.externalId === 'ban1'));
+    bannedOwner.banned = true;
+    await syncUserPublicLists(bannedOwner);
+    assert('a ban removes every projection of the account', !projections.some((p) => p.externalId === 'ban1'));
+    bannedOwner.banned = false;
+    await syncUserPublicLists(bannedOwner);
+    assert('lifting the ban projects the lists again', projections.some((p) => p.externalId === 'ban1'));
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);

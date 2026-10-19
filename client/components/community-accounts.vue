@@ -26,13 +26,26 @@
         </ul>
 
         <div v-if="userToInspect" class="lpModerationAccount">
-            <h3>{{ userToInspect.username }}</h3>
+            <h3>
+                {{ userToInspect.username }}
+                <span v-if="userToInspect.banned" class="lpCommunityBadge lp-moderation-banned">{{ $t('community.moderationBanned') }}</span>
+            </h3>
             <div class="lpModerationRow">
                 <button class="lpButton lpSmall" @click="clearSession(userToInspect)">
                     {{ $t('community.moderationClearSession') }}
                 </button>
                 <button class="lpButton lpSmall" @click="resetPassword(userToInspect)">
                     {{ $t('community.moderationResetPassword') }}
+                </button>
+                <button
+                    v-if="!userToInspect.banned"
+                    class="lpButton lpSmall lpButtonDanger lp-moderation-ban-account"
+                    @click="banAccount(userToInspect)"
+                >
+                    {{ $t('community.moderationBan') }}
+                </button>
+                <button v-else class="lpButton lpSmall lp-moderation-unban-account" @click="unbanAccount(userToInspect)">
+                    {{ $t('community.moderationUnban') }}
                 </button>
                 <template v-if="newPassword">
                     <strong>{{ $t('community.moderationNewPassword') }}</strong> {{ newPassword }}
@@ -129,6 +142,28 @@ export default {
                 .catch(() => {
                     this.error = 'Unable to clear session.';
                 });
+        },
+        // A ban ends the session and hides the account's lists and pages. It can be lifted.
+        async banAccount(user) {
+            // eslint-disable-next-line no-alert
+            if (!window.confirm(`Ban @${user.username}?`)) return;
+            this.error = null;
+            try {
+                await fetchJson(`/api/reports/ban/${encodeURIComponent(user.username)}`, { method: 'POST' });
+                user.banned = true;
+            } catch (error) {
+                const key = `community.moderationBanError_${error.code}`;
+                this.error = this.$te(key) ? this.$t(key) : 'Unable to ban user.';
+            }
+        },
+        async unbanAccount(user) {
+            this.error = null;
+            try {
+                await fetchJson(`/api/reports/unban/${encodeURIComponent(user.username)}`, { method: 'POST' });
+                user.banned = false;
+            } catch {
+                this.error = 'Unable to reinstate user.';
+            }
         },
         // Gives the account a plan for a few months (a creator invited to the beta). The server
         // refuses an account that pays for a subscription, and says why.

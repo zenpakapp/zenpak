@@ -18,7 +18,9 @@ process.env.NODE_CONFIG = JSON.stringify({
 const assert = require('assert');
 const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
-const zen = { username: 'zenpak', email: 'zen@example.com', library: {} };
+const zen = {
+    username: 'zenpak', email: 'zen@example.com', library: {}, banned: true,
+};
 const other = {
     username: 'bob',
     email: 'zen.bob@example.com',
@@ -52,6 +54,8 @@ const res = {
         // A running offer is shown, so a moderator can withdraw it.
         assert.strictEqual(data.results[0].offer, null);
         assert.deepStrictEqual(data.results[1].offer, { plan: 'creator', currentPeriodEnd: '2999-01-01T00:00:00.000Z' });
+        // A moderator sees who is banned, to reinstate them.
+        assert.deepStrictEqual(data.results.map((r) => r.banned), [true, false]);
         console.log('unit-moderation-search OK');
     },
 };

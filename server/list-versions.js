@@ -258,6 +258,8 @@ function buildServedUser(user, liveList, version) {
 // Null unless the list is currently shared AND has a snapshot owned by this user.
 // Public readers use this instead of the live library.
 async function getServedUser(user, externalId) {
+    // A banned account's lists are not served: they stay stored, and come back if it is reinstated.
+    if (user.banned) return null;
     const liveList = findLiveList(user, externalId);
     if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
 
