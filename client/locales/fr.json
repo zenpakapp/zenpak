@@ -284,6 +284,7 @@
     "creatorCodes": "Codes promo"
   },
   "acct": {
+    "planOffered": "Offert par ZenPak jusqu'au {date}.",
     "deletePasswordRequired": "Veuillez saisir votre mot de passe actuel.",
     "deleteConfirmationRequired": "Veuillez saisir le texte de confirmation.",
     "accountSettings": "Paramètres du compte",
@@ -464,6 +465,16 @@
     }
   },
   "community": {
+    "moderationOfferTitle": "Offrir un plan",
+    "moderationOfferPlan": "Plan",
+    "moderationOfferMonths": "Mois (1 à 12)",
+    "moderationOfferButton": "Offrir",
+    "moderationOfferDone": "{plan} offert jusqu'au {date}.",
+    "moderationOfferError_active-subscription": "Ce compte a un abonnement actif.",
+    "moderationOfferError_permanent-plan": "Ce compte a un plan sans date de fin.",
+    "moderationOfferError_invalid-months": "La durée va de 1 à 12 mois.",
+    "moderationOfferError_invalid-plan": "Seuls Kin et Wayfarer peuvent être offerts.",
+    "moderationOfferError_unknown-user": "Compte inconnu.",
     "tabDiscover": "Découvrir",
     "tabFeed": "Mon fil",
     "tabPeople": "Personnes",
@@ -490,7 +501,8 @@
     "feedLoadMore": "Charger plus",
     "feedActivityTitle": "Activité",
     "feedEmptyNone": "Rien ici pour le moment. Suivez des utilisateurs pour voir leur activité de liste.",
-    "moderationTitle": "Panneau d'administration",
+    "moderationAccounts": "Comptes",
+    "moderationLibrary": "Bibliothèque (JSON)",
     "moderationSearchUserPlaceholder": "Rechercher un utilisateur...",
     "moderationSearchButton": "Rechercher",
     "moderationClearSession": "Effacer la session",

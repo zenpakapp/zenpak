@@ -284,6 +284,7 @@
     "creatorCodes": "Creator-Codes"
   },
   "acct": {
+    "planOffered": "Von ZenPak geschenkt bis {date}.",
     "deletePasswordRequired": "Bitte gib dein aktuelles Passwort ein.",
     "deleteConfirmationRequired": "Bitte gib den Bestätigungstext ein.",
     "accountSettings": "Kontoeinstellungen",
@@ -464,6 +465,16 @@
     }
   },
   "community": {
+    "moderationOfferTitle": "Einen Plan schenken",
+    "moderationOfferPlan": "Plan",
+    "moderationOfferMonths": "Monate (1 bis 12)",
+    "moderationOfferButton": "Schenken",
+    "moderationOfferDone": "{plan} geschenkt bis {date}.",
+    "moderationOfferError_active-subscription": "Dieses Konto hat ein aktives Abonnement.",
+    "moderationOfferError_permanent-plan": "Dieses Konto hat einen Plan ohne Enddatum.",
+    "moderationOfferError_invalid-months": "Die Dauer beträgt 1 bis 12 Monate.",
+    "moderationOfferError_invalid-plan": "Nur Kin und Wayfarer können geschenkt werden.",
+    "moderationOfferError_unknown-user": "Unbekanntes Konto.",
     "tabDiscover": "Entdecken",
     "tabFeed": "Mein Feed",
     "tabPeople": "Personen",
@@ -490,7 +501,8 @@
     "feedLoadMore": "Mehr laden",
     "feedActivityTitle": "Aktivität",
     "feedEmptyNone": "Hier gibt es noch nichts. Folge einigen Benutzern, um ihre Listenaktivität zu sehen.",
-    "moderationTitle": "Admin-Panel",
+    "moderationAccounts": "Konten",
+    "moderationLibrary": "Bibliothek (JSON)",
     "moderationSearchUserPlaceholder": "Nach einem Benutzer suchen...",
     "moderationSearchButton": "Suchen",
     "moderationClearSession": "Sitzung löschen",

@@ -630,3 +630,135 @@
     flex-wrap: wrap;
     gap: 6px;
 }
+
+.lpModerationHeading {
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 16px;
+}
+
+.lpModerationAccounts {
+    border-bottom: 1px solid $color-border;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+}
+
+.lpModerationSearch {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.lpModerationResults {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+
+    button {
+        background: $color-control-muted;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        color: $color-text;
+        cursor: pointer;
+        font-size: $fontSize-sm;
+        padding: 4px 10px;
+
+        &:hover { border-color: $color-accent; }
+    }
+}
+
+.lpModerationAccount h3 {
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 10px;
+}
+
+.lpModerationRow {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-sm;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.lpModerationOffer {
+    align-items: flex-end;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-sm;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 14px;
+
+    h4 {
+        flex: 0 0 100%;
+        font-size: $fontSize-sm;
+        font-weight: $fontWeight-bold;
+        margin: 0;
+    }
+
+    label {
+        color: $color-text-muted;
+        display: flex;
+        flex-direction: column;
+        font-size: $fontSize-xs;
+        gap: 4px;
+    }
+
+    select,
+    input {
+        background: $color-bg;
+        border: 1px solid $color-border;
+        border-radius: $radius-sm;
+        color: $color-text;
+        font-size: $fontSize-sm;
+        height: 34px;
+        padding: 0 10px;
+
+        &:focus {
+            border-color: $color-accent;
+            outline: none;
+        }
+    }
+
+    .lp-moderation-offer-months { width: 90px; }
+
+    .lp-moderation-offer-result,
+    .lp-moderation-offer-error {
+        flex: 0 0 100%;
+        margin: 0;
+    }
+
+    .lp-moderation-offer-result { color: $color-accent; }
+
+    .lp-moderation-offer-error { color: #dc3545; }
+}
+
+.lpModerationLibraryBox {
+    font-size: $fontSize-sm;
+
+    summary {
+        color: $color-text-muted;
+        cursor: pointer;
+        margin-bottom: 8px;
+    }
+}
+
+.lpModerationLibrary {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-family: monospace;
+    font-size: 12px;
+    height: 12em;
+    padding: 8px;
+    width: 100%;
+}

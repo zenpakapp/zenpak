@@ -15,8 +15,8 @@ const CLIENT = path.join(__dirname, '..', 'client');
 
 // Admin-only tooling stays in English, register.vue is only reachable through a redirect.
 const SKIPPED_FILES = new Set([
-    'views/moderation.vue',
     'components/community-moderation.vue',
+    'components/community-accounts.vue',
     'views/register.vue',
 ]);
 

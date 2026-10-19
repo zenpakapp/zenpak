@@ -2,6 +2,7 @@ const config = require('config');
 const createStripe = require('stripe');
 const db = require('./db.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
+const { isOfferActive } = require('./plan-offers.js');
 
 const LEGAL_ENTITY_VERSION = 'ae-fxbenard-v1';
 const INVOICE_SELLER_FOOTER = 'FX Bénard AE - ZenPak · SIRET 75082412000026 · 4 impasse chez Huguet, 17150 Soubran';
@@ -68,6 +69,11 @@ async function getOrCreateCustomer(user) {
 async function syncUserBilling(user, subscription, status) {
     if (!user.billing) user.billing = {};
 
+    // A plan offered by a moderator is not undone by an event about another subscription (a late
+    // "subscription ended" for an old one). A new subscription that really pays takes over.
+    const subscriptionPays = Boolean(subscription) && ['active', 'trialing', 'past_due'].includes(subscription.status);
+    if (!subscriptionPays && isOfferActive(user)) return;
+
     const existingTermsAccepted = user.billing && user.billing.termsVersionAccepted;
 
     const now = new Date().toISOString();
@@ -120,6 +126,9 @@ async function syncUserBilling(user, subscription, status) {
 }
 
 async function syncKofiBilling(user, { amount, donationDate }) {
+    // A donation does not downgrade a plan offered by a moderator while it runs.
+    if (isOfferActive(user)) return;
+
     if (!user.billing) user.billing = {};
 
     const expiryDate = new Date(donationDate);
