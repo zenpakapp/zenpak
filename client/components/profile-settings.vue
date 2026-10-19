@@ -241,8 +241,8 @@
 
 <script>
 import { fetchJson } from '../utils/utils';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
-import { avatarColor, avatarInitial } from '../utils/avatar.js';
+import { hasFeature, FEATURES } from '../services/entitlements';
+import { avatarColor, avatarInitial } from '../utils/avatar';
 import { isReservedDisplayName } from '../utils/reserved-names';
 import { AVATAR_MAX_BYTES, checkImageFile, uploadErrorMessage } from '../utils/upload-errors';
 import LpSelect from './lp-select.vue';
@@ -351,7 +351,7 @@ export default {
         updateDefaultUnit(field, value) {
             this.$store.commit('setDefaultUnits', {
                 itemUnit: field === 'itemUnit' ? value : this.library.itemUnit,
-                totalUnit: field === 'itemUnit' ? value : (field === 'totalUnit' ? value : this.library.totalUnit),
+                totalUnit: field === 'itemUnit' || field === 'totalUnit' ? value : this.library.totalUnit,
             });
         },
         updateCurrencySymbol(value) {
@@ -414,11 +414,12 @@ export default {
             }
         },
         async removeAvatar() {
+            this.avatarError = null;
             try {
                 await fetchJson('/api/profile/avatar', { method: 'DELETE' });
                 this.$store.commit('updatePublicProfile', { avatarUrl: '' });
             } catch {
-                this.avatarError = 'Failed to remove avatar';
+                this.avatarError = this.$t('acct.removePhotoFailed');
             }
         },
     },

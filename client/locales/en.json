@@ -333,6 +333,7 @@
     "avatar": "Avatar",
     "uploading": "Uploading…",
     "uploadPhoto": "Upload photo",
+    "removePhotoFailed": "We could not remove your photo. Please try again.",
     "remove": "Remove",
     "displayName": "Display name",
     "trailName": "Trail name",

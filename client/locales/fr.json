@@ -333,6 +333,7 @@
     "avatar": "Avatar",
     "uploading": "Téléchargement…",
     "uploadPhoto": "Téléverser une photo",
+    "removePhotoFailed": "Impossible de retirer ta photo. Réessaie.",
     "remove": "Supprimer",
     "displayName": "Nom d'affichage",
     "trailName": "Surnom",
