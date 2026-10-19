@@ -1001,6 +1001,10 @@
       "4-season-backpacking": {
         "name": "Ruta 4 estaciones",
         "description": "30 artículos para invierno/alpino — tienda sólida, saco cálido, capas protectoras"
+      },
+      "bikepacking": {
+        "name": "Bikepacking",
+        "description": "34 artículos para un viaje en bici de varios días — tienda ligera, descanso abrigado, ropa, reparación y electrónica"
       }
     },
     "gearPickerTitle": "Añadir equipo",
