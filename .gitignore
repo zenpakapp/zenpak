@@ -21,3 +21,11 @@ app.sublime-workspace
 .gstack/
 /logs/
 /maintenance/
+
+# Dev tooling, kept on the maintainer machine only
+/AGENTS.md
+/CONTEXT.md
+/skills-lock.json
+/scripts/verify-*.js
+/scripts/purge-test-data.js
+/test/load-testing/
