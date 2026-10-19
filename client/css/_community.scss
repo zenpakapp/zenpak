@@ -637,6 +637,38 @@
     margin-bottom: 16px;
 }
 
+.lpModerationListRows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.lpModerationListRow {
+    align-items: center;
+    border-bottom: 1px solid $color-border;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    justify-content: space-between;
+    padding: 10px 0;
+
+    &:last-child { border-bottom: none; }
+}
+
+.lpModerationListInfo {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $fontSize-sm;
+    gap: 8px;
+}
+
+.lpModerationListAuthor {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+}
+
+.lpModerationLists,
 .lpModerationAccounts {
     border-bottom: 1px solid $color-border;
     margin-bottom: 24px;

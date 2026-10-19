@@ -1,6 +1,7 @@
 <template>
     <div>
         <community-accounts />
+        <community-lists />
         <h2 class="lpModerationHeading">
             {{ $t('community.moderationReports') }} ({{ reports.length }} pending)
         </h2>
@@ -49,10 +50,11 @@
 <script>
 import { fetchJson } from '../utils/utils.js';
 import CommunityAccounts from './community-accounts.vue';
+import CommunityLists from './community-lists.vue';
 
 export default {
     name: 'CommunityModeration',
-    components: { CommunityAccounts },
+    components: { CommunityAccounts, CommunityLists },
     emits: ['feature-list'],
     data() {
         return {

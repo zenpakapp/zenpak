@@ -170,6 +170,38 @@ router.post('/moderation/offer-plan', (req, res) => {
     authenticateModerator(req, res, (authedReq, authedRes, moderator) => offerPlan(authedReq, authedRes, moderator));
 });
 
+const LIST_SEARCH_LIMIT = 20;
+
+// Finds a published list by its name or its author, to feature or unpublish it without a report.
+// With nothing typed it returns the newest lists.
+async function searchLists(req, res) {
+    const text = String(req.query.q || '').trim();
+    const query = {};
+    if (text) {
+        const pattern = new RegExp(escapeRegExp(text), 'i');
+        query.$or = [{ name: pattern }, { ownerUsername: pattern }];
+    }
+
+    try {
+        const lists = await db.publicLists.findSorted(query, { updatedAt: -1 }, LIST_SEARCH_LIMIT);
+        return res.json({
+            results: lists.map((list) => ({
+                externalId: list.externalId,
+                name: list.name,
+                ownerUsername: list.ownerUsername,
+                featured: Boolean(list.featured),
+            })),
+        });
+    } catch (error) {
+        logWithRequest(req, { message: 'MODERATION List search error', error: error.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+}
+
+router.get('/moderation/search-lists', (req, res) => {
+    authenticateModerator(req, res, searchLists);
+});
+
 // Withdraws a running offer before its date.
 async function revokePlanOffer(req, res, moderator) {
     const username = String(req.body.username || '').toLowerCase().trim();
