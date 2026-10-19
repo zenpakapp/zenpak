@@ -19,7 +19,14 @@ const assert = require('assert');
 const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
 const zen = { username: 'zenpak', email: 'zen@example.com', library: {} };
-const other = { username: 'bob', email: 'zen.bob@example.com', library: {} };
+const other = {
+    username: 'bob',
+    email: 'zen.bob@example.com',
+    library: {},
+    billing: {
+        provider: 'comp', status: 'active', plan: 'creator', currentPeriodEnd: '2999-01-01T00:00:00.000Z',
+    },
+};
 stubServerModule('db.js', {
     users: {
         find(query, callback) {
@@ -42,6 +49,9 @@ const res = {
     status() { return this; },
     json(data) {
         assert.deepStrictEqual(data.results.map((r) => r.username), ['zenpak', 'bob']);
+        // A running offer is shown, so a moderator can withdraw it.
+        assert.strictEqual(data.results[0].offer, null);
+        assert.deepStrictEqual(data.results[1].offer, { plan: 'creator', currentPeriodEnd: '2999-01-01T00:00:00.000Z' });
         console.log('unit-moderation-search OK');
     },
 };

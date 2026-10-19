@@ -28,6 +28,7 @@ const {
     expireLapsedPlan,
     isLapsed,
     isOfferActive,
+    revokeOffer,
     sweepLapsedPlans,
 } = require('../server/plan-offers.js');
 
@@ -172,6 +173,30 @@ assert.strictEqual(running.library.entitlements.plan, 'creator');
 
     usersToReturn = [];
     assert.strictEqual(await sweepLapsedPlans(NOW), 0);
+
+    // A running offer can be withdrawn: the account goes back to the free plan at once.
+    const running = offered();
+    assert.strictEqual(revokeOffer(running, { revokedBy: 'm', now: NOW }), 'creator', 'says which plan ended');
+    assert.strictEqual(running.library.entitlements.plan, 'free');
+    assert.strictEqual(running.billing.plan, 'free');
+    assert.strictEqual(running.billing.status, 'revoked');
+    assert.strictEqual(running.billing.revokedBy, 'm');
+    assert.strictEqual(running.billing.revokedAt, NOW.toISOString());
+    assert.strictEqual(isOfferActive(running, NOW), false);
+
+    // What is not an offer is left alone: a free account, a Stripe subscription, a permanent plan,
+    // an offer already over.
+    const notOffers = {
+        free: freeUser(),
+        stripe: stripeUser('active'),
+        permanent: { username: 'p', library: { entitlements: { plan: 'creator', source: 'manual' } } },
+        over: offered({ currentPeriodEnd: '2026-01-01T00:00:00.000Z' }),
+    };
+    Object.entries(notOffers).forEach(([name, account]) => {
+        const before = JSON.stringify(account);
+        assert.throws(() => revokeOffer(account, { revokedBy: 'm', now: NOW }), (error) => error.code === 'no-offer', name);
+        assert.strictEqual(JSON.stringify(account), before, `${name} is untouched`);
+    });
 
     console.log('ok');
     process.exit(0);

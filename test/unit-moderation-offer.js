@@ -40,8 +40,8 @@ stubServerModule('auth.js', {
 
 const router = require('../server/moderation-endpoints.js');
 
-async function offer(body) {
-    const layer = router.stack.find((l) => l.route && l.route.path === '/moderation/offer-plan' && l.route.methods.post);
+async function post(path, body) {
+    const layer = router.stack.find((l) => l.route && l.route.path === path && l.route.methods.post);
     assert.ok(layer, 'the route exists');
     return new Promise((resolve) => {
         const res = {
@@ -52,6 +52,9 @@ async function offer(body) {
         layer.route.stack[0].handle({ body, cookies: {} }, res);
     });
 }
+
+const offer = (body) => post('/moderation/offer-plan', body);
+const revoke = (body) => post('/moderation/revoke-offer', body);
 
 const account = (overrides = {}) => ({
     username: 'alice',
@@ -119,13 +122,43 @@ const account = (overrides = {}) => ({
     assert.strictEqual(accounts.frank.billing.provider, undefined, 'the account is left alone');
     assert.strictEqual(saved.length, writesBeforeFrank, 'nothing written for a refused offer');
 
+    // A running offer is withdrawn: the account is free again, and it is written down.
+    const writesBeforeRevoke = saved.length;
+    result = await revoke({ username: 'alice' });
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(result.data.ok, true);
+    assert.strictEqual(result.data.plan, 'creator', 'says which plan ended');
+    assert.strictEqual(accounts.alice.library.entitlements.plan, 'free');
+    assert.strictEqual(accounts.alice.billing.status, 'revoked');
+    assert.strictEqual(accounts.alice.billing.revokedBy, 'fxbenard');
+    assert.strictEqual(saved.length, writesBeforeRevoke + 1);
+
+    // Nothing to withdraw: refused, nothing written.
+    const writesBeforeRefusal = saved.length;
+    result = await revoke({ username: 'alice' });
+    assert.strictEqual(result.status, 409, 'already withdrawn');
+    assert.strictEqual(result.data.code, 'no-offer');
+    result = await revoke({ username: 'frank' });
+    assert.strictEqual(result.status, 409, 'a permanent plan is not an offer');
+    assert.strictEqual(accounts.frank.library.entitlements.plan, 'creator');
+    result = await revoke({ username: 'nobody' });
+    assert.strictEqual(result.status, 404);
+    assert.strictEqual(saved.length, writesBeforeRefusal);
+
     // Anybody who is not a moderator is denied before the handler runs.
     caller = { username: 'mallory', moderator: false };
     accounts.erin = account({ username: 'erin' });
     result = await offer({ username: 'erin', plan: 'creator', months: 3 });
     assert.strictEqual(result.status, 403);
     assert.strictEqual(accounts.erin.library.entitlements.plan, 'free');
-    assert.strictEqual(saved.length, writes);
+    accounts.erin.library.entitlements.plan = 'creator';
+    accounts.erin.billing = {
+        provider: 'comp', status: 'active', plan: 'creator', currentPeriodEnd: '2999-01-01T00:00:00.000Z',
+    };
+    result = await revoke({ username: 'erin' });
+    assert.strictEqual(result.status, 403);
+    assert.strictEqual(accounts.erin.library.entitlements.plan, 'creator', 'a non-moderator withdraws nothing');
+    assert.strictEqual(saved.length, writesBeforeRefusal);
 
     console.log('ok');
     process.exit(0);

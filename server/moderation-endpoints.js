@@ -8,7 +8,9 @@ const { logWithRequest } = require('./log.js');
 const db = require('./db.js');
 
 const { authenticateModerator } = require('./auth.js');
-const { applyOffer, OfferError } = require('./plan-offers.js');
+const {
+    applyOffer, isOfferActive, OfferError, revokeOffer,
+} = require('./plan-offers.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 function escapeRegExp(text) {
@@ -44,6 +46,8 @@ function search(req, res) {
                     username: user.username,
                     library: user.library,
                     email: user.email,
+                    // The offer the account is running on, so the moderator can withdraw it.
+                    offer: isOfferActive(user) ? { plan: user.billing.plan, currentPeriodEnd: user.billing.currentPeriodEnd } : null,
                 }));
 
             res.json({ results: allResults });
@@ -114,7 +118,13 @@ router.post('/moderation/clear-session', (req, res) => {
 });
 
 const DEFAULT_OFFER_MONTHS = 3;
-const OFFER_ERROR_STATUS = { 'invalid-plan': 400, 'invalid-months': 400, 'active-subscription': 409, 'permanent-plan': 409 };
+const OFFER_ERROR_STATUS = {
+    'invalid-plan': 400,
+    'invalid-months': 400,
+    'active-subscription': 409,
+    'permanent-plan': 409,
+    'no-offer': 409,
+};
 
 // Gives an account Wayfarer or Kin for a few months (a creator invited to the beta). It never sits
 // on top of a Stripe subscription, and it ends by itself (see plan-offers.js).
@@ -158,6 +168,43 @@ async function offerPlan(req, res, moderator) {
 
 router.post('/moderation/offer-plan', (req, res) => {
     authenticateModerator(req, res, (authedReq, authedRes, moderator) => offerPlan(authedReq, authedRes, moderator));
+});
+
+// Withdraws a running offer before its date.
+async function revokePlanOffer(req, res, moderator) {
+    const username = String(req.body.username || '').toLowerCase().trim();
+    logWithRequest(req, { message: 'MODERATION Revoke offer start', username, by: moderator.username });
+
+    try {
+        const user = username ? await db.users.findOne({ username }) : null;
+        if (!user) {
+            return res.status(404).json({ message: 'Unknown user.', code: 'unknown-user' });
+        }
+
+        let plan;
+        try {
+            plan = revokeOffer(user, { revokedBy: moderator.username });
+        } catch (error) {
+            if (error instanceof OfferError) {
+                return res.status(OFFER_ERROR_STATUS[error.code] || 400).json({ message: error.message, code: error.code });
+            }
+            throw error;
+        }
+
+        await db.users.save(user);
+        syncUserPublicLists(user).catch(() => {});
+        logWithRequest(req, {
+            message: 'MODERATION Revoke offer succeeded', username, plan, by: moderator.username,
+        });
+        return res.json({ ok: true, plan });
+    } catch (error) {
+        logWithRequest(req, { message: 'MODERATION Revoke offer error', username, error: error.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+}
+
+router.post('/moderation/revoke-offer', (req, res) => {
+    authenticateModerator(req, res, (authedReq, authedRes, moderator) => revokePlanOffer(authedReq, authedRes, moderator));
 });
 
 module.exports = router;
