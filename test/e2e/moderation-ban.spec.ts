@@ -72,13 +72,15 @@ test("banning from a list report bans the list's author", async ({ page }) => {
   );
 
   // It asks to confirm the account, without asking to type a name, then resolves the report.
-  const messages = [];
-  page.on("dialog", (dialog) => {
-    messages.push(`${dialog.type()}: ${dialog.message()}`);
-    return dialog.accept();
+  // The confirmation is the app's own box, never the browser's.
+  page.on("dialog", () => {
+    throw new Error("a native dialog opened");
   });
   await rows.nth(0).locator(".lp-moderation-ban").click();
+  const confirmBox = page.locator("#confirmDialog");
+  await expect(confirmBox).toContainText("Ban @alice?");
+  expect(calls).toEqual([]);
+  await confirmBox.locator(".lp-confirm-ok").click();
   await expect(rows).toHaveCount(2);
-  expect(messages).toEqual(["confirm: Ban @alice?"]);
   expect(calls).toEqual(["ban/alice", "resolve/r1"]);
 });

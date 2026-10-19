@@ -35,15 +35,24 @@
                     <button v-if="r.targetType === 'list'" class="lpButton lpSmall" @click="$emit('feature-list', r.targetId)">
                         {{ $t('community.moderationFeature') }}
                     </button>
-                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="unpublish(r)">
+                    <button v-if="r.targetType === 'list'" class="lpButton lpSmall lpButtonDanger" @click="pending = { type: 'unpublish', report: r }">
                         {{ $t('community.moderationUnpublish') }}
                     </button>
-                    <button v-if="banTarget(r)" class="lpButton lpSmall lpButtonDanger lp-moderation-ban" @click="ban(r)">
+                    <button v-if="banTarget(r)" class="lpButton lpSmall lpButtonDanger lp-moderation-ban" @click="pending = { type: 'ban', report: r }">
                         {{ $t('community.moderationBan') }} @{{ banTarget(r) }}
                     </button>
                 </div>
             </div>
         </template>
+        <confirm-dialog
+            :shown="Boolean(pending)"
+            :title="confirmTitle"
+            :message="pending && pending.type === 'ban' ? $t('community.moderationConfirmBan') : $t('community.moderationConfirmUnpublish')"
+            :confirm-label="pending && pending.type === 'ban' ? $t('community.moderationBan') : $t('community.moderationUnpublish')"
+            danger
+            @confirm="runPending"
+            @cancel="pending = null"
+        />
     </div>
 </template>
 
@@ -51,17 +60,28 @@
 import { fetchJson } from '../utils/utils';
 import CommunityAccounts from './community-accounts.vue';
 import CommunityLists from './community-lists.vue';
+import ConfirmDialog from './confirm-dialog.vue';
 
 export default {
     name: 'CommunityModeration',
-    components: { CommunityAccounts, CommunityLists },
+    components: { CommunityAccounts, CommunityLists, ConfirmDialog },
     emits: ['feature-list'],
     data() {
         return {
             reports: [],
             loading: false,
             error: null,
+            pending: null,
         };
+    },
+    computed: {
+        confirmTitle() {
+            if (!this.pending) return '';
+            const { type, report } = this.pending;
+            return type === 'ban'
+                ? this.$t('community.moderationConfirmBanTitle', { name: this.banTarget(report) })
+                : this.$t('community.moderationConfirmUnpublishTitle', { name: report.targetId });
+        },
     },
     created() {
         this.load();
@@ -96,10 +116,16 @@ export default {
         banTarget(report) {
             return report.targetType === 'user' ? report.targetId : report.targetOwnerUsername;
         },
+        // The confirmation box is shown for `pending`; the action runs when it is confirmed.
+        async runPending() {
+            const { type, report } = this.pending;
+            this.pending = null;
+            if (type === 'ban') await this.ban(report);
+            else await this.unpublish(report);
+        },
         async ban(report) {
             const username = this.banTarget(report);
-            // eslint-disable-next-line no-alert
-            if (!username || !window.confirm(`Ban @${username}?`)) return;
+            if (!username) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
@@ -109,8 +135,6 @@ export default {
             }
         },
         async unpublish(report) {
-            // eslint-disable-next-line no-alert
-            if (!window.confirm(`Unpublish "${report.targetId}"?`)) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });

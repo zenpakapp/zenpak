@@ -87,15 +87,24 @@ test("a moderator bans and reinstates an account", async ({ page }) => {
   await results.getByText("alice").click();
   await expect(account.locator(".lp-moderation-banned")).toHaveCount(0);
   await expect(account.locator(".lp-moderation-unban-account")).toHaveCount(0);
-  const messages = [];
-  page.on("dialog", (dialog) => {
-    messages.push(dialog.message());
-    return dialog.accept();
+  // The confirmation is the app's own box, never the browser's.
+  page.on("dialog", () => {
+    throw new Error("a native dialog opened");
   });
+  const confirmBox = page.locator("#confirmDialog");
   await account.locator(".lp-moderation-ban-account").click();
+  await expect(confirmBox).toContainText("Ban @alice?");
+
+  // Cancelling bans nobody.
+  await confirmBox.locator(".lp-confirm-cancel").click();
+  await expect(confirmBox).toHaveCount(0);
+  await expect(account.locator(".lp-moderation-banned")).toHaveCount(0);
+  expect(calls).toEqual([]);
+
+  await account.locator(".lp-moderation-ban-account").click();
+  await confirmBox.locator(".lp-confirm-ok").click();
   await expect(account.locator(".lp-moderation-banned")).toBeVisible();
   await expect(account.locator(".lp-moderation-ban-account")).toHaveCount(0);
-  expect(messages).toEqual(["Ban @alice?"]);
   expect(calls).toEqual(["ban/alice"]);
 
   // A banned account is marked, and can be reinstated.
@@ -109,6 +118,7 @@ test("a moderator bans and reinstates an account", async ({ page }) => {
   // A moderator cannot be banned: the refusal is shown and the account stays as it was.
   await results.getByText("mod", { exact: true }).click();
   await account.locator(".lp-moderation-ban-account").click();
+  await confirmBox.locator(".lp-confirm-ok").click();
   await expect(page.locator(".lp-moderation-error")).toContainText(
     "moderator cannot be banned",
   );

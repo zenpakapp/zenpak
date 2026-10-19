@@ -40,7 +40,7 @@
                 <button
                     v-if="!userToInspect.banned"
                     class="lpButton lpSmall lpButtonDanger lp-moderation-ban-account"
-                    @click="banAccount(userToInspect)"
+                    @click="pendingBan = userToInspect"
                 >
                     {{ $t('community.moderationBan') }}
                 </button>
@@ -85,20 +85,32 @@
                 <textarea v-model="editableLibrary" class="lpModerationLibrary" readonly />
             </details>
         </div>
+        <confirm-dialog
+            :shown="Boolean(pendingBan)"
+            :title="$t('community.moderationConfirmBanTitle', { name: pendingBan ? pendingBan.username : '' })"
+            :message="$t('community.moderationConfirmBan')"
+            :confirm-label="$t('community.moderationBan')"
+            danger
+            @confirm="banAccount"
+            @cancel="pendingBan = null"
+        />
     </section>
 </template>
 
 <script>
 import { fetchJson } from '../utils/utils';
+import ConfirmDialog from './confirm-dialog.vue';
 import { planLabel } from '../services/tier-labels';
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
 export default {
     name: 'CommunityAccounts',
+    components: { ConfirmDialog },
     data() {
         return {
             searchQuery: '',
+            pendingBan: null,
             searchResults: null,
             userToInspect: null,
             editableLibrary: null,
@@ -144,9 +156,10 @@ export default {
                 });
         },
         // A ban ends the session and hides the account's lists and pages. It can be lifted.
-        async banAccount(user) {
-            // eslint-disable-next-line no-alert
-            if (!window.confirm(`Ban @${user.username}?`)) return;
+        async banAccount() {
+            const user = this.pendingBan;
+            this.pendingBan = null;
+            if (!user) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/ban/${encodeURIComponent(user.username)}`, { method: 'POST' });
