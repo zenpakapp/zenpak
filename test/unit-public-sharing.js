@@ -298,6 +298,12 @@ async function runProfileTests() {
     profileTestUser.library.lists[0].name = 'LIVE EDIT AFTER PUBLISH';
     const afterLiveEdit = await buildPublicProfile(profileTestUser);
     assert('unpublished live edits to a published list are not served on the profile', afterLiveEdit.lists[0].name === 'Published Trail');
+
+    // A banned account has no public profile.
+    profileTestUser.banned = true;
+    assert('a banned account has no public profile', (await buildPublicProfile(profileTestUser)) === null);
+    profileTestUser.banned = false;
+    assert('a reinstated account has its profile back', (await buildPublicProfile(profileTestUser)) !== null);
 }
 
 runProfileTests().then(() => {

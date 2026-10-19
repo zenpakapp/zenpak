@@ -94,14 +94,38 @@ router.patch('/:id', (req, res) => {
 });
 
 // POST /api/reports/ban/:username — bannir un user (modérateurs uniquement)
+// A ban ends the session, takes the account's lists out of Discover and search, and stops its
+// public pages and sign-in. Nothing is deleted: a ban can be lifted. A moderator cannot be banned.
 router.post('/ban/:username', (req, res) => {
     auth.authenticateModerator(req, res, async (req, res) => {
         const username = String(req.params.username || '').toLowerCase().trim();
         try {
             const user = await db.users.findOne({ username });
             if (!user) return res.status(404).json({ message: 'User not found' });
+            if (auth.isModerator(user.username)) {
+                return res.status(409).json({ message: 'A moderator cannot be banned.', code: 'moderator' });
+            }
             user.banned = true;
+            user.token = null;
             await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
+            return res.json({ ok: true });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+// POST /api/reports/unban/:username — rétablir un compte banni (modérateurs uniquement)
+router.post('/unban/:username', (req, res) => {
+    auth.authenticateModerator(req, res, async (req, res) => {
+        const username = String(req.params.username || '').toLowerCase().trim();
+        try {
+            const user = await db.users.findOne({ username });
+            if (!user) return res.status(404).json({ message: 'User not found' });
+            user.banned = false;
+            await db.users.save(user);
+            syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

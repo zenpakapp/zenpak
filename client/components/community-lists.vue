@@ -35,22 +35,34 @@
                     <button class="lpButton lpSmall lp-moderation-list-feature" @click="toggleFeatured(list)">
                         {{ list.featured ? $t('community.moderationUnfeature') : $t('community.moderationFeature') }}
                     </button>
-                    <button class="lpButton lpSmall lpButtonDanger lp-moderation-list-unpublish" @click="unpublish(list)">
+                    <button class="lpButton lpSmall lpButtonDanger lp-moderation-list-unpublish" @click="pendingUnpublish = list">
                         {{ $t('community.moderationUnpublish') }}
                     </button>
                 </div>
             </li>
         </ul>
+        <confirm-dialog
+            :shown="Boolean(pendingUnpublish)"
+            :title="$t('community.moderationConfirmUnpublishTitle', { name: pendingUnpublish ? (pendingUnpublish.name || pendingUnpublish.externalId) : '' })"
+            :message="$t('community.moderationConfirmUnpublish')"
+            :confirm-label="$t('community.moderationUnpublish')"
+            danger
+            @confirm="unpublish"
+            @cancel="pendingUnpublish = null"
+        />
     </section>
 </template>
 
 <script>
 import { fetchJson } from '../utils/utils';
+import ConfirmDialog from './confirm-dialog.vue';
 
 export default {
     name: 'CommunityLists',
+    components: { ConfirmDialog },
     data() {
         return {
+            pendingUnpublish: null,
             searchQuery: '',
             featuredOnly: false,
             lists: [],
@@ -90,9 +102,10 @@ export default {
                 this.error = 'Unable to update featured list.';
             }
         },
-        async unpublish(list) {
-            // eslint-disable-next-line no-alert
-            if (!window.confirm(`Unpublish "${list.name || list.externalId}"?`)) return;
+        async unpublish() {
+            const list = this.pendingUnpublish;
+            this.pendingUnpublish = null;
+            if (!list) return;
             this.error = null;
             try {
                 await fetchJson(`/api/reports/unpublish/${list.externalId}`, { method: 'POST' });

@@ -80,6 +80,13 @@ async function run() {
     assert('served-by-externalId respects live unsharing', (await getServedByExternalId('abc123')) === null);
     owner.library.lists[0].visibility = 'discoverable';
 
+    console.log('\n--- a banned account is not served ---');
+    owner.banned = true;
+    assert('a banned owner\'s list is not served by externalId', (await getServedByExternalId('abc123')) === null);
+    assert('a banned owner is not served directly either', (await getServedUser(owner, 'abc123')) === null);
+    owner.banned = false;
+    assert('an account that is no longer banned is served again', (await getServedByExternalId('abc123')) !== null);
+
     console.log('\n--- loadPublishedLibrary ---');
     const loaded = await loadPublishedLibrary(owner, 'abc123');
     assert('hydrates the frozen list', loaded.list.name === 'PCT' && loaded.library.defaultListId === loaded.list.id);

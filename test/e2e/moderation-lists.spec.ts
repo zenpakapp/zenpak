@@ -101,8 +101,14 @@ test("a moderator finds a list, features it and unpublishes it", async ({
   await expect(rows).toHaveCount(2);
 
   // Unpublishing asks first, then removes the row.
-  page.once("dialog", (dialog) => dialog.accept());
+  page.on("dialog", () => {
+    throw new Error("a native dialog opened");
+  });
   await rows.nth(1).locator(".lp-moderation-list-unpublish").click();
+  const confirmBox = page.locator("#confirmDialog");
+  await expect(confirmBox).toContainText("Weekend light");
+  expect(calls).not.toContain("unpublish/b2");
+  await confirmBox.locator(".lp-confirm-ok").click();
   await expect(rows).toHaveCount(1);
   expect(calls).toContain("unpublish/b2");
 });

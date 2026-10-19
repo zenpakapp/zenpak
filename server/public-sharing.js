@@ -255,6 +255,8 @@ function listHasExplicitSourceListInfo(library, list) {
 const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
 
 async function buildPublicProfile(user) {
+    // A banned account has no public profile.
+    if (user.banned) return null;
     const library = getLibrary(user);
     const profile = library && library.publicProfile;
 

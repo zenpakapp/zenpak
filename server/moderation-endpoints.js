@@ -46,6 +46,7 @@ function search(req, res) {
                     username: user.username,
                     library: user.library,
                     email: user.email,
+                    banned: Boolean(user.banned),
                     // The offer the account is running on, so the moderator can withdraw it.
                     offer: isOfferActive(user) ? { plan: user.billing.plan, currentPeriodEnd: user.billing.currentPeriodEnd } : null,
                 }));

@@ -125,6 +125,12 @@ async function getListStats(externalId) {
 async function syncUserPublicLists(user) {
     if (!user || !user._id || !user.library || !db.publicLists) return;
 
+    // A banned account has nothing in Discover or search; its lists are projected again if it is reinstated.
+    if (user.banned) {
+        await db.publicLists.deleteMany({ ownerId: new ObjectId(user._id) });
+        return;
+    }
+
     const lists = Array.isArray(user.library.lists) ? user.library.lists : [];
     const projectedExternalIds = [];
 

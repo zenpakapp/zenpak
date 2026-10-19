@@ -22,6 +22,12 @@ const authenticateModerator = function (req, res, callback) {
     });
 };
 
+// A banned account cannot sign in or keep using its session. This is said only after the right
+// password, so it does not reveal which names are banned.
+function refuseSuspended(res) {
+    return res.status(403).json({ message: 'This account is suspended.', code: 'suspended' });
+}
+
 const authenticateUser = function (req, res, callback) {
     if (!req.cookies.lp && (!req.body.username || !req.body.password)) {
         return res.status(401).json({ message: 'Please log in.' });
@@ -31,7 +37,8 @@ const authenticateUser = function (req, res, callback) {
         const password = String(req.body.password);
         verifyPassword(username, password)
             .then((user) => {
-                generateSession(req, res, user, callback);
+                if (user.banned) return refuseSuspended(res);
+                return generateSession(req, res, user, callback);
             })
             .catch((err) => {
                 logWithRequest(req, err);
@@ -51,6 +58,7 @@ const authenticateUser = function (req, res, callback) {
                 logWithRequest(req, { message: 'bad cookie!' });
                 return res.status(404).json({ message: 'Please log in again.' });
             }
+            if (user.banned) return refuseSuspended(res);
             req.lighterpackusername = user.username || 'UNKNOWN';
             callback(req, res, user);
         });
