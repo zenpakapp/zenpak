@@ -57,7 +57,7 @@ test("a moderator offers a plan from the moderation tab", async ({ page }) => {
     .filter({ hasText: "Moderation" })
     .click();
   await page.locator(".lp-moderation-search").fill("alice");
-  await page.locator(".lpModerationSearch button").click();
+  await page.locator(".lpModerationAccounts .lpModerationSearch button").click();
   await page
     .locator(".lp-moderation-search-results")
     .getByText("alice")
@@ -162,7 +162,7 @@ test("a moderator withdraws a running offer", async ({ page }) => {
     .filter({ hasText: "Moderation" })
     .click();
   await page.locator(".lp-moderation-search").fill("a");
-  await page.locator(".lpModerationSearch button").click();
+  await page.locator(".lpModerationAccounts .lpModerationSearch button").click();
 
   // An account with no offer has nothing to withdraw.
   const offer = page.locator(".lp-moderation-offer");

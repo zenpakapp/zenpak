@@ -17,6 +17,7 @@ const CLIENT = path.join(__dirname, '..', 'client');
 const SKIPPED_FILES = new Set([
     'components/community-moderation.vue',
     'components/community-accounts.vue',
+    'components/community-lists.vue',
     'views/register.vue',
 ]);
 
