@@ -114,7 +114,7 @@ router.post('/moderation/clear-session', (req, res) => {
 });
 
 const DEFAULT_OFFER_MONTHS = 3;
-const OFFER_ERROR_STATUS = { 'invalid-plan': 400, 'invalid-months': 400, 'active-subscription': 409 };
+const OFFER_ERROR_STATUS = { 'invalid-plan': 400, 'invalid-months': 400, 'active-subscription': 409, 'permanent-plan': 409 };
 
 // Gives an account Wayfarer or Kin for a few months (a creator invited to the beta). It never sits
 // on top of a Stripe subscription, and it ends by itself (see plan-offers.js).

@@ -44,8 +44,8 @@ function entitlementPlan(user) {
 }
 
 // Gives `plan` for `months` months. Throws an OfferError (with a `code`) when the plan or the
-// duration is not allowed, or when the account pays for a subscription: an offer never sits on
-// top of one.
+// duration is not allowed, when the account pays for a subscription, or when it holds a plan
+// with no end date: an offer never sits on top of a subscription, nor shortens a permanent plan.
 function applyOffer(user, {
     plan, months, offeredBy, now = new Date(),
 }) {
@@ -57,6 +57,9 @@ function applyOffer(user, {
     }
     if (hasActiveSubscription(user)) {
         throw new OfferError('active-subscription', 'This account has an active subscription.');
+    }
+    if (entitlementPlan(user) !== 'free' && !(user.billing && user.billing.currentPeriodEnd)) {
+        throw new OfferError('permanent-plan', 'This account has a plan with no end date.');
     }
 
     const currentPeriodEnd = addMonths(now, months).toISOString();

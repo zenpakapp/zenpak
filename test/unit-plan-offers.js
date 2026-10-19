@@ -101,6 +101,11 @@ refuses(freeUser(), { months: 'x' }, 'invalid-months');
 refuses(freeUser(), { months: undefined }, 'invalid-months');
 // A paying subscriber keeps their subscription: nothing is offered on top of it.
 ['active', 'trialing', 'past_due'].forEach((status) => refuses(stripeUser(status), {}, 'active-subscription'));
+// A plan with no end date (given by hand) is permanent: a time-limited offer would shorten it.
+const permanent = { username: 'p', library: { entitlements: { plan: 'creator', source: 'manual' } } };
+refuses(permanent, {}, 'permanent-plan');
+refuses(permanent, { plan: 'supporter' }, 'permanent-plan');
+assert.strictEqual(permanent.billing, undefined, 'a refused offer changes nothing');
 // A cancelled Stripe subscription does not block an offer.
 const cancelled = stripeUser('canceled');
 applyOffer(cancelled, {

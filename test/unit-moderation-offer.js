@@ -107,6 +107,18 @@ const account = (overrides = {}) => ({
     assert.strictEqual(accounts.dave.library.entitlements.plan, 'supporter', 'the subscription is left alone');
     assert.strictEqual(saved.length, writes, 'nothing written for a refused offer');
 
+    // A plan given by hand has no end date: it is not replaced by a time-limited offer.
+    accounts.frank = account({
+        username: 'frank',
+        library: { entitlements: { plan: 'creator', source: 'manual' } },
+    });
+    const writesBeforeFrank = saved.length;
+    result = await offer({ username: 'frank', plan: 'creator', months: 3 });
+    assert.strictEqual(result.status, 409);
+    assert.strictEqual(result.data.code, 'permanent-plan');
+    assert.strictEqual(accounts.frank.billing.provider, undefined, 'the account is left alone');
+    assert.strictEqual(saved.length, writesBeforeFrank, 'nothing written for a refused offer');
+
     // Anybody who is not a moderator is denied before the handler runs.
     caller = { username: 'mallory', moderator: false };
     accounts.erin = account({ username: 'erin' });
