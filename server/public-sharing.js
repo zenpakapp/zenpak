@@ -6,6 +6,7 @@ const { normalizeTier } = require('./tier-policy.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 const { clipDescription } = require('./text-limits.js');
+const { promoLinkUrl, ruleHostname } = require('../client/utils/promo-link.js');
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -163,7 +164,7 @@ function resolvePublicItemLink(item, creator) {
     const hostname = normalizeHostname(item.url);
     const hasPromo = (r) => r && (normalizeString(r.promoCode) || normalizeString(r.promoLabel));
     const shopRule = rules.find((r) => hasPromo(r) && r.type === 'shop' && matchesText(item.shop, r.match));
-    const domainRule = rules.find((r) => hasPromo(r) && r.type === 'domain' && hostname && matchesText(hostname, r.match));
+    const domainRule = rules.find((r) => hasPromo(r) && r.type === 'domain' && hostname && ruleHostname(r) === hostname);
     const brandRule = rules.find((r) => hasPromo(r) && r.type === 'brand' && matchesText(item.brand, r.match));
     const rule = shopRule || domainRule || brandRule;
 
@@ -252,32 +253,6 @@ function listHasExplicitSourceListInfo(library, list) {
     });
 }
 const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
-
-// Where the promo code of a "domain" rule links to. The rule's value is free text, so it only
-// becomes a link when it is a real web address: a name such as "Lyoplilisé" gave
-// https://Lyoplilisé, a link that goes nowhere. Anything else is shown as plain text.
-function promoLinkUrl(rule) {
-    if (!rule || rule.type !== 'domain') return '';
-    const typed = normalizeString(rule.match);
-    if (!typed) return '';
-
-    const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(typed);
-    const candidate = hasScheme ? typed : `https://${typed}`;
-    let parsed;
-    try {
-        parsed = new URL(candidate);
-    } catch (error) {
-        return '';
-    }
-
-    const labels = parsed.hostname.split('.');
-    const isAddress = (parsed.protocol === 'http:' || parsed.protocol === 'https:')
-        && labels.length >= 2
-        && labels.every(Boolean)
-        && /^[a-z][a-z0-9-]+$/i.test(labels[labels.length - 1])
-        && !/^\d+(\.\d+){3}$/.test(parsed.hostname);
-    return isAddress ? candidate : '';
-}
 
 async function buildPublicProfile(user) {
     const library = getLibrary(user);
@@ -374,6 +349,5 @@ function buildPublicList(user, externalId) {
 module.exports = {
     buildPublicProfile,
     buildPublicList,
-    promoLinkUrl,
     resolvePublicItemLink,
 };

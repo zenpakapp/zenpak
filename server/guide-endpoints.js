@@ -6,6 +6,7 @@ const auth = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
+const { ruleHostname } = require('../client/utils/promo-link.js');
 
 function isGuide(user) {
     const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
@@ -116,7 +117,7 @@ router.get('/items', (req, res) => {
                 if (rule.type === 'domain' && item.url) {
                     try {
                         const hostname = new URL(item.url).hostname.replace(/^www\./i, '').toLowerCase();
-                        if (hostname === matchLower) return `domain:${rule.match}`;
+                        if (hostname === ruleHostname(rule)) return `domain:${rule.match}`;
                     } catch (_) { /* ignore */ }
                 }
             }

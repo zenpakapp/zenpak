@@ -358,6 +358,27 @@
     "languageAuto": "Auto (navigateur)"
   },
   "guide": {
+    "ruleFieldType": "S'applique à",
+    "ruleFieldMatch": {
+      "brand": "Nom de la marque",
+      "shop": "Nom de la boutique",
+      "domain": "Site web"
+    },
+    "ruleMatchPlaceholder": {
+      "brand": "ex. Zpacks",
+      "shop": "ex. REI",
+      "domain": "ex. zpacks.com"
+    },
+    "ruleFieldCode": "Code promo",
+    "rulePromoCodePlaceholder": "ex. ZEN10",
+    "ruleFieldLabel": "Texte affiché",
+    "rulePromoLabelPlaceholder": "ex. 10 % de réduction",
+    "ruleHelp": {
+      "brand": "S'applique aux objets dont la marque est exactement ce nom, par exemple Zpacks. Les majuscules ne comptent pas.",
+      "shop": "S'applique aux objets dont la boutique est exactement ce nom, par exemple REI. Les majuscules ne comptent pas.",
+      "domain": "S'applique aux objets dont le lien mène à ce site, par exemple zpacks.com. Écrivez-le comme vous voulez : https:// et www. sont ignorés."
+    },
+    "ruleDomainWarning": "Cela ne ressemble pas à un domaine (par exemple zpacks.com) : la règle ne correspondra à aucun lien d'objet, et son code promo s'affichera sans lien.",
     "viewProfile": "Voir mon profil →",
     "title": "Paramètres Wayfarer",
     "publicProfile": "Profil public",
@@ -375,7 +396,7 @@
     "saveChanges": "Enregistrer les modifications",
     "profileSaved": "Profil enregistré ✓",
     "affiliateRules": "Règles d'affiliation",
-    "affiliateRulesHint": "Les règles s'appliquent automatiquement à tous vos articles de liste publique. Un remplacement au niveau des articles (ci-dessous) a la priorité.",
+    "affiliateRulesHint": "Chaque règle ajoute un code promo aux objets publics qu'elle concerne. Pour remplacer le lien d'un seul objet, utilisez la liste des objets ci-dessous.",
     "ruleTypeBrand": "Marque",
     "ruleTypeShop": "Boutique",
     "ruleTypeDomain": "Domaine",

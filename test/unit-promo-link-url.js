@@ -9,12 +9,8 @@
 'use strict';
 
 const assert = require('assert');
-const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
-
-// public-sharing.js loads the database module, which would open a connection.
-stubServerModule('db.js', {});
-
-const { promoLinkUrl } = require('../server/public-sharing.js');
+// Shared by the server (public profile) and the Guide editor (warning on a rule).
+const { promoLinkUrl, ruleHostname } = require('../client/utils/promo-link.js');
 
 const domain = (match) => promoLinkUrl({ type: 'domain', match });
 
@@ -49,5 +45,19 @@ assert.strictEqual(domain('ftp://zpacks.com'), '');
 assert.strictEqual(promoLinkUrl({ type: 'brand', match: 'zpacks.com' }), '');
 assert.strictEqual(promoLinkUrl({ type: 'shop', match: 'zpacks.com' }), '');
 assert.strictEqual(promoLinkUrl(null), '');
+
+// The hostname a domain rule matches against an item's link: the website itself, however it was
+// typed (scheme, www., path, capitals), the way an item's own hostname is read.
+const host = (match) => ruleHostname({ type: 'domain', match });
+assert.strictEqual(host('zpacks.com'), 'zpacks.com');
+assert.strictEqual(host('https://www.Zpacks.com/promo?x=1'), 'zpacks.com');
+assert.strictEqual(host('  WWW.zpacks.com  '), 'zpacks.com');
+assert.strictEqual(host('shop.example.co.uk/path'), 'shop.example.co.uk');
+assert.strictEqual(host('zpacks.com:8080'), 'zpacks.com', 'a port is not part of the website');
+assert.strictEqual(host('Lyoplilisé'), '', 'not an address: matches nothing');
+assert.strictEqual(host('my partner'), '');
+assert.strictEqual(host(''), '');
+assert.strictEqual(ruleHostname({ type: 'brand', match: 'zpacks.com' }), '', 'only a domain rule has a hostname');
+assert.strictEqual(ruleHostname(null), '');
 
 console.log('ok');
