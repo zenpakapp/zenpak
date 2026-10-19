@@ -333,6 +333,7 @@
     "avatar": "Avatar",
     "uploading": "Subiendo…",
     "uploadPhoto": "Subir foto",
+    "removePhotoFailed": "No pudimos quitar tu foto. Inténtalo de nuevo.",
     "remove": "Eliminar",
     "displayName": "Nombre de visualización",
     "trailName": "Apodo",

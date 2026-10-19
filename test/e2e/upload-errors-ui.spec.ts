@@ -76,6 +76,51 @@ test.describe("avatar upload", () => {
       /not a supported image/,
     );
   });
+
+  test("a stored avatar shows in the header, and removing it works or says why not", async ({
+    page,
+  }) => {
+    test.setTimeout(60000);
+    await openAvatarSettings(page);
+    // A one-pixel image the browser can draw, standing in for the stored picture.
+    const stored =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+    await page.route("**/api/profile/avatar", (route) => {
+      if (route.request().method() === "POST") {
+        return route.fulfill({ json: { avatarUrl: stored } });
+      }
+      return route.fulfill({
+        status: 500,
+        json: { message: "An error occurred" },
+      });
+    });
+
+    await page.locator(".profileSettingsAvatarBtn input").setInputFiles({
+      name: "me.png",
+      mimeType: "image/png",
+      buffer: pngOfSize(2048),
+    });
+    await expect(page.locator(".accountDropdownAvatar img")).toHaveAttribute(
+      "src",
+      stored,
+    );
+
+    // The server cannot remove it: the message is the user's language, and the avatar stays.
+    await page.getByRole("button", { name: "Remove" }).click();
+    await expect(page.locator(".profileSettingsAvatarError")).toContainText(
+      "We could not remove your photo",
+    );
+    await expect(page.locator(".accountDropdownAvatar img")).toBeAttached();
+
+    // Once the server accepts, it is gone.
+    await page.unroute("**/api/profile/avatar");
+    await page.route("**/api/profile/avatar", (route) =>
+      route.fulfill({ json: { ok: true } }),
+    );
+    await page.getByRole("button", { name: "Remove" }).click();
+    await expect(page.locator(".accountDropdownAvatar img")).toHaveCount(0);
+    await expect(page.locator(".profileSettingsAvatarError")).toHaveCount(0);
+  });
 });
 
 test.describe("item image dialog", () => {
