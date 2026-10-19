@@ -45,6 +45,7 @@ let updateManyCalledWith = null;
 let deleteManyCalledWith = null;
 
 const dbStub = {
+    users: { findMany() { return Promise.resolve([]); } }, // nobody is banned here
     notifications: {
         findMany(query) {
             // match on userId string comparison

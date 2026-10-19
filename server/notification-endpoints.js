@@ -9,9 +9,16 @@ const auth = require('./auth.js');
 router.get('/', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         try {
-            const notes = await db.notifications.findMany(
+            const all = await db.notifications.findMany(
                 { userId: new ObjectId(user._id) },
             );
+            // What a banned account did is left out, and not counted. It stays stored, so it
+            // comes back if the account is reinstated.
+            const actors = [...new Set(all.map((n) => n.actorUsername).filter(Boolean))];
+            const banned = actors.length
+                ? new Set((await db.users.findMany({ username: { $in: actors }, banned: true })).map((u) => u.username))
+                : new Set();
+            const notes = all.filter((n) => !banned.has(n.actorUsername));
             // tri par date desc, max 50
             notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             const page = notes.slice(0, 50);

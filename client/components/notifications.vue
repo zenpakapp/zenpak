@@ -90,6 +90,15 @@
         background: rgba(var(--color-accent-rgb), 0.06);
     }
 
+    &.clickable {
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(var(--color-accent-rgb), 0.1);
+        }
+    }
+
     &:last-child { border-bottom: none; }
 }
 
@@ -155,7 +164,11 @@
                 v-for="n in notifications"
                 :key="String(n._id)"
                 class="lpNotifItem"
-                :class="{ unread: !n.read }"
+                :class="{ unread: !n.read, clickable: n.actorUsername }"
+                :role="n.actorUsername ? 'link' : undefined"
+                :tabindex="n.actorUsername ? 0 : undefined"
+                @click="openProfile(n)"
+                @keydown.enter="openProfile(n)"
             >
                 <div class="lpNotifText">
                     {{ formatText(n) }}
@@ -179,7 +192,7 @@
 </template>
 
 <script>
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../utils/utils';
 
 export default {
     name: 'Notifications',
@@ -245,6 +258,12 @@ export default {
             } catch {
                 // silent
             }
+        },
+        // An alert opens the profile of the person it is about.
+        openProfile(n) {
+            if (!n.actorUsername) return;
+            this.open = false;
+            this.$router.push(`/u/${encodeURIComponent(n.actorUsername)}`);
         },
         formatText(n) {
             const actor = this.actorName(n);
