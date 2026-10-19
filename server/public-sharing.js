@@ -253,6 +253,32 @@ function listHasExplicitSourceListInfo(library, list) {
 }
 const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
 
+// Where the promo code of a "domain" rule links to. The rule's value is free text, so it only
+// becomes a link when it is a real web address: a name such as "Lyoplilisé" gave
+// https://Lyoplilisé, a link that goes nowhere. Anything else is shown as plain text.
+function promoLinkUrl(rule) {
+    if (!rule || rule.type !== 'domain') return '';
+    const typed = normalizeString(rule.match);
+    if (!typed) return '';
+
+    const hasScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(typed);
+    const candidate = hasScheme ? typed : `https://${typed}`;
+    let parsed;
+    try {
+        parsed = new URL(candidate);
+    } catch (error) {
+        return '';
+    }
+
+    const labels = parsed.hostname.split('.');
+    const isAddress = (parsed.protocol === 'http:' || parsed.protocol === 'https:')
+        && labels.length >= 2
+        && labels.every(Boolean)
+        && /^[a-z][a-z0-9-]+$/i.test(labels[labels.length - 1])
+        && !/^\d+(\.\d+){3}$/.test(parsed.hostname);
+    return isAddress ? candidate : '';
+}
+
 async function buildPublicProfile(user) {
     const library = getLibrary(user);
     const profile = library && library.publicProfile;
@@ -269,11 +295,8 @@ async function buildPublicProfile(user) {
         const label = normalizeString(rule.promoLabel);
         if (code && !seenCodes.has(code)) {
             seenCodes.add(code);
-            const url = rule.type === 'domain' && normalizeString(rule.match)
-                ? `https://${normalizeString(rule.match)}`
-                : '';
             creatorCodes.push({
-                name: normalizeString(rule.match), code, label, url,
+                name: normalizeString(rule.match), code, label, url: promoLinkUrl(rule),
             });
         }
     }
@@ -351,5 +374,6 @@ function buildPublicList(user, externalId) {
 module.exports = {
     buildPublicProfile,
     buildPublicList,
+    promoLinkUrl,
     resolvePublicItemLink,
 };
