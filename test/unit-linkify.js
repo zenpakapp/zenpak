@@ -8,7 +8,7 @@
 'use strict';
 
 const assert = require('assert');
-const { splitLinks } = require('../client/utils/linkify.js');
+const { collapseLineBreaks, splitLinks } = require('../client/utils/linkify.js');
 
 const links = (segments) => segments.filter((s) => s.type === 'link').map((s) => s.value);
 const text = (segments) => segments.map((s) => s.value).join('');
@@ -80,5 +80,17 @@ assert.ok(links(markup).every((url) => !url.includes('<') && !url.includes('"'))
 // Very long URLs are still one link.
 const long = `https://example.com/${'a'.repeat(500)}`;
 assert.deepStrictEqual(links(splitLinks(`go ${long} now`, 3)), [long]);
+
+// Line breaks: never more than one in a row, so a description cannot push the page down.
+assert.strictEqual(collapseLineBreaks('a\nb'), 'a\nb');
+assert.strictEqual(collapseLineBreaks('a\n\nb'), 'a\nb', 'a blank line becomes a single break');
+assert.strictEqual(collapseLineBreaks(`a${'\n'.repeat(50)}b`), 'a\nb');
+assert.strictEqual(collapseLineBreaks('a \n  \n \t\n b'), 'a\nb', 'lines holding only spaces count as empty');
+assert.strictEqual(collapseLineBreaks('a\r\n\r\n\r\nb'), 'a\nb', 'Windows line ends too');
+assert.strictEqual(collapseLineBreaks('\n\n\na\n\n\n'), 'a', 'none at the start or the end');
+assert.strictEqual(collapseLineBreaks('one line'), 'one line');
+assert.strictEqual(collapseLineBreaks(''), '');
+assert.strictEqual(collapseLineBreaks(null), '');
+assert.strictEqual(collapseLineBreaks(undefined), '');
 
 console.log('ok');

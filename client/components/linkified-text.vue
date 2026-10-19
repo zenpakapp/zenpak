@@ -1,4 +1,9 @@
 <style lang="scss">
+// Line breaks typed in the description are kept; runs of spaces still collapse.
+.lpLinkifiedText {
+    white-space: pre-line;
+}
+
 .lpLinkifiedLink {
     color: inherit;
     overflow-wrap: anywhere;
@@ -15,7 +20,9 @@
 </template>
 
 <script>
-import { MAX_DESCRIPTION_LINKS, USER_LINK_REL, splitLinks } from '../utils/linkify';
+import {
+    MAX_DESCRIPTION_LINKS, USER_LINK_REL, collapseLineBreaks, splitLinks,
+} from '../utils/linkify';
 
 // Text whose URLs are clickable. Built from plain pieces, never v-html, so nothing typed by a
 // user can inject markup.
@@ -27,7 +34,7 @@ export default {
     },
     computed: {
         segments() {
-            return splitLinks(this.text, this.maxLinks);
+            return splitLinks(collapseLineBreaks(this.text), this.maxLinks);
         },
         rel() {
             return USER_LINK_REL;
