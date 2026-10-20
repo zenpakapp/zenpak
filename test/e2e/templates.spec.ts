@@ -156,9 +156,9 @@ test.describe("Template picker", () => {
 
     const library = JSON.parse(libraryPayload!);
     expect(library.lists[0].name).toBe("Via ferrata");
-    expect(library.items.length).toBe(24);
+    expect(library.items.length).toBe(29);
     const lanyard = library.items.find((i) => i.name === "Via ferrata lanyard");
-    expect(lanyard.weight).toBe(450000);
+    expect(lanyard.weight).toBe(530000);
 
     await expect(
       page.locator('input.lpCategoryName[value="Safety & Navigation"]'),
