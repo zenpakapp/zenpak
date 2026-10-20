@@ -94,7 +94,7 @@ async function run() {
 
     // Never more than one line break in a row, and none at the ends.
     await save([{ id: 1, name: 'Breaks', description: `\n\nfirst${'\n'.repeat(50)}second\r\n\r\nthird\n\n` }]);
-    assert.strictEqual(savedUser.library.lists[0].description, 'first\nsecond\nthird');
+    assert.strictEqual(savedUser.library.lists[0].description, 'first\n\nsecond\n\nthird');
 
     console.log('ok');
     process.exit(0);

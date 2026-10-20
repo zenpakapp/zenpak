@@ -1,7 +1,7 @@
 // What the public sees of a list description, and what is stored of it. The text is bounded two
 // ways, so pages stay readable, Discover projections stay small, and a description cannot be
 // used to push a page out of sight or to hide link spam in a wall of text:
-//  - never more than one line break in a row (fifty empty lines show as one break);
+//  - never more than one empty line in a row (fifty empty lines show as one);
 //  - at most PUBLIC_DESCRIPTION_MAX_LENGTH characters.
 // The editor stops typing at the same length (client/utils/linkify.js).
 const PUBLIC_DESCRIPTION_MAX_LENGTH = 1000;
@@ -13,8 +13,9 @@ function collapseLineBreaks(value) {
         .replace(/\r\n?/g, '\n')
         .split('\n')
         .map((line) => line.trim())
-        .filter(Boolean)
-        .join('\n');
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
 }
 
 function clipDescription(value) {

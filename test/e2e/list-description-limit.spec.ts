@@ -24,7 +24,7 @@ test("the description field is limited and explains links", async ({
   await expect(field).toHaveAttribute("maxlength", "1000");
 
   const help = page.locator("#listDescriptionContainer");
-  await expect(help).toContainText(/are clickable/i);
+  await expect(help).toContainText(/clickable links/i);
   await expect(help).toContainText("3");
   await expect(help).not.toContainText("Markdown");
 
