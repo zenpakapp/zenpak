@@ -88,6 +88,12 @@
                     @change="val => { filterSeason = val; applyDiscoverFilters(); }"
                 />
                 <lp-select
+                    :value="filterDuration"
+                    :options="durationOptions"
+                    :aria-label="$t('community.ariaFilterDuration')"
+                    @change="val => { filterDuration = val; applyDiscoverFilters(); }"
+                />
+                <lp-select
                     :value="filterType"
                     :options="listTypeOptions"
                     :aria-label="$t('community.ariaFilterType')"
@@ -299,7 +305,9 @@ import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils.js';
 import { tierLabel } from '../services/tier-labels.js';
 import LpSelect from '../components/lp-select.vue';
-import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
+import {
+    LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions,
+} from '../data/list-type-options';
 
 const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
 const CommunityPeople = defineAsyncComponent(() => import(/* webpackChunkName: "community-people" */ '../components/community-people.vue'));
@@ -371,6 +379,7 @@ export default {
             filterTimeout: null,
             filterSeason: '',
             filterType: '',
+            filterDuration: '',
             filterMinWeight: '',
             filterMaxWeight: '',
             isModerator: false,
@@ -382,6 +391,12 @@ export default {
             return [
                 { value: '', label: this.$t('community.filterSeasonAny') },
                 ...toI18nOptions(SEASON_VALUES, (key) => this.$t(key)),
+            ];
+        },
+        durationOptions() {
+            return [
+                { value: '', label: this.$t('community.filterDurationAny') },
+                ...toI18nOptions(DURATION_VALUES, (key) => this.$t(key)),
             ];
         },
         listTypeOptions() {
@@ -400,7 +415,7 @@ export default {
             return this.discoverLists.filter((l) => !l.featured);
         },
         filtersActive() {
-            return Boolean(this.filterSeason || this.filterType || this.filterMinWeight || this.filterMaxWeight);
+            return Boolean(this.filterSeason || this.filterType || this.filterDuration || this.filterMinWeight || this.filterMaxWeight);
         },
     },
     created() {
@@ -429,6 +444,7 @@ export default {
             this.setDiscoverFilters({
                 season: this.filterSeason,
                 type: this.filterType,
+                duration: this.filterDuration,
                 minWeightKg: this.filterMinWeight,
                 maxWeightKg: this.filterMaxWeight,
             });
@@ -436,6 +452,7 @@ export default {
         resetDiscoverFilters() {
             this.filterSeason = '';
             this.filterType = '';
+            this.filterDuration = '';
             this.filterMinWeight = '';
             this.filterMaxWeight = '';
             this.applyDiscoverFilters();
@@ -471,11 +488,12 @@ export default {
         listTags(list) {
             return [
                 ...(Array.isArray(list.seasons) ? list.seasons : []),
+                ...(Array.isArray(list.durations) ? list.durations : []),
                 ...(Array.isArray(list.listTypes) ? list.listTypes : []),
             ];
         },
         formatTag(value) {
-            const label = [...this.seasonOptions, ...this.listTypeOptions].find((option) => option.value === value);
+            const label = [...this.seasonOptions, ...this.durationOptions, ...this.listTypeOptions].find((option) => option.value === value);
             return label ? label.label : value;
         },
         timeAgo(dateStr) {

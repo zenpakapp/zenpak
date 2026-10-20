@@ -77,6 +77,17 @@ assert('firstList.seasons defaults to [] when absent', Array.isArray(withoutSeas
 const keepsExistingSeasons = applyQuickSetup({ defaultListId: 1, lists: [{ id: 1, name: 'L', categoryIds: [], seasons: ['summer'] }] }, {});
 assert('firstList.seasons is NOT wiped when setup.seasons is absent', JSON.stringify(keepsExistingSeasons.lists[0].seasons) === JSON.stringify(['summer']));
 
+console.log('\n--- applyQuickSetup sets durations on the seeded List ---');
+
+const withDurations = applyQuickSetup(fixtureLibraryData(), { durations: ['weekend'] });
+assert('firstList.durations is set from setup.durations', JSON.stringify(withDurations.lists[0].durations) === JSON.stringify(['weekend']));
+
+const withoutDurations = applyQuickSetup(fixtureLibraryData(), {});
+assert('firstList.durations defaults to [] when absent', Array.isArray(withoutDurations.lists[0].durations) && withoutDurations.lists[0].durations.length === 0);
+
+const keepsExistingDurations = applyQuickSetup({ defaultListId: 1, lists: [{ id: 1, name: 'L', categoryIds: [], durations: ['day'] }] }, {});
+assert('firstList.durations is NOT wiped when setup.durations is absent', JSON.stringify(keepsExistingDurations.lists[0].durations) === JSON.stringify(['day']));
+
 console.log('\n--- every Template carries valid List Types and Seasons ---');
 
 const { templates } = require('../client/composables/useTemplatePicker.js');

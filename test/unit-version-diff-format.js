@@ -29,6 +29,8 @@ assert('star 1 is a check mark', formatDiffValue('star', 1) === '✓');
 assert('star 0 is a dash', formatDiffValue('star', 0) === '—');
 assert('seasons are translated', formatDiffValue('seasons', ['summer', '3-season'], { t }) === 'T:list.seasonSummer, T:list.season3');
 assert('list types are translated', formatDiffValue('listTypes', ['trek', 'day-hike'], { t }) === 'T:list.typeThru, T:list.typeDay');
+assert('activities are translated', formatDiffValue('listTypes', ['hiking', 'via-ferrata'], { t }) === 'T:list.typeHiking, T:list.typeViaFerrata');
+assert('durations are translated', formatDiffValue('durations', ['weekend', 'long-distance'], { t }) === 'T:list.durationWeekend, T:list.durationLongDistance');
 assert('an unknown slug stays as is', formatDiffValue('seasons', ['monsoon'], { t }) === 'monsoon');
 assert('seasons without a translator stay raw', formatDiffValue('seasons', ['summer']) === 'summer');
 

@@ -66,6 +66,7 @@ function buildDiscoverQuery(filters, words) {
     const query = { visibility: { $in: ['discoverable', 'indexable'] } };
     if (filters.season) query.seasons = filters.season;
     if (filters.type) query.listTypes = filters.type;
+    if (filters.duration) query.durations = filters.duration;
     if (filters.minWeight !== null || filters.maxWeight !== null) {
         query.totalBaseWeight = {};
         if (filters.minWeight !== null) query.totalBaseWeight.$gte = filters.minWeight;
@@ -277,6 +278,7 @@ router.get('/discover', async (req, res) => {
         maxWeight: parseNumberParam(req.query.maxWeight),
         season: String(req.query.season || '').trim().toLowerCase().slice(0, 40),
         type: String(req.query.type || '').trim().toLowerCase().slice(0, 40),
+        duration: String(req.query.duration || '').trim().toLowerCase().slice(0, 40),
     };
 
     try {
@@ -429,6 +431,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                 description: publishedList.description || '',
                 seasons: normalizeTagArray(publishedList.seasons),
                 listTypes: normalizeTagArray(publishedList.listTypes),
+                durations: normalizeTagArray(publishedList.durations),
                 sourceCurrencySymbol,
                 categories,
                 forkedFrom,

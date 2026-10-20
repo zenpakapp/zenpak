@@ -89,6 +89,7 @@ function sanitizeListSummary(list, options = {}) {
         totalQty: Number(list.totalQty) || 0,
         seasons: Array.isArray(list.seasons) ? list.seasons.slice() : [],
         listTypes: Array.isArray(list.listTypes) ? list.listTypes.slice() : [],
+        durations: Array.isArray(list.durations) ? list.durations.slice() : [],
     };
 }
 

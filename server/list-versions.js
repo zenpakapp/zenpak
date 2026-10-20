@@ -8,7 +8,7 @@ const { Library } = require('../client/models/library.js');
 
 const LEGACY_HIDDEN_FIELD = 'creator' + 'LinksRemoved';
 const PUBLISHED_LIST_FIELDS = [
-    'id', 'externalId', 'name', 'description', 'summary', 'seasons', 'listTypes',
+    'id', 'externalId', 'name', 'description', 'summary', 'seasons', 'listTypes', 'durations',
     'visibility', 'allowSearchIndexing', 'copyable', 'categoryIds', 'forkedFrom',
     'publicFields', 'sourceListInfoHidden', LEGACY_HIDDEN_FIELD,
 ];

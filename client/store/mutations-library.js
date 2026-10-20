@@ -152,6 +152,7 @@ module.exports = {
         if (list) {
             list.seasons = Array.isArray(args.seasons) ? args.seasons : [];
             list.listTypes = Array.isArray(args.listTypes) ? args.listTypes : [];
+            list.durations = Array.isArray(args.durations) ? args.durations : [];
         }
     },
     updatePublicProfile(state, profile) {

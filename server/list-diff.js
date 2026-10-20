@@ -9,7 +9,7 @@ const PLACEMENT_FIELDS = ['qty', 'worn', 'consumable', 'star'];
 const IMAGE_FIELDS = ['imageUrl', 'image'];
 const LINK_FIELDS = ['publicUrl', 'promoCode', 'promoLabel'];
 const AFFILIATE_FIELDS = ['promoCode', 'promoLabel'];
-const META_FIELDS = ['name', 'description', 'seasons', 'listTypes'];
+const META_FIELDS = ['name', 'description', 'seasons', 'listTypes', 'durations'];
 
 function sameValue(a, b) {
     return JSON.stringify(a) === JSON.stringify(b);

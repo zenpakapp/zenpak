@@ -135,6 +135,13 @@
     "typeThru": "Trek",
     "typeBike": "Bikepacking",
     "typeTravel": "Travel",
+    "typeHiking": "Hiking",
+    "typeTrail": "Trail running",
+    "typeViaFerrata": "Via ferrata",
+    "durationDay": "Day",
+    "durationWeekend": "Weekend",
+    "durationMultiDay": "Several days (3 to 10 days)",
+    "durationLongDistance": "Long distance (over 10 days)",
     "communityHint": "Looking for inspiration? Discover gear lists from the community.",
     "communityHintCta": "Explore community →",
     "guestHint": "Save your list and discover the community — it's free.",
@@ -184,7 +191,8 @@
         "promoCode": "Promo code",
         "promoLabel": "Promo label",
         "seasons": "Seasons",
-        "listTypes": "Types"
+        "listTypes": "Types",
+        "durations": "Duration"
       }
     }
   },
@@ -493,7 +501,8 @@
     "sortPopular": "Most viewed",
     "searchListsPlaceholder": "Search lists…",
     "filterSeasonAny": "Any season",
-    "filterTypeAny": "Any type",
+    "filterTypeAny": "Any activity",
+    "filterDurationAny": "Any duration",
     "filterMinKgPlaceholder": "Min kg",
     "filterMaxKgPlaceholder": "Max kg",
     "filterReset": "Reset",
@@ -542,7 +551,8 @@
     "peopleNoUsersFound": "No users found.",
     "peopleLoadError": "Could not load results.",
     "ariaFilterSeason": "Filter by season",
-    "ariaFilterType": "Filter by list type",
+    "ariaFilterType": "Filter by activity",
+    "ariaFilterDuration": "Filter by duration",
     "ariaMinWeight": "Minimum base weight in kilograms",
     "ariaMaxWeight": "Maximum base weight in kilograms",
     "ariaPopularPacks": "Popular packs"

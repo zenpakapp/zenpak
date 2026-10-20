@@ -191,6 +191,7 @@ module.exports = {
         await publicLists.createIndex({ ownerId: 1 });
         await publicLists.createIndex({ seasons: 1 });
         await publicLists.createIndex({ listTypes: 1 });
+        await publicLists.createIndex({ durations: 1 });
         // Discover search: an anchored regex on a word prefix walks this multikey index.
         await publicLists.createIndex({ searchTokens: 1 });
 

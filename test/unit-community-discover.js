@@ -17,6 +17,7 @@ const dbStub = {
                 // Filters now run in the query, so the stub has to apply them.
                 if (typeof query.seasons === 'string' && !(list.seasons || []).includes(query.seasons)) return false;
                 if (typeof query.listTypes === 'string' && !(list.listTypes || []).includes(query.listTypes)) return false;
+                if (typeof query.durations === 'string' && !(list.durations || []).includes(query.durations)) return false;
                 if (query.totalBaseWeight) {
                     const weight = Number(list.totalBaseWeight) || 0;
                     if (query.totalBaseWeight.$gte !== undefined && weight < query.totalBaseWeight.$gte) return false;
@@ -86,7 +87,8 @@ async function run() {
         viewCount: 12,
         copyCount: 3,
         seasons: ['summer'],
-        listTypes: ['weekend'],
+        listTypes: ['hiking'],
+        durations: ['weekend'],
         updatedAt: new Date('2026-06-10'),
     });
 
@@ -227,7 +229,8 @@ async function run() {
             viewCount: i === 3 ? 99 : i,
             totalBaseWeight: i * 1000,
             seasons: i % 2 === 0 ? ['summer'] : ['winter'],
-            listTypes: i % 3 === 0 ? ['thru-hike'] : ['weekend'],
+            listTypes: ['hiking'],
+            durations: i % 3 === 0 ? ['multi-day'] : ['weekend'],
             updatedAt: new Date(`2026-05-${String(i + 1).padStart(2, '0')}`),
         });
     }
@@ -255,7 +258,8 @@ async function run() {
                 minWeight: '4000',
                 maxWeight: '10000',
                 season: 'summer',
-                type: 'weekend',
+                type: 'hiking',
+                duration: 'weekend',
             },
         }, res);
     });
@@ -263,7 +267,9 @@ async function run() {
     assert('filters return matching lists', responseData && responseData.lists.length > 0);
     assert('filters by min/max weight', responseData.lists.every(l => l.totalBaseWeight >= 4000 && l.totalBaseWeight <= 10000));
     assert('filters by season', responseData.lists.every(l => l.seasons.includes('summer')));
-    assert('filters by list type', responseData.lists.every(l => l.listTypes.includes('weekend')));
+    assert('filters by list type', responseData.lists.every(l => l.listTypes.includes('hiking')));
+    assert('filters by duration', responseData.lists.every(l => l.durations.includes('weekend')));
+    assert('a discover entry carries its durations', Array.isArray(responseData.lists[0].durations));
 
     projectedLists.length = 0;
     projectedLists.push({

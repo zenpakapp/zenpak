@@ -194,10 +194,12 @@ test("links and promo codes on a public profile carry the right rel", async ({
   await page.goto(`${testRoot}u/someone`);
   const siteLink = page.locator(".lpPublicLinks a").first();
   await expect(siteLink).toBeVisible();
+  // A creator can put an affiliate link in the profile, so these are sponsored too.
   expect((await siteLink.getAttribute("rel")).split(" ").sort()).toEqual([
     "nofollow",
     "noopener",
     "noreferrer",
+    "sponsored",
     "ugc",
   ]);
   const promo = page.locator(".lpPublicCreatorCodes a").first();
@@ -242,14 +244,14 @@ test("line breaks in a description are kept on the public list", async ({
   await expect(summary.locator("a")).toHaveCount(1);
 });
 
-test("a run of line breaks shows as one", async ({ page }) => {
+test("a run of line breaks shows as one blank line", async ({ page }) => {
   await openList(
     page,
     `First line${"\n".repeat(50)}Second line\n\n\n\nThird line`,
   );
   const summary = page.locator(".lpPublicListSummary");
   const rendered = await summary.innerText();
-  expect(rendered.trim()).toBe("First line\nSecond line\nThird line");
+  expect(rendered.trim()).toBe("First line\n\nSecond line\n\nThird line");
   // And the paragraph stays a few lines tall, not a screenful.
   const box = await summary.boundingBox();
   expect(box.height).toBeLessThan(120);
