@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n';
+import { setGenericErrorMessage } from './utils/utils';
 
 const SUPPORTED = ['en', 'fr', 'de', 'es'];
 const LOCALE_KEY = 'zp-locale';
@@ -24,6 +25,11 @@ export const i18n = createI18n({
     messages: {},
 });
 
+// A failed request with nothing to say shows this sentence, in the language of the page.
+function syncGenericError() {
+    setGenericErrorMessage(i18n.global.t('misc.genericError'));
+}
+
 export async function loadLocale(locale) {
     const target = SUPPORTED.includes(locale) ? locale : 'en';
     if (!loadedLocales[target]) {
@@ -47,8 +53,12 @@ export async function setLocale(locale) {
     }
 
     i18n.global.locale = await loadLocale(target);
+    syncGenericError();
 }
 
 export function initLocale() {
-    return loadLocale(i18n.global.locale);
+    return loadLocale(i18n.global.locale).then((target) => {
+        syncGenericError();
+        return target;
+    });
 }
