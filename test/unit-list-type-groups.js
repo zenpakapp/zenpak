@@ -25,7 +25,7 @@ assert.deepStrictEqual(values(SEASON_VALUES), ['3-season', '4-season', 'spring',
 
 // Activities: what kind of trip. Durations: how long. Nothing of one is in the other.
 assert.deepStrictEqual(values(LIST_TYPE_VALUES), ['hiking', 'trail-running', 'bikepacking', 'via-ferrata', 'travel']);
-assert.deepStrictEqual(values(DURATION_VALUES), ['day', 'weekend', 'multi-day', 'long-distance']);
+assert.deepStrictEqual(values(DURATION_VALUES), ['day', 'weekend', 'multi-day', 'long']);
 assert.deepStrictEqual(values(LIST_TYPE_VALUES).filter((value) => values(DURATION_VALUES).includes(value)), []);
 
 // Every value has a label key.

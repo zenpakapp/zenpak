@@ -33,7 +33,7 @@ test("the community tags are grouped by season, gear level, duration and activit
     /Day/,
     /Weekend/,
     /Several days/,
-    /Long distance/,
+    /Long trip/,
   ]);
   await expect(group("Activity").locator(".shareTagCheckbox")).toHaveText([
     /Hiking/,

@@ -141,7 +141,7 @@
     "durationDay": "Day",
     "durationWeekend": "Weekend",
     "durationMultiDay": "Several days (3 to 10 days)",
-    "durationLongDistance": "Long distance (over 10 days)",
+    "durationLong": "Long trip (over 10 days)",
     "communityHint": "Looking for inspiration? Discover gear lists from the community.",
     "communityHintCta": "Explore community →",
     "guestHint": "Save your list and discover the community — it's free.",
