@@ -107,7 +107,7 @@ import PopoverHover from './popover-hover.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { fetchJson } from '../utils/utils';
 import {
-    LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions, valuesInGroup,
+    LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions, valuesInGroup, toggleTag,
 } from '../data/list-type-options';
 
 export default {
@@ -125,8 +125,9 @@ export default {
         };
     },
     computed: {
-        // Four labelled groups instead of one flat block of unrelated checkboxes. The stored
-        // fields are still `seasons` and `listTypes`.
+        // Four labelled groups instead of one flat block of unrelated checkboxes: seasons and
+        // gear level are stored in `seasons`, the duration in `durations` (one choice) and the
+        // activity in `listTypes`.
         tagGroups() {
             const options = (values, group) => toI18nOptions(valuesInGroup(values, group), (key) => this.$t(key));
             return [
@@ -137,10 +138,10 @@ export default {
                     key: 'gearLevel', field: 'seasons', label: this.$t('share.tagGroupGearLevel'), options: options(SEASON_VALUES, 'gearLevel'), selected: this.selectedSeasons,
                 },
                 {
-                    key: 'duration', field: 'listTypes', label: this.$t('share.tagGroupDuration'), options: options(LIST_TYPE_VALUES, 'duration'), selected: this.selectedListTypes,
+                    key: 'duration', field: 'durations', label: this.$t('share.tagGroupDuration'), options: toI18nOptions(DURATION_VALUES, (key) => this.$t(key)), selected: this.selectedDurations,
                 },
                 {
-                    key: 'activity', field: 'listTypes', label: this.$t('share.tagGroupActivity'), options: options(LIST_TYPE_VALUES, 'activity'), selected: this.selectedListTypes,
+                    key: 'activity', field: 'listTypes', label: this.$t('share.tagGroupActivity'), options: toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key)), selected: this.selectedListTypes,
                 },
             ];
         },
@@ -186,6 +187,9 @@ export default {
         },
         selectedListTypes() {
             return Array.isArray(this.list.listTypes) ? this.list.listTypes : [];
+        },
+        selectedDurations() {
+            return Array.isArray(this.list.durations) ? this.list.durations : [];
         },
         isShared() {
             return Boolean(this.list && this.list.visibility && this.list.visibility !== 'private');
@@ -257,17 +261,16 @@ export default {
             });
         },
         toggleDiscoveryTag(field, value, checked) {
-            const seasons = [...this.selectedSeasons];
-            const listTypes = [...this.selectedListTypes];
-            const target = field === 'seasons' ? seasons : listTypes;
-            const index = target.indexOf(value);
-            if (checked && index === -1) target.push(value);
-            if (!checked && index !== -1) target.splice(index, 1);
+            const tags = {
+                seasons: this.selectedSeasons,
+                listTypes: this.selectedListTypes,
+                durations: this.selectedDurations,
+            };
+            tags[field] = toggleTag(tags[field], value, checked, field === 'durations');
 
             this.$store.commit('updateListDiscoveryTags', {
                 listId: this.list.id,
-                seasons,
-                listTypes,
+                ...tags,
             });
             return this.saveShareState().catch((err) => {
                 if (err && err.message) return;

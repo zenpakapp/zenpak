@@ -14,6 +14,7 @@ const List = function ({ id, library }) {
     this.summary = '';
     this.seasons = [];
     this.listTypes = [];
+    this.durations = [];
     this.visibility = VISIBILITY_PRIVATE;
     this.allowSearchIndexing = false;
     this.externalId = '';

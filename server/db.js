@@ -1,5 +1,6 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const config = require('config');
+const { migrateListTags } = require('./list-tag-migration.js');
 
 const url = `mongodb://${config.get('databaseUrl')}`;
 const dbName = config.get('databaseUrl').split('/').pop();
@@ -153,6 +154,12 @@ module.exports = {
     listCopies: collection('list_copies'),
     reports: collection('reports'),
     billingEvents: collection('billing_events'),
+    // One-off conversion of the old list types into an activity and a duration; it only touches
+    // lists that still carry an old value, so it is safe to run on every start.
+    async migrateListTags() {
+        await ready;
+        return migrateListTags(_db);
+    },
     async ensureIndexes() {
         await ready;
         // createIndex is not exposed by the wrapper — use raw _db collections directly
@@ -191,6 +198,7 @@ module.exports = {
         await publicLists.createIndex({ ownerId: 1 });
         await publicLists.createIndex({ seasons: 1 });
         await publicLists.createIndex({ listTypes: 1 });
+        await publicLists.createIndex({ durations: 1 });
         // Discover search: an anchored regex on a word prefix walks this multikey index.
         await publicLists.createIndex({ searchTokens: 1 });
 

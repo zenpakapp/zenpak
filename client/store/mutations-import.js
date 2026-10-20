@@ -104,7 +104,7 @@ module.exports = {
         state.globalAlerts.push({ id: `${Date.now()}-${Math.random()}`, key: alertKey, params: alertParams });
     },
     importPublicList(state, {
-        listName, description, categories, forkedFrom, seasons, listTypes, sourceCurrencySymbol,
+        listName, description, categories, forkedFrom, seasons, listTypes, durations, sourceCurrencySymbol,
     }) {
         const list = state.library.newList();
         const sourceUsername = forkedFrom && forkedFrom.ownerUsername;
@@ -116,6 +116,7 @@ module.exports = {
             : null;
         list.seasons = Array.isArray(seasons) ? seasons.slice() : [];
         list.listTypes = Array.isArray(listTypes) ? listTypes.slice() : [];
+        list.durations = Array.isArray(durations) ? durations.slice() : [];
 
         let mergedCount = 0;
         let newCount = 0;

@@ -1,10 +1,17 @@
 // CommonJS so test/unit-*.js can require it directly.
 const weightUtils = require('./weight.js');
 const { formatDisplayPrice } = require('./currency.js');
-const { LIST_TYPE_VALUES, SEASON_VALUES } = require('../data/list-type-options.js');
+const {
+    LIST_TYPE_VALUES, LEGACY_LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES,
+} = require('../data/list-type-options.js');
 
 const DIFF_LIST_KEYS = ['added', 'removed', 'moved', 'modified', 'categoriesRenamed', 'meta'];
-const TAG_VALUES = { seasons: SEASON_VALUES, listTypes: LIST_TYPE_VALUES };
+// A version history keeps the list types it had, so the old ones stay translatable.
+const TAG_VALUES = {
+    seasons: SEASON_VALUES,
+    listTypes: [...LIST_TYPE_VALUES, ...LEGACY_LIST_TYPE_VALUES],
+    durations: DURATION_VALUES,
+};
 const CHECK_FIELDS = ['consumable', 'worn', 'star'];
 
 // `t` (optional) translates season / list type slugs; without it they stay raw.

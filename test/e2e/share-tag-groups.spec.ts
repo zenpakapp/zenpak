@@ -30,12 +30,31 @@ test("the community tags are grouped by season, gear level, duration and activit
     /4-Season/,
   ]);
   await expect(group("Duration").locator(".shareTagCheckbox")).toHaveText([
-    /Day hike/,
+    /Day/,
     /Weekend/,
-    /Trek/,
+    /Several days/,
+    /Long distance/,
   ]);
   await expect(group("Activity").locator(".shareTagCheckbox")).toHaveText([
+    /Hiking/,
+    /Trail running/,
     /Bikepacking/,
+    /Via ferrata/,
     /Travel/,
   ]);
+
+  // A list lasts one time: ticking a second duration replaces the first.
+  const durations = group("Duration").locator(".shareTagCheckbox input");
+  await durations.nth(0).check();
+  await expect(durations.nth(0)).toBeChecked();
+  await durations.nth(1).check();
+  await expect(durations.nth(1)).toBeChecked();
+  await expect(durations.nth(0)).not.toBeChecked();
+
+  // Activities can be several.
+  const activities = group("Activity").locator(".shareTagCheckbox input");
+  await activities.nth(0).check();
+  await activities.nth(2).check();
+  await expect(activities.nth(0)).toBeChecked();
+  await expect(activities.nth(2)).toBeChecked();
 });

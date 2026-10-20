@@ -16,7 +16,7 @@ export function useDiscover(options = {}) {
     const sort = ref(options.sort || 'recent');
     const query = ref('');
     const filters = ref({
-        season: '', type: '', minWeightKg: '', maxWeightKg: '',
+        season: '', type: '', duration: '', minWeightKg: '', maxWeightKg: '',
     });
     const limit = ref(options.limit || 20);
 
@@ -30,6 +30,7 @@ export function useDiscover(options = {}) {
             if (query.value.trim()) params.set('q', query.value.trim());
             if (filters.value.season) params.set('season', filters.value.season);
             if (filters.value.type) params.set('type', filters.value.type);
+            if (filters.value.duration) params.set('duration', filters.value.duration);
             const minWeight = kgToMg(filters.value.minWeightKg);
             const maxWeight = kgToMg(filters.value.maxWeightKg);
             if (minWeight !== null) params.set('minWeight', String(minWeight));

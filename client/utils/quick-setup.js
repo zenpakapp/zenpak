@@ -16,6 +16,7 @@ function normalizeSetup(setup) {
         listName: String(normalized.listName || '').trim(),
         listTypes: Array.isArray(normalized.listTypes) ? normalized.listTypes.slice() : [],
         seasons: Array.isArray(normalized.seasons) ? normalized.seasons.slice() : [],
+        durations: Array.isArray(normalized.durations) ? normalized.durations.slice() : [],
     };
 }
 
@@ -43,6 +44,11 @@ export function applyQuickSetup(libraryData, setup) {
                 firstList.seasons = settings.seasons;
             } else if (!Array.isArray(firstList.seasons)) {
                 firstList.seasons = [];
+            }
+            if (settings.durations.length > 0) {
+                firstList.durations = settings.durations;
+            } else if (!Array.isArray(firstList.durations)) {
+                firstList.durations = [];
             }
         }
     }

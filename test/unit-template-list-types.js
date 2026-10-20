@@ -23,11 +23,12 @@ function assert(description, condition) {
 }
 
 const { templates } = require('../client/composables/useTemplatePicker.js');
-const { LIST_TYPE_VALUES } = require('../client/data/list-type-options.js');
+const { LIST_TYPE_VALUES, DURATION_VALUES } = require('../client/data/list-type-options.js');
 const { Library } = require('../client/models/library.js');
 
 const LOCALES = ['en', 'fr', 'es', 'de'];
 const knownListTypes = LIST_TYPE_VALUES.map((t) => t.value);
+const knownDurations = DURATION_VALUES.map((d) => d.value);
 const curatedCategoryOrder = [
     'Pack',
     'Shelter',
@@ -74,6 +75,16 @@ for (const template of templates) {
     assert(`${template.id}: listTypes is an array`, Array.isArray(template.listTypes));
     const unknown = (template.listTypes || []).filter((value) => !knownListTypes.includes(value));
     assert(`${template.id}: listTypes values are all known (${JSON.stringify(template.listTypes)})`, unknown.length === 0);
+}
+
+console.log('\n--- every template.durations value is a known Duration, and no duration is an activity ---');
+
+for (const template of templates) {
+    assert(`${template.id}: durations is an array with exactly one value`, Array.isArray(template.durations) && template.durations.length === 1);
+    const unknown = (template.durations || []).filter((value) => !knownDurations.includes(value));
+    assert(`${template.id}: durations values are all known (${JSON.stringify(template.durations)})`, unknown.length === 0);
+    const mixed = (template.listTypes || []).filter((value) => knownDurations.includes(value));
+    assert(`${template.id}: no duration among the activities`, mixed.length === 0);
 }
 
 console.log('\n--- every template has a name/description in every locale ---');

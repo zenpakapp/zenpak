@@ -350,7 +350,7 @@ export default {
         },
         onSelect(template) {
             if (!this.validateSetup()) return;
-            this.$emit('select', template.data, { ...this.getSetup(), listTypes: [...(template.listTypes || [])], seasons: [...(template.seasons || [])] });
+            this.$emit('select', template.data, { ...this.getSetup(), listTypes: [...(template.listTypes || [])], durations: [...(template.durations || [])], seasons: [...(template.seasons || [])] });
         },
         onDismiss() {
             if (!this.validateSetup()) return;

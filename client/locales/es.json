@@ -135,6 +135,13 @@
     "typeThru": "Trekking",
     "typeBike": "Bikepacking",
     "typeTravel": "Viaje",
+    "typeHiking": "Senderismo",
+    "typeTrail": "Trail running",
+    "typeViaFerrata": "Vía ferrata",
+    "durationDay": "Día",
+    "durationWeekend": "Fin de semana",
+    "durationMultiDay": "Varios días (3 a 10 días)",
+    "durationLongDistance": "Larga distancia (más de 10 días)",
     "communityHint": "Buscas inspiracion? Descubre listas de la comunidad.",
     "communityHintCta": "Explorar comunidad →",
     "guestHint": "Guarda tu lista y descubre la comunidad — es gratis.",
@@ -184,7 +191,8 @@
         "promoCode": "Código promo",
         "promoLabel": "Texto promo",
         "seasons": "Temporadas",
-        "listTypes": "Tipos"
+        "listTypes": "Tipos",
+        "durations": "Duración"
       }
     }
   },
@@ -493,7 +501,8 @@
     "sortPopular": "Más visto",
     "searchListsPlaceholder": "Buscar listas…",
     "filterSeasonAny": "Cualquier estación",
-    "filterTypeAny": "Cualquier tipo",
+    "filterTypeAny": "Cualquier actividad",
+    "filterDurationAny": "Cualquier duración",
     "filterMinKgPlaceholder": "Min kg",
     "filterMaxKgPlaceholder": "Max kg",
     "filterReset": "Restablecer",
@@ -542,7 +551,8 @@
     "peopleNoUsersFound": "No se encontraron usuarios.",
     "peopleLoadError": "No se pudieron cargar los resultados.",
     "ariaFilterSeason": "Filtrar por estación",
-    "ariaFilterType": "Filtrar por tipo de lista",
+    "ariaFilterType": "Filtrar por actividad",
+    "ariaFilterDuration": "Filtrar por duración",
     "ariaMinWeight": "Peso base mínimo en kilogramos",
     "ariaMaxWeight": "Peso base máximo en kilogramos",
     "ariaPopularPacks": "Mochilas populares"

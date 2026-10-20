@@ -71,6 +71,7 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
         totalQty: totals ? Number(totals.qty) || 0 : Number(list.totalQty) || 0,
         seasons: normalizeTagArray(published.seasons),
         listTypes: normalizeTagArray(published.listTypes),
+        durations: normalizeTagArray(published.durations),
         copyCount: Number(stats.copyCount ?? list.copyCount) || 0,
         viewCount: Number(stats.viewCount ?? list.viewCount) || 0,
         featured: Boolean(list.featured),
@@ -110,6 +111,7 @@ function projectionToDiscoverItem(projection) {
         viewCount: Number(projection.viewCount) || 0,
         seasons: normalizeTagArray(projection.seasons),
         listTypes: normalizeTagArray(projection.listTypes),
+        durations: normalizeTagArray(projection.durations),
         updatedAt: updatedAt.toISOString(),
         featured: Boolean(projection.featured),
     };

@@ -166,6 +166,12 @@ const { reindexMissingSearchTokens } = require('./server/public-list-projections
 const { sweepLapsedPlans } = require('./server/plan-offers.js');
 
 db.ensureIndexes()
+    .then(() => db.migrateListTags())
+    .then((migrated) => {
+        if (migrated.users || migrated.publicLists) {
+            logger.info(`Converted list types for ${migrated.users} users and ${migrated.publicLists} public lists`);
+        }
+    })
     .then(() => reindexMissingSearchTokens())
     .then((count) => {
         if (count) logger.info(`Added Discover search tokens to ${count} public lists`);
