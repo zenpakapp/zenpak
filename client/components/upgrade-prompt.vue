@@ -105,6 +105,7 @@
 <script>
 import modal from './modal.vue';
 import { fetchJson } from '../utils/utils.js';
+import { trackEvent } from '../utils/analytics';
 import { tierLabel as sharedTierLabel } from '../services/tier-labels.js';
 
 const TRAIL_BENEFITS_KEYS = [
@@ -217,6 +218,7 @@ export default {
             this.$emit('close');
         },
         async checkout() {
+            trackEvent('plan-click', { plan: this.tier });
             this.checkoutError = null;
             this.checkingOut = true;
             try {

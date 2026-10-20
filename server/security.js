@@ -2,9 +2,11 @@ const REQUEST_BODY_LIMIT = '10mb';
 
 function securityHeaders(options = {}) {
     const environment = String(options.environment || 'production');
+    // The visit statistics script is the one outside origin allowed to run, and only when it is set.
+    const analyticsOrigin = options.analyticsOrigin ? ` ${options.analyticsOrigin}` : '';
     const scriptPolicy = environment === 'production'
-        ? "script-src 'self'"
-        : "script-src 'self' 'unsafe-eval'";
+        ? `script-src 'self'${analyticsOrigin}`
+        : `script-src 'self' 'unsafe-eval'${analyticsOrigin}`;
 
     return function setSecurityHeaders(req, res, next) {
         res.removeHeader('X-Powered-By');

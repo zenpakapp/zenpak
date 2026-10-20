@@ -105,6 +105,7 @@
 <script>
 import PopoverHover from './popover-hover.vue';
 import { showGlobalAlert } from '../services/user-feedback';
+import { trackEvent } from '../utils/analytics';
 import { fetchJson } from '../utils/utils';
 import {
     LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions, valuesInGroup, toggleTag,
@@ -377,6 +378,7 @@ export default {
                 body: JSON.stringify({ note: this.publishNote }),
             })
                 .then((result) => {
+                    if (result.created && result.version === 1) trackEvent('list-published');
                     this.publishNote = '';
                     if (!silent) {
                         showGlobalAlert(result.created

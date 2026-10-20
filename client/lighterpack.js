@@ -1,4 +1,5 @@
 import { createApp, h } from 'vue';
+import { installAnalyticsFilter } from './utils/analytics';
 import { createRouter, createWebHistory, RouterView } from 'vue-router';
 
 import routes from './routes';
@@ -88,6 +89,7 @@ registerAppEventHandlers({
 });
 
 const initLighterPack = function () {
+    installAnalyticsFilter();
     const app = createApp({
         render() {
             return h(RouterView);

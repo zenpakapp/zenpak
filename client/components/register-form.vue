@@ -37,6 +37,7 @@ import { push } from '../services/navigation';
 import { getLocalLibrary, hasLocalLibrary, moveLocalLibraryToRegistered } from '../services/browser-storage';
 import { applyQuickSetup } from '../utils/quick-setup';
 import { fetchJson } from '../utils/utils';
+import { trackEvent } from '../utils/analytics';
 
 const dataTypes = require('../dataTypes.js');
 const {
@@ -182,6 +183,7 @@ export default {
                         moveLocalLibraryToRegistered();
                     }
                     this.saving = false;
+                    trackEvent('signup');
                     this.$store.commit('pushGlobalAlert', { message: this.$t('auth.welcomeCheckEmail') });
                     const redirect = this.$route.query.redirect;
                     push(redirect && redirect.startsWith('/') ? redirect : '/');
