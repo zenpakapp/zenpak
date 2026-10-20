@@ -86,3 +86,39 @@ test("a list description uses the width of its card on a public profile", async 
   expect(description.width).toBeGreaterThan(560);
   expect(description.width).toBeLessThan(card.width - 100);
 });
+
+// A creator can put an affiliate link or a partner code in the profile links, so those links
+// carry `sponsored` like the links of a list description.
+test("the links of a creator profile are marked sponsored", async ({ page }) => {
+  test.setTimeout(60000);
+  const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+  await registerUser(page, `ps${now}`, "testtest", `ps+${now}@lighterpack.com`);
+  await expect(page.locator(".accountDropdownName")).toBeVisible({
+    timeout: 35000,
+  });
+
+  await page.route("**/api/public/profile/*", (route) =>
+    route.fulfill({
+      json: {
+        username: "creator",
+        profile: {
+          displayName: "A Creator",
+          visibility: "public",
+          links: [{ label: "Shop", url: "https://example.com/shop" }],
+        },
+        entitlements: { plan: "creator" },
+        lists: [],
+        followerCount: 0,
+        followingCount: 0,
+      },
+    }),
+  );
+  await page.goto(`${testRoot}u/creator`);
+  const link = page.locator(".lpPublicLinks a");
+  await expect(link).toBeVisible({ timeout: 15000 });
+  const rel = (await link.getAttribute("rel")) || "";
+  expect(rel).toContain("sponsored");
+  expect(rel).toContain("ugc");
+  expect(rel).toContain("nofollow");
+  expect(rel).toContain("noopener");
+});

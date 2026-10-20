@@ -151,7 +151,7 @@ import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
-import { SPONSORED_REL, UGC_REL } from '../utils/linkify';
+import { SPONSORED_REL, USER_LINK_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
@@ -177,7 +177,7 @@ export default {
             backTo,
             backLabelKey,
             sponsoredRel: SPONSORED_REL,
-            ugcRel: UGC_REL,
+            ugcRel: USER_LINK_REL,
         };
     },
     data() {
