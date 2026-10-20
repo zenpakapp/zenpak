@@ -56,7 +56,7 @@ const templates = [
         id: 'thru-hike-pct',
         data: toLibraryData(thruHikeData),
         listTypes: ['hiking'],
-        durations: ['long-distance'],
+        durations: ['long'],
         seasons: ['3-season', 'summer'],
     },
     {
