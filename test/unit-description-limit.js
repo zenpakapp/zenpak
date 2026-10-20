@@ -42,11 +42,11 @@ list.summary = '';
 assert.strictEqual(buildPublicList(owner, 'abc123').list.description, 'A description');
 assert.strictEqual(buildPublicListProjection(owner, list, {}, null).description, 'A description');
 
-// Line breaks: one at most in a row, on every public surface.
+// Line breaks: one empty line at most in a row, on every public surface.
 list.description = `first${'\n'.repeat(50)}second\r\n\r\n\r\nthird`;
 list.summary = '';
-assert.strictEqual(buildPublicList(owner, 'abc123').list.description, 'first\nsecond\nthird');
-assert.strictEqual(buildPublicListProjection(owner, list, {}, null).description, 'first\nsecond\nthird');
+assert.strictEqual(buildPublicList(owner, 'abc123').list.description, 'first\n\nsecond\n\nthird');
+assert.strictEqual(buildPublicListProjection(owner, list, {}, null).description, 'first\n\nsecond\n\nthird');
 // Empty lines do not eat the length either.
 list.description = `${'\n'.repeat(500)}${'x'.repeat(2000)}`;
 assert.strictEqual(buildPublicList(owner, 'abc123').list.description, 'x'.repeat(1000));

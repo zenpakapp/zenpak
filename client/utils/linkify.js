@@ -20,17 +20,19 @@ export const MAX_DESCRIPTION_LENGTH = 1000;
 const KNOWN_ENDINGS = 'com|org|net|io|co|app|dev|fr|de|es|it|nl|be|ch|uk|eu|ca|us|info|me|tv|ly|gg|cc|xyz|ai';
 const NOT_GLUED = '(?<![\\w./-])(?<!\\w@)';
 const REST_OF_URL = '[^\\s<>"\']';
-// A description keeps its line breaks, but never more than one in a row: fifty empty lines
-// would otherwise push the rest of the page out of sight. Lines holding only spaces count as
-// empty, and none is left at the start or the end. Same rule as server/text-limits.js.
+// A description keeps its line breaks, but a run of empty lines shrinks to one: it keeps two
+// paragraphs apart, while fifty empty lines would otherwise push the rest of the page out of
+// sight. Lines holding only spaces count as empty, and none is left at the start or the end.
+// Same rule as server/text-limits.js.
 export function collapseLineBreaks(text) {
     if (typeof text !== 'string') return '';
     return text
         .replace(/\r\n?/g, '\n')
         .split('\n')
         .map((line) => line.trim())
-        .filter(Boolean)
-        .join('\n');
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
 }
 
 const URL_PATTERN = new RegExp([
