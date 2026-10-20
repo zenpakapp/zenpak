@@ -48,7 +48,7 @@
     position: absolute;
     right: 0;
     top: calc(100% + 8px);
-    width: 300px;
+    width: 340px;
     z-index: $belowDialog;
 }
 
@@ -56,11 +56,13 @@
     align-items: center;
     border-bottom: 1px solid $color-border;
     display: flex;
+    gap: 12px;
     justify-content: space-between;
     padding: 14px 14px 10px;
 
     span {
         color: $color-text;
+        white-space: nowrap;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
     }
@@ -71,6 +73,7 @@
         color: $color-text-muted;
         cursor: pointer;
         font-size: $fontSize-sm;
+        white-space: nowrap;
 
         &:hover { color: $color-accent; }
     }
@@ -111,7 +114,8 @@
 .lpNotifTime {
     color: $color-text-muted;
     font-size: 11px;
-    margin-top: 2px;
+    line-height: 1.3;
+    margin-top: 4px;
 }
 
 .lpNotifEmpty {
