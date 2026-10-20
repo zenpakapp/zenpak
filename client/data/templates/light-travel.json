@@ -1,0 +1,835 @@
+{
+  "version": "0.3",
+  "totalUnit": "g",
+  "itemUnit": "g",
+  "defaultListId": 51,
+  "sequence": 200,
+  "showSidebar": true,
+  "optionalFields": {
+    "price": false,
+    "consumable": true,
+    "worn": true
+  },
+  "currencySymbol": "€",
+  "items": [
+    {
+      "id": 1,
+      "name": "30 L travel backpack",
+      "description": "Carry-on size, top-loading, water-resistant fabric",
+      "weight": 900,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 2,
+      "name": "Packing cubes",
+      "description": "Compression bags that keep clothes sorted",
+      "weight": 45,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 3,
+      "name": "Day sling bag",
+      "description": "Small crossbody bag for daily outings",
+      "weight": 250,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 4,
+      "name": "Sleep mask",
+      "description": "For rooms without shutters",
+      "weight": 25,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 5,
+      "name": "Earplugs",
+      "description": "Foam earplugs for noisy rooms and flights",
+      "weight": 5,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 6,
+      "name": "Merino polo shirt",
+      "description": "Odour-resistant, wears several days",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 7,
+      "name": "Technical T-shirt",
+      "description": "Breathable, for sport and hot days",
+      "weight": 130,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 8,
+      "name": "Cotton T-shirt",
+      "description": "Spare shirt for the evening",
+      "weight": 160,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 9,
+      "name": "Lightweight travel pants",
+      "description": "Quick-dry, stretch, easy to wash",
+      "weight": 350,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 10,
+      "name": "Stretch shorts",
+      "description": "For hot days and sport",
+      "weight": 180,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 11,
+      "name": "Quick-dry underwear",
+      "description": "Dries overnight after a hand wash",
+      "weight": 70,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 12,
+      "name": "Socks",
+      "description": "Pair of light socks",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 13,
+      "name": "Light overshirt",
+      "description": "Worn over a T-shirt, smart enough for a restaurant",
+      "weight": 220,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 14,
+      "name": "Walking shoes",
+      "description": "Comfortable for 15 to 20 km a day",
+      "weight": 600,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 15,
+      "name": "Packable rain jacket",
+      "description": "Thin waterproof and windproof shell",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 16,
+      "name": "Sun hat",
+      "description": "Packable bucket hat",
+      "weight": 70,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 17,
+      "name": "Flip-flops",
+      "description": "For hotel rooms, showers and hostels",
+      "weight": 250,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 18,
+      "name": "Compact umbrella",
+      "description": "Rain and sun protection",
+      "weight": 230,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 19,
+      "name": "Water bottle",
+      "description": "Bottle with a locking cap that stays shut in the bag",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 20,
+      "name": "Soft flask",
+      "description": "Folding flask for a run or a walk",
+      "weight": 70,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 21,
+      "name": "Snacks",
+      "description": "Nuts and bars for a long day",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 22,
+      "name": "Compact cutlery",
+      "description": "Folding fork and spoon",
+      "weight": 30,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 23,
+      "name": "Toiletry bag",
+      "description": "Small bag that hangs up",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 24,
+      "name": "Toothbrush and toothpaste",
+      "description": "Full-size brush, travel-size tube",
+      "weight": 70,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 25,
+      "name": "Deodorant",
+      "description": "Travel size",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 26,
+      "name": "Trimmer or razor",
+      "description": "USB rechargeable",
+      "weight": 120,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 27,
+      "name": "Basic medicine kit",
+      "description": "Painkillers, melatonin for jet lag, lip balm, eye drops",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 28,
+      "name": "Bite relief stick",
+      "description": "Soothes mosquito bites",
+      "weight": 20,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 29,
+      "name": "Microfibre towel",
+      "description": "Small and quick-dry",
+      "weight": 90,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 30,
+      "name": "Laundry sheets",
+      "description": "Dissolve in water, for a hand wash or the machine",
+      "weight": 30,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 31,
+      "name": "Travel clothesline",
+      "description": "Dries a hand wash in a hotel room",
+      "weight": 40,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 32,
+      "name": "Small pocket knife",
+      "description": "Blade under 6 cm, accepted at airport security",
+      "weight": 40,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 33,
+      "name": "Travel padlock",
+      "description": "For hostel lockers and bag zips",
+      "weight": 50,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 34,
+      "name": "USB-C cables",
+      "description": "Charge the phone and the power bank",
+      "weight": 25,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 35,
+      "name": "Wall charger and travel adapter",
+      "description": "Compact, works in most countries",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 36,
+      "name": "Power bank 10,000 mAh",
+      "description": "Recharges the phone several times",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 37,
+      "name": "Wireless earbuds",
+      "description": "For transport and calls",
+      "weight": 55,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 38,
+      "name": "E-reader",
+      "description": "Hundreds of books for the weight of one",
+      "weight": 175,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 39,
+      "name": "Notebook and pen",
+      "description": "For notes, addresses and sketches",
+      "weight": 120,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 40,
+      "name": "Sunglasses",
+      "description": "Or clip-on lenses for your glasses",
+      "weight": 30,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 41,
+      "name": "Passport and wallet",
+      "description": "Documents, cards and a little cash",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    }
+  ],
+  "categories": [
+    {
+      "id": 101,
+      "name": "Pack",
+      "categoryItems": [
+        {
+          "itemId": 1,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 2,
+          "qty": 2,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 3,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1240,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 4
+    },
+    {
+      "id": 102,
+      "name": "Sleep System",
+      "categoryItems": [
+        {
+          "itemId": 4,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 5,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 30,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 103,
+      "name": "Clothing & Footwear",
+      "categoryItems": [
+        {
+          "itemId": 6,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 7,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 8,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 9,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 10,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 11,
+          "qty": 5,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 12,
+          "qty": 4,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 13,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 14,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 15,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 16,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 17,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 18,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 3130,
+      "subtotalWornWeight": 1170,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 20
+    },
+    {
+      "id": 104,
+      "name": "Water",
+      "categoryItems": [
+        {
+          "itemId": 19,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 20,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 270,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 105,
+      "name": "Cook & Food",
+      "categoryItems": [
+        {
+          "itemId": 21,
+          "qty": 1,
+          "worn": false,
+          "consumable": true,
+          "star": false
+        },
+        {
+          "itemId": 22,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 180,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 150,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 106,
+      "name": "Hygiene & Health",
+      "categoryItems": [
+        {
+          "itemId": 23,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 24,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 25,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 26,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 27,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 28,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 29,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 30,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 31,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 590,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 9
+    },
+    {
+      "id": 107,
+      "name": "Safety & Navigation",
+      "categoryItems": [
+        {
+          "itemId": 32,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 33,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 90,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 108,
+      "name": "Electronics & Essentials",
+      "categoryItems": [
+        {
+          "itemId": 34,
+          "qty": 2,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 35,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 36,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 37,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 38,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 39,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 40,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 41,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 880,
+      "subtotalWornWeight": 100,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 9
+    }
+  ],
+  "lists": [
+    {
+      "id": 51,
+      "name": "Light travel",
+      "categoryIds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "totalWeight": 6410,
+      "totalWornWeight": 1270,
+      "totalConsumableWeight": 150,
+      "totalBaseWeight": 4990,
+      "totalPackWeight": 5140,
+      "totalPrice": 0,
+      "totalConsumablePrice": 0,
+      "totalQty": 50
+    }
+  ]
+}

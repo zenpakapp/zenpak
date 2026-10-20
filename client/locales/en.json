@@ -134,6 +134,7 @@
     "typeWeekend": "Weekend",
     "typeThru": "Trek",
     "typeBike": "Bikepacking",
+    "typeTravel": "Travel",
     "communityHint": "Looking for inspiration? Discover gear lists from the community.",
     "communityHintCta": "Explore community →",
     "guestHint": "Save your list and discover the community — it's free.",
@@ -899,6 +900,10 @@
       "bikepacking": {
         "name": "Bikepacking",
         "description": "34 items for a multi-day ride — light tent, warm sleep, clothing, repair and electronics"
+      },
+      "light-travel": {
+        "name": "Light travel",
+        "description": "41 items for a week-long trip with one 30 L pack — clothing, hygiene, electronics and a little comfort"
       }
     },
     "gearPickerTitle": "Add gear",
