@@ -97,7 +97,7 @@
     "faq3A": "Oui. Exportez votre CSV depuis lighterpack.com ou un autre outil de liste d'équipement basé sur tableur, puis importez-le dans ZenPak. Les listes, articles, poids et notes sont transférés proprement, sans avoir à tout reconstruire à la main."
   },
   "list": {
-    "descriptionHelp": "Les liens de la description sont cliquables (3 au maximum). Si un lien vous rapporte de l'argent, dites-le.",
+    "descriptionHelp": "Liens cliquables (3 maximum). Un lien qui vous rémunère (affiliation, parrainage) ? Précisez-le.",
     "addCategory": "Ajouter une catégorie",
     "packThis": "Préparer ce sac",
     "reset": "Réinitialiser",
