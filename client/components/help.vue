@@ -23,7 +23,7 @@
         <strong>{{ $t('misc.helpLinkedItemsTitle') }}</strong>
         <p>{{ $t('misc.helpLinkedItemsText') }}</p>
         <hr>
-        <p><a class="lpHref" href="mailto:info@zenpak.app">{{ $t('misc.helpEmailCta') }}</a></p>
+        <p><a class="lpHref" href="mailto:support@zenpak.app">{{ $t('misc.helpEmailCta') }}</a></p>
     </modal>
 </template>
 

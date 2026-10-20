@@ -175,7 +175,7 @@
                     -
                     <a class="lpHref" href="/legal">{{ $t('dash.footerLegal') }}</a>
                     -
-                    <a class="lpHref" href="mailto:info@zenpak.app">{{ $t('dash.footerContact') }}</a>
+                    <a class="lpHref" href="mailto:support@zenpak.app">{{ $t('dash.footerContact') }}</a>
                 </div>
             </div>
         </div>
