@@ -14,9 +14,9 @@
   "items": [
     {
       "id": 1,
-      "name": "Daypack 22 L",
+      "name": "Daypack 25 L",
       "description": "Small pack that sits close to the body on the rock",
-      "weight": 700,
+      "weight": 950,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -156,7 +156,7 @@
       "id": 15,
       "name": "Helmet",
       "description": "Climbing helmet, compulsory against falling rocks",
-      "weight": 280,
+      "weight": 240,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -176,7 +176,7 @@
       "id": 17,
       "name": "Via ferrata lanyard",
       "description": "Two arms with an energy absorber",
-      "weight": 450,
+      "weight": 530,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -194,9 +194,9 @@
     },
     {
       "id": 19,
-      "name": "Rest sling",
-      "description": "Lets you rest hanging from the cable",
-      "weight": 100,
+      "name": "Rest lanyard",
+      "description": "Adjustable cow tail that lets you rest hanging from the cable",
+      "weight": 160,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -204,6 +204,56 @@
     },
     {
       "id": 20,
+      "name": "Quickdraws",
+      "description": "For protecting a section outside the cable",
+      "weight": 45,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 21,
+      "name": "Pocket knife",
+      "description": "Small rescue knife",
+      "weight": 37,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 22,
+      "name": "Pulley",
+      "description": "Rescue kit, for experienced climbers (hauling and self-rescue)",
+      "weight": 270,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 23,
+      "name": "Hand ascender",
+      "description": "Rescue kit, for experienced climbers",
+      "weight": 125,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 24,
+      "name": "Dyneema sling",
+      "description": "Rescue kit, 120 cm (estimate)",
+      "weight": 25,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 25,
       "name": "Emergency blanket",
       "description": "Foil survival blanket",
       "weight": 60,
@@ -213,7 +263,7 @@
       "url": ""
     },
     {
-      "id": 21,
+      "id": 26,
       "name": "Whistle",
       "description": "Signals for help",
       "weight": 10,
@@ -223,7 +273,7 @@
       "url": ""
     },
     {
-      "id": 22,
+      "id": 27,
       "name": "Topo or GPS",
       "description": "Route topo, printed or on the phone",
       "weight": 100,
@@ -233,7 +283,7 @@
       "url": ""
     },
     {
-      "id": 23,
+      "id": 28,
       "name": "Headlamp",
       "description": "For tunnels and an unplanned late return",
       "weight": 85,
@@ -243,7 +293,7 @@
       "url": ""
     },
     {
-      "id": 24,
+      "id": 29,
       "name": "Sunglasses",
       "description": "Glare on the rock",
       "weight": 30,
@@ -266,7 +316,7 @@
           "star": false
         }
       ],
-      "subtotalWeight": 700,
+      "subtotalWeight": 950,
       "subtotalWornWeight": 0,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
@@ -453,7 +503,7 @@
         },
         {
           "itemId": 20,
-          "qty": 1,
+          "qty": 2,
           "worn": false,
           "consumable": false,
           "star": false
@@ -471,19 +521,7 @@
           "worn": false,
           "consumable": false,
           "star": false
-        }
-      ],
-      "subtotalWeight": 1430,
-      "subtotalWornWeight": 1060,
-      "subtotalConsumableWeight": 0,
-      "subtotalPrice": 0,
-      "subtotalConsumablePrice": 0,
-      "subtotalQty": 9
-    },
-    {
-      "id": 107,
-      "name": "Electronics & Essentials",
-      "categoryItems": [
+        },
         {
           "itemId": 23,
           "qty": 1,
@@ -493,6 +531,53 @@
         },
         {
           "itemId": 24,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 25,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 26,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 27,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 2077,
+      "subtotalWornWeight": 1100,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 15
+    },
+    {
+      "id": 107,
+      "name": "Electronics & Essentials",
+      "categoryItems": [
+        {
+          "itemId": 28,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 29,
           "qty": 1,
           "worn": true,
           "consumable": false,
@@ -520,14 +605,14 @@
         106,
         107
       ],
-      "totalWeight": 6475,
-      "totalWornWeight": 2470,
+      "totalWeight": 7372,
+      "totalWornWeight": 2510,
       "totalConsumableWeight": 2100,
-      "totalBaseWeight": 1905,
-      "totalPackWeight": 4005,
+      "totalBaseWeight": 2762,
+      "totalPackWeight": 4862,
       "totalPrice": 0,
       "totalConsumablePrice": 0,
-      "totalQty": 25
+      "totalQty": 31
     }
   ]
 }
