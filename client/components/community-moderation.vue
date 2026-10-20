@@ -1,5 +1,6 @@
 <template>
     <div>
+        <community-stats />
         <community-accounts />
         <community-lists />
         <h2 class="lpModerationHeading">
@@ -59,12 +60,15 @@
 <script>
 import { fetchJson } from '../utils/utils';
 import CommunityAccounts from './community-accounts.vue';
+import CommunityStats from './community-stats.vue';
 import CommunityLists from './community-lists.vue';
 import ConfirmDialog from './confirm-dialog.vue';
 
 export default {
     name: 'CommunityModeration',
-    components: { CommunityAccounts, CommunityLists, ConfirmDialog },
+    components: {
+        CommunityAccounts, CommunityLists, CommunityStats, ConfirmDialog,
+    },
     emits: ['feature-list'],
     data() {
         return {

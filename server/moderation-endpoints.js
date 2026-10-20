@@ -12,6 +12,7 @@ const {
     applyOffer, isOfferActive, OfferError, revokeOffer,
 } = require('./plan-offers.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
+const { collectStats } = require('./moderation-stats.js');
 
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -200,6 +201,18 @@ async function searchLists(req, res) {
         return res.status(500).json({ message: 'An error occurred' });
     }
 }
+
+// The numbers of the "Chiffres" panel.
+router.get('/moderation/stats', (req, res) => {
+    authenticateModerator(req, res, async (authedReq, authedRes) => {
+        try {
+            return authedRes.json(await collectStats());
+        } catch (error) {
+            logWithRequest(authedReq, { message: 'MODERATION Stats error', error: error.message });
+            return authedRes.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
 
 router.get('/moderation/search-lists', (req, res) => {
     authenticateModerator(req, res, searchLists);
