@@ -904,6 +904,10 @@
       "light-travel": {
         "name": "Light travel",
         "description": "41 items for a week-long trip with one 30 L pack — clothing, hygiene, electronics and a little comfort"
+      },
+      "via-ferrata": {
+        "name": "Via ferrata",
+        "description": "24 items for a day on the rock — helmet, harness, lanyard, gloves and the essentials for a half-day route"
       }
     },
     "gearPickerTitle": "Add gear",

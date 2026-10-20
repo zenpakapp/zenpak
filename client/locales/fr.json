@@ -1010,6 +1010,10 @@
       "light-travel": {
         "name": "Voyage léger",
         "description": "41 articles pour un voyage d'une semaine avec un seul sac de 30 L — vêtements, hygiène, électronique et un peu de confort"
+      },
+      "via-ferrata": {
+        "name": "Via ferrata",
+        "description": "24 articles pour une journée sur le rocher — casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
       }
     },
     "gearPickerTitle": "Ajouter de l'équipement",

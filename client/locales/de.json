@@ -1010,6 +1010,10 @@
       "light-travel": {
         "name": "Leichtes Reisen",
         "description": "41 Gegenstände für eine Woche Reise mit einem 30-L-Rucksack — Kleidung, Hygiene, Elektronik und etwas Komfort"
+      },
+      "via-ferrata": {
+        "name": "Klettersteig",
+        "description": "24 Gegenstände für einen Tag am Fels — Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
       }
     },
     "gearPickerTitle": "Ausrüstung hinzufügen",

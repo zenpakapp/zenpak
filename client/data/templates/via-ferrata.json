@@ -1,0 +1,533 @@
+{
+  "version": "0.3",
+  "totalUnit": "g",
+  "itemUnit": "g",
+  "defaultListId": 61,
+  "sequence": 200,
+  "showSidebar": true,
+  "optionalFields": {
+    "price": false,
+    "consumable": true,
+    "worn": true
+  },
+  "currencySymbol": "€",
+  "items": [
+    {
+      "id": 1,
+      "name": "Daypack 22 L",
+      "description": "Small pack that sits close to the body on the rock",
+      "weight": 700,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 2,
+      "name": "Approach shoes",
+      "description": "Grippy sole for rock and scree",
+      "weight": 800,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 3,
+      "name": "Hiking pants",
+      "description": "Hard-wearing and stretchy, resists rubbing on the rock",
+      "weight": 350,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 4,
+      "name": "Technical T-shirt",
+      "description": "Quick-dry",
+      "weight": 130,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 5,
+      "name": "Via ferrata gloves",
+      "description": "Protect the palms from cables and rock",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 6,
+      "name": "Light fleece",
+      "description": "For the wait at the foot of the route and the summit",
+      "weight": 250,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 7,
+      "name": "Windproof jacket",
+      "description": "Packable, for wind on exposed sections",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 8,
+      "name": "Sun cap",
+      "description": "Light cap, fits under the helmet strap when carried",
+      "weight": 50,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 9,
+      "name": "Water",
+      "description": "1.5 litres for a half-day route",
+      "weight": 1500,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 10,
+      "name": "Soft flask or bottle",
+      "description": "Empty weight of the container",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 11,
+      "name": "Snacks",
+      "description": "Nuts, bars and dried fruit for the climb",
+      "weight": 300,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 12,
+      "name": "Lunch",
+      "description": "Sandwich or wrap for the summit",
+      "weight": 300,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 13,
+      "name": "First aid kit",
+      "description": "Plasters, bandage, tape, painkillers",
+      "weight": 150,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 14,
+      "name": "Sunscreen",
+      "description": "Small tube",
+      "weight": 50,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 15,
+      "name": "Helmet",
+      "description": "Climbing helmet, compulsory against falling rocks",
+      "weight": 280,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 16,
+      "name": "Harness",
+      "description": "Light climbing harness",
+      "weight": 330,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 17,
+      "name": "Via ferrata lanyard",
+      "description": "Two arms with an energy absorber",
+      "weight": 450,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 18,
+      "name": "Locking carabiners",
+      "description": "Spare locking carabiners",
+      "weight": 50,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 19,
+      "name": "Rest sling",
+      "description": "Lets you rest hanging from the cable",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 20,
+      "name": "Emergency blanket",
+      "description": "Foil survival blanket",
+      "weight": 60,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 21,
+      "name": "Whistle",
+      "description": "Signals for help",
+      "weight": 10,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 22,
+      "name": "Topo or GPS",
+      "description": "Route topo, printed or on the phone",
+      "weight": 100,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 23,
+      "name": "Headlamp",
+      "description": "For tunnels and an unplanned late return",
+      "weight": 85,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 24,
+      "name": "Sunglasses",
+      "description": "Glare on the rock",
+      "weight": 30,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    }
+  ],
+  "categories": [
+    {
+      "id": 101,
+      "name": "Pack",
+      "categoryItems": [
+        {
+          "itemId": 1,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 700,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 1
+    },
+    {
+      "id": 102,
+      "name": "Clothing & Footwear",
+      "categoryItems": [
+        {
+          "itemId": 2,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 3,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 4,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 5,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 6,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 7,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 8,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1830,
+      "subtotalWornWeight": 1380,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 7
+    },
+    {
+      "id": 103,
+      "name": "Water",
+      "categoryItems": [
+        {
+          "itemId": 9,
+          "qty": 1,
+          "worn": false,
+          "consumable": true,
+          "star": false
+        },
+        {
+          "itemId": 10,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1600,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 1500,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 104,
+      "name": "Cook & Food",
+      "categoryItems": [
+        {
+          "itemId": 11,
+          "qty": 1,
+          "worn": false,
+          "consumable": true,
+          "star": false
+        },
+        {
+          "itemId": 12,
+          "qty": 1,
+          "worn": false,
+          "consumable": true,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 600,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 600,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 105,
+      "name": "Hygiene & Health",
+      "categoryItems": [
+        {
+          "itemId": 13,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 14,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 200,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    },
+    {
+      "id": 106,
+      "name": "Safety & Navigation",
+      "categoryItems": [
+        {
+          "itemId": 15,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 16,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 17,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 18,
+          "qty": 2,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 19,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 20,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 21,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 22,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 1430,
+      "subtotalWornWeight": 1060,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 9
+    },
+    {
+      "id": 107,
+      "name": "Electronics & Essentials",
+      "categoryItems": [
+        {
+          "itemId": 23,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 24,
+          "qty": 1,
+          "worn": true,
+          "consumable": false,
+          "star": false
+        }
+      ],
+      "subtotalWeight": 115,
+      "subtotalWornWeight": 30,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 2
+    }
+  ],
+  "lists": [
+    {
+      "id": 61,
+      "name": "Via ferrata",
+      "categoryIds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107
+      ],
+      "totalWeight": 6475,
+      "totalWornWeight": 2470,
+      "totalConsumableWeight": 2100,
+      "totalBaseWeight": 1905,
+      "totalPackWeight": 4005,
+      "totalPrice": 0,
+      "totalConsumablePrice": 0,
+      "totalQty": 25
+    }
+  ]
+}

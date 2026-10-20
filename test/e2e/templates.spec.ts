@@ -29,6 +29,7 @@ test.describe("Template picker", () => {
     ).toBeVisible();
     await expect(page.getByText("Bikepacking", { exact: true })).toBeVisible();
     await expect(page.getByText("Light travel", { exact: true })).toBeVisible();
+    await expect(page.getByText("Via ferrata", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Create my list" }),
     ).toBeVisible();
@@ -131,6 +132,36 @@ test.describe("Template picker", () => {
     ).toHaveCount(1);
     await expect(
       page.locator('input.lpCategoryName[value="Electronics & Essentials"]'),
+    ).toHaveCount(1);
+  });
+
+  test("the via ferrata template builds a list with the safety gear", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    let libraryPayload: string | null = null;
+    await page.route("**/register", async (route) => {
+      libraryPayload = route.request().postDataJSON()?.library ?? null;
+      await route.continue();
+    });
+
+    await registerUserWithTemplate(
+      page,
+      `tpl${now}`,
+      "testtest",
+      `tpl+${now}@lighterpack.com`,
+      "Via ferrata",
+    );
+    await expect(page.locator(".accountDropdownName")).toHaveText(`tpl${now}`);
+
+    const library = JSON.parse(libraryPayload!);
+    expect(library.lists[0].name).toBe("Via ferrata");
+    expect(library.items.length).toBe(24);
+    const lanyard = library.items.find((i) => i.name === "Via ferrata lanyard");
+    expect(lanyard.weight).toBe(450000);
+
+    await expect(
+      page.locator('input.lpCategoryName[value="Safety & Navigation"]'),
     ).toHaveCount(1);
   });
 
