@@ -49,25 +49,18 @@
 
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.communityTags') }}</div>
-                        <div class="shareTagGroup" :aria-label="$t('share.seasonsLabel')">
-                            <label v-for="season in seasonOptions" :key="season.value" class="shareTagCheckbox">
-                                <input
-                                    type="checkbox"
-                                    :checked="selectedSeasons.includes(season.value)"
-                                    @change="toggleDiscoveryTag('seasons', season.value, $event.target.checked)"
-                                >
-                                {{ season.label }}
-                            </label>
-                        </div>
-                        <div class="shareTagGroup" :aria-label="$t('share.listTypesLabel')">
-                            <label v-for="listType in listTypeOptions" :key="listType.value" class="shareTagCheckbox">
-                                <input
-                                    type="checkbox"
-                                    :checked="selectedListTypes.includes(listType.value)"
-                                    @change="toggleDiscoveryTag('listTypes', listType.value, $event.target.checked)"
-                                >
-                                {{ listType.label }}
-                            </label>
+                        <div v-for="group in tagGroups" :key="group.key" class="shareTagGroupBlock">
+                            <div class="shareTagGroupLabel">{{ group.label }}</div>
+                            <div class="shareTagGroup" :aria-label="group.label">
+                                <label v-for="option in group.options" :key="option.value" class="shareTagCheckbox">
+                                    <input
+                                        type="checkbox"
+                                        :checked="group.selected.includes(option.value)"
+                                        @change="toggleDiscoveryTag(group.field, option.value, $event.target.checked)"
+                                    >
+                                    {{ option.label }}
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -113,7 +106,9 @@
 import PopoverHover from './popover-hover.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { fetchJson } from '../utils/utils';
-import { LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions } from '../data/list-type-options';
+import {
+    LIST_TYPE_VALUES, SEASON_VALUES, toI18nOptions, valuesInGroup,
+} from '../data/list-type-options';
 
 export default {
     name: 'Share',
@@ -130,11 +125,24 @@ export default {
         };
     },
     computed: {
-        seasonOptions() {
-            return toI18nOptions(SEASON_VALUES, (key) => this.$t(key));
-        },
-        listTypeOptions() {
-            return toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key));
+        // Four labelled groups instead of one flat block of unrelated checkboxes. The stored
+        // fields are still `seasons` and `listTypes`.
+        tagGroups() {
+            const options = (values, group) => toI18nOptions(valuesInGroup(values, group), (key) => this.$t(key));
+            return [
+                {
+                    key: 'season', field: 'seasons', label: this.$t('share.tagGroupSeason'), options: options(SEASON_VALUES, 'season'), selected: this.selectedSeasons,
+                },
+                {
+                    key: 'gearLevel', field: 'seasons', label: this.$t('share.tagGroupGearLevel'), options: options(SEASON_VALUES, 'gearLevel'), selected: this.selectedSeasons,
+                },
+                {
+                    key: 'duration', field: 'listTypes', label: this.$t('share.tagGroupDuration'), options: options(LIST_TYPE_VALUES, 'duration'), selected: this.selectedListTypes,
+                },
+                {
+                    key: 'activity', field: 'listTypes', label: this.$t('share.tagGroupActivity'), options: options(LIST_TYPE_VALUES, 'activity'), selected: this.selectedListTypes,
+                },
+            ];
         },
         visibilityHint() {
             const hints = {
