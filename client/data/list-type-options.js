@@ -22,9 +22,8 @@ const DURATION_VALUES = [
     { value: 'long-distance', i18nKey: 'list.durationLongDistance' },
 ];
 
-// The list types before the activity and the duration were split. They no longer exist on a
-// list (server/list-tag-migration.js converts them), but a version history keeps the value it
-// had, so they stay readable there.
+// The list types before the activity and the duration were split. A list no longer offers
+// them, but a version history keeps the value it had, so they stay readable there.
 const LEGACY_LIST_TYPE_VALUES = [
     { value: 'day-hike', i18nKey: 'list.typeDay' },
     { value: 'weekend', i18nKey: 'list.typeWeekend' },
