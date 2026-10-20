@@ -30,6 +30,7 @@ test.describe("Template picker", () => {
     await expect(page.getByText("Bikepacking", { exact: true })).toBeVisible();
     await expect(page.getByText("Light travel", { exact: true })).toBeVisible();
     await expect(page.getByText("Via ferrata", { exact: true })).toBeVisible();
+    await expect(page.getByText("Trail running", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Create my list" }),
     ).toBeVisible();
@@ -159,6 +160,36 @@ test.describe("Template picker", () => {
     expect(library.items.length).toBe(29);
     const lanyard = library.items.find((i) => i.name === "Via ferrata lanyard");
     expect(lanyard.weight).toBe(530000);
+
+    await expect(
+      page.locator('input.lpCategoryName[value="Safety & Navigation"]'),
+    ).toHaveCount(1);
+  });
+
+  test("the trail running template builds a list with the mandatory kit", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    let libraryPayload: string | null = null;
+    await page.route("**/register", async (route) => {
+      libraryPayload = route.request().postDataJSON()?.library ?? null;
+      await route.continue();
+    });
+
+    await registerUserWithTemplate(
+      page,
+      `tpl${now}`,
+      "testtest",
+      `tpl+${now}@lighterpack.com`,
+      "Trail running",
+    );
+    await expect(page.locator(".accountDropdownName")).toHaveText(`tpl${now}`);
+
+    const library = JSON.parse(libraryPayload!);
+    expect(library.lists[0].name).toBe("Trail running");
+    expect(library.items.length).toBe(28);
+    const vest = library.items.find((i) => i.name === "Trail running vest");
+    expect(vest.weight).toBe(129000);
 
     await expect(
       page.locator('input.lpCategoryName[value="Safety & Navigation"]'),

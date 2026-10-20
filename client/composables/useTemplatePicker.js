@@ -10,6 +10,7 @@ const fourSeasonData = require('../data/templates/4-season-backpacking.json');
 const bikepackingData = require('../data/templates/bikepacking.json');
 const lightTravelData = require('../data/templates/light-travel.json');
 const viaFerrataData = require('../data/templates/via-ferrata.json');
+const trailRunningData = require('../data/templates/trail-running.json');
 
 const SUBTOTAL_WEIGHT_FIELDS = ['subtotalWeight', 'subtotalWornWeight', 'subtotalConsumableWeight'];
 
@@ -76,6 +77,12 @@ const templates = [
     {
         id: 'via-ferrata',
         data: toLibraryData(viaFerrataData),
+        listTypes: ['day-hike'],
+        seasons: ['3-season', 'summer'],
+    },
+    {
+        id: 'trail-running',
+        data: toLibraryData(trailRunningData),
         listTypes: ['day-hike'],
         seasons: ['3-season', 'summer'],
     },

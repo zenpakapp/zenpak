@@ -1014,6 +1014,10 @@
       "via-ferrata": {
         "name": "Klettersteig",
         "description": "29 Gegenstände für einen Tag am Fels — Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
+      },
+      "trail-running": {
+        "name": "Trailrunning",
+        "description": "28 Gegenstände für einen Berglauf oder einen langen Lauf — Weste, Pflichtausrüstung, Verpflegung und Kleidung für schlechtes Wetter"
       }
     },
     "gearPickerTitle": "Ausrüstung hinzufügen",
