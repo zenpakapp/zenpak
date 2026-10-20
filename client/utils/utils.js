@@ -1,8 +1,17 @@
+const ENGLISH_GENERIC_ERROR = 'An error occurred, please try again later.';
+// Shown when a failed request has nothing to say. This file is loaded by tests in Node, where the
+// i18n module cannot run, so the app hands it the sentence of the page language (client/i18n.js).
+let genericErrorMessage = ENGLISH_GENERIC_ERROR;
+
+export function setGenericErrorMessage(message) {
+    genericErrorMessage = typeof message === 'string' && message ? message : ENGLISH_GENERIC_ERROR;
+}
+
 class lpError extends Error {
     constructor(response, statusCode = null) {
         super();
 
-        this.message = 'An error occurred, please try again later.';
+        this.message = genericErrorMessage;
         this.statusCode = statusCode;
         this.status = statusCode;
         this.isUnauthorized = statusCode === 401 || statusCode === 403;
