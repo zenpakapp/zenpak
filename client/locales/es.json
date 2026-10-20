@@ -1010,6 +1010,10 @@
       "light-travel": {
         "name": "Viaje ligero",
         "description": "41 artículos para una semana de viaje con una sola mochila de 30 L — ropa, higiene, electrónica y algo de comodidad"
+      },
+      "via-ferrata": {
+        "name": "Vía ferrata",
+        "description": "24 artículos para un día en la roca — casco, arnés, disipador, guantes y lo esencial para un recorrido de medio día"
       }
     },
     "gearPickerTitle": "Añadir equipo",
