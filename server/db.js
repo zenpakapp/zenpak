@@ -49,6 +49,10 @@ function collection(name) {
                 .then((docs) => callback(null, docs))
                 .catch((err) => callback(err, null));
         },
+        count(query = {}) {
+            return getCollection(name)
+                .then((mongoCollection) => mongoCollection.countDocuments(query));
+        },
         findMany(query, options) {
             return getCollection(name)
                 .then((mongoCollection) => mongoCollection.find(query, options).toArray());

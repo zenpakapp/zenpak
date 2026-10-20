@@ -676,6 +676,52 @@
     font-size: $fontSize-xs;
 }
 
+.lpModerationStatsGrid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.lpModerationStatsCard {
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    padding: 12px 14px;
+}
+
+.lpModerationStatsTitle {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    letter-spacing: 0.04em;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+}
+
+.lpModerationStatsRows {
+    margin: 0;
+}
+
+.lpModerationStatsRow {
+    align-items: baseline;
+    display: flex;
+    font-size: $fontSize-sm;
+    justify-content: space-between;
+    padding: 3px 0;
+
+    dt {
+        color: $color-text-muted;
+    }
+
+    dd {
+        color: $color-text;
+        font-variant-numeric: tabular-nums;
+        font-weight: $fontWeight-bold;
+        margin: 0;
+    }
+}
+
+.lpModerationStats,
 .lpModerationLists,
 .lpModerationAccounts {
     border-bottom: 1px solid $color-border;
