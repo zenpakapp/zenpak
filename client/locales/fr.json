@@ -1014,6 +1014,10 @@
       "via-ferrata": {
         "name": "Via ferrata",
         "description": "29 articles pour une journée sur le rocher — casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
+      },
+      "trail-running": {
+        "name": "Trail running",
+        "description": "28 articles pour une course en montagne ou une sortie longue — gilet, matériel obligatoire, nutrition et vêtements pour le mauvais temps"
       }
     },
     "gearPickerTitle": "Ajouter de l'équipement",
