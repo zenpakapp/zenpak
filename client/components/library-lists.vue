@@ -6,7 +6,7 @@
     margin-bottom: 20px;
 
     #lists {
-        max-height: 111px;
+        max-height: 150px;
         overflow-y: auto;
     }
 }
@@ -61,11 +61,15 @@
         background: rgba(var(--color-accent-rgb), 0.04);
     }
 
+    // A long name takes two lines instead of one cut-off line; the full name is the tooltip.
     .lpListName {
+        -webkit-box-orient: vertical;
+        display: -webkit-box;
         flex: 1 1 auto;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        overflow-wrap: anywhere;
 
         &:hover {
             cursor: pointer;
@@ -120,7 +124,7 @@
         <ul id="lists" ref="lists">
             <li v-for="list in library.lists" :key="list.id" class="lpLibraryList" :class="{lpActive: (library.defaultListId == list.id)}">
                 <div class="lpHandle" :title="$t('library.reorderItemTitle')" />
-                <span class="lpLibraryListSwitch lpListName" @click="setDefaultList(list)">
+                <span class="lpLibraryListSwitch lpListName" :title="listName(list)" @click="setDefaultList(list)">
                     {{ listName(list) }}
                     <span v-if="forkUpdateFor(list)" class="lpForkUpdateBadge">{{ $t('list.versioning.updateBadge', { version: forkUpdateFor(list).latestVersion }) }}</span>
                 </span>
