@@ -24,6 +24,7 @@ const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvField } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
 const { clipDescription } = require('./text-limits.js');
+const { analyticsConfig, analyticsTag } = require('./analytics.js');
 
 const db = require('./db.js');
 const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
@@ -123,6 +124,7 @@ if (getRuntimeEnvironment() === 'production') {
 
 index = index.replace('{{styles}}', appStylesHtml);
 index = index.replace('{{scripts}}', appScriptsHtml);
+index = index.replace('{{analytics}}', analyticsTag(analyticsConfig()));
 
 for (let i = 0; i < vueRoutes.length; i++) {
     router.get(vueRoutes[i].path, (req, res) => {
@@ -404,7 +406,7 @@ function init() {
 
         fs.readFile(path.join(__dirname, '../templates/pricing.mustache'), (err, data) => {
             if (!err) {
-                pricingTemplate = data.toString();
+                pricingTemplate = data.toString().replace('</head>', `${analyticsTag(analyticsConfig())}</head>`);
             } else {
                 logger.info('ERROR reading pricing.mustache');
             }

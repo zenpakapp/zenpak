@@ -232,6 +232,7 @@
 <script>
 import { useRouter } from 'vue-router';
 import { fetchJson } from '../utils/utils';
+import { trackEvent } from '../utils/analytics';
 import { tierLabel } from '../services/tier-labels';
 import { useTheme } from '../composables/useTheme';
 import { useBackNav } from '../composables/useBackNav';
@@ -542,6 +543,7 @@ export default {
                 }
                 const data = await fetchJson(`/api/community/copy-list/${this.$route.params.externalId}`, { method: 'POST' });
                 this.$store.commit('importPublicList', data);
+                trackEvent('list-copied');
                 this.router.push('/');
                 this.copySuccess = true;
                 setTimeout(() => { this.copySuccess = false; }, 2000);

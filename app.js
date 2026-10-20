@@ -14,6 +14,7 @@ const morgan = require('morgan');
 const path = require('path');
 
 const { logger } = require('./server/log.js');
+const { analyticsConfig, analyticsOrigin } = require('./server/analytics.js');
 const {
     REQUEST_BODY_LIMIT,
     securityHeaders,
@@ -45,7 +46,7 @@ const appPort = getRuntimeNumber('PORT', config.get('port'));
 const devServerPort = getRuntimeNumber('DEV_SERVER_PORT', config.get('devServerPort'));
 app.enable('trust proxy');
 app.disable('x-powered-by');
-app.use(securityHeaders({ environment: getRuntimeEnvironment() }));
+app.use(securityHeaders({ environment: getRuntimeEnvironment(), analyticsOrigin: analyticsOrigin(analyticsConfig()) }));
 
 app.use((req, res, next) => {
     req.uuid = crypto.randomUUID();
