@@ -70,7 +70,7 @@ const templates = [
         id: 'light-travel',
         data: toLibraryData(lightTravelData),
         listTypes: ['travel'],
-        seasons: ['3-season', 'summer'],
+        seasons: ['summer'],
     },
 ];
 
