@@ -134,6 +134,7 @@
     "typeWeekend": "Week-end",
     "typeThru": "Trek",
     "typeBike": "Bikepacking",
+    "typeTravel": "Voyage",
     "communityHint": "Besoin d'inspiration ? Découvrez les listes de la communauté.",
     "communityHintCta": "Explorer la communauté →",
     "guestHint": "Sauvegardez votre liste et découvrez la communauté — c'est gratuit.",
@@ -1005,6 +1006,10 @@
       "bikepacking": {
         "name": "Bikepacking",
         "description": "34 articles pour un voyage à vélo de plusieurs jours — tente légère, couchage chaud, vêtements, réparation et électronique"
+      },
+      "light-travel": {
+        "name": "Voyage léger",
+        "description": "41 articles pour un voyage d'une semaine avec un seul sac de 30 L — vêtements, hygiène, électronique et un peu de confort"
       }
     },
     "gearPickerTitle": "Ajouter de l'équipement",

@@ -28,6 +28,7 @@ test.describe("Template picker", () => {
       page.getByText("4-season hiking", { exact: true }),
     ).toBeVisible();
     await expect(page.getByText("Bikepacking", { exact: true })).toBeVisible();
+    await expect(page.getByText("Light travel", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Create my list" }),
     ).toBeVisible();
@@ -97,6 +98,39 @@ test.describe("Template picker", () => {
     ).toHaveCount(1);
     await expect(
       page.locator('input.lpCategoryName[value="Sleep System"]'),
+    ).toHaveCount(1);
+  });
+
+  test("the light travel template builds a list for one 30 L pack", async ({
+    page,
+  }) => {
+    const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+    let libraryPayload: string | null = null;
+    await page.route("**/register", async (route) => {
+      libraryPayload = route.request().postDataJSON()?.library ?? null;
+      await route.continue();
+    });
+
+    await registerUserWithTemplate(
+      page,
+      `tpl${now}`,
+      "testtest",
+      `tpl+${now}@lighterpack.com`,
+      "Light travel",
+    );
+    await expect(page.locator(".accountDropdownName")).toHaveText(`tpl${now}`);
+
+    const library = JSON.parse(libraryPayload!);
+    expect(library.lists[0].name).toBe("Light travel");
+    expect(library.items.length).toBe(41);
+    const pack = library.items.find((i) => i.name === "30 L travel backpack");
+    expect(pack.weight).toBe(900000);
+
+    await expect(
+      page.locator('input.lpCategoryName[value="Hygiene & Health"]'),
+    ).toHaveCount(1);
+    await expect(
+      page.locator('input.lpCategoryName[value="Electronics & Essentials"]'),
     ).toHaveCount(1);
   });
 

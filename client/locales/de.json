@@ -134,6 +134,7 @@
     "typeWeekend": "Wochenende",
     "typeThru": "Trekking",
     "typeBike": "Bikepacking",
+    "typeTravel": "Reise",
     "communityHint": "Auf der Suche nach Inspiration? Entdecke Community-Listen.",
     "communityHintCta": "Community entdecken →",
     "guestHint": "Liste speichern und Community entdecken — kostenlos.",
@@ -1005,6 +1006,10 @@
       "bikepacking": {
         "name": "Bikepacking",
         "description": "34 Gegenstände für eine mehrtägige Radreise — leichtes Zelt, warmer Schlaf, Kleidung, Reparatur und Elektronik"
+      },
+      "light-travel": {
+        "name": "Leichtes Reisen",
+        "description": "41 Gegenstände für eine Woche Reise mit einem 30-L-Rucksack — Kleidung, Hygiene, Elektronik und etwas Komfort"
       }
     },
     "gearPickerTitle": "Ausrüstung hinzufügen",

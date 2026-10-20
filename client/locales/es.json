@@ -134,6 +134,7 @@
     "typeWeekend": "Fin de semana",
     "typeThru": "Trekking",
     "typeBike": "Bikepacking",
+    "typeTravel": "Viaje",
     "communityHint": "Buscas inspiracion? Descubre listas de la comunidad.",
     "communityHintCta": "Explorar comunidad →",
     "guestHint": "Guarda tu lista y descubre la comunidad — es gratis.",
@@ -1005,6 +1006,10 @@
       "bikepacking": {
         "name": "Bikepacking",
         "description": "34 artículos para un viaje en bici de varios días — tienda ligera, descanso abrigado, ropa, reparación y electrónica"
+      },
+      "light-travel": {
+        "name": "Viaje ligero",
+        "description": "41 artículos para una semana de viaje con una sola mochila de 30 L — ropa, higiene, electrónica y algo de comodidad"
       }
     },
     "gearPickerTitle": "Añadir equipo",

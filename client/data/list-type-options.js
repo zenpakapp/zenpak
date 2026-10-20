@@ -10,6 +10,7 @@ const LIST_TYPE_VALUES = [
     { value: 'weekend', i18nKey: 'list.typeWeekend' },
     { value: 'trek', i18nKey: 'list.typeThru' },
     { value: 'bikepacking', i18nKey: 'list.typeBike' },
+    { value: 'travel', i18nKey: 'list.typeTravel' },
 ];
 
 const SEASON_VALUES = [
