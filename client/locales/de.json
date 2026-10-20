@@ -97,7 +97,7 @@
     "faq3A": "Ja. Exportiere deine CSV von lighterpack.com oder einem anderen tabellenbasierten Ausrüstungslistentool und importiere sie in ZenPak. Listen, Gegenstände, Gewichte und Notizen werden sauber übertragen, sodass du wechseln kannst, ohne alles von Hand neu aufzubauen."
   },
   "list": {
-    "descriptionHelp": "Links in der Beschreibung sind anklickbar (höchstens 3). Wenn dir ein Link Geld einbringt, sag es dazu.",
+    "descriptionHelp": "Anklickbare Links (höchstens 3). Ein Link, der dich vergütet (Affiliate, Empfehlung)? Sag es dazu.",
     "addCategory": "Kategorie hinzufügen",
     "packThis": "Diese Liste packen",
     "reset": "Zurücksetzen",
