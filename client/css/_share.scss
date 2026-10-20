@@ -418,6 +418,21 @@
     }
 }
 
+.shareTagGroupBlock {
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.shareTagGroupLabel {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-medium;
+    margin-bottom: 4px;
+}
+
 .shareTagGroup {
     display: flex;
     flex-wrap: wrap;
