@@ -105,10 +105,10 @@
 }
 
 .profileSettingsAvatarPreviewImage {
-    background: $color-bg;
+    background: #fff;
 
     img {
-        background: $color-bg;
+        background: #fff;
     }
 }
 
