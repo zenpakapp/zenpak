@@ -80,7 +80,9 @@ for (const template of templates) {
 console.log('\n--- every template.durations value is a known Duration, and no duration is an activity ---');
 
 for (const template of templates) {
-    assert(`${template.id}: durations is an array with exactly one value`, Array.isArray(template.durations) && template.durations.length === 1);
+    // A structure-only template (categories, no items) is not a trip, so it carries no tags.
+    const expectedDurations = template.data.items.length > 0 ? 1 : 0;
+    assert(`${template.id}: durations is an array with ${expectedDurations} value`, Array.isArray(template.durations) && template.durations.length === expectedDurations);
     const unknown = (template.durations || []).filter((value) => !knownDurations.includes(value));
     assert(`${template.id}: durations values are all known (${JSON.stringify(template.durations)})`, unknown.length === 0);
     const mixed = (template.listTypes || []).filter((value) => knownDurations.includes(value));

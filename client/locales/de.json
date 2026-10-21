@@ -1049,11 +1049,15 @@
       },
       "via-ferrata": {
         "name": "Klettersteig",
-        "description": "29 Gegenstände für einen Tag am Fels — Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
+        "description": "32 Gegenstände für einen Tag am Fels — Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
       },
       "trail-running": {
         "name": "Trailrunning",
         "description": "28 Gegenstände für einen Berglauf oder einen langen Lauf — Weste, Pflichtausrüstung, Verpflegung und Kleidung für schlechtes Wetter"
+      },
+      "categories-only": {
+        "name": "Leere Liste mit Kategorien",
+        "description": "Die 9 Standardkategorien, bereit für deine eigene Ausrüstung"
       }
     },
     "gearPickerTitle": "Ausrüstung hinzufügen",
@@ -1061,7 +1065,12 @@
     "gearPickerSearchPlaceholder": "Nach Name oder Marke suchen...",
     "gearPickerUnnamedItem": "Gegenstand ohne Namen",
     "gearPickerNoResults": "Keine passende Ausrüstung gefunden.",
-    "gearPickerCreatePrefix": "+ Neuen Gegenstand erstellen"
+    "gearPickerCreatePrefix": "+ Neuen Gegenstand erstellen",
+    "addListFromTemplate": "Liste aus Vorlage hinzufügen",
+    "templatePickerAddTitle": "Mit einer Vorlage starten",
+    "templatePickerAddSubtitle": "Die neue Liste wird deiner Bibliothek hinzugefügt.",
+    "templatePickerAddListName": "Name der Liste",
+    "templatePickerCancel": "Abbrechen"
   },
   "import": {
     "csvAdded": "Import abgeschlossen: {count} Gegenstände hinzugefügt — angezeigt in {unit}.",

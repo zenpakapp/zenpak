@@ -113,6 +113,7 @@
                 <template #content>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="showTemplatePicker = true" @keydown.enter="showTemplatePicker = true" @keydown.space.prevent="showTemplatePicker = true"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addListFromTemplate') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
@@ -131,21 +132,27 @@
                 <a class="lpRemove" role="button" tabindex="0" :title="$t('library.removeListTitle')" @click="removeList(list)" @keydown.enter="removeList(list)" @keydown.space.prevent="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
             </li>
         </ul>
+        <templatePicker v-if="showTemplatePicker" mode="add" @add="addFromTemplate" @dismiss="showTemplatePicker = false" />
     </section>
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue';
 import PopoverHover from './popover-hover.vue';
+import { templateToListImport } from '../composables/useTemplatePicker';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop } from '../services/drag-drop';
 import { findForkUpdate } from '../utils/fork-updates';
 
+const templatePicker = defineAsyncComponent(() => import(/* webpackChunkName: "template-picker" */ './template-picker.vue'));
+
 export default {
     name: 'LibraryList',
     components: {
         PopoverHover,
+        templatePicker,
     },
     inject: {
         forkUpdates: { from: 'forkUpdates', default: () => [] },
@@ -155,6 +162,7 @@ export default {
         return {
             dragStartIndex: null,
             drake: null,
+            showTemplatePicker: false,
         };
     },
     computed: {
@@ -186,6 +194,10 @@ export default {
         },
         copyList() {
             openDialog('copyList');
+        },
+        addFromTemplate(template, { listName, templateName }) {
+            this.$store.commit('importPublicList', templateToListImport(template, listName, templateName));
+            this.showTemplatePicker = false;
         },
         importText() {
             openDialog('importText');

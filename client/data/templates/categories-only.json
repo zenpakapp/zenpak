@@ -1,0 +1,141 @@
+{
+  "version": "0.3",
+  "totalUnit": "g",
+  "itemUnit": "g",
+  "defaultListId": 71,
+  "sequence": 200,
+  "showSidebar": true,
+  "optionalFields": {
+    "price": false,
+    "consumable": true,
+    "worn": true
+  },
+  "currencySymbol": "€",
+  "items": [],
+  "categories": [
+    {
+      "id": 101,
+      "name": "Pack",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 102,
+      "name": "Shelter",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 103,
+      "name": "Sleep System",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 104,
+      "name": "Clothing & Footwear",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 105,
+      "name": "Water",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 106,
+      "name": "Cook & Food",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 107,
+      "name": "Hygiene & Health",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 108,
+      "name": "Safety & Navigation",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    },
+    {
+      "id": 109,
+      "name": "Electronics & Essentials",
+      "categoryItems": [],
+      "subtotalWeight": 0,
+      "subtotalWornWeight": 0,
+      "subtotalConsumableWeight": 0,
+      "subtotalPrice": 0,
+      "subtotalConsumablePrice": 0,
+      "subtotalQty": 0
+    }
+  ],
+  "lists": [
+    {
+      "id": 71,
+      "name": "Categories only",
+      "categoryIds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109
+      ],
+      "totalWeight": 0,
+      "totalWornWeight": 0,
+      "totalConsumableWeight": 0,
+      "totalBaseWeight": 0,
+      "totalPackWeight": 0,
+      "totalPrice": 0,
+      "totalConsumablePrice": 0,
+      "totalQty": 0
+    }
+  ]
+}

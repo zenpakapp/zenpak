@@ -27,6 +27,10 @@
     z-index: $dialog + 1;
 }
 
+.lpTemplatePickerCancel {
+    margin-top: $spacingLarge;
+}
+
 .lpTemplatePickerTitle {
     font-size: 28px;
     font-weight: $fontWeight-bold;
@@ -194,15 +198,15 @@
         <div class="lpTemplatePicker">
             <div class="lpTemplatePickerModal">
                 <p class="lpTemplatePickerTitle">
-                    {{ $t('library.templatePickerTitle') }}
+                    {{ addMode ? $t('library.templatePickerAddTitle') : $t('library.templatePickerTitle') }}
                 </p>
                 <p class="lpTemplatePickerSubtitle">
-                    {{ $t('library.templatePickerSubtitle') }}
+                    {{ addMode ? $t('library.templatePickerAddSubtitle') : $t('library.templatePickerSubtitle') }}
                 </p>
                 <div class="lpTemplatePickerSetup">
                     <div class="lpTemplatePickerSetupCard">
                         <div class="lpTemplatePickerField">
-                            <label for="template-list-name">{{ $t('library.templatePickerListName') }}</label>
+                            <label for="template-list-name">{{ addMode ? $t('library.templatePickerAddListName') : $t('library.templatePickerListName') }}</label>
                             <input id="template-list-name" v-model.trim="setup.listName" type="text" :placeholder="$t('library.templatePickerListNamePlaceholder')">
                         </div>
                     </div>
@@ -218,7 +222,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="lpTemplatePickerSetupCard">
+                    <div v-if="!addMode" class="lpTemplatePickerSetupCard">
                         <p class="lpTemplatePickerSetupTitle">
                             {{ $t('library.templatePickerSettingsSection') }}
                         </p>
@@ -256,11 +260,11 @@
                         </div>
                     </div>
                 </div>
-                <p class="lpTemplatePickerSectionTitle">
+                <p v-if="!addMode" class="lpTemplatePickerSectionTitle">
                     {{ $t('library.templatePickerStartWith') }}
                 </p>
                 <div class="lpTemplatePickerCards">
-                    <div class="lpTemplatePickerCard lpTemplatePickerCardBlank">
+                    <div v-if="!addMode" class="lpTemplatePickerCard lpTemplatePickerCardBlank">
                         <div class="lpTemplatePickerCardBody">
                             <p class="lpTemplatePickerCardName">
                                 {{ $t('library.templatePickerBlankTitle') }}
@@ -279,7 +283,7 @@
                                 {{ templateName(template) }}
                             </p>
                             <p class="lpTemplatePickerCardDesc">
-                                {{ templateDescription(template) }} — {{ templateWeight(template) }}
+                                {{ templateSummary(template) }}
                             </p>
                         </div>
                         <button class="lpButton" @click="onSelect(template)">
@@ -287,6 +291,9 @@
                         </button>
                     </div>
                 </div>
+                <button v-if="addMode" class="lpButton lpTemplatePickerCancel" type="button" @click="$emit('dismiss')">
+                    {{ $t('library.templatePickerCancel') }}
+                </button>
             </div>
         </div>
     </teleport>
@@ -304,8 +311,13 @@ export default {
             type: Boolean,
             default: false,
         },
+        // 'add' = reopened from the library to add one more list (no profile or unit setup).
+        mode: {
+            type: String,
+            default: 'signup',
+        },
     },
-    emits: ['select', 'dismiss'],
+    emits: ['select', 'dismiss', 'add'],
     data() {
         return {
             templates,
@@ -317,7 +329,11 @@ export default {
         currencyOptions() {
             return ['€', '$'];
         },
+        addMode() {
+            return this.mode === 'add';
+        },
         showDisplayName() {
+            if (this.addMode) return false;
             const profile = this.$store.state.library && this.$store.state.library.publicProfile;
             return this.requestDisplayName || (this.$store.state.loggedIn && (!profile || !profile.displayName));
         },
@@ -348,7 +364,15 @@ export default {
                 defaultListName: this.$t('library.newListDefault'),
             };
         },
+        templateSummary(template) {
+            const description = this.templateDescription(template);
+            return templateWeightMg(template.data) > 0 ? `${description} — ${this.templateWeight(template)}` : description;
+        },
         onSelect(template) {
+            if (this.addMode) {
+                this.$emit('add', template, { listName: this.setup.listName, templateName: this.templateName(template) });
+                return;
+            }
             if (!this.validateSetup()) return;
             this.$emit('select', template.data, { ...this.getSetup(), listTypes: [...(template.listTypes || [])], durations: [...(template.durations || [])], seasons: [...(template.seasons || [])] });
         },

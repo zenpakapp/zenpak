@@ -157,7 +157,7 @@ test.describe("Template picker", () => {
 
     const library = JSON.parse(libraryPayload!);
     expect(library.lists[0].name).toBe("Via ferrata");
-    expect(library.items.length).toBe(29);
+    expect(library.items.length).toBe(32);
     const lanyard = library.items.find((i) => i.name === "Via ferrata lanyard");
     expect(lanyard.weight).toBe(530000);
 
