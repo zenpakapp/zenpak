@@ -128,7 +128,7 @@ router.post('/follow/:username', (req, res) => {
                 type: 'follow',
                 actorUsername: user.username,
                 actorDisplayName: publicDisplayName(user),
-                actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
+                actorTier: (user.library && user.library.entitlements && user.library.entitlements.plan) || null,
             });
 
             return res.json({ following: true, mode });
@@ -198,7 +198,7 @@ router.get('/follow-status/:username', (req, res) => {
 router.get('/feed', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         const cursor = req.query.cursor || null;
-        if (cursor && isNaN(Date.parse(cursor))) {
+        if (cursor && Number.isNaN(Date.parse(cursor))) {
             return res.status(400).json({ message: 'Invalid cursor' });
         }
 
@@ -235,12 +235,12 @@ router.get('/feed', (req, res) => {
             // Resolve list names from author docs (lists stored in user.library.lists)
             // Keyed by String(list.id) to match the plain-string listId stored in feed events
             const listNameMap = {};
-            for (const author of authors) {
+            authors.forEach((author) => {
                 const lists = (author.library && author.library.lists) || [];
-                for (const list of lists) {
+                lists.forEach((list) => {
                     if (list.id != null) listNameMap[String(list.id)] = list.name;
-                }
-            }
+                });
+            });
 
             const enriched = events.filter((e) => !bannedIds.has(e.userId.toString())).map((e) => ({
                 _id: e._id,
@@ -372,7 +372,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                     type: 'copy',
                     actorUsername: user.username,
                     actorDisplayName: publicDisplayName(user),
-                    actorTier: user.library && user.library.entitlements && user.library.entitlements.plan || null,
+                    actorTier: (user.library && user.library.entitlements && user.library.entitlements.plan) || null,
                     listName: sourceList.name,
                 });
             }
@@ -500,36 +500,59 @@ router.get('/users', async (req, res) => {
         plan: { $ifNull: ['$library.entitlements.plan', 'free'] },
     };
 
+    // Date of the most recent public list, used to break ties and to order the default view
+    const LATEST_LIST = {
+        $max: {
+            $map: {
+                input: {
+                    $filter: {
+                        input: { $ifNull: ['$library.lists', []] },
+                        as: 'l',
+                        cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
+                    },
+                },
+                as: 'l',
+                in: '$$l.dateUpdated',
+            },
+        },
+    };
+
+    // 0 = exact name, 1 = name starts with the query, 2 = name contains it
+    const matchesName = (regex) => ({
+        $or: [
+            { $regexMatch: { input: '$username', regex, options: 'i' } },
+            { $regexMatch: { input: { $ifNull: ['$library.publicProfile.displayName', ''] }, regex, options: 'i' } },
+        ],
+    });
+    const RANK = {
+        $switch: {
+            branches: [
+                { case: matchesName(`^${q}$`), then: 0 },
+                { case: matchesName(`^${q}`), then: 1 },
+            ],
+            default: 2,
+        },
+    };
+
     try {
         const PAGE_SIZE = 20;
+        const MAX_SKIP = 1000;
+        const skip = Math.min(Math.max(parseInt(req.query.skip, 10) || 0, 0), MAX_SKIP);
+        // One row past the page tells whether another page exists
+        const page = [
+            ...(skip ? [{ $skip: skip }] : []),
+            { $limit: PAGE_SIZE + 1 },
+            { $project: PROJECT },
+        ];
         let pipeline;
 
         if (!q) {
             // Default: discoverable/indexable profiles sorted by most recent public list
             pipeline = [
                 { $match: { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] }, banned: { $ne: true } } },
-                {
-                    $addFields: {
-                        _latestList: {
-                            $max: {
-                                $map: {
-                                    input: {
-                                        $filter: {
-                                            input: { $ifNull: ['$library.lists', []] },
-                                            as: 'l',
-                                            cond: { $in: ['$$l.visibility', ['discoverable', 'indexable']] },
-                                        },
-                                    },
-                                    as: 'l',
-                                    in: '$$l.dateUpdated',
-                                },
-                            },
-                        },
-                    },
-                },
-                { $sort: { _latestList: -1 } },
-                { $limit: PAGE_SIZE },
-                { $project: PROJECT },
+                { $addFields: { _latestList: LATEST_LIST } },
+                { $sort: { _latestList: -1, username: 1 } },
+                ...page,
             ];
         } else {
             pipeline = [
@@ -543,19 +566,20 @@ router.get('/users', async (req, res) => {
                         banned: { $ne: true },
                     },
                 },
-                { $limit: PAGE_SIZE },
-                { $project: PROJECT },
+                { $addFields: { _rank: RANK, _latestList: LATEST_LIST } },
+                { $sort: { _rank: 1, _latestList: -1, username: 1 } },
+                ...page,
             ];
         }
 
         const users = await db.users.aggregate(pipeline);
-        const normalized = users.map((u) => ({
+        const normalized = users.slice(0, PAGE_SIZE).map((u) => ({
             ...u,
             tier: normalizeTier(u.plan),
             plan: undefined,
         }));
 
-        return res.json({ users: normalized });
+        return res.json({ users: normalized, hasMore: users.length > PAGE_SIZE });
     } catch (err) {
         return res.status(500).json({ message: 'An error occurred' });
     }

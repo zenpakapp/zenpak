@@ -44,14 +44,17 @@
                     </div>
                 </div>
             </router-link>
+            <button v-if="hasMore" class="lpCommunityLoadMore" :disabled="loadingMore" @click="loadMore">
+                {{ loadingMore ? $t('community.loading') : $t('community.feedLoadMore') }}
+            </button>
         </template>
     </div>
 </template>
 
 <script>
-import { avatarColor, avatarInitial } from '../utils/avatar.js';
-import { fetchJson } from '../utils/utils.js';
-import { tierLabel } from '../services/tier-labels.js';
+import { avatarColor, avatarInitial } from '../utils/avatar';
+import { fetchJson } from '../utils/utils';
+import { tierLabel } from '../services/tier-labels';
 
 export default {
     name: 'CommunityPeople',
@@ -60,6 +63,8 @@ export default {
             peopleQuery: '',
             results: [],
             loading: false,
+            loadingMore: false,
+            hasMore: false,
             error: null,
             timeout: null,
         };
@@ -79,18 +84,35 @@ export default {
         avatarLetter(user) {
             return avatarInitial(user && user.displayName, user && user.username);
         },
+        async fetchPage(skip) {
+            const params = new URLSearchParams();
+            if (this.peopleQuery.trim()) params.set('q', this.peopleQuery.trim());
+            if (skip) params.set('skip', skip);
+            return fetchJson(`/api/community/users?${params}`);
+        },
         async search() {
             this.loading = true;
             this.error = null;
             try {
-                const params = new URLSearchParams();
-                if (this.peopleQuery.trim()) params.set('q', this.peopleQuery.trim());
-                const data = await fetchJson(`/api/community/users?${params}`);
+                const data = await this.fetchPage(0);
                 this.results = data.users || [];
+                this.hasMore = !!data.hasMore;
             } catch {
                 this.error = this.$t('community.peopleLoadError');
             } finally {
                 this.loading = false;
+            }
+        },
+        async loadMore() {
+            this.loadingMore = true;
+            try {
+                const data = await this.fetchPage(this.results.length);
+                this.results = this.results.concat(data.users || []);
+                this.hasMore = !!data.hasMore;
+            } catch {
+                this.error = this.$t('community.peopleLoadError');
+            } finally {
+                this.loadingMore = false;
             }
         },
     },
