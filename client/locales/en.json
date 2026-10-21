@@ -577,7 +577,15 @@
     "ariaFilterDuration": "Filter by duration",
     "ariaMinWeight": "Minimum base weight in kilograms",
     "ariaMaxWeight": "Maximum base weight in kilograms",
-    "ariaPopularPacks": "Popular packs"
+    "ariaPopularPacks": "Popular packs",
+    "moderationAllTypes": "All types",
+    "moderationAllReasons": "All reasons",
+    "moderationTypeList": "List",
+    "moderationTypeUser": "User",
+    "moderationReportCount": "{count} reports",
+    "moderationReportedBy": "by {names}",
+    "ariaFilterReportType": "Filter reports by type",
+    "ariaFilterReportReason": "Filter reports by reason"
   },
   "upload": {
     "tooLarge": "This image is too large. The maximum size is {max}.",

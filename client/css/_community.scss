@@ -617,6 +617,21 @@
     &:last-child { border-bottom: none; }
 }
 
+.lpModerationReportFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.lpModerationReportCount {
+    background: rgba(var(--color-danger-rgb), 0.12);
+    border-radius: $radius-sm;
+    color: $color-danger;
+    font-weight: $fontWeight-bold;
+    padding: 1px 8px;
+}
+
 .lpModerationReportMeta {
     align-items: center;
     color: $color-text-muted;

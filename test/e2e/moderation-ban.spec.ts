@@ -17,23 +17,25 @@ test("banning from a list report bans the list's author", async ({ page }) => {
     const body = await response.json();
     await route.fulfill({ response, json: { ...body, isModerator: true } });
   });
-  const report = (id, targetType, targetId, targetOwnerUsername?) => ({
-    _id: id,
+  const report = (targetType, targetId, targetOwnerUsername?) => ({
     targetType,
     targetId,
     targetOwnerUsername,
-    reason: "spam",
-    reporterUsername: "rep",
-    createdAt: new Date().toISOString(),
+    count: 1,
+    reasons: { spam: 1 },
+    reporters: ["rep"],
+    latestAt: new Date().toISOString(),
   });
   await page.route("**/api/reports", (route) =>
     route.fulfill({
       json: {
         reports: [
-          report("r1", "list", "list1", "alice"),
-          report("r2", "list", "list2", null),
-          report("r3", "user", "carol"),
+          report("list", "list1", "alice"),
+          report("list", "list2", null),
+          report("user", "carol"),
         ],
+        total: 3,
+        hasMore: false,
       },
     }),
   );
@@ -45,9 +47,9 @@ test("banning from a list report bans the list's author", async ({ page }) => {
     calls.push(`ban/${route.request().url().split("/").pop()}`);
     return route.fulfill({ json: { ok: true } });
   });
-  await page.route("**/api/reports/r*", (route) => {
-    if (route.request().method() !== "PATCH") return route.fallback();
-    calls.push(`resolve/${route.request().url().split("/").pop()}`);
+  await page.route("**/api/reports/target", (route) => {
+    const { targetType, targetId, status } = route.request().postDataJSON();
+    calls.push(`${status}/${targetType}/${targetId}`);
     return route.fulfill({ json: { ok: true } });
   });
 
@@ -82,5 +84,5 @@ test("banning from a list report bans the list's author", async ({ page }) => {
   expect(calls).toEqual([]);
   await confirmBox.locator(".lp-confirm-ok").click();
   await expect(rows).toHaveCount(2);
-  expect(calls).toEqual(["ban/alice", "resolve/r1"]);
+  expect(calls).toEqual(["ban/alice", "resolved/list/list1"]);
 });
