@@ -18,7 +18,7 @@
                 {{ $t('auth.continueWithGoogle') }}
             </a>
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;color:#888;font-size:13px;">
-                <hr style="flex:1;border:none;border-top:1px solid #e0e0e0;"><span>{{ $t('auth.or') }}</span><hr style="flex:1;border:none;border-top:1px solid #e0e0e0;">
+                <hr style="flex:1;border:none;border-top:1px solid #e9e6df;"><span>{{ $t('auth.or') }}</span><hr style="flex:1;border:none;border-top:1px solid #e9e6df;">
             </div>
             <SigninForm :message="message" />
         </modal>

@@ -271,11 +271,11 @@ router.get('/csv/:id', (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Not available — ZenPak</title>
   <style>
-    body { background: #F8F7F5; color: #1A1A1A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    body { background: #F7F3EB; color: #1A1A1A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
     .box { max-width: 400px; padding: 40px 20px; text-align: center; }
     .icon { font-size: 48px; margin-bottom: 16px; }
     h1 { font-size: 20px; font-weight: 700; margin: 0 0 8px; }
-    p { color: #6B7280; font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
+    p { color: #6F6B63; font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
     a { color: #2D7A4F; font-size: 13px; text-decoration: none; }
     a:hover { text-decoration: underline; }
   </style>

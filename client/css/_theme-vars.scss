@@ -1,8 +1,8 @@
 /* design system — custom properties (light / dark / auto) */
 :root {
-    --color-bg: #F8F7F5;
+    --color-bg: #F7F3EB;
     --color-surface: #FFFFFF;
-    --color-surface-elevated: #FCFBF9;
+    --color-surface-elevated: #FBFAF7;
     --color-surface-soft: rgba(255, 255, 255, 0.72);
     --color-surface-panel: rgba(255, 255, 255, 0.58);
     --color-overlay: rgba(15, 23, 42, 0.34);
@@ -21,13 +21,13 @@
     --color-danger-hover: #A9132B;
     --color-control: rgba(255, 255, 255, 0.86);
     --color-control-hover: rgba(255, 255, 255, 0.96);
-    --color-control-muted: rgba(15, 23, 42, 0.04);
+    --color-control-muted: rgba(150, 110, 40, 0.06);
     --shadow-soft: 0 1px 3px rgba(var(--color-shadow-rgb), 0.08);
     --shadow-popover: 0 12px 28px rgba(var(--color-shadow-rgb), 0.16);
     --shadow-modal: 0 24px 56px rgba(var(--color-shadow-rgb), 0.24);
     --color-text: #1A1A1A;
-    --color-text-muted: #6B7280;
-    --color-border: #E0E0E0;
+    --color-text-muted: #6F6B63;
+    --color-border: #E9E6DF;
     color-scheme: light;
 }
 
