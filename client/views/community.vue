@@ -256,10 +256,10 @@
             </p>
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
-                    <div class="lpCommunityEventAvatar">
-                        <img v-if="event.avatarUrl" :src="event.avatarUrl" :alt="event.author">
+                    <router-link :to="communityProfileTo(event.author)" class="lpCommunityEventAvatar" :aria-label="event.author">
+                        <img v-if="event.avatarUrl" :src="event.avatarUrl" alt="">
                         <span v-else>{{ event.author.charAt(0).toUpperCase() }}</span>
-                    </div>
+                    </router-link>
                     <div class="lpCommunityEventBody">
                         <div class="lpCommunityEventLine">
                             <router-link :to="communityProfileTo(event.author)">
@@ -269,7 +269,14 @@
                             <span v-else-if="event.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
                             <span> {{ eventLabel(event.type) }}</span>
                         </div>
-                        <div v-if="event.listName" class="lpCommunityEventList">
+                        <router-link
+                            v-if="event.listName && event.listExternalId"
+                            :to="communityListTo({ externalId: event.listExternalId })"
+                            class="lpCommunityEventList lpCommunityEventListLink"
+                        >
+                            {{ event.listName }}
+                        </router-link>
+                        <div v-else-if="event.listName" class="lpCommunityEventList">
                             {{ event.listName }}
                         </div>
                         <div v-else-if="event.listDeleted" class="lpCommunityEventList lpCommunityEventListDeleted">
@@ -302,8 +309,8 @@ import { defineAsyncComponent } from 'vue';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
-import { fetchJson } from '../utils/utils.js';
-import { tierLabel } from '../services/tier-labels.js';
+import { fetchJson } from '../utils/utils';
+import { tierLabel } from '../services/tier-labels';
 import LpSelect from '../components/lp-select.vue';
 import {
     LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions,

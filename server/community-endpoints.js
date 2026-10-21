@@ -235,10 +235,16 @@ router.get('/feed', (req, res) => {
             // Resolve list names from author docs (lists stored in user.library.lists)
             // Keyed by String(list.id) to match the plain-string listId stored in feed events
             const listNameMap = {};
+            // Public id only for lists still shown in the community, so the client never links to a dead page
+            const listExternalIdMap = {};
             authors.forEach((author) => {
                 const lists = (author.library && author.library.lists) || [];
                 lists.forEach((list) => {
-                    if (list.id != null) listNameMap[String(list.id)] = list.name;
+                    if (list.id == null) return;
+                    listNameMap[String(list.id)] = list.name;
+                    if (list.externalId && (list.visibility === 'discoverable' || list.visibility === 'indexable')) {
+                        listExternalIdMap[String(list.id)] = list.externalId;
+                    }
                 });
             });
 
@@ -251,6 +257,7 @@ router.get('/feed', (req, res) => {
                 avatarUrl: avatarMap[e.userId.toString()] || '',
                 listId: e.listId,
                 listName: listNameMap[e.listId] || '',
+                listExternalId: listExternalIdMap[e.listId] || '',
                 listDeleted: !listNameMap[e.listId],
             }));
 
