@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 import { registerUser } from './auth-utils';
 
 async function openTemplatePicker(page) {
-    await page.getByText('Add new list').first().hover();
-    await page.getByRole('button', { name: 'Add list from a template' }).click();
+    await page.locator('.listContainerHeader a.lpAdd').first().hover();
+    await page.getByRole('button', { name: 'New list from a template' }).click();
     await expect(page.getByText('Start from a template')).toBeVisible();
 }
 

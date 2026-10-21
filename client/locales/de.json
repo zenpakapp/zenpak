@@ -946,11 +946,11 @@
     "listsTitle": "Listen",
     "reorderItemTitle": "Diesen Gegenstand neuanordnen",
     "removeListTitle": "Diese Liste entfernen",
-    "addNewList": "Neue Liste hinzufügen",
+    "addNewList": "Neue Liste",
     "pasteGearList": "Ausrüstungsliste einfügen",
-    "importCSV": "CSV importieren",
+    "importCSV": "CSV-Datei importieren",
     "importFromLighterpack": "Von LighterPack importieren",
-    "copyList": "Duplizieren",
+    "copyList": "Liste duplizieren",
     "newListDefault": "Neue Liste",
     "deleteListConfirm": "Möchtest du diese Liste wirklich löschen? Das kann nicht rückgängig gemacht werden.",
     "confirmImportTitle": "Importieren bestätigen",
@@ -1064,10 +1064,11 @@
     "gearPickerUnnamedItem": "Gegenstand ohne Namen",
     "gearPickerNoResults": "Keine passende Ausrüstung gefunden.",
     "gearPickerCreatePrefix": "+ Neuen Gegenstand erstellen",
-    "addListFromTemplate": "Liste aus Vorlage hinzufügen",
+    "addListFromTemplate": "Neue Liste aus Vorlage",
     "templatePickerAddTitle": "Mit einer Vorlage starten",
     "templatePickerAddSubtitle": "Die neue Liste wird deiner Bibliothek hinzugefügt.",
-    "templatePickerAddListName": "Name der Liste"
+    "templatePickerAddListName": "Name der Liste",
+    "addBlankList": "Neue leere Liste"
   },
   "import": {
     "csvAdded": "Import abgeschlossen: {count} Gegenstände hinzugefügt — angezeigt in {unit}.",

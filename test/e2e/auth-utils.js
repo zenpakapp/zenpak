@@ -60,12 +60,12 @@ export async function registerUserWithTemplate(page, username, password, email, 
     await templateCard.locator('..').click();
 }
 
-// The CSV input lives in a lazily loaded dialog: open it from the "Add new list" flyout and
+// The CSV input lives in a lazily loaded dialog: open it from the "New list" flyout and
 // answer the native file chooser it triggers.
 export async function importCsvFile(page, csvPath) {
     const fileChooser = page.waitForEvent('filechooser');
-    await page.getByText('Add new list').first().hover();
-    await page.getByRole('button', { name: 'Import CSV' }).click();
+    await page.locator('.listContainerHeader a.lpAdd').first().hover();
+    await page.getByRole('button', { name: 'Import a CSV file' }).click();
     await (await fileChooser).setFiles(csvPath);
 }
 
