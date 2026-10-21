@@ -186,6 +186,7 @@
     height: 36px;
     justify-content: center;
     overflow: hidden;
+    text-decoration: none;
     width: 36px;
 
     img {
@@ -220,7 +221,7 @@
     line-height: 1.4;
 
     a {
-        color: $color-text;
+        color: $color-accent;
         font-weight: $fontWeight-bold;
         text-decoration: none;
 
@@ -245,6 +246,18 @@
     font-weight: $fontWeight-medium;
     margin-top: 6px;
     padding: 8px 12px;
+}
+
+.lpCommunityEventListLink {
+    color: $color-accent;
+    display: block;
+    text-decoration: none;
+    transition: background $transitionDurationFast ease;
+
+    &:hover {
+        background: rgba(var(--color-accent-rgb), 0.1);
+        text-decoration: underline;
+    }
 }
 
 .lpCommunityEventListDeleted {
