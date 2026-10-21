@@ -961,8 +961,7 @@
     "addListFromTemplate": "Add list from a template",
     "templatePickerAddTitle": "Start from a template",
     "templatePickerAddSubtitle": "The new list is added to your library.",
-    "templatePickerAddListName": "List name",
-    "templatePickerCancel": "Cancel"
+    "templatePickerAddListName": "List name"
   },
   "item": {
     "addType": "+ Add type",

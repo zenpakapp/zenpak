@@ -27,8 +27,29 @@
     z-index: $dialog + 1;
 }
 
-.lpTemplatePickerCancel {
-    margin-top: $spacingLarge;
+.lpTemplatePickerClose {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: $radius-md;
+    color: $color-text-muted;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 22px;
+    height: 32px;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    width: 32px;
+
+    &:hover,
+    &:focus-visible {
+        background: $color-bg;
+        color: $color-text;
+    }
 }
 
 .lpTemplatePickerTitle {
@@ -206,8 +227,18 @@
 
 <template>
     <teleport to="body">
-        <div class="lpTemplatePicker">
+        <div class="lpTemplatePicker" @click.self="closeIfAdding">
             <div class="lpTemplatePickerModal">
+                <button
+                    v-if="addMode"
+                    type="button"
+                    class="lpTemplatePickerClose"
+                    :aria-label="$t('misc.close')"
+                    :title="$t('misc.close')"
+                    @click="$emit('dismiss')"
+                >
+                    ×
+                </button>
                 <p class="lpTemplatePickerTitle">
                     {{ addMode ? $t('library.templatePickerAddTitle') : $t('library.templatePickerTitle') }}
                 </p>
@@ -292,9 +323,6 @@
                         </span>
                     </button>
                 </div>
-                <button v-if="addMode" class="lpButton lpTemplatePickerCancel" type="button" @click="$emit('dismiss')">
-                    {{ $t('library.templatePickerCancel') }}
-                </button>
             </div>
         </div>
     </teleport>
@@ -304,6 +332,7 @@
 import { templates, templateWeightMg } from '../composables/useTemplatePicker.js';
 import { isReservedDisplayName } from '../utils/reserved-names';
 import weightUtils from '../utils/weight.js';
+import { addWindowListener, removeWindowListener } from '../services/window-events';
 
 export default {
     name: 'TemplatePicker',
@@ -345,6 +374,12 @@ export default {
             ];
         },
     },
+    mounted() {
+        if (this.addMode) addWindowListener('keyup', this.closeOnEscape);
+    },
+    beforeUnmount() {
+        removeWindowListener('keyup', this.closeOnEscape);
+    },
     methods: {
         createInitialSetup() {
             const library = this.$store.state.library;
@@ -364,6 +399,12 @@ export default {
                 ...this.setup,
                 defaultListName: this.$t('library.newListDefault'),
             };
+        },
+        closeIfAdding() {
+            if (this.addMode) this.$emit('dismiss');
+        },
+        closeOnEscape(evt) {
+            if (evt.key === 'Escape') this.$emit('dismiss');
         },
         templateSummary(template) {
             const description = this.templateDescription(template);

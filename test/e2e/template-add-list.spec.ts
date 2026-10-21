@@ -64,23 +64,28 @@ test.describe('Add a list from a template after signup', () => {
         await expect(page.locator('.lpItem')).toHaveCount(0);
     });
 
-    test('cancel closes the picker without adding a list', async ({ page }) => {
-        const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-        await registerUser(
-            page,
-            `tplcnl${now}`,
-            'testtest',
-            `tplcnl+${now}@lighterpack.com`,
-        );
-        await expect(page.locator('.accountDropdownName')).toBeVisible();
-        const listsBefore = await page.locator('#lists .lpLibraryList').count();
+    for (const [title, close] of [
+        ['the close button', async (page) => page.getByRole('button', { name: 'Close' }).click()],
+        ['a click outside', async (page) => page.mouse.click(5, 5)],
+        ['the Escape key', async (page) => page.keyboard.press('Escape')],
+    ] as const) {
+        test(`${title} closes the picker without adding a list`, async ({ page }) => {
+            const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+            await registerUser(
+                page,
+                `tplcls${now}`,
+                'testtest',
+                `tplcls+${now}@lighterpack.com`,
+            );
+            await expect(page.locator('.accountDropdownName')).toBeVisible();
+            const listsBefore = await page.locator('#lists .lpLibraryList').count();
 
-        await openTemplatePicker(page);
-        await page.getByRole('button', { name: 'Cancel' }).click();
+            await openTemplatePicker(page);
+            await expect(page.getByRole('button', { name: 'Cancel' })).toHaveCount(0);
+            await close(page);
 
-        await expect(page.getByText('Start from a template')).toHaveCount(0);
-        await expect(page.locator('#lists .lpLibraryList')).toHaveCount(
-            listsBefore,
-        );
-    });
+            await expect(page.getByText('Start from a template')).toHaveCount(0);
+            await expect(page.locator('#lists .lpLibraryList')).toHaveCount(listsBefore);
+        });
+    }
 });

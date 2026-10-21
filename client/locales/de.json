@@ -1067,8 +1067,7 @@
     "addListFromTemplate": "Liste aus Vorlage hinzufügen",
     "templatePickerAddTitle": "Mit einer Vorlage starten",
     "templatePickerAddSubtitle": "Die neue Liste wird deiner Bibliothek hinzugefügt.",
-    "templatePickerAddListName": "Name der Liste",
-    "templatePickerCancel": "Abbrechen"
+    "templatePickerAddListName": "Name der Liste"
   },
   "import": {
     "csvAdded": "Import abgeschlossen: {count} Gegenstände hinzugefügt — angezeigt in {unit}.",
