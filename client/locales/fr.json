@@ -1067,8 +1067,7 @@
     "addListFromTemplate": "Ajouter une liste depuis un modèle",
     "templatePickerAddTitle": "Partir d'un modèle",
     "templatePickerAddSubtitle": "La nouvelle liste est ajoutée à votre bibliothèque.",
-    "templatePickerAddListName": "Nom de la liste",
-    "templatePickerCancel": "Annuler"
+    "templatePickerAddListName": "Nom de la liste"
   },
   "import": {
     "csvAdded": "Import terminé : {count} articles ajoutés — affichés en {unit}.",
