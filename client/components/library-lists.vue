@@ -112,7 +112,7 @@
                 </template>
                 <template #content>
                     <div style="display:flex;flex-direction:column;gap:8px;">
-                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addBlankList') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="showTemplatePicker = true" @keydown.enter="showTemplatePicker = true" @keydown.space.prevent="showTemplatePicker = true"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addListFromTemplate') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
                         <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
