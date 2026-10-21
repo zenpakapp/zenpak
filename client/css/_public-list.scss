@@ -268,8 +268,15 @@
         &:first-child { text-align: left; }
     }
 
+    td strong {
+        font-weight: inherit;
+    }
+
     tr:last-child td {
         border-bottom: none;
+    }
+
+    tfoot tr:last-child td {
         font-weight: 700;
     }
 
