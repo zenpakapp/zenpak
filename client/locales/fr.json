@@ -577,7 +577,15 @@
     "ariaFilterDuration": "Filtrer par durée",
     "ariaMinWeight": "Poids de base minimum en kilogrammes",
     "ariaMaxWeight": "Poids de base maximum en kilogrammes",
-    "ariaPopularPacks": "Packs populaires"
+    "ariaPopularPacks": "Packs populaires",
+    "moderationAllTypes": "Tous les types",
+    "moderationAllReasons": "Tous les motifs",
+    "moderationTypeList": "Liste",
+    "moderationTypeUser": "Utilisateur",
+    "moderationReportCount": "{count} signalements",
+    "moderationReportedBy": "par {names}",
+    "ariaFilterReportType": "Filtrer les signalements par type",
+    "ariaFilterReportReason": "Filtrer les signalements par motif"
   },
   "upload": {
     "tooLarge": "Cette image est trop lourde. La taille maximale est de {max}.",

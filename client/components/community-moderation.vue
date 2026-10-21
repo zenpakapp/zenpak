@@ -4,8 +4,22 @@
         <community-accounts />
         <community-lists />
         <h2 class="lpModerationHeading">
-            {{ $t('community.moderationReports') }} ({{ reports.length }} pending)
+            {{ $t('community.moderationReports') }} ({{ total }} pending)
         </h2>
+        <div class="lpModerationReportFilters">
+            <lp-select
+                :value="filterType"
+                :options="typeOptions"
+                :aria-label="$t('community.ariaFilterReportType')"
+                @change="val => { filterType = val; load(); }"
+            />
+            <lp-select
+                :value="filterReason"
+                :options="reasonOptions"
+                :aria-label="$t('community.ariaFilterReportReason')"
+                @change="val => { filterReason = val; load(); }"
+            />
+        </div>
         <p v-if="error" class="lpCommunityEmpty">
             {{ error }}
         </p>
@@ -16,12 +30,13 @@
             {{ $t('community.moderationNoPendingReports') }}
         </p>
         <template v-else>
-            <div v-for="r in reports" :key="String(r._id)" class="lpModerationReport">
+            <div v-for="r in reports" :key="`${r.targetType}:${r.targetId}`" class="lpModerationReport">
                 <div class="lpModerationReportMeta">
-                    <span class="lpCommunityBadge">{{ r.targetType }}</span>
-                    <span>{{ r.reason }}</span>
-                    <span>by {{ r.reporterUsername }}</span>
-                    <span>{{ timeAgo(r.createdAt) }}</span>
+                    <span class="lpCommunityBadge">{{ typeLabel(r.targetType) }}</span>
+                    <span v-if="r.count > 1" class="lpModerationReportCount">{{ $t('community.moderationReportCount', { count: r.count }) }}</span>
+                    <span>{{ reasonsLabel(r.reasons) }}</span>
+                    <span>{{ $t('community.moderationReportedBy', { names: r.reporters.join(', ') }) }}</span>
+                    <span>{{ timeAgo(r.latestAt) }}</span>
                 </div>
                 <div class="lpModerationReportTarget">
                     <a :href="r.targetType === 'list' ? `/p/${r.targetId}` : `/u/${r.targetId}`" target="_blank" class="lpHref">{{ r.targetId }}</a>
@@ -44,6 +59,9 @@
                     </button>
                 </div>
             </div>
+            <button v-if="hasMore" class="lpCommunityLoadMore" :disabled="loadingMore" @click="loadMore">
+                {{ loadingMore ? $t('community.loading') : $t('community.feedLoadMore') }}
+            </button>
         </template>
         <confirm-dialog
             :shown="Boolean(pending)"
@@ -63,22 +81,49 @@ import CommunityAccounts from './community-accounts.vue';
 import CommunityStats from './community-stats.vue';
 import CommunityLists from './community-lists.vue';
 import ConfirmDialog from './confirm-dialog.vue';
+import LpSelect from './lp-select.vue';
+
+const REPORT_TYPES = ['list', 'user'];
+const REPORT_REASONS = ['spam', 'inappropriate', 'fake', 'other'];
+const REASON_LABEL_KEYS = {
+    spam: 'misc.reportReasonSpam',
+    inappropriate: 'misc.reportReasonInappropriate',
+    fake: 'misc.reportReasonFake',
+    other: 'misc.reportReasonOther',
+};
 
 export default {
     name: 'CommunityModeration',
     components: {
-        CommunityAccounts, CommunityLists, CommunityStats, ConfirmDialog,
+        CommunityAccounts, CommunityLists, CommunityStats, ConfirmDialog, LpSelect,
     },
     emits: ['feature-list'],
     data() {
         return {
             reports: [],
+            total: 0,
+            hasMore: false,
             loading: false,
+            loadingMore: false,
             error: null,
             pending: null,
+            filterType: '',
+            filterReason: '',
         };
     },
     computed: {
+        typeOptions() {
+            return [
+                { value: '', label: this.$t('community.moderationAllTypes') },
+                ...REPORT_TYPES.map((value) => ({ value, label: this.typeLabel(value) })),
+            ];
+        },
+        reasonOptions() {
+            return [
+                { value: '', label: this.$t('community.moderationAllReasons') },
+                ...REPORT_REASONS.map((value) => ({ value, label: this.$t(REASON_LABEL_KEYS[value]) })),
+            ];
+        },
         confirmTitle() {
             if (!this.pending) return '';
             const { type, report } = this.pending;
@@ -91,27 +136,65 @@ export default {
         this.load();
     },
     methods: {
+        typeLabel(type) {
+            return this.$t(type === 'user' ? 'community.moderationTypeUser' : 'community.moderationTypeList');
+        },
+        reasonsLabel(reasons) {
+            return Object.entries(reasons || {})
+                .map(([reason, count]) => {
+                    const label = REASON_LABEL_KEYS[reason] ? this.$t(REASON_LABEL_KEYS[reason]) : reason;
+                    return count > 1 ? `${label} ×${count}` : label;
+                })
+                .join(' · ');
+        },
+        fetchPage(skip) {
+            const params = new URLSearchParams();
+            if (this.filterType) params.set('type', this.filterType);
+            if (this.filterReason) params.set('reason', this.filterReason);
+            if (skip) params.set('skip', skip);
+            const query = params.toString();
+            return fetchJson(query ? `/api/reports?${query}` : '/api/reports');
+        },
         async load() {
             this.loading = true;
             this.error = null;
             try {
-                const data = await fetchJson('/api/reports');
+                const data = await this.fetchPage(0);
                 this.reports = data.reports || [];
+                this.total = data.total || 0;
+                this.hasMore = !!data.hasMore;
             } catch {
                 this.reports = [];
+                this.total = 0;
+                this.hasMore = false;
                 this.error = 'Unable to load reports.';
             } finally {
                 this.loading = false;
             }
         },
+        async loadMore() {
+            this.loadingMore = true;
+            try {
+                const data = await this.fetchPage(this.reports.length);
+                this.reports = this.reports.concat(data.reports || []);
+                this.total = data.total || this.total;
+                this.hasMore = !!data.hasMore;
+            } catch {
+                this.error = 'Unable to load reports.';
+            } finally {
+                this.loadingMore = false;
+            }
+        },
+        // Closes every pending report on the target at once
         async resolve(report, status) {
             this.error = null;
             try {
-                await fetchJson(`/api/reports/${report._id}`, {
+                await fetchJson('/api/reports/target', {
                     method: 'PATCH',
-                    body: JSON.stringify({ status }),
+                    body: JSON.stringify({ targetType: report.targetType, targetId: report.targetId, status }),
                 });
-                this.reports = this.reports.filter((r) => String(r._id) !== String(report._id));
+                this.reports = this.reports.filter((r) => r.targetType !== report.targetType || r.targetId !== report.targetId);
+                this.total = Math.max(this.total - 1, 0);
             } catch {
                 this.error = 'Unable to update report.';
             }

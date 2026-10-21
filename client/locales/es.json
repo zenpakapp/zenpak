@@ -577,7 +577,15 @@
     "ariaFilterDuration": "Filtrar por duración",
     "ariaMinWeight": "Peso base mínimo en kilogramos",
     "ariaMaxWeight": "Peso base máximo en kilogramos",
-    "ariaPopularPacks": "Mochilas populares"
+    "ariaPopularPacks": "Mochilas populares",
+    "moderationAllTypes": "Todos los tipos",
+    "moderationAllReasons": "Todos los motivos",
+    "moderationTypeList": "Lista",
+    "moderationTypeUser": "Usuario",
+    "moderationReportCount": "{count} denuncias",
+    "moderationReportedBy": "por {names}",
+    "ariaFilterReportType": "Filtrar denuncias por tipo",
+    "ariaFilterReportReason": "Filtrar denuncias por motivo"
   },
   "upload": {
     "tooLarge": "Esta imagen es demasiado grande. El tamaño máximo es {max}.",

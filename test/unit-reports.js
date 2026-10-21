@@ -220,7 +220,7 @@ async function run() {
     // --- GET / : returns only pending reports ---
     {
         reportsStore = [existingReport, resolvedReport];
-        const req = { body: {} };
+        const req = { body: {}, query: {} };
         const { statusCode, data } = await new Promise(resolve => {
             const res = makeRes(resolve);
             getRoute.route.stack[0].handle(req, res, () => {});
@@ -228,24 +228,27 @@ async function run() {
 
         assert('GET / returns 200', statusCode === 200);
         assert('GET / response has reports array', Array.isArray(data && data.reports));
-        assert('GET / returns only pending reports', data.reports.every(r => r.status === 'pending'));
+        assert('GET / returns only pending reports', data.reports.every(r => r.targetId === existingReport.targetId));
         assert('GET / does not return resolved reports', data.reports.length === 1);
+        assert('GET / groups a target with its report count', data.reports[0].count === 1);
     }
 
-    // --- GET / : reports sorted newest first ---
+    // --- GET / : targets sorted newest first when they have as many reports ---
     {
         const olderReport = {
             ...existingReport,
             _id: new ObjectId(),
+            targetId: 'list-old',
             createdAt: new Date('2026-06-08T00:00:00Z'),
         };
         const newerReport = {
             ...existingReport,
             _id: new ObjectId(),
+            targetId: 'list-new',
             createdAt: new Date('2026-06-12T00:00:00Z'),
         };
         reportsStore = [olderReport, newerReport];
-        const req = { body: {} };
+        const req = { body: {}, query: {} };
         const { data } = await new Promise(resolve => {
             const res = makeRes(resolve);
             getRoute.route.stack[0].handle(req, res, () => {});
@@ -253,7 +256,7 @@ async function run() {
 
         assert('GET / reports sorted newest first',
             data.reports.length === 2 &&
-            new Date(data.reports[0].createdAt) >= new Date(data.reports[1].createdAt)
+            new Date(data.reports[0].latestAt) >= new Date(data.reports[1].latestAt)
         );
     }
 
@@ -384,7 +387,7 @@ async function run() {
         });
         reportsStore = [reportOf('list', 'named1'), reportOf('list', 'ghost'), reportOf('user', 'owner3')];
         const { data } = await new Promise(resolve => {
-            getRoute.route.stack[0].handle({ body: {} }, makeRes(resolve), () => {});
+            getRoute.route.stack[0].handle({ body: {}, query: {} }, makeRes(resolve), () => {});
         });
         const byTarget = (id) => data.reports.find(r => r.targetId === id);
         assert('GET / names the published author of a reported list', byTarget('named1').targetOwnerUsername === 'owner3');
