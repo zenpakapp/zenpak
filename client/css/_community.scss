@@ -402,7 +402,7 @@
 .lpCommunityFilters {
     display: grid;
     gap: 8px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px 96px auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) 96px 96px auto;
     margin-bottom: 18px;
 }
 
