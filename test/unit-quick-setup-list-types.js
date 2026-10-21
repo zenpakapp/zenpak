@@ -94,7 +94,7 @@ const { templates } = require('../client/composables/useTemplatePicker.js');
 const { LIST_TYPE_VALUES, SEASON_VALUES } = require('../client/data/list-type-options.js');
 const validTypes = LIST_TYPE_VALUES.map((o) => o.value);
 const validSeasons = SEASON_VALUES.map((o) => o.value);
-templates.forEach((template) => {
+templates.filter((template) => template.data.items.length > 0).forEach((template) => {
     assert(`${template.id} has at least one valid List Type`, template.listTypes.length > 0 && template.listTypes.every((v) => validTypes.includes(v)));
     assert(`${template.id} has at least one valid Season`, Array.isArray(template.seasons) && template.seasons.length > 0 && template.seasons.every((v) => validSeasons.includes(v)));
 });

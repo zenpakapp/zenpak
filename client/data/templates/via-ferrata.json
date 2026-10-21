@@ -16,7 +16,7 @@
       "id": 1,
       "name": "Daypack 25 L",
       "description": "Small pack that sits close to the body on the rock",
-      "weight": 950,
+      "weight": 700,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -26,7 +26,7 @@
       "id": 2,
       "name": "Approach shoes",
       "description": "Grippy sole for rock and scree",
-      "weight": 800,
+      "weight": 700,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -301,6 +301,36 @@
       "price": 0,
       "image": "",
       "url": ""
+    },
+    {
+      "id": 30,
+      "name": "Packable rain jacket",
+      "description": "Thin waterproof shell for a mountain storm",
+      "weight": 200,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 31,
+      "name": "Buff / neck gaiter",
+      "description": "Sun and wind protection",
+      "weight": 35,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
+    },
+    {
+      "id": 32,
+      "name": "Smartphone",
+      "description": "Photos, route and emergency call",
+      "weight": 170,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
     }
   ],
   "categories": [
@@ -316,7 +346,7 @@
           "star": false
         }
       ],
-      "subtotalWeight": 950,
+      "subtotalWeight": 700,
       "subtotalWornWeight": 0,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
@@ -375,14 +405,28 @@
           "worn": false,
           "consumable": false,
           "star": false
+        },
+        {
+          "itemId": 30,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 31,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
         }
       ],
-      "subtotalWeight": 1830,
-      "subtotalWornWeight": 1380,
+      "subtotalWeight": 1965,
+      "subtotalWornWeight": 1280,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
       "subtotalConsumablePrice": 0,
-      "subtotalQty": 7
+      "subtotalQty": 9
     },
     {
       "id": 103,
@@ -582,14 +626,21 @@
           "worn": true,
           "consumable": false,
           "star": false
+        },
+        {
+          "itemId": 32,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
         }
       ],
-      "subtotalWeight": 115,
+      "subtotalWeight": 285,
       "subtotalWornWeight": 30,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
       "subtotalConsumablePrice": 0,
-      "subtotalQty": 2
+      "subtotalQty": 3
     }
   ],
   "lists": [
@@ -605,14 +656,14 @@
         106,
         107
       ],
-      "totalWeight": 7372,
-      "totalWornWeight": 2510,
+      "totalWeight": 7427,
+      "totalWornWeight": 2410,
       "totalConsumableWeight": 2100,
-      "totalBaseWeight": 2762,
-      "totalPackWeight": 4862,
+      "totalBaseWeight": 2917,
+      "totalPackWeight": 5017,
       "totalPrice": 0,
       "totalConsumablePrice": 0,
-      "totalQty": 31
+      "totalQty": 34
     }
   ]
 }

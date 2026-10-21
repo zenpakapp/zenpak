@@ -11,6 +11,7 @@ const bikepackingData = require('../data/templates/bikepacking.json');
 const lightTravelData = require('../data/templates/light-travel.json');
 const viaFerrataData = require('../data/templates/via-ferrata.json');
 const trailRunningData = require('../data/templates/trail-running.json');
+const categoriesOnlyData = require('../data/templates/categories-only.json');
 
 const SUBTOTAL_WEIGHT_FIELDS = ['subtotalWeight', 'subtotalWornWeight', 'subtotalConsumableWeight'];
 
@@ -38,6 +39,13 @@ function templateWeightMg(templateData) {
 }
 
 const templates = [
+    {
+        id: 'categories-only',
+        data: toLibraryData(categoriesOnlyData),
+        listTypes: [],
+        durations: [],
+        seasons: [],
+    },
     {
         id: 'weekend-ultralight',
         data: toLibraryData(ultralightData),
@@ -74,11 +82,11 @@ const templates = [
         seasons: ['3-season', 'summer'],
     },
     {
-        id: 'light-travel',
-        data: toLibraryData(lightTravelData),
-        listTypes: ['travel'],
-        durations: ['multi-day'],
-        seasons: ['summer'],
+        id: 'trail-running',
+        data: toLibraryData(trailRunningData),
+        listTypes: ['trail-running'],
+        durations: ['day'],
+        seasons: ['3-season', 'summer'],
     },
     {
         id: 'via-ferrata',
@@ -88,12 +96,39 @@ const templates = [
         seasons: ['3-season', 'summer'],
     },
     {
-        id: 'trail-running',
-        data: toLibraryData(trailRunningData),
-        listTypes: ['trail-running'],
-        durations: ['day'],
-        seasons: ['3-season', 'summer'],
+        id: 'light-travel',
+        data: toLibraryData(lightTravelData),
+        listTypes: ['travel'],
+        durations: ['multi-day'],
+        seasons: ['summer'],
     },
 ];
 
-module.exports = { templates, templateWeightMg };
+// Shape expected by the `importPublicList` mutation, so a template can be added as one more
+// list in an existing library (items already in the library are matched, not duplicated).
+function templateToListImport(template, listName, fallbackName) {
+    const itemsById = {};
+    (template.data.items || []).forEach((item) => {
+        itemsById[item.id] = item;
+    });
+    return {
+        listName: String(listName || '').trim() || fallbackName || '',
+        keepName: true,
+        description: '',
+        seasons: [...(template.seasons || [])],
+        listTypes: [...(template.listTypes || [])],
+        durations: [...(template.durations || [])],
+        categories: (template.data.categories || []).map((category) => ({
+            name: category.name,
+            categoryItems: (category.categoryItems || []).map((entry) => ({
+                ...itemsById[entry.itemId],
+                qty: entry.qty,
+                worn: entry.worn,
+                consumable: entry.consumable,
+                star: entry.star,
+            })),
+        })),
+    };
+}
+
+module.exports = { templates, templateWeightMg, templateToListImport };

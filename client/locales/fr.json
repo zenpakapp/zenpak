@@ -1032,7 +1032,7 @@
         "description": "22 articles pour 2 jours — tarp, quilt, sac minimaliste"
       },
       "thru-hike-pct": {
-        "name": "Grande Traversée des Alpes",
+        "name": "Trek longue distance",
         "description": "29 articles pour un trek long — setup léger, navigation, autonomie"
       },
       "4-season-backpacking": {
@@ -1049,11 +1049,15 @@
       },
       "via-ferrata": {
         "name": "Via ferrata",
-        "description": "29 articles pour une journée sur le rocher — casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
+        "description": "32 articles pour une journée sur le rocher — casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
       },
       "trail-running": {
         "name": "Trail running",
         "description": "28 articles pour une course en montagne ou une sortie longue — gilet, matériel obligatoire, nutrition et vêtements pour le mauvais temps"
+      },
+      "categories-only": {
+        "name": "Liste vide avec catégories",
+        "description": "Les 9 catégories standard, à remplir avec votre matériel"
       }
     },
     "gearPickerTitle": "Ajouter de l'équipement",
@@ -1061,7 +1065,12 @@
     "gearPickerSearchPlaceholder": "Rechercher par nom ou marque...",
     "gearPickerUnnamedItem": "Article sans nom",
     "gearPickerNoResults": "Aucun équipement correspondant trouvé.",
-    "gearPickerCreatePrefix": "+ Créer un nouvel article"
+    "gearPickerCreatePrefix": "+ Créer un nouvel article",
+    "addListFromTemplate": "Ajouter une liste depuis un modèle",
+    "templatePickerAddTitle": "Partir d'un modèle",
+    "templatePickerAddSubtitle": "La nouvelle liste est ajoutée à votre bibliothèque.",
+    "templatePickerAddListName": "Nom de la liste",
+    "templatePickerCancel": "Annuler"
   },
   "import": {
     "csvAdded": "Import terminé : {count} articles ajoutés — affichés en {unit}.",

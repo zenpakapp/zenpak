@@ -1049,11 +1049,15 @@
       },
       "via-ferrata": {
         "name": "Vía ferrata",
-        "description": "29 artículos para un día en la roca — casco, arnés, disipador, guantes y lo esencial para un recorrido de medio día"
+        "description": "32 artículos para un día en la roca — casco, arnés, disipador, guantes y lo esencial para un recorrido de medio día"
       },
       "trail-running": {
         "name": "Trail running",
         "description": "28 artículos para una carrera de montaña o una salida larga — chaleco, material obligatorio, nutrición y ropa para el mal tiempo"
+      },
+      "categories-only": {
+        "name": "Lista vacía con categorías",
+        "description": "Las 9 categorías estándar, listas para rellenar con tu propio equipo"
       }
     },
     "gearPickerTitle": "Añadir equipo",
@@ -1061,7 +1065,12 @@
     "gearPickerSearchPlaceholder": "Buscar por nombre o marca...",
     "gearPickerUnnamedItem": "Artículo sin nombre",
     "gearPickerNoResults": "No se encontró equipo coincidente.",
-    "gearPickerCreatePrefix": "+ Crear nuevo artículo"
+    "gearPickerCreatePrefix": "+ Crear nuevo artículo",
+    "addListFromTemplate": "Añadir una lista desde una plantilla",
+    "templatePickerAddTitle": "Empezar desde una plantilla",
+    "templatePickerAddSubtitle": "La nueva lista se añade a tu biblioteca.",
+    "templatePickerAddListName": "Nombre de la lista",
+    "templatePickerCancel": "Cancelar"
   },
   "import": {
     "csvAdded": "Importación completa: {count} artículos añadidos — mostrados en {unit}.",

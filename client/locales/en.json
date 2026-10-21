@@ -943,11 +943,15 @@
       },
       "via-ferrata": {
         "name": "Via ferrata",
-        "description": "29 items for a day on the rock — helmet, harness, lanyard, gloves and the essentials for a half-day route"
+        "description": "32 items for a day on the rock — helmet, harness, lanyard, gloves and the essentials for a half-day route"
       },
       "trail-running": {
         "name": "Trail running",
         "description": "28 items for a mountain race or a long run — vest, mandatory kit, nutrition and clothing for bad weather"
+      },
+      "categories-only": {
+        "name": "Empty list with categories",
+        "description": "The 9 standard categories, ready to fill with your own gear"
       }
     },
     "gearPickerTitle": "Add gear",
@@ -955,7 +959,12 @@
     "gearPickerSearchPlaceholder": "Search by name or brand...",
     "gearPickerUnnamedItem": "Unnamed item",
     "gearPickerNoResults": "No matching gear found.",
-    "gearPickerCreatePrefix": "+ Create new item"
+    "gearPickerCreatePrefix": "+ Create new item",
+    "addListFromTemplate": "Add list from a template",
+    "templatePickerAddTitle": "Start from a template",
+    "templatePickerAddSubtitle": "The new list is added to your library.",
+    "templatePickerAddListName": "List name",
+    "templatePickerCancel": "Cancel"
   },
   "item": {
     "addType": "+ Add type",
