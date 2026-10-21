@@ -32,7 +32,7 @@ test.describe("Template picker", () => {
     await expect(page.getByText("Via ferrata", { exact: true })).toBeVisible();
     await expect(page.getByText("Trail running", { exact: true })).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Create my list" }),
+      page.getByRole("button", { name: /Custom list/ }),
     ).toBeVisible();
   });
 
@@ -235,8 +235,6 @@ test.describe("Template picker", () => {
     await page
       .getByText("Ultralight weekend", { exact: true })
       .locator("..")
-      .locator("..")
-      .getByRole("button", { name: "Select" })
       .click();
 
     await expect(

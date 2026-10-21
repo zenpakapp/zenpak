@@ -1017,43 +1017,41 @@
     "templatePickerImperialUnits": "oz / lb",
     "templatePickerCurrency": "Währung",
     "templatePickerStartWith": "Was ist dein nächstes Abenteuer?",
-    "templatePickerSelectButton": "Auswählen",
     "templatePickerBlankLink": "Leer starten",
     "templatePickerBlankTitle": "Eigene Liste",
     "templatePickerBlankDesc": "Füge deine eigenen Gegenstände und Kategorien hinzu.",
-    "templatePickerBlankButton": "Meine Liste erstellen",
     "templatePickerTemplates": {
       "3-day-backpacking": {
         "name": "3-Tage-Tour",
-        "description": "30 Gegenstände, 6 Kategorien — Schutz, Schlafen, Kleidung, Wasser, Essen, Essentials"
+        "description": "30 Gegenstände, 6 Kategorien: Schutz, Schlafen, Kleidung, Wasser, Essen, Essentials"
       },
       "weekend-ultralight": {
         "name": "Ultraleichtes Wochenende",
-        "description": "22 Gegenstände für 2 Tage —Tarp, Quilt, minimalistischer Rucksack"
+        "description": "22 Gegenstände für 2 Tage: Tarp, Quilt, minimalistischer Rucksack"
       },
       "thru-hike-pct": {
         "name": "Fernwanderung",
-        "description": "29 Gegenstände für lange Touren — leichtes Setup, Navigation, Autonomie"
+        "description": "29 Gegenstände für lange Touren: leichtes Setup, Navigation, Autonomie"
       },
       "4-season-backpacking": {
         "name": "4-Jahreszeiten-Tour",
-        "description": "30 Gegenstände für Winter/Alpin — stabiles Zelt, warmer Schlaf, Schutzschichten"
+        "description": "30 Gegenstände für Winter/Alpin: stabiles Zelt, warmer Schlaf, Schutzschichten"
       },
       "bikepacking": {
         "name": "Bikepacking",
-        "description": "34 Gegenstände für eine mehrtägige Radreise — leichtes Zelt, warmer Schlaf, Kleidung, Reparatur und Elektronik"
+        "description": "34 Gegenstände für eine mehrtägige Radreise: leichtes Zelt, warmer Schlaf, Kleidung, Reparatur und Elektronik"
       },
       "light-travel": {
         "name": "Leichtes Reisen",
-        "description": "41 Gegenstände für eine Woche Reise mit einem 30-L-Rucksack — Kleidung, Hygiene, Elektronik und etwas Komfort"
+        "description": "41 Gegenstände für eine Woche Reise mit einem 30-L-Rucksack: Kleidung, Hygiene, Elektronik und etwas Komfort"
       },
       "via-ferrata": {
         "name": "Klettersteig",
-        "description": "32 Gegenstände für einen Tag am Fels — Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
+        "description": "32 Gegenstände für einen Tag am Fels: Helm, Gurt, Klettersteigset, Handschuhe und das Wichtigste für eine Halbtagestour"
       },
       "trail-running": {
         "name": "Trailrunning",
-        "description": "28 Gegenstände für einen Berglauf oder einen langen Lauf — Weste, Pflichtausrüstung, Verpflegung und Kleidung für schlechtes Wetter"
+        "description": "28 Gegenstände für einen Berglauf oder einen langen Lauf: Weste, Pflichtausrüstung, Verpflegung und Kleidung für schlechtes Wetter"
       },
       "categories-only": {
         "name": "Leere Liste mit Kategorien",

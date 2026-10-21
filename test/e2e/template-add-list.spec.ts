@@ -26,11 +26,8 @@ test.describe('Add a list from a template after signup', () => {
         await expect(page.getByText('What is your next adventure?')).toHaveCount(0);
         await expect(page.getByText('Currency')).toHaveCount(0);
         await page.fill('#template-list-name', 'Dolomites 2027');
-        const card = page
-            .getByText('Via ferrata', { exact: true })
-            .locator('..')
-            .locator('..');
-        await card.getByRole('button', { name: 'Select' }).click();
+        const card = page.locator('button.lpTemplatePickerCard', { hasText: 'Via ferrata' });
+        await card.click();
 
         await expect(page.getByText('Start from a template')).toHaveCount(0);
         await expect(page.locator('#lists .lpLibraryList')).toHaveCount(
@@ -57,9 +54,8 @@ test.describe('Add a list from a template after signup', () => {
         await openTemplatePicker(page);
         const card = page
             .getByText('Empty list with categories', { exact: true })
-            .locator('..')
             .locator('..');
-        await card.getByRole('button', { name: 'Select' }).click();
+        await card.click();
 
         await expect(page.locator('#lists .lpLibraryList.lpActive')).toContainText(
             'Empty list with categories',
