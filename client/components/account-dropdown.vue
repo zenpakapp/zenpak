@@ -160,7 +160,7 @@ html.lpSigningOut body::before {
         <PopoverHover id="headerPopover" placement="right">
             <template #target>
                 <span class="accountDropdownTarget" :title="username" :aria-label="accessibleName">
-                    <span class="accountDropdownAvatar" :style="avatarUrl ? null : { background: avatarBackground }">
+                    <span class="accountDropdownAvatar" :style="{ background: avatarUrl ? '#fff' : avatarBackground }">
                         <img v-if="avatarUrl" :src="avatarUrl" alt="" @error="avatarFailed = true">
                         <template v-else>
                             {{ avatarLetter }}
