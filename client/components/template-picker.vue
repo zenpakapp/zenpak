@@ -54,9 +54,9 @@
 }
 
 .lpTemplatePickerCards {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: $spacingSmall;
+    grid-template-columns: 1fr 1fr;
     margin-bottom: $spacingLarge;
 }
 
@@ -151,18 +151,27 @@
 }
 
 .lpTemplatePickerCard {
-    align-items: center;
     background: $color-bg;
     border: 1px solid $color-border;
     border-radius: $radius-md;
-    display: flex;
-    gap: $spacingMedium;
-    justify-content: space-between;
-    padding: $spacingMedium $spacingMedium $spacingMedium $spacingLarge;
-    transition: border-color $transitionDurationFast;
+    color: inherit;
+    cursor: pointer;
+    display: block;
+    font: inherit;
+    padding: $spacingMedium;
+    text-align: left;
+    transition: border-color $transitionDurationFast, background-color $transitionDurationFast;
+    width: 100%;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
+        background: $color-surface;
         border-color: $color-accent;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
     }
 }
 
@@ -170,24 +179,26 @@
     border-color: rgba(var(--color-accent-rgb), 0.35);
 }
 
-.lpTemplatePickerCardBody {
-    flex: 1;
-}
-
 .lpTemplatePickerCardName {
+    display: block;
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
     margin: 0 0 4px;
 }
 
 .lpTemplatePickerCardDesc {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
     color: $color-text-muted;
+    display: -webkit-box;
     font-size: $fontSize-sm;
     margin: 0;
+    overflow: hidden;
 }
 
 @media (max-width: 640px) {
-    .lpTemplatePickerSettingsGrid {
+    .lpTemplatePickerSettingsGrid,
+    .lpTemplatePickerCards {
         grid-template-columns: 1fr;
     }
 }
@@ -264,32 +275,22 @@
                     {{ $t('library.templatePickerStartWith') }}
                 </p>
                 <div class="lpTemplatePickerCards">
-                    <div v-if="!addMode" class="lpTemplatePickerCard lpTemplatePickerCardBlank">
-                        <div class="lpTemplatePickerCardBody">
-                            <p class="lpTemplatePickerCardName">
-                                {{ $t('library.templatePickerBlankTitle') }}
-                            </p>
-                            <p class="lpTemplatePickerCardDesc">
-                                {{ $t('library.templatePickerBlankDesc') }}
-                            </p>
-                        </div>
-                        <button class="lpButton" @click="onDismiss">
-                            {{ $t('library.templatePickerBlankButton') }}
-                        </button>
-                    </div>
-                    <div v-for="template in templates" :key="template.id" class="lpTemplatePickerCard">
-                        <div class="lpTemplatePickerCardBody">
-                            <p class="lpTemplatePickerCardName">
-                                {{ templateName(template) }}
-                            </p>
-                            <p class="lpTemplatePickerCardDesc">
-                                {{ templateSummary(template) }}
-                            </p>
-                        </div>
-                        <button class="lpButton" @click="onSelect(template)">
-                            {{ $t('library.templatePickerSelectButton') }}
-                        </button>
-                    </div>
+                    <button v-if="!addMode" type="button" class="lpTemplatePickerCard lpTemplatePickerCardBlank" @click="onDismiss">
+                        <span class="lpTemplatePickerCardName">
+                            {{ $t('library.templatePickerBlankTitle') }}
+                        </span>
+                        <span class="lpTemplatePickerCardDesc">
+                            {{ $t('library.templatePickerBlankDesc') }}
+                        </span>
+                    </button>
+                    <button v-for="template in templates" :key="template.id" type="button" class="lpTemplatePickerCard" @click="onSelect(template)">
+                        <span class="lpTemplatePickerCardName">
+                            {{ templateName(template) }}
+                        </span>
+                        <span class="lpTemplatePickerCardDesc">
+                            {{ templateSummary(template) }}
+                        </span>
+                    </button>
                 </div>
                 <button v-if="addMode" class="lpButton lpTemplatePickerCancel" type="button" @click="$emit('dismiss')">
                     {{ $t('library.templatePickerCancel') }}
@@ -366,7 +367,7 @@ export default {
         },
         templateSummary(template) {
             const description = this.templateDescription(template);
-            return templateWeightMg(template.data) > 0 ? `${description} — ${this.templateWeight(template)}` : description;
+            return templateWeightMg(template.data) > 0 ? `${description} (${this.templateWeight(template)})` : description;
         },
         onSelect(template) {
             if (this.addMode) {

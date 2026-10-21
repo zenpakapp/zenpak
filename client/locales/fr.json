@@ -1017,43 +1017,41 @@
     "templatePickerImperialUnits": "oz / lb",
     "templatePickerCurrency": "Devise",
     "templatePickerStartWith": "Quelle est votre prochaine aventure ?",
-    "templatePickerSelectButton": "Sélectionner",
     "templatePickerBlankLink": "Commencer à blanc",
     "templatePickerBlankTitle": "Liste personnalisée",
     "templatePickerBlankDesc": "Vous ajoutez vos propres articles et catégories.",
-    "templatePickerBlankButton": "Créer ma liste",
     "templatePickerTemplates": {
       "3-day-backpacking": {
         "name": "Bivouac 3 jours",
-        "description": "30 articles, 6 catégories — abri, couchage, vêtements, eau, nourriture, essentiels"
+        "description": "30 articles, 6 catégories : abri, couchage, vêtements, eau, nourriture, essentiels"
       },
       "weekend-ultralight": {
         "name": "Week-end ultraléger",
-        "description": "22 articles pour 2 jours — tarp, quilt, sac minimaliste"
+        "description": "22 articles pour 2 jours : tarp, quilt, sac minimaliste"
       },
       "thru-hike-pct": {
         "name": "Trek longue distance",
-        "description": "29 articles pour un trek long — setup léger, navigation, autonomie"
+        "description": "29 articles pour un trek long : setup léger, navigation, autonomie"
       },
       "4-season-backpacking": {
         "name": "Rando 4 saisons",
-        "description": "30 articles pour hiver/alpin — tente solide, sac chaud, couches de protection"
+        "description": "30 articles pour hiver/alpin : tente solide, sac chaud, couches de protection"
       },
       "bikepacking": {
         "name": "Bikepacking",
-        "description": "34 articles pour un voyage à vélo de plusieurs jours — tente légère, couchage chaud, vêtements, réparation et électronique"
+        "description": "34 articles pour un voyage à vélo de plusieurs jours : tente légère, couchage chaud, vêtements, réparation et électronique"
       },
       "light-travel": {
         "name": "Voyage léger",
-        "description": "41 articles pour un voyage d'une semaine avec un seul sac de 30 L — vêtements, hygiène, électronique et un peu de confort"
+        "description": "41 articles pour un voyage d'une semaine avec un seul sac de 30 L : vêtements, hygiène, électronique et un peu de confort"
       },
       "via-ferrata": {
         "name": "Via ferrata",
-        "description": "32 articles pour une journée sur le rocher — casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
+        "description": "32 articles pour une journée sur le rocher : casque, baudrier, longe, gants et l'essentiel pour un parcours d'une demi-journée"
       },
       "trail-running": {
         "name": "Trail running",
-        "description": "28 articles pour une course en montagne ou une sortie longue — gilet, matériel obligatoire, nutrition et vêtements pour le mauvais temps"
+        "description": "28 articles pour une course en montagne ou une sortie longue : gilet, matériel obligatoire, nutrition et vêtements pour le mauvais temps"
       },
       "categories-only": {
         "name": "Liste vide avec catégories",

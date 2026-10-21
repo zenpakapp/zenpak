@@ -22,7 +22,7 @@ export async function registerUser(page, username, password, email) {
     await page.fill('.lpRegister input[name="password"]', password);
     await page.fill('.lpRegister input[name="passwordConfirm"]', password);
     await page.getByRole('button').filter({hasText: 'Register'}).click();
-    await page.getByRole('button', { name: 'Create my list' }).click();
+    await page.getByRole('button', { name: /Custom list/ }).click();
 }
 
 export async function verifyUserEmail(username) {
@@ -57,7 +57,7 @@ export async function registerUserWithTemplate(page, username, password, email, 
     await page.getByRole('button').filter({hasText: 'Register'}).click();
     const templateCard = page.getByText(templateName, { exact: true });
     await templateCard.waitFor();
-    await templateCard.locator('..').locator('..').getByRole('button', { name: 'Select' }).click();
+    await templateCard.locator('..').click();
 }
 
 // The CSV input lives in a lazily loaded dialog: open it from the "Add new list" flyout and

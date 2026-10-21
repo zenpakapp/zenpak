@@ -911,43 +911,41 @@
     "templatePickerImperialUnits": "oz / lb",
     "templatePickerCurrency": "Currency",
     "templatePickerStartWith": "What is your next adventure?",
-    "templatePickerSelectButton": "Select",
     "templatePickerBlankLink": "Start blank",
     "templatePickerBlankTitle": "Custom list",
     "templatePickerBlankDesc": "Add your own items and categories.",
-    "templatePickerBlankButton": "Create my list",
     "templatePickerTemplates": {
       "3-day-backpacking": {
         "name": "3-day hike",
-        "description": "30 items, 6 categories — shelter, sleep, clothing, water, food, essentials"
+        "description": "30 items, 6 categories: shelter, sleep, clothing, water, food, essentials"
       },
       "weekend-ultralight": {
         "name": "Ultralight weekend",
-        "description": "22 items for 2 days — tarp, quilt, frameless pack"
+        "description": "22 items for 2 days: tarp, quilt, frameless pack"
       },
       "thru-hike-pct": {
         "name": "Long-distance trek",
-        "description": "29 items for a long trek — light setup, navigation, autonomy"
+        "description": "29 items for a long trek: light setup, navigation, autonomy"
       },
       "4-season-backpacking": {
         "name": "4-season hiking",
-        "description": "30 items for winter/alpine trips — sturdy tent, warm sleep, protective layers"
+        "description": "30 items for winter/alpine trips: sturdy tent, warm sleep, protective layers"
       },
       "bikepacking": {
         "name": "Bikepacking",
-        "description": "34 items for a multi-day ride — light tent, warm sleep, clothing, repair and electronics"
+        "description": "34 items for a multi-day ride: light tent, warm sleep, clothing, repair and electronics"
       },
       "light-travel": {
         "name": "Light travel",
-        "description": "41 items for a week-long trip with one 30 L pack — clothing, hygiene, electronics and a little comfort"
+        "description": "41 items for a week-long trip with one 30 L pack: clothing, hygiene, electronics and a little comfort"
       },
       "via-ferrata": {
         "name": "Via ferrata",
-        "description": "32 items for a day on the rock — helmet, harness, lanyard, gloves and the essentials for a half-day route"
+        "description": "32 items for a day on the rock: helmet, harness, lanyard, gloves and the essentials for a half-day route"
       },
       "trail-running": {
         "name": "Trail running",
-        "description": "28 items for a mountain race or a long run — vest, mandatory kit, nutrition and clothing for bad weather"
+        "description": "28 items for a mountain race or a long run: vest, mandatory kit, nutrition and clothing for bad weather"
       },
       "categories-only": {
         "name": "Empty list with categories",

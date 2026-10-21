@@ -1017,43 +1017,41 @@
     "templatePickerImperialUnits": "oz / lb",
     "templatePickerCurrency": "Moneda",
     "templatePickerStartWith": "¿Cuál es tu próxima aventura?",
-    "templatePickerSelectButton": "Seleccionar",
     "templatePickerBlankLink": "Comenzar en blanco",
     "templatePickerBlankTitle": "Lista personalizada",
     "templatePickerBlankDesc": "Añade tus propios artículos y categorías.",
-    "templatePickerBlankButton": "Crear mi lista",
     "templatePickerTemplates": {
       "3-day-backpacking": {
         "name": "Ruta de 3 días",
-        "description": "30 artículos, 6 categorías — refugio, sueño, ropa, agua, comida, esenciales"
+        "description": "30 artículos, 6 categorías: refugio, sueño, ropa, agua, comida, esenciales"
       },
       "weekend-ultralight": {
         "name": "Fin de semana ultraligero",
-        "description": "22 artículos para 2 días —tarp, quilt, mochila minimalista"
+        "description": "22 artículos para 2 días: tarp, quilt, mochila minimalista"
       },
       "thru-hike-pct": {
         "name": "Travesía larga",
-        "description": "29 artículos para un trek largo — setup ligero, navegación, autonomía"
+        "description": "29 artículos para un trek largo: setup ligero, navegación, autonomía"
       },
       "4-season-backpacking": {
         "name": "Ruta 4 estaciones",
-        "description": "30 artículos para invierno/alpino — tienda sólida, saco cálido, capas protectoras"
+        "description": "30 artículos para invierno/alpino: tienda sólida, saco cálido, capas protectoras"
       },
       "bikepacking": {
         "name": "Bikepacking",
-        "description": "34 artículos para un viaje en bici de varios días — tienda ligera, descanso abrigado, ropa, reparación y electrónica"
+        "description": "34 artículos para un viaje en bici de varios días: tienda ligera, descanso abrigado, ropa, reparación y electrónica"
       },
       "light-travel": {
         "name": "Viaje ligero",
-        "description": "41 artículos para una semana de viaje con una sola mochila de 30 L — ropa, higiene, electrónica y algo de comodidad"
+        "description": "41 artículos para una semana de viaje con una sola mochila de 30 L: ropa, higiene, electrónica y algo de comodidad"
       },
       "via-ferrata": {
         "name": "Vía ferrata",
-        "description": "32 artículos para un día en la roca — casco, arnés, disipador, guantes y lo esencial para un recorrido de medio día"
+        "description": "32 artículos para un día en la roca: casco, arnés, disipador, guantes y lo esencial para un recorrido de medio día"
       },
       "trail-running": {
         "name": "Trail running",
-        "description": "28 artículos para una carrera de montaña o una salida larga — chaleco, material obligatorio, nutrición y ropa para el mal tiempo"
+        "description": "28 artículos para una carrera de montaña o una salida larga: chaleco, material obligatorio, nutrición y ropa para el mal tiempo"
       },
       "categories-only": {
         "name": "Lista vacía con categorías",
