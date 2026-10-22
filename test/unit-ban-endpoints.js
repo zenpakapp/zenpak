@@ -137,6 +137,7 @@ const unban = (username) => post('/unban/:username', { username });
     result = await post('/unpublish/:externalId', { externalId: 'ext1' });
     assert.strictEqual(result.status, 200);
     assert.strictEqual(listOwner.library.lists[0].visibility, 'private');
+    assert.strictEqual(listOwner.library.lists[0].takenDown, true, 'the owner cannot publish it again');
     assert.deepStrictEqual(told.slice(before), [['unpublished', 'dana/Big list']]);
     result = await post('/unpublish/:externalId', { externalId: 'ext1' });
     assert.strictEqual(result.status, 200);
@@ -147,6 +148,11 @@ const unban = (username) => post('/unban/:username', { username });
     assert.strictEqual(result.status, 200);
     assert.strictEqual(listOwner.library.lists[0].visibility, 'private');
     noticeFails = false;
+
+    // A moderator can lift the take-down.
+    result = await post('/lift/:externalId', { externalId: 'ext1' });
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(listOwner.library.lists[0].takenDown, undefined);
     listOwner = null;
 
     // Only a moderator can do either.

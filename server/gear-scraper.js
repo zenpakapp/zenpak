@@ -278,6 +278,7 @@ async function scrapeGear(url) {
 
 module.exports = {
     assertSafeOutboundUrl,
+    fetchHtml,
     isPrivateAddress,
     safeLookup,
     scrapeGear,
