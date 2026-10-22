@@ -157,6 +157,17 @@ router.post('/api/restore', (req, res) => {
         if (!library || typeof library !== 'object' || Array.isArray(library)) {
             return res.status(400).json({ error: 'Invalid backup: missing library object.' });
         }
+        if (!user.emailVerified) {
+            const { isPublicVisibility } = require('../client/services/public-visibility.js');
+            const storedVisibility = {};
+            ((user.library && user.library.lists) || []).forEach((l) => { storedVisibility[l.id] = l.visibility; });
+            const escalates = (Array.isArray(library.lists) ? library.lists : []).some((l) => (
+                isPublicVisibility(l.visibility) && !isPublicVisibility(storedVisibility[l.id])
+            ));
+            if (escalates) {
+                return res.status(403).json({ error: 'Please verify your email before making lists public.' });
+            }
+        }
         try {
             pinServerOwnedFields(library, user.library);
             await db.users.updateOne({ _id: user._id }, { $set: { library } });

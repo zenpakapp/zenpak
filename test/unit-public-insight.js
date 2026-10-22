@@ -11,10 +11,10 @@ const ownerUser = {
     username: 'alice',
     library: {
         version: '0.3',
-        items: [],
-        categories: [],
+        items: [{ id: 11, name: 'Tent' }],
+        categories: [{ id: 1, name: 'Shelter', categoryItems: [{ itemId: 11, qty: 1 }] }],
         lists: [{
-            id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'discoverable', categoryIds: [],
+            id: 1, externalId: 'abc', name: 'PCT Section J', visibility: 'discoverable', categoryIds: [1],
         }],
         insights: {},
     },
@@ -154,12 +154,14 @@ async function run() {
     const rejected = await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: { $gt: '' } } });
     assert('object item ids are rejected with 400', rejected.status === 400);
 
+    // A visitor cannot invent counter names or report copies.
+    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'gearClick', itemId: 'not-in-list' } });
+    assert('a click on an item outside the list is ignored', !('gearClicks.not-in-list' in stats.abc));
     const before = await callListRoute('abc');
     assert('public list payload starts with a zero copy count', before.data.copyCount === 0);
     await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'listCopy', itemId: '' } });
-    await callInsight({ ...baseReq, body: { externalId: 'abc', type: 'listCopy', itemId: '' } });
     const after = await callListRoute('abc');
-    assert('public list payload exposes the copy count', after.data.copyCount === 2);
+    assert('a visitor cannot report a copy', after.data.copyCount === 0);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
