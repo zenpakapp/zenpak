@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const express = require('express');
+const { ObjectId } = require('mongodb');
 
 const { logWithRequest } = require('./log.js');
 const { authenticateUser, verifyPassword, generateSession } = require('./auth.js');
@@ -85,6 +86,12 @@ function saveAccountEmail(user, req, res, next) {
         }
 
         user.email = email;
+        // The new address is not proven yet: it must be verified again before Google sign-in or
+        // publishing trusts it.
+        // A link sent to the old address must not verify the new one either.
+        user.emailVerified = false;
+        user.emailVerifyToken = undefined;
+        user.verifyEmailSentAt = undefined;
         logWithRequest(req, { message: 'Changing Email', username: user.username });
         return next();
     });
@@ -125,6 +132,16 @@ function deleteAccount(req, res, user) {
             deleteVersionsForOwner(user._id).catch((err) => {
                 logWithRequest(req, { message: 'failed to delete list versions on account delete', username: user.username, error: err.message });
             });
+
+            // Discover, follows and feed read their own collections: nothing of this account stays there.
+            const ownerId = new ObjectId(user._id);
+            [
+                db.publicLists.deleteMany({ ownerId }),
+                db.follows.deleteMany({ $or: [{ followerId: ownerId }, { followedId: ownerId }] }),
+                db.feedEvents.deleteMany({ userId: ownerId }),
+            ].forEach((op) => op.catch((err) => {
+                logWithRequest(req, { message: 'failed to clean community data on account delete', username: user.username, error: err.message });
+            }));
 
             logWithRequest(req, { message: 'Completed account delete', username: user.username });
 
