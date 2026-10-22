@@ -7,6 +7,7 @@ const db = require('./db.js');
 const auth = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const { getPublishedOwner } = require('./list-versions.js');
+const { noticeListUnpublished, noticeAccountBanned, noticeAccountRestored } = require('./moderation-notices.js');
 
 const VALID_REASONS = ['spam', 'inappropriate', 'fake', 'other'];
 const TARGET_TYPES = ['list', 'user'];
@@ -167,10 +168,12 @@ router.post('/ban/:username', (req, res) => {
             if (auth.isModerator(user.username)) {
                 return res.status(409).json({ message: 'A moderator cannot be banned.', code: 'moderator' });
             }
+            const wasBanned = Boolean(user.banned);
             user.banned = true;
             user.token = null;
             await db.users.save(user);
             syncUserPublicLists(user).catch(() => {});
+            if (!wasBanned) noticeAccountBanned(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -185,9 +188,11 @@ router.post('/unban/:username', (req, res) => {
         try {
             const user = await db.users.findOne({ username });
             if (!user) return res.status(404).json({ message: 'User not found' });
+            const wasBanned = Boolean(user.banned);
             user.banned = false;
             await db.users.save(user);
             syncUserPublicLists(user).catch(() => {});
+            if (wasBanned) noticeAccountRestored(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -223,9 +228,11 @@ router.post('/unpublish/:externalId', (req, res) => {
             if (!owner) return res.status(404).json({ message: 'List not found' });
             const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
+            const wasPrivate = list.visibility === 'private';
             list.visibility = 'private';
             await db.users.save(owner);
             syncUserPublicLists(owner).catch(() => {});
+            if (!wasPrivate) noticeListUnpublished(owner, list).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

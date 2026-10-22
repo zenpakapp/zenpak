@@ -38,6 +38,7 @@ import { getLocalLibrary, hasLocalLibrary, moveLocalLibraryToRegistered } from '
 import { applyQuickSetup } from '../utils/quick-setup';
 import { fetchJson } from '../utils/utils';
 import { trackEvent } from '../utils/analytics';
+import { i18n } from '../i18n';
 
 const dataTypes = require('../dataTypes.js');
 const {
@@ -140,7 +141,7 @@ export default {
                 return;
             }
 
-            const registerData = { username: canonicalUsername(this.username), email: this.email.trim().toLowerCase(), password: this.password };
+            const registerData = { username: canonicalUsername(this.username), email: this.email.trim().toLowerCase(), password: this.password, language: i18n.global.locale };
 
             if (hasLocalLibrary()) {
                 registerData.library = getLocalLibrary();

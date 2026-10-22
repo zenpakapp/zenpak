@@ -40,7 +40,23 @@ export async function loadLocale(locale) {
     return target;
 }
 
-export async function setLocale(locale) {
+// The server writes emails and alerts for the account, so it needs to know the language of the page.
+export async function syncAccountLanguage(serverLanguage) {
+    const current = i18n.global.locale;
+    if (serverLanguage === current) return;
+    try {
+        await fetch('/api/account/language', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ language: current }),
+        });
+    } catch {
+        // silent: it is sent again the next time the app loads
+    }
+}
+
+export async function setLocale(locale, loggedIn = false) {
     let target = locale;
     if (locale === 'auto') {
         localStorage.removeItem(LOCALE_KEY);
@@ -54,6 +70,7 @@ export async function setLocale(locale) {
 
     i18n.global.locale = await loadLocale(target);
     syncGenericError();
+    if (loggedIn) syncAccountLanguage(null);
 }
 
 export function initLocale() {

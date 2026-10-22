@@ -5,6 +5,7 @@ const { logWithRequest } = require('./log.js');
 const { authenticateUser, verifyPassword } = require('./auth.js');
 const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const { deleteVersionsForOwner } = require('./list-versions.js');
+const { normalizeLanguage } = require('./user-language.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -87,6 +88,22 @@ function saveAccountEmail(user, req, res, next) {
         return next();
     });
 }
+
+// The language the account reads the app in, kept so server-written emails and alerts can use it.
+router.post('/api/account/language', (req, res) => {
+    authenticateUser(req, res, async (req, res, user) => {
+        const language = normalizeLanguage(req.body && req.body.language);
+        if (!language) return res.status(400).json({ message: 'Unsupported language.' });
+        if (user.language === language) return res.json({ language });
+        try {
+            user.language = language;
+            await db.users.save(user);
+            return res.json({ language });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
 
 router.post('/delete-account', (req, res) => {
     authenticateUser(req, res, deleteAccount);

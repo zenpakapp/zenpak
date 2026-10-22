@@ -273,6 +273,7 @@ export default {
             const actor = this.actorName(n);
             if (n.type === 'follow') return this.$t('misc.notificationStartedFollowing', { actor });
             if (n.type === 'copy') return this.$t('misc.notificationCopiedList', { actor, listName: n.listName });
+            if (n.type === 'moderation') return this.$t('misc.notificationListRemoved', { listName: n.listName });
             return '';
         },
         actorName(n) {

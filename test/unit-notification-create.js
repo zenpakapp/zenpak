@@ -91,6 +91,18 @@ const { createNotification } = require('../server/notifications.js');
     await createNotification({ userId: noCopies._id, type: 'copy', actorUsername: 'bob', actorDisplayName: 'Bob', listName: 'L' });
     assert.strictEqual(stored.length, before + 1, 'copy alerts are off');
 
+    // A moderation notice has no actor and cannot be turned off: even somebody who muted every
+    // alert is told their list was taken down.
+    const muted = { _id: new ObjectId(), username: 'muted', notificationPrefs: { follow: false, copy: false } };
+    users.push(muted);
+    const beforeNotice = stored.length;
+    await createNotification({ userId: muted._id, type: 'moderation', listName: 'My list' });
+    assert.strictEqual(stored.length, beforeNotice + 1, 'a moderation notice ignores the preferences');
+    assert.strictEqual(stored[beforeNotice].type, 'moderation');
+    assert.strictEqual(stored[beforeNotice].listName, 'My list');
+    assert.ok(!stored[beforeNotice].actorUsername, 'it has no actor');
+    stored.pop();
+
     // Nobody to tell, or a database that fails: nothing is stored, and nothing throws.
     await createNotification({ userId: new ObjectId(), type: 'follow', actorUsername: 'bob', actorDisplayName: 'Bob' });
     assert.strictEqual(stored.length, before + 1, 'an unknown account is not alerted');

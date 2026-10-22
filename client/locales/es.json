@@ -633,6 +633,7 @@
     "noNotifications": "Sin notificaciones aún.",
     "notificationStartedFollowing": "{actor} empezó a seguirte",
     "notificationCopiedList": "{actor} copió tu lista \"{listName}\"",
+    "notificationListRemoved": "Tu lista \"{listName}\" se retiró de la comunidad",
     "notificationFollows": "Seguidores",
     "notificationCopies": "Copias",
     "timeJustNow": "ahora mismo",
