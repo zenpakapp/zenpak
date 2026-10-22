@@ -8,6 +8,7 @@ const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 const { clipDescription } = require('./text-limits.js');
+const { pinServerOwnedFields } = require('./library-server-fields.js');
 
 const Library = dataTypes.Library;
 
@@ -49,10 +50,6 @@ function saveLibrary(req, res, user) {
 
     const oldLists = (user.library && user.library.lists) || [];
 
-    const serverCreator = user.library && user.library.creator ? { ...user.library.creator } : null;
-    const serverProfile = user.library && user.library.publicProfile ? user.library.publicProfile : null;
-    const serverEntitlements = user.library && user.library.entitlements ? { ...user.library.entitlements } : null;
-    const serverInsights = user.library && user.library.insights ? user.library.insights : null;
     const serverItemMap = {};
     if (user.library && user.library.items) {
         for (const item of user.library.items) {
@@ -87,15 +84,11 @@ function saveLibrary(req, res, user) {
         });
     }
 
+    const storedLibrary = user.library;
     user.library = library;
     user.syncToken++;
 
-    if (serverCreator) user.library.creator = serverCreator;
-    if (serverEntitlements) user.library.entitlements = serverEntitlements;
-    if (serverInsights) user.library.insights = serverInsights;
-    if (serverProfile) {
-        user.library.publicProfile = { ...serverProfile };
-    }
+    pinServerOwnedFields(user.library, storedLibrary);
     if (user.library.items) {
         for (const item of user.library.items) {
             const saved = serverItemMap[String(item.id)];
@@ -165,6 +158,7 @@ router.post('/api/restore', (req, res) => {
             return res.status(400).json({ error: 'Invalid backup: missing library object.' });
         }
         try {
+            pinServerOwnedFields(library, user.library);
             await db.users.updateOne({ _id: user._id }, { $set: { library } });
             syncUserPublicLists({ ...user, library }).catch((err) => {
                 logWithRequest(req, { message: 'public list projection sync failed after restore', username: user.username, error: err.message });

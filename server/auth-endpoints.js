@@ -19,6 +19,7 @@ const {
 } = require('./username-policy.js');
 const db = require('./db.js');
 const { normalizeLanguage } = require('./user-language.js');
+const { pinServerOwnedFields } = require('./library-server-fields.js');
 const dataTypes = require('../client/dataTypes.js');
 
 const Library = dataTypes.Library;
@@ -164,6 +165,8 @@ router.post('/register', authLimiter, (req, res) => {
                         if (isReservedDisplayName(displayName)) {
                             return res.status(400).json({ errors: [{ field: 'displayName', message: 'This display name is reserved for the ZenPak team.' }] });
                         }
+
+                        if (library && typeof library === 'object') pinServerOwnedFields(library, null);
 
                         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
                         const newUser = {
