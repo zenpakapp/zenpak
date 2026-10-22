@@ -187,6 +187,29 @@ async function run() {
     assert('copy ignores unpublished live item edits', copiedNames.includes('Water bottle pair') && !copiedNames.includes('LIVE EDITED NAME'));
     ownerUser.library.items[1].name = 'Water bottle pair';
 
+    // A banned owner's list is not served, so it cannot be copied either
+    const copyOnce = () => new Promise((resolve) => {
+        const res = {
+            status(code) { this._status = code; return this; },
+            json(data) { resolve({ status: this._status || 200, data }); },
+        };
+        copyRoute.route.stack[0].handle({ params: { externalId: 'abc123' }, body: {} }, res);
+    });
+    ownerUser.banned = true;
+    const bannedCopy = await copyOnce();
+    assert('a banned owner\'s list cannot be copied (404)', bannedCopy.status === 404);
+    delete ownerUser.banned;
+
+    // Prices follow publicFields.price in the published snapshot
+    const priced = publishedRow.library.items || [];
+    priced.forEach((item) => { item.price = 42; });
+    const hiddenPrice = await copyOnce();
+    assert('hidden prices are not copied', hiddenPrice.data.categories.every((c) => c.categoryItems.every((i) => i.price === 0)));
+    publishedRow.library.lists[0].publicFields = { price: true };
+    const shownPrice = await copyOnce();
+    assert('shared prices are copied', shownPrice.data.categories.some((c) => c.categoryItems.some((i) => i.price === 42)));
+    delete publishedRow.library.lists[0].publicFields;
+
     // A shared list with no snapshot cannot be copied and must not bump counters
     listVersionsDb.rows.length = 0;
     const savesBefore = savedUsers.length;

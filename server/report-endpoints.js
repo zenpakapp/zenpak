@@ -230,9 +230,29 @@ router.post('/unpublish/:externalId', (req, res) => {
             if (!list) return res.status(404).json({ message: 'List not found' });
             const wasPrivate = list.visibility === 'private';
             list.visibility = 'private';
+            // The owner cannot publish it again until a moderator lifts this.
+            list.takenDown = true;
             await db.users.save(owner);
             syncUserPublicLists(owner).catch(() => {});
             if (!wasPrivate) noticeListUnpublished(owner, list).catch(() => {});
+            return res.json({ ok: true });
+        } catch (err) {
+            return res.status(500).json({ message: 'An error occurred' });
+        }
+    });
+});
+
+// POST /api/reports/lift/:externalId — lets the owner publish a list taken down again (moderators only)
+router.post('/lift/:externalId', (req, res) => {
+    auth.authenticateModerator(req, res, async (req, res) => {
+        const externalId = String(req.params.externalId || '').trim();
+        try {
+            const owner = await getPublishedOwner(externalId);
+            if (!owner) return res.status(404).json({ message: 'List not found' });
+            const list = ((owner.library && owner.library.lists) || []).find((l) => l.externalId === externalId);
+            if (!list) return res.status(404).json({ message: 'List not found' });
+            delete list.takenDown;
+            await db.users.save(owner);
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

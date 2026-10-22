@@ -330,7 +330,7 @@ router.post('/copy-list/:externalId', (req, res) => {
         try {
             const version = await getLatest(externalId);
             const owner = version ? await db.users.findOne({ _id: version.ownerId }) : null;
-            if (!owner) {
+            if (!owner || owner.banned) {
                 return res.status(404).json({ message: 'List not found' });
             }
 
@@ -351,6 +351,7 @@ router.post('/copy-list/:externalId', (req, res) => {
 
             const published = version.library;
             const publishedList = (published.lists || [])[0] || {};
+            const sharesPrice = Boolean(publishedList.publicFields && publishedList.publicFields.price);
 
             // Increment copyCount once per user (dedup via copiedBy array)
             const userId = String(user._id);
@@ -400,7 +401,7 @@ router.post('/copy-list/:externalId', (req, res) => {
                             description: item.description || '',
                             weight: Number(item.weight) || 0,
                             authorUnit: item.authorUnit || 'g',
-                            price: Number(item.price) || 0,
+                            price: sharesPrice ? Number(item.price) || 0 : 0,
                             brand: item.brand || '',
                             shop: item.shop || '',
                             url: item.url || '',

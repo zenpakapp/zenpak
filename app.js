@@ -73,6 +73,12 @@ const oneYear = 31536000000;
 
 app.use(compression());
 app.use(cookieParser());
+// cookie-parser turns a "j:{...}" cookie into an object. A session cookie is always a string, so
+// anything else is dropped before it can reach a database query as a Mongo operator.
+app.use((req, res, next) => {
+    if (req.cookies && typeof req.cookies.lp !== 'string') delete req.cookies.lp;
+    next();
+});
 
 app.get('/healthz', (req, res) => {
     res.set('Cache-Control', 'no-store');

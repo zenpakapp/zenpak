@@ -131,6 +131,9 @@ async function syncUserBilling(user, subscription, status) {
 async function syncKofiBilling(user, { amount, donationDate }) {
     // A donation does not downgrade a plan offered by a moderator while it runs.
     if (isOfferActive(user)) return;
+    // Nor does it replace a subscription that is still running.
+    if (user.billing && user.billing.subscriptionId
+        && ['active', 'trialing', 'past_due'].includes(user.billing.status)) return;
 
     if (!user.billing) user.billing = {};
 

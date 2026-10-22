@@ -19,6 +19,7 @@ const {
 } = require('./username-policy.js');
 const db = require('./db.js');
 const { normalizeLanguage } = require('./user-language.js');
+const { pinServerOwnedFields } = require('./library-server-fields.js');
 const dataTypes = require('../client/dataTypes.js');
 
 const Library = dataTypes.Library;
@@ -165,6 +166,8 @@ router.post('/register', authLimiter, (req, res) => {
                             return res.status(400).json({ errors: [{ field: 'displayName', message: 'This display name is reserved for the ZenPak team.' }] });
                         }
 
+                        if (library && typeof library === 'object') pinServerOwnedFields(library, null);
+
                         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
                         const newUser = {
                             username,
@@ -296,7 +299,7 @@ router.post('/resetPassword', authLimiter, (req, res) => {
     logWithRequest(req);
     const { token, password } = req.body;
 
-    if (!token || !password || password.length < 6) {
+    if (typeof token !== 'string' || !token || typeof password !== 'string' || password.length < 6) {
         return res.status(400).json({ errors: [{ message: 'Password must be at least 6 characters.' }] });
     }
 
@@ -313,6 +316,8 @@ router.post('/resetPassword', authLimiter, (req, res) => {
                 user.password = hash;
                 user.resetToken = null;
                 user.resetTokenExpiry = null;
+                // A reset ends every session opened with the old password.
+                user.token = null;
                 db.users.save(user, (saveErr) => {
                     if (saveErr) return res.status(500).json({ message: 'An error occurred' });
                     logWithRequest(req, { message: 'Password reset for user', username: user.username });
@@ -409,6 +414,7 @@ router.get('/api/auth/me', (req, res) => {
 router.get('/verify-email', (req, res, next) => {
     const { token } = req.query;
     if (!token) return next();
+    if (typeof token !== 'string') return res.redirect('/verify-email?error=1');
 
     db.users.findOne({ emailVerifyToken: token }, (err, user) => {
         if (err || !user) return res.redirect('/verify-email?error=1');

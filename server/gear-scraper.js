@@ -1,4 +1,7 @@
 const dns = require('dns').promises;
+const dnsCallback = require('dns');
+const http = require('http');
+const https = require('https');
 const net = require('net');
 
 const TIMEOUT_MS = 8000;
@@ -80,6 +83,40 @@ async function assertSafeOutboundUrl(rawUrl, lookup = dns.lookup) {
     return parsed;
 }
 
+// The address the socket connects to is checked here, in the same lookup that picks it, so a DNS
+// answer cannot change between the safety check and the connection (DNS rebinding).
+function safeLookup(hostname, options, callback) {
+    dnsCallback.lookup(hostname, { ...options, all: true, verbatim: true }, (err, addresses) => {
+        if (err) return callback(err);
+        if (!addresses.length || addresses.some(({ address }) => isPrivateAddress(address))) {
+            const unsafeError = new Error('Unsafe outbound URL');
+            unsafeError.code = 'UNSAFE_URL';
+            return callback(unsafeError);
+        }
+        if (options && options.all) return callback(null, addresses);
+        return callback(null, addresses[0].address, addresses[0].family);
+    });
+}
+
+function requestOnce(url, signal) {
+    return new Promise((resolve, reject) => {
+        const parsed = new URL(url);
+        const transport = parsed.protocol === 'https:' ? https : http;
+        const req = transport.request(parsed, {
+            method: 'GET',
+            lookup: safeLookup,
+            signal,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; LighterPack/1.0; +https://lighterpack.com)',
+                Accept: 'text/html,application/xhtml+xml',
+                'Accept-Language': 'en-US,en;q=0.9',
+            },
+        }, resolve);
+        req.on('error', reject);
+        req.end();
+    });
+}
+
 async function fetchHtml(url) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -89,39 +126,33 @@ async function fetchHtml(url) {
 
         for (let redirects = 0; redirects <= MAX_REDIRECTS; redirects++) {
             await assertSafeOutboundUrl(currentUrl);
-            res = await fetch(currentUrl, {
-                signal: controller.signal,
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (compatible; LighterPack/1.0; +https://lighterpack.com)',
-                    Accept: 'text/html,application/xhtml+xml',
-                    'Accept-Language': 'en-US,en;q=0.9',
-                },
-                redirect: 'manual',
-            });
+            res = await requestOnce(currentUrl, controller.signal);
 
-            if (![301, 302, 303, 307, 308].includes(res.status)) break;
+            if (![301, 302, 303, 307, 308].includes(res.statusCode)) break;
+            res.destroy();
             if (redirects === MAX_REDIRECTS) throw new Error('Too many redirects');
 
-            const location = res.headers.get('location');
+            const { location } = res.headers;
             if (!location) throw new Error('Invalid redirect');
             currentUrl = new URL(location, currentUrl).toString();
         }
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+            res.destroy();
+            throw new Error(`HTTP ${res.statusCode}`);
+        }
 
-        // Stream only the first MAX_BYTES to avoid downloading full page
-        const reader = res.body.getReader();
+        // Read only the first MAX_BYTES to avoid downloading the full page
         const chunks = [];
         let total = 0;
-        while (total < MAX_BYTES) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            chunks.push(value);
-            total += value.length;
+        // eslint-disable-next-line no-restricted-syntax
+        for await (const chunk of res) {
+            chunks.push(chunk);
+            total += chunk.length;
+            if (total >= MAX_BYTES) break;
         }
-        reader.cancel();
-        const buf = Buffer.concat(chunks.map((c) => Buffer.from(c)));
-        return buf.toString('utf-8');
+        res.destroy();
+        return Buffer.concat(chunks).toString('utf-8');
     } finally {
         clearTimeout(timer);
     }
@@ -247,6 +278,8 @@ async function scrapeGear(url) {
 
 module.exports = {
     assertSafeOutboundUrl,
+    fetchHtml,
     isPrivateAddress,
+    safeLookup,
     scrapeGear,
 };

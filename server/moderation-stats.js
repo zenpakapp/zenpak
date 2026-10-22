@@ -29,7 +29,11 @@ async function collectStats(now = new Date()) {
         db.publicLists.count({ visibility: 'discoverable' }),
         db.publicLists.count({ visibility: 'indexable' }),
         db.publicLists.count({ featured: true }),
-        db.publicListStats.aggregate([{ $group: { _id: null, views: { $sum: '$viewCount' }, copies: { $sum: '$copyCount' } } }]),
+        db.publicListStats.aggregate([{
+            $group: {
+                _id: null, views: { $sum: '$viewCount' }, copies: { $sum: '$copyCount' }, csvDownloads: { $sum: '$csvDownloadCount' },
+            },
+        }]),
         db.reports.count({ status: 'pending' }),
     ]);
 
@@ -44,7 +48,9 @@ async function collectStats(now = new Date()) {
         lists: {
             shareable, discoverable, indexable, featured,
         },
-        activity: { views: sums.views || 0, copies: sums.copies || 0, pendingReports },
+        activity: {
+            views: sums.views || 0, copies: sums.copies || 0, csvDownloads: sums.csvDownloads || 0, pendingReports,
+        },
     };
 }
 

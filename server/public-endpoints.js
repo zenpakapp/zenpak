@@ -28,9 +28,9 @@ async function resolveViewerKey(req) {
         } catch (_) { /* ignore */ }
     }
 
-    const forwardedFor = typeof req.get === 'function' ? req.get('x-forwarded-for') : '';
     const userAgent = typeof req.get === 'function' ? req.get('user-agent') : '';
-    const ip = String(forwardedFor || req.ip || '').split(',')[0].trim();
+    // req.ip already follows the proxy settings; the raw header can be written by the visitor.
+    const ip = String(req.ip || '').trim();
     return `anon:${hashViewerPart(`${ip}|${userAgent}`)}`;
 }
 
@@ -98,7 +98,8 @@ router.post('/api/public/insight', async (req, res) => {
     const itemIdIsValid = typeof rawItemId === 'undefined' || typeof rawItemId === 'string' || typeof rawItemId === 'number';
     const itemId = typeof rawItemId === 'undefined' ? '' : String(rawItemId);
     const type = String(req.body.type || '').trim();
-    const allowedTypes = ['listView', 'listCopy', 'gearClick', 'promoClick'];
+    // Copies are counted by the copy route itself, never reported by a visitor.
+    const allowedTypes = ['listView', 'gearClick', 'promoClick'];
 
     if (!externalId || !allowedTypes.includes(type) || !itemIdIsValid) {
         return res.status(400).json({ message: 'Invalid insight event' });
@@ -116,12 +117,10 @@ router.post('/api/public/insight', async (req, res) => {
             if (isNewViewer) {
                 await incrementPublicListStat(externalId, 'viewCount');
             }
-        } else if (type === 'listCopy') {
-            await incrementPublicListStat(externalId, 'copyCount');
-        } else if (type === 'gearClick' && itemId) {
-            await incrementPublicListStat(externalId, `gearClicks.${itemId}`);
-        } else if (type === 'promoClick' && itemId) {
-            await incrementPublicListStat(externalId, `promoClicks.${itemId}`);
+        } else if (itemId && ((served.library && served.library.items) || []).some((i) => String(i.id) === itemId)) {
+            // Only items of this list: a visitor cannot invent counter names.
+            if (type === 'gearClick') await incrementPublicListStat(externalId, `gearClicks.${itemId}`);
+            if (type === 'promoClick') await incrementPublicListStat(externalId, `promoClicks.${itemId}`);
         }
     } catch (err) {
         logWithRequest(req, { message: 'Public insight error', externalId, error: err.message });
