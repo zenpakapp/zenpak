@@ -9,6 +9,7 @@ const db = require('./db.js');
 const dataTypes = require('../client/dataTypes.js');
 const { clipDescription } = require('./text-limits.js');
 const { pinServerOwnedFields } = require('./library-server-fields.js');
+const { isPublicVisibility } = require('../client/services/public-visibility.js');
 
 const Library = dataTypes.Library;
 
@@ -62,7 +63,6 @@ function saveLibrary(req, res, user) {
     }
 
     if (!user.emailVerified && library && library.lists) {
-        const { isPublicVisibility } = require('../client/services/public-visibility.js');
         const storedVisibilityMap = {};
         oldLists.forEach((l) => { storedVisibilityMap[l.id] = l.visibility; });
         const escalatesVisibility = library.lists.some((l) => (
@@ -158,7 +158,6 @@ router.post('/api/restore', (req, res) => {
             return res.status(400).json({ error: 'Invalid backup: missing library object.' });
         }
         if (!user.emailVerified) {
-            const { isPublicVisibility } = require('../client/services/public-visibility.js');
             const storedVisibility = {};
             ((user.library && user.library.lists) || []).forEach((l) => { storedVisibility[l.id] = l.visibility; });
             const escalates = (Array.isArray(library.lists) ? library.lists : []).some((l) => (
