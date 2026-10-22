@@ -296,7 +296,7 @@ router.post('/resetPassword', authLimiter, (req, res) => {
     logWithRequest(req);
     const { token, password } = req.body;
 
-    if (!token || !password || password.length < 6) {
+    if (typeof token !== 'string' || !token || typeof password !== 'string' || password.length < 6) {
         return res.status(400).json({ errors: [{ message: 'Password must be at least 6 characters.' }] });
     }
 
@@ -409,6 +409,7 @@ router.get('/api/auth/me', (req, res) => {
 router.get('/verify-email', (req, res, next) => {
     const { token } = req.query;
     if (!token) return next();
+    if (typeof token !== 'string') return res.redirect('/verify-email?error=1');
 
     db.users.findOne({ emailVerifyToken: token }, (err, user) => {
         if (err || !user) return res.redirect('/verify-email?error=1');

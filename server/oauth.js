@@ -38,6 +38,9 @@ if (oauthEnabled) {
                 if (email) {
                     const byEmail = await db.users.findOne(emailLookup(email));
                     if (byEmail) {
+                        // Never attach a Google identity to a local account whose email was not
+                        // verified: whoever registered it first holds its password.
+                        if (!byEmail.emailVerified) return done(null, false);
                         byEmail.googleId = googleId;
                         if (!byEmail.avatarUrl && avatarUrl) byEmail.avatarUrl = avatarUrl;
                         await db.users.save(byEmail);
@@ -79,6 +82,7 @@ if (oauthEnabled) {
             if (user.needsUsername) {
                 const setupToken = crypto.randomUUID();
                 user.setupToken = setupToken;
+                user.setupTokenExpiry = Date.now() + 10 * 60 * 1000;
                 await db.users.save(user);
                 const suggested = user.suggestedUsername ? encodeURIComponent(user.suggestedUsername) : '';
                 res.cookie('oauth_setup_token', setupToken, { path: '/', httpOnly: false, maxAge: 10 * 60 * 1000 });
@@ -95,7 +99,7 @@ if (oauthEnabled) {
     router.post('/api/auth/google/set-username', express.json(), async (req, res) => {
         const { username, setupToken } = req.body;
 
-        if (!setupToken) return res.status(400).json({ message: 'Missing setup token.' });
+        if (!setupToken || typeof setupToken !== 'string') return res.status(400).json({ message: 'Missing setup token.' });
         if (!username) return res.status(400).json({ message: 'Username is required.' });
 
         const clean = canonicalUsername(username);
@@ -109,13 +113,27 @@ if (oauthEnabled) {
 
         try {
             const user = await db.users.findOne({ setupToken });
-            if (!user) return res.status(404).json({ message: 'Invalid or expired setup token.' });
+            if (!user || !user.setupTokenExpiry || Date.now() > user.setupTokenExpiry) {
+                return res.status(404).json({ message: 'Invalid or expired setup token.' });
+            }
 
             const taken = await db.users.findOne({ username: clean, _id: { $ne: user._id } });
             if (taken) return res.status(409).json({ message: 'Username already taken.' });
 
+            // generateSession persists only the new session token, so the username and the end of
+            // the setup state are written here: the setup token is single use.
+            await db.users.updateOne(
+                { _id: user._id },
+                {
+                    $set: { username: clean },
+                    $unset: {
+                        setupToken: '', setupTokenExpiry: '', needsUsername: '', suggestedUsername: '',
+                    },
+                },
+            );
             user.username = clean;
             user.setupToken = undefined;
+            user.setupTokenExpiry = undefined;
             user.needsUsername = undefined;
             user.suggestedUsername = undefined;
 
