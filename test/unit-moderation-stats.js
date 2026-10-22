@@ -56,7 +56,7 @@ stubServerModule('db.js', {
     users: collection(userDocs),
     publicLists: collection(listDocs),
     reports: collection([{ status: 'pending' }, { status: 'pending' }, { status: 'dismissed' }]),
-    publicListStats: { aggregate: async () => [{ _id: null, views: 120, copies: 7 }] },
+    publicListStats: { aggregate: async () => [{ _id: null, views: 120, copies: 7, csvDownloads: 4 }] },
 });
 
 const { collectStats } = require('../server/moderation-stats.js');
@@ -73,7 +73,9 @@ const { collectStats } = require('../server/moderation-stats.js');
         lists: {
             shareable: 1, discoverable: 2, indexable: 1, featured: 1,
         },
-        activity: { views: 120, copies: 7, pendingReports: 2 },
+        activity: {
+            views: 120, copies: 7, csvDownloads: 4, pendingReports: 2,
+        },
     });
 
     // No stats yet: the totals are zero, not missing.
@@ -85,7 +87,9 @@ const { collectStats } = require('../server/moderation-stats.js');
     });
     delete require.cache[require.resolve('../server/moderation-stats.js')];
     const empty = await require('../server/moderation-stats.js').collectStats(NOW);
-    assert.deepStrictEqual(empty.activity, { views: 0, copies: 0, pendingReports: 0 });
+    assert.deepStrictEqual(empty.activity, {
+        views: 0, copies: 0, csvDownloads: 0, pendingReports: 0,
+    });
     assert.strictEqual(empty.plans.free, 0);
 
     console.log('ok');

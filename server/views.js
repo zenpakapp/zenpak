@@ -23,6 +23,7 @@ const config = require('config');
 const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvField } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
+const { incrementPublicListStat } = require('./public-list-projections.js');
 const { clipDescription } = require('./text-limits.js');
 const { analyticsConfig, analyticsTag } = require('./analytics.js');
 
@@ -343,6 +344,8 @@ router.get('/csv/:id', (req, res) => {
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment;filename=${filename}.csv`);
         res.send(`\uFEFF${out}`);
+        // A download the owner allowed for everyone. Counted for the ZenPak figures only.
+        if (downloadable) incrementPublicListStat(id, 'csvDownloadCount').catch(() => {});
     });
 });
 

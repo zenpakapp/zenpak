@@ -77,6 +77,7 @@ export default {
                     rows: [
                         row('activity-views', 'community.statsViews', stats.activity.views),
                         row('activity-copies', 'community.statsCopies', stats.activity.copies),
+                        row('activity-csv', 'community.statsCsvDownloads', stats.activity.csvDownloads),
                         row('activity-reports', 'community.statsReports', stats.activity.pendingReports),
                     ],
                 },
