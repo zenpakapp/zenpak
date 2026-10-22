@@ -41,7 +41,22 @@ stubServerModule('auth.js', {
 stubServerModule('public-list-projections.js', {
     syncUserPublicLists(user) { synced.push([user.username, Boolean(user.banned)]); return Promise.resolve(); },
 });
-stubServerModule('list-versions.js', { getPublishedOwner() { return Promise.resolve(null); } });
+let listOwner = null;
+stubServerModule('list-versions.js', { getPublishedOwner() { return Promise.resolve(listOwner); } });
+const told = [];
+let noticeFails = false;
+const tell = (name) => (user) => {
+    told.push([name, user.username]);
+    return noticeFails ? Promise.reject(new Error('mail down')) : Promise.resolve();
+};
+stubServerModule('moderation-notices.js', {
+    noticeAccountBanned: tell('banned'),
+    noticeAccountRestored: tell('restored'),
+    noticeListUnpublished(owner, list) {
+        told.push(['unpublished', `${owner.username}/${list.name}`]);
+        return noticeFails ? Promise.reject(new Error('mail down')) : Promise.resolve();
+    },
+});
 
 const router = require('../server/report-endpoints.js');
 
@@ -71,9 +86,12 @@ const unban = (username) => post('/unban/:username', { username });
     assert.strictEqual(saved.length, 1);
     assert.deepStrictEqual(synced, [['spammer', true]], 'the public lists are projected again, now hidden');
 
-    // Banning twice changes nothing more.
+    assert.deepStrictEqual(told, [['banned', 'spammer']], 'the member is told');
+
+    // Banning twice changes nothing more, and tells nobody twice.
     result = await ban('spammer');
     assert.strictEqual(result.status, 200);
+    assert.deepStrictEqual(told, [['banned', 'spammer']], 'no second email');
 
     // A moderator cannot be banned, and nothing is written for the refusal.
     accounts.mod = { username: 'mod', token: 'mtok', library: {} };
@@ -84,6 +102,7 @@ const unban = (username) => post('/unban/:username', { username });
     assert.ok(!accounts.mod.banned);
     assert.strictEqual(accounts.mod.token, 'mtok');
     assert.strictEqual(saved.length, writes);
+    assert.strictEqual(told.length, 1, 'a refused ban tells nobody');
 
     result = await ban('nobody');
     assert.strictEqual(result.status, 404);
@@ -94,8 +113,41 @@ const unban = (username) => post('/unban/:username', { username });
     assert.strictEqual(result.status, 200);
     assert.ok(!accounts.spammer.banned);
     assert.deepStrictEqual(synced, [['spammer', false]]);
+    assert.deepStrictEqual(told[told.length - 1], ['restored', 'spammer'], 'the member is told it is lifted');
+    result = await unban('spammer');
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(told.filter((t) => t[0] === 'restored').length, 1, 'lifting an account that is not banned tells nobody');
     result = await unban('nobody');
     assert.strictEqual(result.status, 404);
+
+    // A mail outage does not stop the ban.
+    noticeFails = true;
+    accounts.fragile = { username: 'fragile', token: 't', library: {} };
+    result = await ban('fragile');
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(accounts.fragile.banned, true);
+    noticeFails = false;
+
+    // Taking a list down tells its owner once; a list already private tells nobody; a mail outage
+    // does not stop it.
+    listOwner = {
+        username: 'dana', library: { lists: [{ externalId: 'ext1', name: 'Big list', visibility: 'discoverable' }] },
+    };
+    const before = told.length;
+    result = await post('/unpublish/:externalId', { externalId: 'ext1' });
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(listOwner.library.lists[0].visibility, 'private');
+    assert.deepStrictEqual(told.slice(before), [['unpublished', 'dana/Big list']]);
+    result = await post('/unpublish/:externalId', { externalId: 'ext1' });
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(told.length, before + 1, 'already private: no second email');
+    noticeFails = true;
+    listOwner.library.lists[0].visibility = 'unlisted';
+    result = await post('/unpublish/:externalId', { externalId: 'ext1' });
+    assert.strictEqual(result.status, 200);
+    assert.strictEqual(listOwner.library.lists[0].visibility, 'private');
+    noticeFails = false;
+    listOwner = null;
 
     // Only a moderator can do either.
     caller = { moderator: false };

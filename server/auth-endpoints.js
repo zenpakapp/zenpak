@@ -18,6 +18,7 @@ const {
     isValidUsername,
 } = require('./username-policy.js');
 const db = require('./db.js');
+const { normalizeLanguage } = require('./user-language.js');
 const dataTypes = require('../client/dataTypes.js');
 
 const Library = dataTypes.Library;
@@ -174,6 +175,7 @@ router.post('/register', authLimiter, (req, res) => {
                             syncToken: 0,
                             emailVerified: false,
                             emailVerifyToken,
+                            language: normalizeLanguage(req.body.language) || undefined,
                         };
                         logWithRequest(req, { message: 'Saving new user', username });
                         db.users.save(newUser, (err) => {
@@ -225,7 +227,7 @@ function returnLibrary(req, res, user) {
         db.users.updateOne({ _id: user._id }, { $set: { syncToken: 0 } });
     }
     return res.json({
-        username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified,
+        username: user.username, library: JSON.stringify(user.library), syncToken: user.syncToken, emailVerified: !!user.emailVerified, language: user.language || null,
     });
 }
 
@@ -400,6 +402,7 @@ router.get('/api/auth/me', (req, res) => {
         username: user.username,
         emailVerified: !!user.emailVerified,
         isModerator: isModerator(user.username),
+        language: user.language || null,
     }));
 });
 

@@ -41,6 +41,13 @@ test("the bell lists alerts, opens a profile, and manages them", async ({
         read: true,
         createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
       },
+      {
+        _id: "n4",
+        type: "moderation",
+        listName: "Big list",
+        read: true,
+        createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+      },
     ],
     prefs: { follow: true, copy: true },
   };
@@ -85,12 +92,18 @@ test("the bell lists alerts, opens a profile, and manages them", async ({
 
   await bell.click();
   const items = page.locator(".lpNotifItem");
-  await expect(items).toHaveCount(3);
+  await expect(items).toHaveCount(4);
   await expect(items.nth(0)).toContainText("Bob Trail");
   await expect(items.nth(1)).toContainText("Carol");
   await expect(items.nth(1)).toContainText("PCT Section J");
   await expect(items.nth(0)).toHaveClass(/unread/);
   await expect(items.nth(2)).not.toHaveClass(/unread/);
+
+  // A moderation notice names the list, has no person behind it, and is not a link.
+  await expect(items.nth(3)).toContainText(
+    'Your list "Big list" was removed from the community',
+  );
+  await expect(items.nth(3)).not.toHaveClass(/clickable/);
 
   // The preferences are saved as they are toggled.
   await page.locator(".lpNotifPrefs input").nth(1).uncheck();

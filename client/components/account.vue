@@ -280,7 +280,7 @@ export default {
             this.changeLocale();
         },
         async changeLocale() {
-            await setLocale(this.selectedLocale);
+            await setLocale(this.selectedLocale, true);
         },
         async downloadBackup() {
             this.backupLoading = true;

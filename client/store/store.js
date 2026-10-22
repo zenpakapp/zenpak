@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 import { notifyGlobalAlert, notifyUnauthorized } from '../services/app-events';
 import { getLocalLibrary, hasLocalLibrary, setLocalLibrary } from '../services/browser-storage';
 import { fetchJson } from '../utils/utils';
+import { syncAccountLanguage } from '../i18n';
 
 const sessionMutations = require('./mutations-session');
 const libraryMutations = require('./mutations-library');
@@ -152,6 +153,7 @@ const store = createStore({
                 .then((response) => {
                     context.commit('setLoggedIn', response.username || false);
                     context.commit('setEmailVerified', response.emailVerified ?? null);
+                    if (response.username) syncAccountLanguage(response.language);
                     context.commit('setInitializationStatus', 'ready');
                 })
                 .catch((error) => {
@@ -233,6 +235,7 @@ const store = createStore({
                 context.commit('setSaveType', 'remote');
                 context.commit('setLoggedIn', response.username);
                 context.commit('setEmailVerified', response.emailVerified ?? null);
+                syncAccountLanguage(response.language);
                 fetch('/api/billing/me', { credentials: 'include' })
                     .then((res) => (res.ok ? res.json() : null))
                     .then((data) => { if (data) context.commit('setBilling', data); })
