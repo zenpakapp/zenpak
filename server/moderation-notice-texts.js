@@ -4,7 +4,7 @@
 const TEXTS = {
     en: {
         greeting: 'Hi {user},',
-        signature: '— The ZenPak team',
+        signature: 'The ZenPak team',
         listUnpublished: {
             subject: 'Your list "{name}" was removed from the community',
             body: 'Your list "{name}" was removed from the community because it does not follow the ZenPak terms of use. It is now private: you still have it, and nobody else can see it.\n\nIf you think this is a mistake, reply to this email and a person will review it.',
@@ -20,7 +20,7 @@ const TEXTS = {
     },
     fr: {
         greeting: 'Bonjour {user},',
-        signature: '— L’équipe ZenPak',
+        signature: 'L’équipe ZenPak',
         listUnpublished: {
             subject: 'Votre liste « {name} » a été retirée de la communauté',
             body: 'Votre liste « {name} » a été retirée de la communauté car elle ne respecte pas les conditions d’utilisation de ZenPak. Elle est maintenant privée : vous la gardez, et personne d’autre ne peut la voir.\n\nSi vous pensez qu’il s’agit d’une erreur, répondez à cet e-mail : une personne réexaminera votre cas.',
@@ -36,7 +36,7 @@ const TEXTS = {
     },
     de: {
         greeting: 'Hallo {user},',
-        signature: '— Das ZenPak-Team',
+        signature: 'Das ZenPak-Team',
         listUnpublished: {
             subject: 'Deine Liste „{name}“ wurde aus der Community entfernt',
             body: 'Deine Liste „{name}“ wurde aus der Community entfernt, weil sie gegen die ZenPak-Nutzungsbedingungen verstößt. Sie ist jetzt privat: Du behältst sie, und niemand sonst kann sie sehen.\n\nWenn du glaubst, dass das ein Fehler ist, antworte auf diese E-Mail. Eine Person prüft deinen Fall erneut.',
@@ -52,7 +52,7 @@ const TEXTS = {
     },
     es: {
         greeting: 'Hola {user},',
-        signature: '— El equipo de ZenPak',
+        signature: 'El equipo de ZenPak',
         listUnpublished: {
             subject: 'Tu lista «{name}» se retiró de la comunidad',
             body: 'Tu lista «{name}» se retiró de la comunidad porque no cumple las condiciones de uso de ZenPak. Ahora es privada: la conservas y nadie más puede verla.\n\nSi crees que es un error, responde a este correo y una persona revisará tu caso.',

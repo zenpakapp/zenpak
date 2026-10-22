@@ -36,7 +36,7 @@ ${verifyUrl}
 
 If you didn't create a ZenPak account, ignore this email.
 
-— The ZenPak team`;
+The ZenPak team`;
     const html = `<!DOCTYPE html>
 <html>
 <body style="margin:0;padding:0;background:#f5f5f5;font-family:sans-serif;">
@@ -50,7 +50,7 @@ If you didn't create a ZenPak account, ignore this email.
         </td></tr>
         <tr><td style="font-size:13px;color:#666;padding-bottom:20px;">If the button does not work, copy this link:<br><a href="${verifyUrl}" style="color:#2d6a4f;word-break:break-all;">${verifyUrl}</a></td></tr>
         <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't create a ZenPak account? Ignore this email.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
       </table>
     </td></tr>
   </table>
@@ -257,7 +257,7 @@ router.post('/forgotPassword', forgotLimiter, (req, res) => {
             const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
             const resetUrl = `${deployUrl}/reset-password?token=${token}`;
 
-            const textBody = `Hi ${username},\n\nEven the best hikers lose the trail sometimes. Here's your link to find your way back — it expires in 1 hour:\n\n${resetUrl}\n\nDidn't request this? Just ignore this email — your password won't change.\n\n— The ZenPak team`;
+            const textBody = `Hi ${username},\n\nEven the best hikers lose the trail sometimes. Here's your link to find your way back — it expires in 1 hour:\n\n${resetUrl}\n\nDidn't request this? Just ignore this email — your password won't change.\n\nThe ZenPak team`;
 
             const htmlBody = `<!DOCTYPE html>
 <html>
@@ -271,7 +271,7 @@ router.post('/forgotPassword', forgotLimiter, (req, res) => {
           <a href="${resetUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Get back on track →</a>
         </td></tr>
         <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Just ignore this email — your password won't change.<br><br>Or copy this link: <a href="${resetUrl}" style="color:#2d6a4f;word-break:break-all;">${resetUrl}</a></td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
       </table>
     </td></tr>
   </table>
@@ -351,7 +351,7 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
 
         const signinUrl = 'https://zenpak.app/welcome';
 
-        const textBody = `Hi,\n\nFound it. Here's the trail marker you were looking for:\n\n  ${username}\n\nHead back: ${signinUrl}\n\nIf you need help, reply to this email.\n\n— The ZenPak team`;
+        const textBody = `Hi,\n\nFound it. Here's the trail marker you were looking for:\n\n  ${username}\n\nHead back: ${signinUrl}\n\nIf you need help, reply to this email.\n\nThe ZenPak team`;
 
         const htmlBody = `<!DOCTYPE html>
 <html>
@@ -368,7 +368,7 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
           <a href="${signinUrl}" style="display:inline-block;background:#2d6a4f;color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:6px;">Back to the trail →</a>
         </td></tr>
         <tr><td style="font-size:13px;color:#888;border-top:1px solid #eee;padding-top:20px;">Didn't request this? Just ignore this email.</td></tr>
-        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">— The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
+        <tr><td style="font-size:13px;color:#aaa;padding-top:20px;">The ZenPak team · <a href="https://zenpak.app" style="color:#aaa;">zenpak.app</a></td></tr>
       </table>
     </td></tr>
   </table>
