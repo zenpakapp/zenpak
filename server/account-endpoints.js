@@ -85,6 +85,12 @@ function saveAccountEmail(user, req, res, next) {
         }
 
         user.email = email;
+        // The new address is not proven yet: it must be verified again before Google sign-in or
+        // publishing trusts it.
+        // A link sent to the old address must not verify the new one either.
+        user.emailVerified = false;
+        user.emailVerifyToken = undefined;
+        user.verifyEmailSentAt = undefined;
         logWithRequest(req, { message: 'Changing Email', username: user.username });
         return next();
     });

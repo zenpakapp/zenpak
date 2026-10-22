@@ -59,6 +59,24 @@ library = { lists: [{ id: 5, visibility: 'discoverable' }] };
 pinServerOwnedFields(library, { lists: [{ id: 5, visibility: 'private' }] });
 assert.strictEqual(library.lists[0].visibility, 'discoverable', 'once lifted, publishing works');
 
+// The lock follows externalId too: a new client-chosen id does not free a taken-down list, and
+// neither does a duplicate entry carrying the same externalId.
+library = {
+    lists: [
+        { id: 99, externalId: 'abc', visibility: 'discoverable' },
+        { id: 100, externalId: 'abc', visibility: 'unlisted' },
+        { id: 101, externalId: 'other', visibility: 'unlisted' },
+    ],
+};
+pinServerOwnedFields(library, { lists: [{ id: 5, externalId: 'abc', takenDown: true, visibility: 'private' }] });
+assert.strictEqual(library.lists[0].visibility, 'private', 'a changed id does not free the list');
+assert.strictEqual(library.lists[0].takenDown, true);
+assert.strictEqual(library.lists[1].visibility, 'private', 'a duplicate externalId is locked too');
+assert.strictEqual(library.lists[2].visibility, 'unlisted', 'other lists are untouched');
+library = { lists: [{ id: 99, externalId: 'abc', featured: true }] };
+pinServerOwnedFields(library, { lists: [{ id: 5, externalId: 'abc', featured: true }] });
+assert.strictEqual(library.lists[0].featured, true, 'featured follows externalId as well');
+
 // A library without lists is fine.
 assert.doesNotThrow(() => pinServerOwnedFields({}, stored));
 

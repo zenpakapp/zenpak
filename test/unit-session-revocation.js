@@ -99,7 +99,8 @@ function call(handler, req) {
     const reset = route(authRouter, 'post', '/resetPassword');
     const result = await call(reset, { body: { token: 'r1', password: 'longenough' } });
     assert.strictEqual(result.status, 200);
-    assert.strictEqual(saved.token, null, 'the old session token is gone');
+    // Unset, not null: the token index is unique, so a second null would collide.
+    assert.strictEqual(saved.token, undefined, 'the old session token is gone');
 
     // Signing out ends the session on the server, not only in the browser.
     const signout = route(oauthRouter, 'post', '/api/auth/signout');

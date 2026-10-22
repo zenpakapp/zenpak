@@ -170,7 +170,7 @@ router.post('/ban/:username', (req, res) => {
             }
             const wasBanned = Boolean(user.banned);
             user.banned = true;
-            user.token = null;
+            user.token = undefined;
             await db.users.save(user);
             syncUserPublicLists(user).catch(() => {});
             if (!wasBanned) noticeAccountBanned(user).catch(() => {});

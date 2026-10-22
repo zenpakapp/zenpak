@@ -14,13 +14,23 @@ function pinServerOwnedFields(library, stored) {
 
     // `featured` and `takenDown` are set by moderators only. A list taken down stays private until
     // a moderator lifts it.
-    const idsWith = (flag) => new Set((server.lists || []).filter((l) => l[flag]).map((l) => String(l.id)));
-    const featuredIds = idsWith('featured');
-    const takenDownIds = idsWith('takenDown');
+    // Matched by the list id and by externalId: the id is client-chosen, but the public link, the
+    // moderation routes and publishing all work on externalId.
+    const keysWith = (flag) => {
+        const keys = new Set();
+        (server.lists || []).filter((l) => l[flag]).forEach((l) => {
+            keys.add(`id:${l.id}`);
+            if (l.externalId) keys.add(`ext:${l.externalId}`);
+        });
+        return keys;
+    };
+    const flagged = (keys, list) => keys.has(`id:${list.id}`) || (list.externalId && keys.has(`ext:${list.externalId}`));
+    const featuredKeys = keysWith('featured');
+    const takenDownKeys = keysWith('takenDown');
     (library.lists || []).forEach((list) => {
-        if (featuredIds.has(String(list.id))) list.featured = true;
+        if (flagged(featuredKeys, list)) list.featured = true;
         else delete list.featured;
-        if (takenDownIds.has(String(list.id))) {
+        if (flagged(takenDownKeys, list)) {
             list.takenDown = true;
             list.visibility = 'private';
         } else {

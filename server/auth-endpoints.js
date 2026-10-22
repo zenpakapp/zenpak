@@ -316,8 +316,9 @@ router.post('/resetPassword', authLimiter, (req, res) => {
                 user.password = hash;
                 user.resetToken = null;
                 user.resetTokenExpiry = null;
-                // A reset ends every session opened with the old password.
-                user.token = null;
+                // A reset ends every session opened with the old password. Unset, not null: the
+                // token index is unique, and a second null would collide.
+                user.token = undefined;
                 db.users.save(user, (saveErr) => {
                     if (saveErr) return res.status(500).json({ message: 'An error occurred' });
                     logWithRequest(req, { message: 'Password reset for user', username: user.username });

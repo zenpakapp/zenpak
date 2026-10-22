@@ -108,7 +108,7 @@ function clearSession(req, res) {
             logWithRequest(req, { message: 'MODERATION Clear session for unknown', username });
             return res.status(500).json({ message: 'An error occurred.' });
         }
-        user.token = '';
+        user.token = undefined;
         db.users.save(user);
         logWithRequest(req, { message: 'MODERATION  Clear session succeeded', username });
         return res.status(200);
