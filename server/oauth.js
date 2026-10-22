@@ -146,7 +146,14 @@ if (oauthEnabled) {
     });
 }
 
-router.post('/api/auth/signout', (req, res) => {
+router.post('/api/auth/signout', async (req, res) => {
+    const token = req.cookies && req.cookies.lp;
+    if (typeof token === 'string' && token) {
+        // Clearing the cookie only forgets it in this browser: end the session on the server too.
+        try {
+            await db.users.updateOne({ token }, { $unset: { token: '' } });
+        } catch (err) { /* the cookie is cleared anyway */ }
+    }
     res.clearCookie('lp', { path: '/' });
     res.json({ ok: true });
 });

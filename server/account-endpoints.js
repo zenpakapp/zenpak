@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 
 const { logWithRequest } = require('./log.js');
-const { authenticateUser, verifyPassword } = require('./auth.js');
+const { authenticateUser, verifyPassword, generateSession } = require('./auth.js');
 const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const { deleteVersionsForOwner } = require('./list-versions.js');
 const { normalizeLanguage } = require('./user-language.js');
@@ -35,7 +35,8 @@ function account(req, res, user) {
                         bcrypt.hash(newPassword, salt, (err, hash) => {
                             user.password = hash;
                             logWithRequest(req, { message: 'Changing PW', username: user.username });
-                            saveAccountUser(user, req, res);
+                            // A new password ends the other sessions: this one gets a fresh token.
+                            generateSession(req, res, user, () => saveAccountUser(user, req, res));
                         });
                     });
                 });
