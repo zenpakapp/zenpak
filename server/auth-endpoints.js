@@ -166,7 +166,11 @@ router.post('/register', authLimiter, (req, res) => {
                             return res.status(400).json({ errors: [{ field: 'displayName', message: 'This display name is reserved for the ZenPak team.' }] });
                         }
 
-                        if (library && typeof library === 'object') pinServerOwnedFields(library, null);
+                        if (library && typeof library === 'object') {
+                            pinServerOwnedFields(library, null);
+                            // A new account is unverified: its profile starts private.
+                            if (library.publicProfile) library.publicProfile.visibility = 'private';
+                        }
 
                         const emailVerifyToken = crypto.randomBytes(32).toString('hex');
                         const newUser = {

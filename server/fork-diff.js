@@ -9,6 +9,7 @@ const {
 
 const OWNER_PROJECTION = {
     username: 1,
+    banned: 1,
     'library.lists': 1,
     'library.publicProfile': 1,
     'library.entitlements': 1,
@@ -38,7 +39,9 @@ async function loadForkPayloads(user, listId) {
     if (!copiedOwnerId || String(copiedOwnerId) !== String(latest.ownerId)) return null;
     // Only what buildServedUser / buildPublicList read: the lists plus the live library overlay.
     const [owner] = await db.users.findMany({ _id: latest.ownerId }, { projection: OWNER_PROJECTION });
-    const liveList = owner ? findLiveList(owner, externalId) : null;
+    // A banned owner's lists are not served, to copiers either.
+    if (!owner || owner.banned) return null;
+    const liveList = findLiveList(owner, externalId);
     if (!liveList || !isPublicVisibility(liveList.visibility)) return null;
 
     const base = await getVersion(externalId, forkedVersion);

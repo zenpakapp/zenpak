@@ -166,7 +166,7 @@ async function getForkUpdates(user) {
     // Only the lists are needed to check the source is still public.
     const owners = await db.users.findMany(
         { _id: { $in: ownerIds.map((id) => new ObjectId(id)) } },
-        { projection: { 'library.lists': 1 } },
+        { projection: { banned: 1, 'library.lists': 1 } },
     );
     const ownersById = new Map(owners.map((owner) => [String(owner._id), owner]));
 
@@ -179,7 +179,8 @@ async function getForkUpdates(user) {
         // report updates from the account this list was actually copied from.
         if (!copiedOwnerId || String(copiedOwnerId) !== String(row.ownerId)) return updates;
         const owner = ownersById.get(String(row.ownerId));
-        const sourceList = owner ? findLiveList(owner, externalId) : null;
+        if (!owner || owner.banned) return updates;
+        const sourceList = findLiveList(owner, externalId);
         if (!sourceList || !isPublicVisibility(sourceList.visibility)) return updates;
         updates.push({
             listId: list.id, sourceExternalId: externalId, forkedVersion, latestVersion: row.version,

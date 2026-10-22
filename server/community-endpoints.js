@@ -241,6 +241,8 @@ router.get('/feed', (req, res) => {
                 const lists = (author.library && author.library.lists) || [];
                 lists.forEach((list) => {
                     if (list.id == null) return;
+                    // A list that is private or taken down no longer gives its name to followers.
+                    if (list.takenDown || list.visibility === 'private' || !list.visibility) return;
                     listNameMap[String(list.id)] = list.name;
                     if (list.externalId && (list.visibility === 'discoverable' || list.visibility === 'indexable')) {
                         listExternalIdMap[String(list.id)] = list.externalId;

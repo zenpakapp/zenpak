@@ -99,7 +99,11 @@ async function run() {
 
     const lastFind = usersDb.findManyCalls[usersDb.findManyCalls.length - 1];
     const projection = lastFind && lastFind.options && lastFind.options.projection;
-    assert('source owners are loaded with a lists-only projection', Boolean(projection) && projection['library.lists'] === 1 && Object.keys(projection).length === 1);
+    assert('source owners are loaded with a lists-and-banned projection', Boolean(projection) && projection['library.lists'] === 1 && projection.banned === 1 && Object.keys(projection).length === 2);
+
+    alice.banned = true;
+    assert('a banned source owner gives no update', (await getForkUpdates(bob)).length === 0);
+    alice.banned = false;
 
     const dave = { _id: new ObjectId(), library: { lists: [{ id: 1, forkedFrom: { externalId: 'badowner', version: 1 } }] } };
     let badOwnerUpdates = null;

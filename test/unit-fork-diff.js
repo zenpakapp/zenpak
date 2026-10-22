@@ -108,6 +108,9 @@ async function run() {
     const projection = ownerLookup && ownerLookup.options && ownerLookup.options.projection;
     assert('the source owner is loaded with a projection, not the whole document', Boolean(projection) && projection['library.lists'] === 1 && projection['library.items'] === undefined && projection.password === undefined);
 
+    alice.banned = true;
+    assert('a banned owner gives no diff', (await getForkDiff(bob, 1)) === null);
+    alice.banned = false;
     assert('a legacy fork gets null', (await getForkDiff(bob, 2)) === null);
     assert('a list that is not a fork gets null', (await getForkDiff(bob, 3)) === null);
     assert('an unknown list id gets null', (await getForkDiff(bob, 99)) === null);

@@ -117,7 +117,13 @@ router.put('/api/profile', (req, res) => {
         if (typeof req.body.trailName === 'string') p.trailName = req.body.trailName.slice(0, 100);
         if (typeof req.body.bio === 'string') p.bio = req.body.bio.slice(0, 500);
         const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];
-        if (VALID_VISIBILITY.includes(req.body.visibility)) p.visibility = req.body.visibility;
+        if (VALID_VISIBILITY.includes(req.body.visibility)) {
+            // Like a public list, a public profile waits for a verified email.
+            if (req.body.visibility !== 'private' && !user.emailVerified) {
+                return res.status(403).json({ message: 'Verify your email before making your profile public.', code: 'email-not-verified' });
+            }
+            p.visibility = req.body.visibility;
+        }
         if (typeof req.body.allowSearchIndexing === 'boolean') p.allowSearchIndexing = req.body.allowSearchIndexing;
 
         try {
