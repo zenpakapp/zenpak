@@ -74,6 +74,10 @@ const dbStub = {
             savedUsers.push(user);
             return Promise.resolve(user);
         },
+        updateOne(filter) {
+            [ownerUser, ownerUser2].forEach((u) => { if (String(u._id) === String(filter._id)) savedUsers.push(u); });
+            return Promise.resolve({ matchedCount: 1 });
+        },
     },
     listVersions: listVersionsDb,
     listCopies: listCopiesDb,

@@ -19,6 +19,7 @@ stubServerModule('db.js', {
     users: {
         findMany(query) { queries.push(query); return Promise.resolve(usersToReturn); },
         save(user) { saved.push(user); return Promise.resolve(user); },
+        updateOne(filter, update) { saved.push({ _id: filter._id, billing: update.$set.billing, library: { entitlements: { plan: update.$set['library.entitlements.plan'] } } }); return Promise.resolve({ matchedCount: 1 }); },
     },
 });
 

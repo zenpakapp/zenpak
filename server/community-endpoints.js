@@ -374,7 +374,14 @@ router.post('/copy-list/:externalId', (req, res) => {
 
                 sourceList.copiedBy.push(userId);
                 sourceList.copyCount = (Number(sourceList.copyCount) || 0) + 1;
-                await db.users.save(owner);
+                // One atomic update on this list only. The filter on copiedBy makes a second copy
+                // by the same member, started at the same time, count once; the rest of the owner's
+                // account is not written.
+                await db.users.updateOne(
+                    { _id: owner._id },
+                    { $inc: { 'library.lists.$[l].copyCount': 1 }, $push: { 'library.lists.$[l].copiedBy': userId } },
+                    { arrayFilters: [{ 'l.id': sourceList.id, 'l.copiedBy': { $ne: userId } }] },
+                );
                 await incrementPublicListStat(sourceList.externalId, 'copyCount');
                 syncUserPublicLists(owner).catch(() => {});
 

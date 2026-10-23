@@ -103,6 +103,7 @@ function call(handler, req) {
     assert.strictEqual(saved.token, undefined, 'the old session token is gone');
 
     // Signing out ends the session on the server, not only in the browser.
+    updates.length = 0;
     const signout = route(oauthRouter, 'post', '/api/auth/signout');
     const out = await call(signout, { cookies: { lp: 'abc' } });
     assert.strictEqual(out.status, 200);
