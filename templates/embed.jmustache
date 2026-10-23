@@ -91,7 +91,8 @@ listReport_{{externalId}} = function() {
         $categories.on("click", ".lpItemImage", function() {
             var imageUrl = $(this).attr("href");
             
-            var $modalImage = $("<img src='"+imageUrl+"' />");
+            // The address is set as a property, never written into HTML, so a quote in it cannot add markup.
+            var $modalImage = $("<img />").attr("src", /^https?:\/\//i.test(imageUrl) ? imageUrl : "");
             $("#lpImageDialog").empty().append($modalImage);
             $modalImage.load(function() {
                 $("#lpImageDialog").show();
