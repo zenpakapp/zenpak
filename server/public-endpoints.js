@@ -1,6 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const crypto = require('crypto');
+const rateLimit = require('express-rate-limit');
 
 const { logWithRequest } = require('./log.js');
 const { buildPublicProfile, buildPublicList } = require('./public-sharing.js');
@@ -92,7 +93,17 @@ router.get('/api/public/list/:externalId', async (req, res) => {
     }
 });
 
-router.post('/api/public/insight', async (req, res) => {
+// A viewer is told apart by address and browser, so varying the browser would count as new
+// viewers: the endpoint is capped per address instead.
+const insightLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many events.' },
+});
+
+router.post('/api/public/insight', insightLimiter, async (req, res) => {
     const externalId = String(req.body.externalId || '').trim();
     const rawItemId = req.body.itemId;
     const itemIdIsValid = typeof rawItemId === 'undefined' || typeof rawItemId === 'string' || typeof rawItemId === 'number';

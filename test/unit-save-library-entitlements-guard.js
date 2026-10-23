@@ -14,7 +14,7 @@ process.env.NODE_CONFIG = JSON.stringify({
 });
 
 const db = require('../server/db.js');
-db.users.save = (user, cb) => { savedUser = user; cb(); };
+db.users.updateOne = (filter, update) => { savedUser = { library: update.$set.library }; return Promise.resolve({ matchedCount: 1 }); };
 let savedUser = null;
 
 const testUser = {

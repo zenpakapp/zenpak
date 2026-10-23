@@ -102,7 +102,7 @@ function callInsight(req) {
             status(code) { this._status = code; return this; },
             json(data) { resolve({ status: this._status || 200, data }); },
         };
-        route.route.stack[0].handle(req, res);
+        route.route.stack[route.route.stack.length - 1].handle(req, res);
     });
 }
 
