@@ -241,10 +241,11 @@ router.get('/feed', (req, res) => {
                 const lists = (author.library && author.library.lists) || [];
                 lists.forEach((list) => {
                     if (list.id == null) return;
-                    // A list that is private or taken down no longer gives its name to followers.
-                    if (list.takenDown || list.visibility === 'private' || !list.visibility) return;
+                    // Only lists shown in the community give their name to followers: a private,
+                    // link-only or taken-down list does not.
+                    if (list.takenDown || !(list.visibility === 'discoverable' || list.visibility === 'indexable')) return;
                     listNameMap[String(list.id)] = list.name;
-                    if (list.externalId && (list.visibility === 'discoverable' || list.visibility === 'indexable')) {
+                    if (list.externalId) {
                         listExternalIdMap[String(list.id)] = list.externalId;
                     }
                 });

@@ -103,6 +103,7 @@ function createUsersStub(users) {
             return Promise.resolve(ids ? users.filter((user) => ids.includes(String(user._id))) : users);
         },
         save(user) { return Promise.resolve(user); },
+        updateOne() { return Promise.resolve({ matchedCount: 1 }); },
     };
 }
 

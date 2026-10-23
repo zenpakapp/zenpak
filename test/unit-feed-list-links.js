@@ -85,7 +85,7 @@ new Promise((resolve) => {
 
     assert.strictEqual(byName.Discoverable, 'ext-discoverable', 'a discoverable list is linkable');
     assert.strictEqual(byName.Indexable, 'ext-indexable', 'an indexable list is linkable');
-    assert.strictEqual(byName.Shareable, '', 'a shareable list is not listed in the community, so no link');
+    assert.strictEqual(byName.Shareable, undefined, 'a link-only list gives no name to followers');
     assert.strictEqual(byName.Private, undefined, 'a list made private since gives no name to followers');
     assert.strictEqual(byName['No public id'], '', 'a list without a public id gets no link');
     assert.strictEqual(byName.gone, '', 'a deleted list gets no link');

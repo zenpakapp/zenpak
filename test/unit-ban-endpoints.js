@@ -25,7 +25,7 @@ const synced = [];
 stubServerModule('db.js', {
     users: {
         findOne(query) { return Promise.resolve(accounts[query.username] || null); },
-        save(user) { saved.push(user); return Promise.resolve(user); },
+        updateOne(filter, update) { saved.push([filter, update]); return Promise.resolve({ matchedCount: 1 }); },
     },
     reports: {},
 });

@@ -15,6 +15,20 @@ const REPORTS_PAGE_SIZE = 50;
 const MAX_SKIP = 5000;
 const REPORTER_SAMPLE = 5;
 
+// A moderator write must not undo, or be undone by, an owner's /saveLibrary running at the same
+// time. The library is written only if nobody saved since it was read, and the sync token moves so
+// that an owner's save made from an older read is refused.
+async function saveOwnerLibrary(owner) {
+    const filter = { _id: owner._id };
+    if (typeof owner.syncToken !== 'undefined') filter.syncToken = owner.syncToken;
+    const result = await db.users.updateOne(filter, { $set: { library: owner.library }, $inc: { syncToken: 1 } });
+    return Boolean(result && result.matchedCount);
+}
+
+function refuseConflict(res) {
+    return res.status(409).json({ message: 'The list changed while you were acting on it. Try again.', code: 'conflict' });
+}
+
 // One line per reported target: how many reports it has, why, who reported, and the latest date.
 function groupReports(reports) {
     const groups = new Map();
@@ -171,7 +185,8 @@ router.post('/ban/:username', (req, res) => {
             const wasBanned = Boolean(user.banned);
             user.banned = true;
             user.token = undefined;
-            await db.users.save(user);
+            // Only the ban fields are written, so a library save running at the same time is untouched.
+            await db.users.updateOne({ _id: user._id }, { $set: { banned: true }, $unset: { token: '' } });
             syncUserPublicLists(user).catch(() => {});
             if (!wasBanned) noticeAccountBanned(user).catch(() => {});
             return res.json({ ok: true });
@@ -190,7 +205,7 @@ router.post('/unban/:username', (req, res) => {
             if (!user) return res.status(404).json({ message: 'User not found' });
             const wasBanned = Boolean(user.banned);
             user.banned = false;
-            await db.users.save(user);
+            await db.users.updateOne({ _id: user._id }, { $set: { banned: false } });
             syncUserPublicLists(user).catch(() => {});
             if (wasBanned) noticeAccountRestored(user).catch(() => {});
             return res.json({ ok: true });
@@ -210,7 +225,7 @@ router.post('/feature/:externalId', (req, res) => {
             const list = (owner.library.lists || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             list.featured = !list.featured;
-            await db.users.save(owner);
+            if (!await saveOwnerLibrary(owner)) return refuseConflict(res);
             syncUserPublicLists(owner).catch(() => {});
             return res.json({ ok: true, featured: list.featured });
         } catch (err) {
@@ -232,7 +247,7 @@ router.post('/unpublish/:externalId', (req, res) => {
             list.visibility = 'private';
             // The owner cannot publish it again until a moderator lifts this.
             list.takenDown = true;
-            await db.users.save(owner);
+            if (!await saveOwnerLibrary(owner)) return refuseConflict(res);
             syncUserPublicLists(owner).catch(() => {});
             if (!wasPrivate) noticeListUnpublished(owner, list).catch(() => {});
             return res.json({ ok: true });
@@ -252,7 +267,7 @@ router.post('/lift/:externalId', (req, res) => {
             const list = ((owner.library && owner.library.lists) || []).find((l) => l.externalId === externalId);
             if (!list) return res.status(404).json({ message: 'List not found' });
             delete list.takenDown;
-            await db.users.save(owner);
+            if (!await saveOwnerLibrary(owner)) return refuseConflict(res);
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
