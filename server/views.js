@@ -454,6 +454,7 @@ const renderItem = function (item, args) {
         unitSelect,
         showImages: args.showImages,
         showPrices: args.showPrices,
+        showLinks: args.showLinks,
         starClass,
         displayPrice,
     };
@@ -486,8 +487,12 @@ const renderCategory = function (category, args) {
 };
 
 const renderList = function (list, args) {
-    args.showPrices = list.library.optionalFields.price;
-    args.showImages = list.library.optionalFields.images;
+    // The owner's display toggles apply only to what this list's share settings allow, as on the
+    // public list page and in the API.
+    const shared = list.publicFields || {};
+    args.showPrices = Boolean(list.library.optionalFields.price && shared.price);
+    args.showImages = Boolean(list.library.optionalFields.images && shared.images);
+    args.showLinks = Boolean(shared.links);
     let out = '';
     for (const i in list.categoryIds) {
         const category = list.library.getCategoryById(list.categoryIds[i]);
@@ -547,7 +552,7 @@ const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, uni
     out.totalPriceDisplay = formatDisplayPrice(totalPrice || 0, list.library.currencySymbol);
     out.totalConsumablePrice = totalConsumablePrice;
     out.totalConsumablePriceDisplay = formatDisplayPrice(totalConsumablePrice || 0, list.library.currencySymbol);
-    out.showPrices = list.library.optionalFields.price;
+    out.showPrices = Boolean(list.library.optionalFields.price && list.publicFields && list.publicFields.price);
 
     if (t) out.t = t;
     return Mustache.render(totalsTemplate, out);

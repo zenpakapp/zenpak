@@ -78,8 +78,14 @@ module.exports = (function () {
         };
     }
 
+    // A colour comes from saved data, and the result is written into style attributes on the share
+    // pages, so each channel is forced to a whole number from 0 to 255.
+    function channel(value) {
+        return Math.max(0, Math.min(255, parseInt(value, 10) || 0));
+    }
+
     function rgbToString(rgb) {
-        return `rgb(${rgb.r},${rgb.g},${rgb.b})`;
+        return `rgb(${channel(rgb.r)},${channel(rgb.g)},${channel(rgb.b)})`;
     }
 
     function stringToRgb(rgbString) {
