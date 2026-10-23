@@ -261,9 +261,10 @@ router.get('/csv/:id', (req, res) => {
         // Check download permission against the published list settings
         const downloadable = list.publicFields && list.publicFields.downloadable;
 
+        const token = req.cookies && req.cookies.lp;
+        const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(served._id)).catch(() => false) : false;
+
         if (!downloadable) {
-            const token = req.cookies && req.cookies.lp;
-            const isOwner = token ? await db.users.findOne({ token }).then((u) => u && String(u._id) === String(served._id)).catch(() => false) : false;
             if (!isOwner) {
                 res.status(403).send(`<!DOCTYPE html>
 <html lang="en">
@@ -298,6 +299,12 @@ router.get('/csv/:id', (req, res) => {
             oz: 'ounce', lb: 'pound', g: 'gram', kg: 'kilogram',
         };
         const itemUnit = library.itemUnit || 'oz';
+        // Price, links and images follow the list's share settings, as on the public page. The owner
+        // keeps a complete file of their own list.
+        const shared = list.publicFields || {};
+        const showPrice = Boolean(isOwner || shared.price);
+        const showLinks = Boolean(isOwner || shared.links);
+        const showImages = Boolean(isOwner || shared.images);
         let out = '';
         if (list.description && list.description.trim()) {
             out += `# List description: ${safeCommentLine(list.description.replace(/\r?\n/g, ' '))}\n`;
@@ -320,15 +327,15 @@ router.get('/csv/:id', (req, res) => {
                         const exportUnit = itemUnit || item.authorUnit;
                         itemRow.push(`${weightUtils.MgToItemWeight(item.weight, exportUnit)}`);
                         itemRow.push(fullUnits[exportUnit]);
-                        itemRow.push(item.url);
-                        itemRow.push(`${item.price}`);
+                        itemRow.push(showLinks ? item.url : '');
+                        itemRow.push(showPrice ? `${item.price}` : '');
                         itemRow.push(categoryItem.worn ? 'Worn' : '');
                         itemRow.push(categoryItem.consumable ? 'Consumable' : '');
                         itemRow.push(item.brand || '');
                         const imageUrl = item.image
                             ? `https://i.imgur.com/${item.image}.jpg`
                             : (item.imageUrl || '');
-                        itemRow.push(imageUrl);
+                        itemRow.push(showImages ? imageUrl : '');
 
                         // Text columns and numeric columns (qty, weight, price) are written differently
                         // so that no cell can start a spreadsheet formula.
