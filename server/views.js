@@ -18,7 +18,7 @@ function resolveLocale(req) {
 
 const router = express.Router();
 const Mustache = require('mustache');
-const markdown = require('markdown').markdown;
+const { renderDescription } = require('./markdown-safe.js');
 const config = require('config');
 const { logWithRequest, logger } = require('./log.js');
 const { escapeCsvText, escapeCsvNumber, safeCommentLine } = require('./csv.js');
@@ -182,7 +182,7 @@ router.get('/r/:id', (req, res) => {
             renderedCategories,
             renderedTotals,
             optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(clipDescription(list.description)),
+            renderedDescription: renderDescription(clipDescription(list.description)),
             scripts: shareScriptsHtml,
             styles: shareStylesHtml,
             t,
@@ -216,7 +216,7 @@ router.get('/e/:id', (req, res) => {
             categoryTemplate: templates.t_categoryShare,
             optionalFields: library.optionalFields,
             unitSelectTemplate: templates.t_unitSelect,
-            renderedDescription: markdown.toHTML(clipDescription(list.description)),
+            renderedDescription: renderDescription(clipDescription(list.description)),
             currencySymbol: library.currencySymbol,
         });
 
@@ -230,7 +230,7 @@ router.get('/e/:id', (req, res) => {
             renderedCategories,
             renderedTotals,
             optionalFields: library.optionalFields,
-            renderedDescription: markdown.toHTML(clipDescription(list.description)),
+            renderedDescription: renderDescription(clipDescription(list.description)),
             baseUrl: getDeployUrl(req),
             styles: shareStylesLinks,
             scripts: shareScriptsLinks,
