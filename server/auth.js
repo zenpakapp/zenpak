@@ -11,6 +11,10 @@ const passwordAttempts = require('./password-attempts.js');
 const moderatorList = config.get('moderators');
 const secureCookie = (config.get('deployUrl') || '').startsWith('https');
 
+// How long a sign-in lasts. The old value, 365 * 24 * 60 * 1000, was missing a factor 60 and meant
+// about six days; this is deliberate.
+const SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
 // one day in many years this can go away.
 eval(`${fs.readFileSync(path.join(__dirname, './sha3.js'))}`);
 
@@ -123,7 +127,7 @@ const generateSession = function (req, res, user, callback) {
         user.token = token;
         await db.users.updateOne({ _id: user._id }, { $set: { token } });
         res.cookie('lp', token, {
-            path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie,
+            path: '/', maxAge: SESSION_MAX_AGE_MS, httpOnly: true, sameSite: 'lax', secure: secureCookie,
         });
         callback(req, res, user);
     });
@@ -139,4 +143,5 @@ module.exports = {
     verifyPassword,
     generateSession,
     isModerator,
+    SESSION_MAX_AGE_MS,
 };

@@ -4,6 +4,14 @@
 
 const SERVER_OWNED_KEYS = ['entitlements', 'creator', 'insights'];
 
+// The server makes the public id of a list (/externalId: lowercase letters and digits). It is written
+// into page addresses and into the script of the embed page, so a client library cannot bring its own.
+const EXTERNAL_ID_PATTERN = /^[a-z0-9]{1,32}$/;
+
+function isValidExternalId(value) {
+    return typeof value === 'string' && EXTERNAL_ID_PATTERN.test(value);
+}
+
 function pinServerOwnedFields(library, stored) {
     const server = stored || {};
     SERVER_OWNED_KEYS.forEach((key) => {
@@ -28,6 +36,7 @@ function pinServerOwnedFields(library, stored) {
     const featuredKeys = keysWith('featured');
     const takenDownKeys = keysWith('takenDown');
     (library.lists || []).forEach((list) => {
+        if (typeof list.externalId !== 'undefined' && !isValidExternalId(list.externalId)) delete list.externalId;
         if (flagged(featuredKeys, list)) list.featured = true;
         else delete list.featured;
         if (flagged(takenDownKeys, list)) {
@@ -40,4 +49,4 @@ function pinServerOwnedFields(library, stored) {
     return library;
 }
 
-module.exports = { pinServerOwnedFields };
+module.exports = { pinServerOwnedFields, isValidExternalId };
