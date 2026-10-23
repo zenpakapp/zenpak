@@ -12,15 +12,15 @@
         </span>
     {{/showImages}}
     <span class="lpName">
-        {{#url}}
+        {{#showLinks}}{{#url}}
             <a href="{{url}}" class="lpHref">
-        {{/url}}
+        {{/url}}{{/showLinks}}
 
         {{name}}
 
-        {{#url}}
+        {{#showLinks}}{{#url}}
             </a>
-        {{/url}}
+        {{/url}}{{/showLinks}}
     </span>
     <span class="lpDescription">
         {{description}}
