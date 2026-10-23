@@ -4,6 +4,7 @@ const config = require('config');
 const crypto = require('crypto');
 const express = require('express');
 const db = require('./db.js');
+const { writeFields } = require('./user-field-writes.js');
 const { generateSession } = require('./auth.js');
 const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const { canonicalUsername, isReservedUsername, isValidUsername } = require('./username-policy.js');
@@ -43,7 +44,7 @@ if (oauthEnabled) {
                         if (!byEmail.emailVerified) return done(null, false);
                         byEmail.googleId = googleId;
                         if (!byEmail.avatarUrl && avatarUrl) byEmail.avatarUrl = avatarUrl;
-                        await db.users.save(byEmail);
+                        await writeFields(byEmail, ['googleId', 'avatarUrl']);
                         return done(null, byEmail);
                     }
                 }
@@ -83,7 +84,7 @@ if (oauthEnabled) {
                 const setupToken = crypto.randomUUID();
                 user.setupToken = setupToken;
                 user.setupTokenExpiry = Date.now() + 10 * 60 * 1000;
-                await db.users.save(user);
+                await writeFields(user, ['setupToken', 'setupTokenExpiry']);
                 const suggested = user.suggestedUsername ? encodeURIComponent(user.suggestedUsername) : '';
                 res.cookie('oauth_setup_token', setupToken, { path: '/', httpOnly: false, maxAge: 10 * 60 * 1000 });
                 res.cookie('oauth_setup_suggested', suggested, { path: '/', httpOnly: false, maxAge: 10 * 60 * 1000 });

@@ -15,6 +15,7 @@ stubServerModule('db.js', {
     users: {
         findOne(query, cb) { if (cb) return cb(null, null); return Promise.resolve(null); },
         save(user, cb) { saved = { ...user }; if (cb) cb(null); return Promise.resolve(user); },
+        updateOne(filter, update) { saved = { ...update.$set }; return Promise.resolve({ matchedCount: 1 }); },
     },
 });
 stubServerModule('auth.js', {

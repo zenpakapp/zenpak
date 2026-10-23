@@ -51,10 +51,12 @@ const baseUser = {
 };
 
 let savedUser = null;
+let lastUpdate = null;
 const dbStub = {
     users: {
         findOne() { return Promise.resolve(guideUser); },
         save(user, cb) { savedUser = user; if (cb) cb(null); return Promise.resolve(); },
+        updateOne(filter, update, options) { savedUser = guideUser; lastUpdate = { filter, update, options }; return Promise.resolve({ matchedCount: 1 }); },
     },
 };
 require.cache[require.resolve('../server/db.js')] = {
@@ -150,6 +152,7 @@ async function run() {
     assert('PUT /items updates item affiliateUrl', savedUser && savedUser.library.items[0].affiliateUrl === 'https://zpacks.com/?ref=alice');
     assert('PUT /items updates item promoCode', savedUser && savedUser.library.items[0].promoCode === 'ALICE10');
     assert('PUT /items does not touch other items', savedUser && savedUser.library.items[1].promoCode === '');
+    assert('PUT /items writes only that item field by field, not the whole account', lastUpdate && Object.keys(lastUpdate.update).join() === '$set' && lastUpdate.update.$set['library.items.$[i0].promoCode'] === 'ALICE10' && JSON.stringify(lastUpdate.options.arrayFilters) === JSON.stringify([{ 'i0.id': 'item1' }]));
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);

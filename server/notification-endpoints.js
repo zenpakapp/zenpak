@@ -3,6 +3,7 @@ const { ObjectId } = require('mongodb');
 
 const router = express.Router();
 const db = require('./db.js');
+const { writeFields } = require('./user-field-writes.js');
 const auth = require('./auth.js');
 
 // GET /api/notifications — liste les notifications du user connecté
@@ -68,7 +69,7 @@ router.patch('/prefs', (req, res) => {
         };
         try {
             user.notificationPrefs = prefs;
-            await db.users.save(user);
+            await writeFields(user, ['notificationPrefs']);
             return res.json({ prefs });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });

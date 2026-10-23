@@ -57,7 +57,14 @@ router.put('/profile', (req, res) => {
         user.library.publicProfile.gearPhilosophy = gearPhilosophy;
 
         try {
-            await db.users.save(user);
+            // Only these three fields are written, so the rest of the account stays as it is.
+            await db.users.updateOne({ _id: user._id }, {
+                $set: {
+                    'library.publicProfile.bio': bio,
+                    'library.publicProfile.links': links,
+                    'library.publicProfile.gearPhilosophy': gearPhilosophy,
+                },
+            });
             syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
@@ -88,7 +95,9 @@ router.put('/affiliate-rules', (req, res) => {
         user.library.creator.disclosure = disclosure;
 
         try {
-            await db.users.save(user);
+            await db.users.updateOne({ _id: user._id }, {
+                $set: { 'library.creator.affiliateRules': affiliateRules, 'library.creator.disclosure': disclosure },
+            });
             syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {
@@ -165,6 +174,7 @@ router.put('/items', (req, res) => {
         const libraryItems = user.library.items || [];
         const libraryCategories = user.library.categories || [];
 
+        const itemWrites = [];
         for (const update of updates) {
             const listId = String(update.listId || '');
             const itemId = String(update.itemId || '');
@@ -183,11 +193,23 @@ router.put('/items', (req, res) => {
                 item.affiliateUrl = String(update.affiliateUrl || '').slice(0, 500);
                 item.promoCode = String(update.promoCode || '').slice(0, 100);
                 item.promoLabel = String(update.promoLabel || '').slice(0, 100);
+                itemWrites.push(item);
             }
         }
 
         try {
-            await db.users.save(user);
+            // Each changed item is written on its own, so a library saved in the meantime is not put back.
+            if (itemWrites.length) {
+                const set = {};
+                const arrayFilters = [];
+                itemWrites.forEach((item, index) => {
+                    set[`library.items.$[i${index}].affiliateUrl`] = item.affiliateUrl;
+                    set[`library.items.$[i${index}].promoCode`] = item.promoCode;
+                    set[`library.items.$[i${index}].promoLabel`] = item.promoLabel;
+                    arrayFilters.push({ [`i${index}.id`]: item.id });
+                });
+                await db.users.updateOne({ _id: user._id }, { $set: set }, { arrayFilters });
+            }
             syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (err) {

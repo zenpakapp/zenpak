@@ -14,6 +14,10 @@ let saved = null;
 stubServerModule('db.js', {
     users: {
         save(user) { saved = JSON.parse(JSON.stringify(user)); return Promise.resolve(user); },
+        updateOne(filter, update) {
+            saved = { library: { publicProfile: { visibility: update.$set['library.publicProfile.visibility'] } } };
+            return Promise.resolve({ matchedCount: 1 });
+        },
     },
 });
 stubServerModule('auth.js', {
