@@ -29,6 +29,17 @@ your-domain.example {
 
 Caddy handles HTTPS certificates automatically. Keep Node bound to a private/local interface and expose only ports `80` and `443` publicly.
 
+### Proxies in front of the app (`TRUST_PROXY`)
+
+The app reads the visitor's address from `X-Forwarded-For`, and the rate limiters use it. It trusts as many proxy hops as you tell it:
+
+- Unset, `NODE_ENV=production`: one proxy (the Caddy above). Right for this setup.
+- Unset, any other environment: none. `req.ip` is the connection address.
+- `TRUST_PROXY=2`: two proxies, for example a CDN in front of Caddy.
+- `TRUST_PROXY=false`: none. Use it when Node is exposed without a proxy.
+
+Never leave a higher number than the proxies you really run: the extra hop would let a visitor write their own address. The same value can be set as `trustProxy` in the config file.
+
 ## systemd service
 
 Create `/etc/systemd/system/zenpak.service`:
