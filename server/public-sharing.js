@@ -188,6 +188,10 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
     }
     const publicLink = resolvePublicItemLink(item, options.applyCreatorRules === false ? null : creator);
     const includePrice = options.includePrice !== false;
+    // Links and images follow the list's share settings here, not only in the page that draws them:
+    // the JSON is public, so a value hidden by the client would still be readable.
+    const includeLinks = options.includeLinks !== false;
+    const includeImages = options.includeImages !== false;
 
     return {
         id: item.id,
@@ -196,12 +200,12 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
         weight: Number(item.weight) || 0,
         authorUnit: item.authorUnit || library.itemUnit || '',
         price: includePrice ? Number(item.price) || 0 : 0,
-        image: item.image || '',
-        imageUrl: item.imageUrl || '',
+        image: includeImages ? item.image || '' : '',
+        imageUrl: includeImages ? item.imageUrl || '' : '',
         shop: item.shop || '',
         brand: item.brand || '',
         tags: Array.isArray(item.tags) ? item.tags.slice() : [],
-        publicUrl: publicLink.url,
+        publicUrl: includeLinks ? publicLink.url : '',
         promoCode: publicLink.promoCode,
         promoLabel: publicLink.promoLabel,
         hasAffiliateLink: publicLink.hasAffiliateLink,
@@ -214,6 +218,8 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
 
 function buildPublicCategories(library, list, creator, options = {}) {
     const includePrice = options.includePrice !== false;
+    const includeLinks = options.includeLinks !== false;
+    const includeImages = options.includeImages !== false;
     const applyCreatorRules = options.applyCreatorRules !== false;
     return (list.categoryIds || []).map((categoryId) => {
         const category = findById(library.categories, categoryId);
@@ -222,7 +228,9 @@ function buildPublicCategories(library, list, creator, options = {}) {
         }
 
         const items = (category.categoryItems || [])
-            .map((categoryItem) => sanitizeCategoryItem(library, categoryItem, creator, { includePrice, applyCreatorRules }))
+            .map((categoryItem) => sanitizeCategoryItem(library, categoryItem, creator, {
+                includePrice, includeLinks, includeImages, applyCreatorRules,
+            }))
             .filter(Boolean);
 
         return {
@@ -304,7 +312,11 @@ function buildPublicList(user, externalId) {
     const sourceListInfoHidden = list.sourceListInfoHidden === true || list[legacySourceListInfoHiddenField] === true;
     const applyCreatorRules = !sourceListInfoHidden
         && (!list.forkedFrom || listHasExplicitSourceListInfo(library, list));
-    const categories = buildPublicCategories(library, list, creator, { includePrice, applyCreatorRules });
+    const includeLinks = !!(list.publicFields && list.publicFields.links);
+    const includeImages = !!(list.publicFields && list.publicFields.images);
+    const categories = buildPublicCategories(library, list, creator, {
+        includePrice, includeLinks, includeImages, applyCreatorRules,
+    });
     const hasAffiliateLinks = categories.some((category) => category.items.some((item) => item.hasAffiliateLink));
 
     const seenCodes = new Set();

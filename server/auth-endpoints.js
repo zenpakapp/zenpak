@@ -20,6 +20,7 @@ const {
     isValidUsername,
 } = require('./username-policy.js');
 const db = require('./db.js');
+const { writeFields } = require('./user-field-writes.js');
 const { normalizeLanguage } = require('./user-language.js');
 const { pinServerOwnedFields } = require('./library-server-fields.js');
 const dataTypes = require('../client/dataTypes.js');
@@ -260,7 +261,7 @@ router.post('/forgotPassword', forgotLimiter, (req, res) => {
         user.resetToken = token;
         user.resetTokenExpiry = Date.now() + 60 * 60 * 1000;
 
-        db.users.save(user, (saveErr) => {
+        writeFields(user, ['resetToken', 'resetTokenExpiry'], (saveErr) => {
             if (saveErr) return res.status(500).json({ message: 'An error occurred' });
 
             const deployUrl = (config.has('deployUrl') && config.get('deployUrl')) || 'https://zenpak.app';
@@ -325,7 +326,7 @@ router.post('/resetPassword', authLimiter, (req, res) => {
                 // A reset ends every session opened with the old password. Unset, not null: the
                 // token index is unique, and a second null would collide.
                 user.token = undefined;
-                db.users.save(user, (saveErr) => {
+                writeFields(user, ['password', 'resetToken', 'resetTokenExpiry', 'token'], (saveErr) => {
                     if (saveErr) return res.status(500).json({ message: 'An error occurred' });
                     logWithRequest(req, { message: 'Password reset for user', username: user.username });
                     return res.status(200).json({ message: 'Password updated successfully.' });
@@ -357,7 +358,7 @@ router.post('/forgotUsername', forgotLimiter, (req, res) => {
         }
 
         user.forgotUsernameSentAt = Date.now();
-        db.users.save(user, () => {});
+        writeFields(user, ['forgotUsernameSentAt'], () => {});
 
         const username = user.username;
 
@@ -427,7 +428,7 @@ router.get('/verify-email', (req, res, next) => {
         if (err || !user) return res.redirect('/verify-email?error=1');
         user.emailVerified = true;
         user.emailVerifyToken = undefined;
-        db.users.save(user);
+        writeFields(user, ['emailVerified', 'emailVerifyToken']);
         return res.redirect('/verify-email?success=1');
     });
 });
@@ -458,7 +459,7 @@ router.post('/resendVerification', forgotLimiter, (req, res) => {
             html: emailMessage.html,
         }).then(() => {
             user.verifyEmailSentAt = Date.now();
-            db.users.save(user, (saveErr) => {
+            writeFields(user, ['emailVerifyToken', 'verifyEmailSentAt'], (saveErr) => {
                 if (saveErr) {
                     logWithRequest(req, saveErr);
                     return res.status(500).json({ message: 'An error occurred, please try again later.' });

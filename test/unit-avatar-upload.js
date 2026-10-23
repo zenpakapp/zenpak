@@ -30,7 +30,9 @@ const user = { _id: 'u1', username: 'alice', library: { publicProfile: { avatarU
 const saved = [];
 const synced = [];
 stubServerModule('db.js', {
-    users: { save(account) { saved.push(account.library.publicProfile.avatarUrl); return Promise.resolve(account); } },
+    users: {
+        updateOne(filter, update) { saved.push(update.$set['library.publicProfile.avatarUrl']); return Promise.resolve({ matchedCount: 1 }); },
+    },
 });
 stubServerModule('auth.js', {
     authenticateUser(req, res, callback) { return callback(req, res, user); },

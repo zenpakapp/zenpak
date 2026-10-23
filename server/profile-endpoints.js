@@ -106,28 +106,34 @@ router.put('/api/profile', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         if (!user.library.publicProfile) user.library.publicProfile = {};
         const p = user.library.publicProfile;
+        // Only the fields this request changes are written.
+        const set = {};
+        const change = (key, value) => {
+            p[key] = value;
+            set[`library.publicProfile.${key}`] = value;
+        };
 
         if (typeof req.body.displayName === 'string') {
             const displayName = req.body.displayName.slice(0, 100).trim();
             if (isReservedDisplayName(displayName)) {
                 return res.status(400).json({ message: 'This display name is reserved for the ZenPak team.' });
             }
-            p.displayName = displayName;
+            change('displayName', displayName);
         }
-        if (typeof req.body.trailName === 'string') p.trailName = req.body.trailName.slice(0, 100);
-        if (typeof req.body.bio === 'string') p.bio = req.body.bio.slice(0, 500);
+        if (typeof req.body.trailName === 'string') change('trailName', req.body.trailName.slice(0, 100));
+        if (typeof req.body.bio === 'string') change('bio', req.body.bio.slice(0, 500));
         const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];
         if (VALID_VISIBILITY.includes(req.body.visibility)) {
             // Like a public list, a public profile waits for a verified email.
             if (req.body.visibility !== 'private' && !user.emailVerified) {
                 return res.status(403).json({ message: 'Verify your email before making your profile public.', code: 'email-not-verified' });
             }
-            p.visibility = req.body.visibility;
+            change('visibility', req.body.visibility);
         }
-        if (typeof req.body.allowSearchIndexing === 'boolean') p.allowSearchIndexing = req.body.allowSearchIndexing;
+        if (typeof req.body.allowSearchIndexing === 'boolean') change('allowSearchIndexing', req.body.allowSearchIndexing);
 
         try {
-            await db.users.save(user);
+            if (Object.keys(set).length) await db.users.updateOne({ _id: user._id }, { $set: set });
             syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
@@ -142,7 +148,7 @@ router.delete('/api/profile/avatar', (req, res) => {
             if (!user.library) user.library = {};
             if (!user.library.publicProfile) user.library.publicProfile = {};
             user.library.publicProfile.avatarUrl = '';
-            await db.users.save(user);
+            await db.users.updateOne({ _id: user._id }, { $set: { 'library.publicProfile.avatarUrl': '' } });
             syncUserPublicLists(user).catch(() => {});
             return res.json({ ok: true });
         } catch (e) {
@@ -161,7 +167,7 @@ router.post('/api/profile/avatar', (req, res) => {
                 if (!user.library) user.library = {};
                 if (!user.library.publicProfile) user.library.publicProfile = {};
                 user.library.publicProfile.avatarUrl = stored.secure_url;
-                await db.users.save(user);
+                await db.users.updateOne({ _id: user._id }, { $set: { 'library.publicProfile.avatarUrl': stored.secure_url } });
                 syncUserPublicLists(user).catch(() => {});
 
                 return res.json({ avatarUrl: stored.secure_url });

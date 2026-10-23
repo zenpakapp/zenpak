@@ -20,7 +20,10 @@ const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
 const saved = [];
 stubServerModule('db.js', {
-    users: { save(user, callback) { saved.push(user); if (callback) callback(null); return Promise.resolve(user); } },
+    users: {
+        save(user, callback) { saved.push(user); if (callback) callback(null); return Promise.resolve(user); },
+        updateOne(filter, update) { saved.push(update.$set); return Promise.resolve({ matchedCount: 1 }); },
+    },
 });
 let signedIn = true;
 stubServerModule('auth.js', {

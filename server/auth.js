@@ -5,6 +5,7 @@ const config = require('config');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const db = require('./db.js');
+const { writeFields } = require('./user-field-writes.js');
 const { logWithRequest } = require('./log.js');
 const passwordAttempts = require('./password-attempts.js');
 
@@ -107,7 +108,7 @@ const verifyPassword = function (username, password) {
                                         return reject({ code: 500, message: 'An error occurred, please try again later.' });
                                     }
                                     user.password = hash;
-                                    db.users.save(user);
+                                    writeFields(user, ['password']);
                                     resolve(user);
                                 });
                             });

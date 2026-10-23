@@ -32,7 +32,7 @@ stubServerModule('db.js', {
             return Promise.resolve(user);
         },
         save(user, cb) { saved = { ...user }; if (cb) cb(null); return Promise.resolve(user); },
-        updateOne(filter, change) { updates.push([filter, change]); return Promise.resolve(); },
+        updateOne(filter, change) { updates.push([filter, change]); saved = { ...(change.$set || {}) }; return Promise.resolve(); },
     },
 });
 stubServerModule('auth.js', {

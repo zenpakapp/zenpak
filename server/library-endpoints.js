@@ -146,7 +146,8 @@ function externalId(req, res, user) {
             if (typeof user.externalIds === 'undefined') user.externalIds = [id];
             else user.externalIds.push(id);
 
-            db.users.save(user);
+            // One id added, nothing else of the account written.
+            db.users.updateOne({ _id: user._id }, { $push: { externalIds: id } });
             logWithRequest(req, { message: 'Id saved', id, username: user.username });
             res.status(200).json({ externalId: id });
         } else {
@@ -224,13 +225,22 @@ router.post('/api/lists/:listId/hide-source-list-info', (req, res) => {
         });
 
         list.sourceListInfoHidden = true;
+        const filter = { _id: user._id };
+        if (typeof user.syncToken !== 'undefined') filter.syncToken = user.syncToken;
         user.syncToken = (Number(user.syncToken) || 0) + 1;
 
-        db.users.save(user, () => {
+        // Like /saveLibrary: the library is written only if nothing saved since this request read it.
+        db.users.updateOne(filter, { $set: { library: user.library, syncToken: user.syncToken } }).then((result) => {
+            if (!result || result.matchedCount === 0) {
+                return res.status(400).json({ message: 'Your list is out of date - please refresh your browser.' });
+            }
             syncUserPublicLists(user).catch((err) => {
                 logWithRequest(req, { message: 'public list projection sync failed after source list info hide', username: user.username, error: err.message });
             });
             return res.json({ ok: true, count, syncToken: user.syncToken });
+        }).catch((err) => {
+            logWithRequest(req, { message: 'DB error on source list info hide', username: user.username, error: err.message });
+            return res.status(500).json({ message: 'An error occurred' });
         });
     });
 });

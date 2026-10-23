@@ -100,6 +100,7 @@ function call(handler, req) {
     assert.strictEqual(queries.length, 0, 'no lookup was made');
 
     // An expired setup token is refused.
+    updates.length = 0;
     stored = { _id: 'u2', username: 'oauth_abc', setupToken: 'setup-1', setupTokenExpiry: Date.now() - 1000 };
     result = await call(setUsername, { body: { username: 'newname', setupToken: 'setup-1' } });
     assert.strictEqual(result.status, 404);

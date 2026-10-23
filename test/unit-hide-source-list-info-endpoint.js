@@ -34,6 +34,10 @@ require.cache[require.resolve('../server/db.js')] = {
                 if (cb) cb();
                 return Promise.resolve(user);
             },
+            updateOne() {
+                savedUser = ownerUser;
+                return Promise.resolve({ matchedCount: 1 });
+            },
         },
     },
     id: require.resolve('../server/db.js'),

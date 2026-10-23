@@ -8,6 +8,7 @@ const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const { deleteVersionsForOwner } = require('./list-versions.js');
 const { normalizeLanguage } = require('./user-language.js');
 const db = require('./db.js');
+const { writeFields } = require('./user-field-writes.js');
 
 const router = express.Router();
 
@@ -54,7 +55,7 @@ function account(req, res, user) {
 }
 
 function saveAccountUser(user, req, res) {
-    db.users.save(user, (err) => {
+    writeFields(user, ['password', 'email', 'emailVerified', 'emailVerifyToken', 'verifyEmailSentAt'], (err) => {
         if (err) {
             logWithRequest(req, { message: 'DB error on account save', username: user.username, error: err.message });
             if (err.code === 11000 && err.message.includes('email')) {
@@ -105,7 +106,7 @@ router.post('/api/account/language', (req, res) => {
         if (user.language === language) return res.json({ language });
         try {
             user.language = language;
-            await db.users.save(user);
+            await writeFields(user, ['language']);
             return res.json({ language });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
