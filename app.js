@@ -15,6 +15,7 @@ const path = require('path');
 
 const { logger } = require('./server/log.js');
 const { analyticsConfig, analyticsOrigin } = require('./server/analytics.js');
+const { resolveTrustProxy } = require('./server/trust-proxy.js');
 const {
     REQUEST_BODY_LIMIT,
     securityHeaders,
@@ -44,7 +45,9 @@ const app = express();
 const runtimeEnvironment = getRuntimeEnvironment();
 const appPort = getRuntimeNumber('PORT', config.get('port'));
 const devServerPort = getRuntimeNumber('DEV_SERVER_PORT', config.get('devServerPort'));
-app.enable('trust proxy');
+let trustProxySetting = process.env.TRUST_PROXY;
+if (typeof trustProxySetting === 'undefined' && config.has('trustProxy')) trustProxySetting = config.get('trustProxy');
+app.set('trust proxy', resolveTrustProxy(trustProxySetting, runtimeEnvironment));
 app.disable('x-powered-by');
 app.use(securityHeaders({ environment: getRuntimeEnvironment(), analyticsOrigin: analyticsOrigin(analyticsConfig()) }));
 
