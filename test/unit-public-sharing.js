@@ -276,10 +276,13 @@ const profileTestUser = {
         ],
         lists: [
             {
-                id: 10, externalId: 'published-list', name: 'Published Trail', visibility: 'shareable', categoryIds: [2], seasons: ['summer'], listTypes: ['trek'],
+                id: 10, externalId: 'published-list', name: 'Published Trail', visibility: 'discoverable', categoryIds: [2], seasons: ['summer'], listTypes: ['trek'],
             },
             {
-                id: 11, externalId: 'unpublished-list', name: 'Unpublished Trail', visibility: 'shareable', categoryIds: [2], seasons: [], listTypes: [],
+                id: 11, externalId: 'unpublished-list', name: 'Unpublished Trail', visibility: 'discoverable', categoryIds: [2], seasons: [], listTypes: [],
+            },
+            {
+                id: 12, externalId: 'unlisted-list', name: 'Unlisted Trail', visibility: 'shareable', categoryIds: [2], seasons: [], listTypes: [],
             },
         ],
     },
@@ -292,6 +295,9 @@ async function runProfileTests() {
 
     await publishVersion(profileTestUser, 'published-list', '');
     profilePayload = await buildPublicProfile(profileTestUser);
+    await publishVersion(profileTestUser, 'unlisted-list', '');
+    profilePayload = await buildPublicProfile(profileTestUser);
+    assert('a published link-only list is not listed on the profile', !profilePayload.lists.some((l) => l.externalId === 'unlisted-list'));
     assert('the published list appears on the profile', profilePayload.lists.length === 1 && profilePayload.lists[0].externalId === 'published-list');
     assert('a shared but never-published list is excluded from the profile', !profilePayload.lists.some((l) => l.externalId === 'unpublished-list'));
 

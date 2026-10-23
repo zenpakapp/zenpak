@@ -499,13 +499,21 @@ router.get('/insights', (req, res) => {
 
 // GET /api/community/users?q=
 router.get('/users', async (req, res) => {
-    const q = String(req.query.q || '').trim().slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const rawQ = String(req.query.q || '').trim().slice(0, 100);
+    const q = rawQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const PROJECT = {
         _id: 0,
         username: 1,
         displayName: { $ifNull: ['$library.publicProfile.displayName', '$username'] },
-        bio: { $ifNull: ['$library.publicProfile.bio', ''] },
+        // The bio is a Guide feature, as on the public profile page.
+        bio: {
+            $cond: [
+                { $eq: [{ $ifNull: ['$library.entitlements.plan', 'free'] }, 'creator'] },
+                { $ifNull: ['$library.publicProfile.bio', ''] },
+                '',
+            ],
+        },
         avatarUrl: { $ifNull: ['$library.publicProfile.avatarUrl', ''] },
         plan: { $ifNull: ['$library.entitlements.plan', 'free'] },
     };
@@ -572,8 +580,14 @@ router.get('/users', async (req, res) => {
                             { username: { $regex: q, $options: 'i' } },
                             { 'library.publicProfile.displayName': { $regex: q, $options: 'i' } },
                         ],
-                        'library.publicProfile.visibility': { $in: ['shareable', 'discoverable', 'indexable'] },
                         banned: { $ne: true },
+                        // Link-only profiles are found by their exact username only, not by browsing.
+                        $and: [{
+                            $or: [
+                                { 'library.publicProfile.visibility': { $in: ['discoverable', 'indexable'] } },
+                                { 'library.publicProfile.visibility': 'shareable', username: rawQ.toLowerCase() },
+                            ],
+                        }],
                     },
                 },
                 { $addFields: { _rank: RANK, _latestList: LATEST_LIST } },
