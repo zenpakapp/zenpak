@@ -13,6 +13,7 @@ const {
 } = require('./plan-offers.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const { collectStats } = require('./moderation-stats.js');
+const { savePlanState } = require('./user-plan-writes.js');
 
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -82,7 +83,8 @@ function resetPassword(req, res) {
             bcrypt.genSalt(10, (err, salt) => {
                 bcrypt.hash(newPassword, salt, (err, hash) => {
                     user.password = hash;
-                    db.users.save(user);
+                    // Only the password is written, so nothing else the account changed meanwhile is put back.
+                    db.users.updateOne({ _id: user._id }, { $set: { password: hash } });
                     const out = { newPassword };
                     logWithRequest(req, { message: 'MODERATION password changed', username });
                     return res.status(200).json(out);
@@ -109,9 +111,9 @@ function clearSession(req, res) {
             return res.status(500).json({ message: 'An error occurred.' });
         }
         user.token = undefined;
-        db.users.save(user);
+        db.users.updateOne({ _id: user._id }, { $unset: { token: '' } });
         logWithRequest(req, { message: 'MODERATION  Clear session succeeded', username });
-        return res.status(200);
+        return res.status(200).json({ ok: true });
     });
 }
 
@@ -156,7 +158,7 @@ async function offerPlan(req, res, moderator) {
             throw error;
         }
 
-        await db.users.save(user);
+        await savePlanState(user);
         syncUserPublicLists(user).catch(() => {});
         logWithRequest(req, {
             message: 'MODERATION Offer plan succeeded', username, plan, until: offer.currentPeriodEnd, by: moderator.username,
@@ -239,7 +241,7 @@ async function revokePlanOffer(req, res, moderator) {
             throw error;
         }
 
-        await db.users.save(user);
+        await savePlanState(user);
         syncUserPublicLists(user).catch(() => {});
         logWithRequest(req, {
             message: 'MODERATION Revoke offer succeeded', username, plan, by: moderator.username,

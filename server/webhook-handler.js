@@ -5,6 +5,7 @@ const config = require('config');
 const router = express.Router();
 const { logger } = require('./log.js');
 const db = require('./db.js');
+const { saveBilling } = require('./user-plan-writes.js');
 const {
     stripeEnabled, getStripe, syncUserBilling, syncKofiBilling, updateInvoiceFooter,
 } = require('./billing.js');
@@ -73,7 +74,7 @@ async function handleEvent(event) {
         if (obj.consent && obj.consent.terms_of_service === 'accepted') {
             user.billing.termsVersionAccepted = new Date().toISOString().slice(0, 10);
         }
-        await db.users.save(user);
+        await saveBilling(user);
         break;
     }
 
@@ -106,7 +107,7 @@ async function handleEvent(event) {
         } else {
             if (!user.billing) user.billing = {};
             user.billing.lastSyncedAt = new Date().toISOString();
-            await db.users.save(user);
+            await saveBilling(user);
         }
         break;
     }
@@ -118,7 +119,7 @@ async function handleEvent(event) {
         user.billing.status = 'past_due';
         user.billing.lastSyncedAt = new Date().toISOString();
         // Do NOT downgrade plan — Stripe retries. Plan stays during grace period.
-        await db.users.save(user);
+        await saveBilling(user);
         break;
     }
 

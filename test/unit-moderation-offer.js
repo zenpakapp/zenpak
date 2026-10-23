@@ -24,6 +24,7 @@ stubServerModule('db.js', {
     users: {
         findOne(query) { return Promise.resolve(accounts[query.username] || null); },
         save(user) { saved.push(user); return Promise.resolve(user); },
+        updateOne(filter, update) { saved.push({ _id: filter._id, billing: update.$set.billing, library: { entitlements: { plan: update.$set['library.entitlements.plan'] } } }); return Promise.resolve({ matchedCount: 1 }); },
     },
 });
 

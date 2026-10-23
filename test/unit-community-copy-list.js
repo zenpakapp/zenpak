@@ -53,6 +53,7 @@ const { createListVersionsStub, createListCopiesStub } = require('./fixtures/lis
 const listVersionsDb = createListVersionsStub();
 
 const savedUsers = [];
+let lastOwnerUpdate = null;
 const dbStub = {
     users: {
         findOne(query) {
@@ -62,6 +63,11 @@ const dbStub = {
         save(user) {
             savedUsers.push(user);
             return Promise.resolve(user);
+        },
+        updateOne(filter, update, options) {
+            lastOwnerUpdate = { filter, update, options };
+            if (String(filter._id) === String(ownerUser._id)) savedUsers.push(ownerUser);
+            return Promise.resolve({ matchedCount: 1 });
         },
     },
     listVersions: listVersionsDb,
@@ -142,6 +148,8 @@ async function run() {
     assert('the alert is a copy alert naming the list and the copier', alerts[0] && alerts[0].type === 'copy' && alerts[0].listName === 'PCT Section J' && alerts[0].actorUsername === copyUser.username);
     assert('returns source currency symbol', responseData && responseData.sourceCurrencySymbol === '€');
     assert('saves source owner for copy count', savedUsers.some(u => u.username === 'alice'));
+    assert('the count is one atomic update of that list only, not a save of the whole account', lastOwnerUpdate && lastOwnerUpdate.update.$inc['library.lists.$[l].copyCount'] === 1 && Object.keys(lastOwnerUpdate.update).sort().join() === '$inc,$push');
+    assert('the same member counts once even when two copies run together', lastOwnerUpdate && JSON.stringify(lastOwnerUpdate.options.arrayFilters[0]['l.copiedBy']) === JSON.stringify({ $ne: String(copyUser._id) }));
     assert('returns categories payload', responseData.categories && responseData.categories.length === 1);
     assert('copy payload preserves zero quantity', responseData.categories[0].categoryItems[0].qty === 0);
     assert('copy payload preserves quantity above one', responseData.categories[0].categoryItems[1].qty === 2);

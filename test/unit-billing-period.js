@@ -24,7 +24,7 @@ process.env.NODE_CONFIG = JSON.stringify({
 const assert = require('assert');
 const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
-stubServerModule('db.js', { users: { save: async () => {} } });
+stubServerModule('db.js', { users: { save: async () => {}, updateOne: async () => ({ matchedCount: 1 }) } });
 stubServerModule('public-list-projections.js', { syncUserPublicLists: async () => {} });
 
 const { syncUserBilling } = require('../server/billing.js');

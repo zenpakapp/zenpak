@@ -24,7 +24,7 @@ const assert = require('assert');
 const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
 let saves = 0;
-stubServerModule('db.js', { users: { save() { saves += 1; return Promise.resolve(); } } });
+stubServerModule('db.js', { users: { save() { saves += 1; return Promise.resolve(); }, updateOne() { saves += 1; return Promise.resolve({ matchedCount: 1 }); } } });
 
 const { syncKofiBilling, syncUserBilling } = require('../server/billing.js');
 

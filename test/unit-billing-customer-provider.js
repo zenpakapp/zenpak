@@ -21,6 +21,7 @@ const db = require('../server/db.js');
 
 let saved = null;
 db.users.save = async (user) => { saved = JSON.parse(JSON.stringify(user)); };
+db.users.updateOne = async (filter, update) => { saved = JSON.parse(JSON.stringify({ billing: update.$set.billing })); };
 
 const billing = require('../server/billing.js');
 

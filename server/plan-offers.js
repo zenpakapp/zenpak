@@ -6,6 +6,7 @@
 // sweepLapsedPlans sends those back to the free plan once their date has passed.
 const db = require('./db.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
+const { savePlanState } = require('./user-plan-writes.js');
 
 // Only the paid plans can be offered. Keys are the plan names stored on the account.
 const OFFERABLE_PLANS = { supporter: 'Kin', creator: 'Wayfarer' };
@@ -136,7 +137,7 @@ async function sweepLapsedPlans(now = new Date()) {
     // One account at a time: this runs at startup and must not flood the database.
     await candidates.reduce((previous, user) => previous.then(async () => {
         if (!expireLapsedPlan(user, now)) return;
-        await db.users.save(user);
+        await savePlanState(user);
         syncUserPublicLists(user).catch(() => {});
         ended += 1;
     }), Promise.resolve());

@@ -3,6 +3,7 @@ const createStripe = require('stripe');
 const db = require('./db.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const { isOfferActive } = require('./plan-offers.js');
+const { saveBilling, savePlanState } = require('./user-plan-writes.js');
 
 const LEGAL_ENTITY_VERSION = 'ae-fxbenard-v1';
 const INVOICE_SELLER_FOOTER = 'FX Bénard AE - ZenPak · SIRET 75082412000026 · 4 impasse chez Huguet, 17150 Soubran';
@@ -63,7 +64,7 @@ async function getOrCreateCustomer(user) {
     user.billing.customerId = customer.id;
     // The provider changes to stripe when a subscription really pays, not when a customer is
     // created: a plan offered by a moderator or Ko-fi keeps its expiry and its revoke until then.
-    await db.users.save(user);
+    await saveBilling(user);
     return customer.id;
 }
 
@@ -125,7 +126,7 @@ async function syncUserBilling(user, subscription, status) {
         }
     }
 
-    await db.users.save(user);
+    await savePlanState(user);
     syncUserPublicLists(user).catch(() => {});
 }
 
@@ -161,7 +162,7 @@ async function syncKofiBilling(user, { amount, donationDate }) {
     if (!user.library.entitlements) user.library.entitlements = {};
     user.library.entitlements.plan = 'supporter';
 
-    await db.users.save(user);
+    await savePlanState(user);
     syncUserPublicLists(user).catch(() => {});
 }
 
