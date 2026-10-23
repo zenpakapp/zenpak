@@ -9,7 +9,9 @@ const config = require('config');
 
 const { logWithRequest } = require('./log.js');
 const { sendMail } = require('./email-provider.js');
-const { authenticateUser, verifyPassword, isModerator } = require('./auth.js');
+const {
+    authenticateUser, verifyPassword, isModerator, SESSION_MAX_AGE_MS,
+} = require('./auth.js');
 const { canonicalEmail, emailLookup } = require('./email-policy.js');
 const {
     canonicalUsername,
@@ -212,7 +214,7 @@ router.post('/register', authLimiter, (req, res) => {
                                 username, library: JSON.stringify(newUser.library), syncToken: 0, emailVerified: false,
                             };
                             res.cookie('lp', token, {
-                                path: '/', maxAge: 365 * 24 * 60 * 1000, httpOnly: true, sameSite: 'lax', secure: secureCookie,
+                                path: '/', maxAge: SESSION_MAX_AGE_MS, httpOnly: true, sameSite: 'lax', secure: secureCookie,
                             });
                             return res.status(200).json(out);
                         });

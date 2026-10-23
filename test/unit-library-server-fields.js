@@ -77,6 +77,28 @@ library = { lists: [{ id: 99, externalId: 'abc', featured: true }] };
 pinServerOwnedFields(library, { lists: [{ id: 5, externalId: 'abc', featured: true }] });
 assert.strictEqual(library.lists[0].featured, true, 'featured follows externalId as well');
 
+// A public id is made by the server (lowercase letters and digits). A client cannot bring its own
+// characters into page addresses or into the script of the embed page.
+const { isValidExternalId } = require('../server/library-server-fields.js');
+
+['a1b2c3', 'abc', 'x'.repeat(32), '0'].forEach((id) => assert.ok(isValidExternalId(id), `${id} is a valid public id`));
+['', 'a;b', 'a b', 'a=0;alert(1);var b', 'a(b)', 'A1B2', 'a-b', 'a_b', 'a/b', 'a"b', 'x'.repeat(33), 5, null, {}, ['a']]
+    .forEach((id) => assert.ok(!isValidExternalId(id), `${JSON.stringify(id)} is not a valid public id`));
+
+library = {
+    lists: [
+        { id: 1, externalId: 'abc123', name: 'kept' },
+        { id: 2, externalId: 'a=0;alert(1);var b', name: 'hostile' },
+        { id: 3, externalId: { $ne: null }, name: 'operator' },
+        { id: 4, name: 'none yet' },
+    ],
+};
+pinServerOwnedFields(library, null);
+assert.strictEqual(library.lists[0].externalId, 'abc123', 'a server-made id is kept');
+assert.ok(!('externalId' in library.lists[1]), 'an id with script characters is dropped');
+assert.ok(!('externalId' in library.lists[2]), 'an id that is not a string is dropped');
+assert.ok(!('externalId' in library.lists[3]), 'a list without an id stays without');
+
 // A library without lists is fine.
 assert.doesNotThrow(() => pinServerOwnedFields({}, stored));
 
