@@ -123,7 +123,8 @@ async function publicListsForProfile(user, library) {
     }, {});
 
     const candidates = (library.lists || [])
-        .filter((list) => isPublicVisibility(list.visibility))
+        // Link-only lists stay off the profile, as the share dialog says.
+        .filter((list) => list.visibility === 'discoverable' || list.visibility === 'indexable')
         .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)]);
 
     const summaries = await Promise.all(candidates.map((list) => buildProfileListSummary(user, list)));
