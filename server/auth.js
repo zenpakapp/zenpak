@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const db = require('./db.js');
 const { logWithRequest } = require('./log.js');
+const passwordAttempts = require('./password-attempts.js');
 
 const moderatorList = config.get('moderators');
 const secureCookie = (config.get('deployUrl') || '').startsWith('https');
@@ -35,12 +36,17 @@ const authenticateUser = function (req, res, callback) {
     if (req.body.username && req.body.password) {
         const username = String(req.body.username).toLowerCase().trim();
         const password = String(req.body.password);
+        if (passwordAttempts.isLimited(req, username)) {
+            return res.status(429).json({ message: 'Too many attempts. Try again in 15 minutes.' });
+        }
         verifyPassword(username, password)
             .then((user) => {
+                passwordAttempts.clear(req, username);
                 if (user.banned) return refuseSuspended(res);
                 return generateSession(req, res, user, callback);
             })
             .catch((err) => {
+                if (err && err.code === 404) passwordAttempts.recordFailure(req, username);
                 logWithRequest(req, err);
                 if (err.code && err.message) {
                     logWithRequest(req, { message: `error on verifyPassword for: ${username}`, error: err.message });

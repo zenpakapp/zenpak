@@ -24,7 +24,7 @@ const assert = require('assert');
 const db = require('../server/db.js');
 
 let savedUser = null;
-db.users.save = (user, cb) => { savedUser = user; cb(); };
+db.users.updateOne = (filter, update) => { savedUser = { library: update.$set.library }; return Promise.resolve({ matchedCount: 1 }); };
 
 const testUser = {
     _id: 'user1',

@@ -85,6 +85,7 @@ function saveLibrary(req, res, user) {
     }
 
     const storedLibrary = user.library;
+    const expectedSyncToken = user.syncToken;
     user.library = library;
     user.syncToken++;
 
@@ -100,7 +101,17 @@ function saveLibrary(req, res, user) {
         }
     }
 
-    db.users.save(user, () => {
+    // Only the library and its sync token are written, and only if nothing saved since this
+    // request read the account: a whole-document save from an older read would put back a plan,
+    // password or session that changed in between.
+    db.users.updateOne(
+        { _id: user._id, syncToken: expectedSyncToken },
+        { $set: { library: user.library, syncToken: user.syncToken } },
+    ).then((result) => {
+        if (!result || result.matchedCount === 0) {
+            logWithRequest(req, { message: 'save lost a race, out of date', username: user.username });
+            return res.status(400).json({ message: 'Your list is out of date - please refresh your browser.' });
+        }
         logWithRequest(req, { message: 'saved library', username: user.username });
 
         const newLists = (library && library.lists) || [];
@@ -110,6 +121,9 @@ function saveLibrary(req, res, user) {
         });
 
         return res.status(200).json({ message: 'success', syncToken: user.syncToken });
+    }).catch((err) => {
+        logWithRequest(req, { message: 'DB error on save library', username: user.username, error: err.message });
+        return res.status(500).json({ message: 'An error occurred while saving your data. Please try again.' });
     });
 }
 

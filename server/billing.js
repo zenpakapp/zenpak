@@ -61,7 +61,8 @@ async function getOrCreateCustomer(user) {
     });
     if (!user.billing) user.billing = {};
     user.billing.customerId = customer.id;
-    user.billing.provider = 'stripe';
+    // The provider changes to stripe when a subscription really pays, not when a customer is
+    // created: a plan offered by a moderator or Ko-fi keeps its expiry and its revoke until then.
     await db.users.save(user);
     return customer.id;
 }
