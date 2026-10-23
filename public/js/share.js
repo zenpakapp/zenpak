@@ -122,7 +122,8 @@ function listReport() {
 
         $categories.on('click', '.lpItemImage', function () {
             const imageUrl = $(this).attr('href');
-            const $modalImage = $(`<img src='${imageUrl}' />`);
+            // The address is set as a property, never written into HTML, so a quote in it cannot add markup.
+            const $modalImage = $('<img />').attr('src', /^https?:\/\//i.test(imageUrl) ? imageUrl : '');
             $imageModal.empty().append($modalImage);
             $modalImage.load(() => {
                 $imageModal.show();

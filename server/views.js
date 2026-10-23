@@ -21,7 +21,7 @@ const Mustache = require('mustache');
 const markdown = require('markdown').markdown;
 const config = require('config');
 const { logWithRequest, logger } = require('./log.js');
-const { escapeCsvField } = require('./csv.js');
+const { escapeCsvText, escapeCsvNumber, safeCommentLine } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
 const { incrementPublicListStat } = require('./public-list-projections.js');
 const { clipDescription } = require('./text-limits.js');
@@ -300,7 +300,7 @@ router.get('/csv/:id', (req, res) => {
         const itemUnit = library.itemUnit || 'oz';
         let out = '';
         if (list.description && list.description.trim()) {
-            out += `# List description: ${list.description.replace(/\r?\n/g, ' ')}\n`;
+            out += `# List description: ${safeCommentLine(list.description.replace(/\r?\n/g, ' '))}\n`;
         }
         out += 'Item Name,Category,desc,qty,weight,unit,url,price,worn,consumable,brand,image_url\n';
 
@@ -330,7 +330,10 @@ router.get('/csv/:id', (req, res) => {
                             : (item.imageUrl || '');
                         itemRow.push(imageUrl);
 
-                        out += itemRow.map(escapeCsvField).join(',');
+                        // Text columns and numeric columns (qty, weight, price) are written differently
+                        // so that no cell can start a spreadsheet formula.
+                        const numericColumns = [3, 4, 7];
+                        out += itemRow.map((cell, index) => (numericColumns.includes(index) ? escapeCsvNumber(cell) : escapeCsvText(cell))).join(',');
                         out += '\n';
                     }
                 }
