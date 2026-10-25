@@ -44,9 +44,12 @@
                     </span>
                     <router-link v-else :to="$store.state.loggedIn ? '/' : '/welcome'">{{ $store.state.loggedIn ? $t('public.backToZenPak') : $t('public.joinZenPak') }}</router-link>
                 </span>
-                <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">
-                    {{ $t('public.openApp') }}
-                </router-link>
+                <span class="lpPublicNavRight">
+                    <router-link v-if="isLoggedIn" to="/" class="lpPublicNavMyLists">
+                        {{ $t('public.openApp') }}
+                    </router-link>
+                    <ThemeToggle v-if="!isLoggedIn" show-label />
+                </span>
             </nav>
 
             <h1 class="lpPublicListTitle">
@@ -235,6 +238,7 @@ import { fetchJson } from '../utils/utils';
 import { trackEvent } from '../utils/analytics';
 import { tierLabel } from '../services/tier-labels';
 import { useTheme } from '../composables/useTheme';
+import ThemeToggle from '../components/theme-toggle.vue';
 import { useBackNav } from '../composables/useBackNav';
 import ReportButton from '../components/report-button.vue';
 import LinkifiedText from '../components/linkified-text.vue';
@@ -260,7 +264,7 @@ async function loadChart() {
 
 export default {
     name: 'PublicList',
-    components: { ReportButton, LinkifiedText },
+    components: { ReportButton, LinkifiedText, ThemeToggle },
     setup() {
         useTheme();
         const router = useRouter();

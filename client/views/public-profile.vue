@@ -22,6 +22,7 @@
                 <router-link v-if="showAppLink" :to="$store.state.loggedIn ? '/' : '/welcome'">
                     {{ $store.state.loggedIn ? $t('public.openApp') : $t('public.joinZenPak') }}
                 </router-link>
+                <ThemeToggle v-if="!$store.state.loggedIn" show-label />
             </span>
         </nav>
 
@@ -151,11 +152,12 @@ import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
+import ThemeToggle from '../components/theme-toggle.vue';
 import { SPONSORED_REL, USER_LINK_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
-    components: { ReportButton },
+    components: { ReportButton, ThemeToggle },
     setup() {
         useTheme();
         const route = useRoute();

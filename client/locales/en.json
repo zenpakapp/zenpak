@@ -240,6 +240,16 @@
     "publishNoChanges": "Nothing new to publish.",
     "errorPublishing": "An error occurred while publishing your list. Please try again later."
   },
+  "theme": {
+    "auto": "Theme: follow system",
+    "light": "Theme: light",
+    "dark": "Theme: dark",
+    "short": {
+      "auto": "Theme: auto",
+      "light": "Theme: light",
+      "dark": "Theme: dark"
+    }
+  },
   "public": {
     "category": "Category",
     "price": "Price",

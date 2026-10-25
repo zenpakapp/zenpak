@@ -240,6 +240,16 @@
     "publishNoChanges": "Nichts Neues zum Veröffentlichen.",
     "errorPublishing": "Beim Veröffentlichen deiner Liste ist ein Fehler aufgetreten. Bitte versuche es später erneut."
   },
+  "theme": {
+    "auto": "Design: Systemeinstellung",
+    "light": "Design: hell",
+    "dark": "Design: dunkel",
+    "short": {
+      "auto": "Design: auto",
+      "light": "Design: hell",
+      "dark": "Design: dunkel"
+    }
+  },
   "public": {
     "category": "Kategorie",
     "price": "Preis",
