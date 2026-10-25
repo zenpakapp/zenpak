@@ -64,9 +64,13 @@
         page-break-inside: avoid;
     }
 
-    .lpPublicListItemLink,
+    .lpPublicListItemLinkIcon,
     .lpPublicListItemPromo {
         display: none;
+    }
+
+    .lpPublicListItemNameLink {
+        color: inherit;
     }
 
     a[href]::after {

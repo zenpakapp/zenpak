@@ -372,13 +372,13 @@
     border-bottom: 1px solid $color-border;
     display: grid;
     gap: 8px;
-    grid-template-columns: 36px 1fr auto auto;
+    grid-template-columns: 36px 1fr auto;
     padding: 4px 0;
 
     &:last-child { border-bottom: none; }
 
     &.lpPublicListItemWithPrice {
-        grid-template-columns: 36px 1fr auto auto auto;
+        grid-template-columns: 36px 1fr auto auto;
     }
 
     &.lpPublicListItemOptional {
@@ -441,13 +441,32 @@
     white-space: nowrap;
 }
 
-.lpPublicListItemLink {
+// The item name is the link when the list shares links: one link per item, labelled by the name.
+.lpPublicListItemNameLink {
     color: $color-accent;
-    font-size: 12px;
-    text-align: center;
     text-decoration: none;
 
-    &:hover { text-decoration: underline; }
+    &:hover,
+    &:focus-visible { text-decoration: underline; }
+}
+
+.lpPublicListItemLinkIcon {
+    margin-left: 3px;
+    opacity: 0.7;
+    vertical-align: -1px;
+}
+
+// Touch screens have no hover: the accent colour and the icon show the name is a link, and the row
+// is tall enough to hit with a finger.
+@media (max-width: 640px) {
+    .lpPublicListItem:has(.lpPublicListItemNameLink) {
+        min-height: 44px;
+    }
+
+    .lpPublicListItemNameLink {
+        display: inline-block;
+        padding: 4px 0;
+    }
 }
 
 .lpPublicListItemPromo {
