@@ -109,7 +109,7 @@ async function openList(page, description = DESCRIPTION) {
 
 test("item and promo links carry the right rel", async ({ page }) => {
   await openList(page);
-  const links = page.locator(".lpPublicListItemLink");
+  const links = page.locator(".lpPublicListItemNameLink");
   await expect(links).toHaveCount(2);
 
   const affiliate = await links.nth(0).getAttribute("rel");
@@ -133,6 +133,45 @@ test("item and promo links carry the right rel", async ({ page }) => {
     .getAttribute("rel");
   expect(promo.split(" ")).toContain("sponsored");
   expect(promo.split(" ")).toContain("nofollow");
+});
+
+test("the item name is the link: one link per item, labelled by the name", async ({
+  page,
+}) => {
+  await openList(page);
+  const links = page.locator(".lpPublicListItemNameLink");
+  await expect(links).toHaveCount(2);
+  // The accessible name is the item's name; the icon is decoration and no second link exists.
+  await expect(links.nth(0)).toHaveText("Affiliate tent");
+  await expect(links.nth(1)).toHaveText("Plain stove");
+  await expect(page.locator(".lpPublicListItem a")).toHaveCount(2);
+  await expect(links.nth(0).locator("svg")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
+  expect(
+    await links.evaluateAll((els) => els.map((el) => el.getAttribute("href"))),
+  ).toEqual(["https://shop.example/tent?tag=me", "https://example.org/stove"]);
+});
+
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 375, height: 700 }, hasTouch: true });
+
+  test("the linked name is a comfortable touch target and the row does not overflow", async ({
+    page,
+  }) => {
+    await openList(page);
+    const link = page.locator(".lpPublicListItemNameLink").first();
+    const box = await link.boundingBox();
+    const row = await page.locator(".lpPublicListItem").first().boundingBox();
+    expect(row.height).toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(20);
+    // Nothing runs off the screen sideways.
+    const scrollWidth = await page.evaluate(
+      () => document.documentElement.scrollWidth,
+    );
+    expect(scrollWidth).toBeLessThanOrEqual(375);
+  });
 });
 
 test("URLs in the description are clickable, three at most", async ({
@@ -186,7 +225,12 @@ test("links and promo codes on a public profile carry the right rel", async ({
         followerCount: 0,
         followingCount: 0,
         creatorCodes: [
-          { name: "Shop", code: "ZEN10", label: "", url: "https://shop.example" },
+          {
+            name: "Shop",
+            code: "ZEN10",
+            label: "",
+            url: "https://shop.example",
+          },
         ],
       },
     }),
@@ -222,7 +266,10 @@ test("an address typed without https is a link, the text stays as typed", async 
   await expect(links).toHaveCount(2);
   expect(
     await links.evaluateAll((els) => els.map((el) => el.getAttribute("href"))),
-  ).toEqual(["https://www.youtube.com/@kinred", "https://instagram.com/kinredgta"]);
+  ).toEqual([
+    "https://www.youtube.com/@kinred",
+    "https://instagram.com/kinredgta",
+  ]);
   // The link is the address; the "@" in front of it and the ")" after it are not part of it.
   await expect(links.nth(1)).toHaveText("instagram.com/kinredgta");
   await expect(summary).toContainText("@instagram.com/kinredgta).");
