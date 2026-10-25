@@ -50,6 +50,12 @@ export function applyQuickSetup(libraryData, setup) {
             } else if (!Array.isArray(firstList.durations)) {
                 firstList.durations = [];
             }
+            // Template data is raw: like any new list, it shares its item links once published.
+            if (!firstList.publicFields) {
+                firstList.publicFields = {
+                    price: false, links: true, images: false, downloadable: false,
+                };
+            }
         }
     }
 

@@ -137,6 +137,10 @@ Library.prototype.removeCategory = function (id, force) {
 
 Library.prototype.newList = function () {
     const temp = new List({ id: this.nextSequence(), library: this });
+    // A new list shares its item links once published; price, images and CSV stay the owner's choice.
+    temp.publicFields = {
+        price: false, links: true, images: false, downloadable: false,
+    };
     this.lists.push(temp);
     this.idMap[temp.id] = temp;
     if (!this.defaultListId) this.defaultListId = temp.id;
