@@ -240,6 +240,16 @@
     "publishNoChanges": "Rien de nouveau à publier.",
     "errorPublishing": "Une erreur est survenue lors de la publication de votre liste. Veuillez réessayer plus tard."
   },
+  "theme": {
+    "auto": "Thème : suit le système",
+    "light": "Thème : clair",
+    "dark": "Thème : sombre",
+    "short": {
+      "auto": "Thème : auto",
+      "light": "Thème : clair",
+      "dark": "Thème : sombre"
+    }
+  },
   "public": {
     "category": "Catégorie",
     "price": "Prix",
