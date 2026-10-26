@@ -64,3 +64,25 @@ test("a free account, or an offered plan, is not warned", async ({ page }) => {
     page.locator("#deleteAccount [data-test=subscription-warning]"),
   ).toHaveCount(0);
 });
+
+test("a refused cancellation shows the translated message, not the server's English one", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await openDeleteDialog(page, stripeBilling);
+  await page.route("**/delete-account", (route) =>
+    route.fulfill({
+      status: 502,
+      json: {
+        code: "subscription-cancel-failed",
+        errors: [{ message: "SERVER ENGLISH TEXT" }],
+      },
+    }),
+  );
+  const dialog = page.locator("#deleteAccount");
+  await dialog.getByPlaceholder("Current password").fill("testtest");
+  await dialog.getByPlaceholder("Confirmation text").fill("delete my account");
+  await page.getByText("Permanently delete account").click();
+  await expect(dialog).toContainText("We could not cancel your subscription");
+  await expect(dialog).not.toContainText("SERVER ENGLISH TEXT");
+});
