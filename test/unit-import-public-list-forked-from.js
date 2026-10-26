@@ -39,7 +39,10 @@ function run() {
     assert('community list types copied', JSON.stringify(newList.listTypes) === JSON.stringify(['trek', 'weekend']));
     assert('copied list stays private by default', newList.visibility === 'private');
     assert('copied list does not inherit copy permission', newList.copyable === false);
-    assert('copied list does not inherit public fields', typeof newList.publicFields === 'undefined');
+    // A copy is a new list: it gets the new-list default (links shared, the rest off), never the source's choices.
+    assert('copied list gets the new-list share defaults', JSON.stringify(newList.publicFields) === JSON.stringify({
+        price: false, links: true, images: false, downloadable: false,
+    }));
 
     // Defensive: payload without forkedFrom (e.g. stale client/server mismatch) must not crash.
     const state2 = { library: new Library(), globalAlerts: [], loggedIn: 'bob' };
