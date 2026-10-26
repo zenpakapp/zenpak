@@ -1,13 +1,19 @@
 const crypto = require('crypto');
 const config = require('config');
 
-// Only an image this app stored as a profile photo is ever destroyed: the folder is checked, so a
-// Google photo, a foreign address or an item image (copies made by other accounts may still show
-// it) is left alone.
+// Only an image this app stored is ever destroyed, and the folder is checked: a Google photo or a
+// foreign address is left alone. A profile photo goes to the avatar folder, an item photo directly
+// to the app folder.
 const AVATAR_FOLDER = 'lighterpack/avatars/';
+const ITEM_FOLDER = 'lighterpack/';
 
-function avatarPublicId(url, cloudName) {
-    if (typeof url !== 'string' || !cloudName) return '';
+function cloudName() {
+    return config.has('cloudinaryCloudName') ? config.get('cloudinaryCloudName') : '';
+}
+
+// Public id of an image stored directly under `folder` (no subfolder), or '' for anything else.
+function publicIdInFolder(url, name, folder) {
+    if (typeof url !== 'string' || !name) return '';
     let parsed;
     try {
         parsed = new URL(url);
@@ -16,23 +22,29 @@ function avatarPublicId(url, cloudName) {
     }
     if (parsed.protocol !== 'https:' || parsed.hostname !== 'res.cloudinary.com') return '';
 
-    const prefix = `/${cloudName}/image/upload/`;
+    const prefix = `/${name}/image/upload/`;
     if (!parsed.pathname.startsWith(prefix)) return '';
     // .../upload/v1792351260/lighterpack/avatars/abc123.png  ->  lighterpack/avatars/abc123
     const rest = parsed.pathname.slice(prefix.length).replace(/^v\d+\//, '');
     const withoutExtension = rest.replace(/\.[A-Za-z0-9]+$/, '');
-    if (!withoutExtension.startsWith(AVATAR_FOLDER)) return '';
-    if (withoutExtension.slice(AVATAR_FOLDER.length).includes('/')) return '';
+    if (!withoutExtension.startsWith(folder)) return '';
+    if (withoutExtension.slice(folder.length).includes('/')) return '';
     return decodeURIComponent(withoutExtension);
 }
 
-// Removes a profile photo from the image host. Resolves with whether a request was made; rejects
-// when the host refuses, so the caller can log it (a failure never blocks an account deletion).
-async function destroyAvatar(url) {
-    const cloudName = config.has('cloudinaryCloudName') ? config.get('cloudinaryCloudName') : '';
+function avatarPublicId(url, name) {
+    return publicIdInFolder(url, name, AVATAR_FOLDER);
+}
+
+function itemImagePublicId(url, name) {
+    return publicIdInFolder(url, name, ITEM_FOLDER);
+}
+
+// Removes an image from the host. Resolves with whether a request was made; rejects when the host
+// refuses, so the caller can log it (a failure never blocks an account deletion).
+async function destroyImage(publicId) {
     const apiKey = config.has('cloudinaryApiKey') ? config.get('cloudinaryApiKey') : '';
     const apiSecret = config.has('cloudinaryApiSecret') ? config.get('cloudinaryApiSecret') : '';
-    const publicId = avatarPublicId(url, cloudName);
     if (!publicId || !apiKey || !apiSecret) return false;
 
     const timestamp = Math.floor(Date.now() / 1000);
@@ -43,7 +55,7 @@ async function destroyAvatar(url) {
     formData.append('timestamp', String(timestamp));
     formData.append('signature', signature);
 
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/destroy`, {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName()}/image/destroy`, {
         method: 'POST',
         body: formData,
     });
@@ -54,4 +66,10 @@ async function destroyAvatar(url) {
     return true;
 }
 
-module.exports = { avatarPublicId, destroyAvatar };
+function destroyAvatar(url) {
+    return destroyImage(avatarPublicId(url, cloudName()));
+}
+
+module.exports = {
+    avatarPublicId, itemImagePublicId, destroyAvatar, destroyImage, cloudName,
+};

@@ -40,6 +40,7 @@ stubServerModule('auth.js', {
 });
 stubServerModule('list-versions.js', { deleteVersionsForOwner: () => Promise.resolve() });
 stubServerModule('avatar-storage.js', { destroyAvatar(url) { destroyed.push(url); return Promise.resolve(true); } });
+stubServerModule('item-image-cleanup.js', { eraseUnsharedItemImages: () => Promise.resolve(0) });
 
 const router = require('../server/account-endpoints.js');
 

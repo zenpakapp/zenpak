@@ -31,6 +31,7 @@ stubServerModule('db.js', {
     reports: quietCollection,
 });
 stubServerModule('avatar-storage.js', { destroyAvatar: () => Promise.resolve(false) });
+stubServerModule('item-image-cleanup.js', { eraseUnsharedItemImages: () => Promise.resolve(0) });
 stubServerModule('auth.js', {
     authenticateUser(req, res, next) { next(req, res, account); },
     verifyPassword(username, password) {

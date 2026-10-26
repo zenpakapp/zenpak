@@ -11,6 +11,7 @@ const db = require('./db.js');
 const { writeFields } = require('./user-field-writes.js');
 const { cancelSubscriptionsForDeletion } = require('./billing.js');
 const { destroyAvatar } = require('./avatar-storage.js');
+const { eraseUnsharedItemImages } = require('./item-image-cleanup.js');
 
 const router = express.Router();
 
@@ -176,6 +177,8 @@ function deleteAccount(req, res, user) {
                 db.reports.deleteMany({ reporterId: ownerId }),
                 // The profile photo at the image host.
                 destroyAvatar(avatarUrl),
+                // Item photos no copy made by another account still shows.
+                eraseUnsharedItemImages(user, (err) => logWithRequest(req, { message: 'failed to remove an item image on account delete', username: user.username, error: err.message })),
             ].forEach((op) => op.catch((err) => {
                 logWithRequest(req, { message: 'failed to clean community data on account delete', username: user.username, error: err.message });
             }));
