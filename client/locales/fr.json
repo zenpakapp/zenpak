@@ -371,6 +371,7 @@
     "allowSearchIndexing": "Autoriser l'indexation des moteurs de recherche",
     "deleteAccountTitle": "Supprimer le compte ?",
     "deleteAccountPermanent": "Cette action est permanente et ne peut pas être annulée.",
+    "deleteSubscriptionWarning": "Votre abonnement sera résilié immédiatement, et le reste de la période payée ne sera pas remboursé. Si vous avez été débité il y a moins de 14 jours, vous pouvez encore demander un remboursement à support{'@'}zenpak.app.",
     "deleteAccountInstructions": "Si vous souhaitez supprimer votre compte, veuillez saisir votre mot de passe actuel et le texte <strong>delete my account</strong> :",
     "confirmationText": "Texte de confirmation",
     "permanentlyDelete": "Supprimer définitivement le compte",

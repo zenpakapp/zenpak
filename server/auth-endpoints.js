@@ -419,6 +419,8 @@ router.get('/api/auth/me', (req, res) => {
     authenticateUser(req, res, (req, res, user) => res.json({
         username: user.username,
         emailVerified: !!user.emailVerified,
+        // A Google account has no password: the delete dialog then asks only for the typed phrase.
+        hasPassword: !!user.password,
         isModerator: isModerator(user.username),
         language: user.language || null,
     }));

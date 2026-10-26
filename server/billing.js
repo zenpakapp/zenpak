@@ -27,6 +27,21 @@ function getStripe() {
     return stripeClient;
 }
 
+// An account that is being deleted must stop being billed. Every live subscription of its Stripe
+// customer is cancelled at once. The customer itself stays: its invoices are kept, as the law asks.
+// Resolves with how many subscriptions were cancelled; rejects if Stripe refuses, so the caller can
+// stop before anything is deleted.
+async function cancelSubscriptionsForDeletion(user) {
+    const customerId = user && user.billing && user.billing.customerId;
+    if (!customerId || !stripeEnabled()) return 0;
+
+    const stripe = getStripe();
+    const subscriptions = await stripe.subscriptions.list({ customer: customerId, status: 'all', limit: 100 });
+    const live = subscriptions.data.filter((subscription) => !['canceled', 'incomplete_expired'].includes(subscription.status));
+    await Promise.all(live.map((subscription) => stripe.subscriptions.cancel(subscription.id)));
+    return live.length;
+}
+
 function getPlanFromPriceId(priceId) {
     if (!priceId) return 'free';
     if (priceId === config.get('stripePriceIdTrail')) return 'supporter';
@@ -253,6 +268,7 @@ module.exports = {
     VAT_MENTION_OUTSIDE_EU,
     stripeEnabled,
     getStripe,
+    cancelSubscriptionsForDeletion,
     getPlanFromPriceId,
     getIntervalFromPriceId,
     getOrCreateCustomer,
