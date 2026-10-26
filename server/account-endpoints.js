@@ -141,7 +141,7 @@ function deleteAccount(req, res, user) {
                 await cancelSubscriptionsForDeletion(user);
             } catch (err) {
                 logWithRequest(req, { message: 'failed to cancel subscriptions on account delete', username: user.username, error: err.message });
-                return res.status(502).json({ errors: [{ message: 'We could not cancel your subscription, so your account was not deleted. Please try again or contact support.' }] });
+                return res.status(502).json({ code: 'subscription-cancel-failed', errors: [{ message: 'We could not cancel your subscription, so your account was not deleted. Please try again or contact support.' }] });
             }
 
             db.users.remove(user, true);

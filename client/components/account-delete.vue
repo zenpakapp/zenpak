@@ -121,7 +121,10 @@ export default {
                     redirect('/welcome');
                 })
                 .catch((err) => {
-                    this.errors = err;
+                    // The server's own message is English only: this one is translated.
+                    this.errors = err && err.code === 'subscription-cancel-failed'
+                        ? [{ message: this.$t('acct.deleteSubscriptionCancelFailed') }]
+                        : err;
                     this.deleting = false;
                 });
         },

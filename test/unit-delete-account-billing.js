@@ -110,6 +110,7 @@ function reset(newAccount) {
     assert.strictEqual(result.status, 502, 'a failed cancellation stops the deletion');
     assert.strictEqual(removed, 0, 'nothing was deleted');
     assert.ok(result.data.errors[0].message.includes('not deleted'), 'the person is told why');
+    assert.strictEqual(result.data.code, 'subscription-cancel-failed', 'the client can translate it');
 
     console.log('unit-delete-account-billing: ok');
     process.exit(0);
