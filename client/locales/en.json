@@ -371,6 +371,7 @@
     "allowSearchIndexing": "Allow search indexing",
     "deleteAccountTitle": "Delete account?",
     "deleteAccountPermanent": "This action is permanent and cannot be undone.",
+    "deleteSubscriptionWarning": "Your subscription will be cancelled immediately, and the rest of the period you paid for will not be refunded. If you were charged less than 14 days ago, you can still ask for a refund at support{'@'}zenpak.app.",
     "deleteAccountInstructions": "If you want to delete your account, please enter your current password and the text <strong>delete my account</strong>:",
     "confirmationText": "Confirmation text",
     "permanentlyDelete": "Permanently delete account",

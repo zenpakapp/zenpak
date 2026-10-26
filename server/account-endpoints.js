@@ -9,6 +9,7 @@ const { deleteVersionsForOwner } = require('./list-versions.js');
 const { normalizeLanguage } = require('./user-language.js');
 const db = require('./db.js');
 const { writeFields } = require('./user-field-writes.js');
+const { cancelSubscriptionsForDeletion } = require('./billing.js');
 
 const router = express.Router();
 
@@ -121,11 +122,24 @@ router.post('/delete-account', (req, res) => {
 function deleteAccount(req, res, user) {
     logWithRequest(req, { message: 'Starting account delete', username: user.username });
 
-    verifyPassword(user.username, String(req.body.password))
-        .then((user) => {
+    // An account made with Google has no password: the signed-in session and the typed confirmation
+    // stand for it. Without this, such an account could never be deleted.
+    const identity = user.password ? verifyPassword(user.username, String(req.body.password)) : Promise.resolve(user);
+
+    identity
+        .then(async (user) => {
             if (req.body.username !== user.username) {
                 logWithRequest(req, { message: 'Bad account deletion - wrong user', requestedUsername: req.body.username, initiatedby: user.username });
                 return Promise.reject(new Error('An error occurred, please try logging out and in again.'));
+            }
+
+            // Stop the billing first. If Stripe refuses, nothing is deleted: a deleted account that
+            // is still being charged would be worse than a failed deletion.
+            try {
+                await cancelSubscriptionsForDeletion(user);
+            } catch (err) {
+                logWithRequest(req, { message: 'failed to cancel subscriptions on account delete', username: user.username, error: err.message });
+                return res.status(502).json({ errors: [{ message: 'We could not cancel your subscription, so your account was not deleted. Please try again or contact support.' }] });
             }
 
             db.users.remove(user, true);

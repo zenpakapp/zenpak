@@ -371,6 +371,7 @@
     "allowSearchIndexing": "Suchmaschinen-Indizierung erlauben",
     "deleteAccountTitle": "Konto löschen?",
     "deleteAccountPermanent": "Diese Aktion ist permanent und kann nicht rückgängig gemacht werden.",
+    "deleteSubscriptionWarning": "Dein Abo wird sofort gekündigt, und der Rest des bezahlten Zeitraums wird nicht erstattet. Wurdest du vor weniger als 14 Tagen belastet, kannst du unter support{'@'}zenpak.app noch eine Erstattung anfragen.",
     "deleteAccountInstructions": "Wenn du dein Konto löschen möchtest, gib bitte dein aktuelles Passwort und den Text <strong>delete my account</strong> ein:",
     "confirmationText": "Bestätigungstext",
     "permanentlyDelete": "Konto dauerhaft löschen",
