@@ -10,6 +10,7 @@ const { normalizeLanguage } = require('./user-language.js');
 const db = require('./db.js');
 const { writeFields } = require('./user-field-writes.js');
 const { cancelSubscriptionsForDeletion } = require('./billing.js');
+const { destroyAvatar } = require('./avatar-storage.js');
 
 const router = express.Router();
 
@@ -149,11 +150,32 @@ function deleteAccount(req, res, user) {
             });
 
             // Discover, follows and feed read their own collections: nothing of this account stays there.
+            // What is kept on purpose: Stripe's customer and our billing events (invoices are kept by law),
+            // reports filed against this account or its lists (moderation record), and everything the
+            // copies other accounts made of its lists hold, including the name of the original author.
             const ownerId = new ObjectId(user._id);
+            const listIds = (user.library && Array.isArray(user.library.lists) ? user.library.lists : [])
+                .map((list) => list.externalId)
+                .filter(Boolean);
+            const avatarUrl = user.library && user.library.publicProfile && user.library.publicProfile.avatarUrl;
             [
                 db.publicLists.deleteMany({ ownerId }),
                 db.follows.deleteMany({ $or: [{ followerId: ownerId }, { followedId: ownerId }] }),
                 db.feedEvents.deleteMany({ userId: ownerId }),
+                // Notifications this account received, and those that carry its name in other inboxes.
+                db.notifications.deleteMany({ $or: [{ userId: ownerId }, { actorUsername: user.username }] }),
+                // The record of the copies this account made. The copies other accounts made of its lists
+                // are theirs: their lists and their record stay.
+                db.listCopies.deleteMany({ userId: String(user._id) }),
+                // View counts of its own lists.
+                ...(listIds.length ? [
+                    db.publicListStats.deleteMany({ externalId: { $in: listIds } }),
+                    db.publicListViewers.deleteMany({ externalId: { $in: listIds } }),
+                ] : []),
+                // Reports this account filed.
+                db.reports.deleteMany({ reporterId: ownerId }),
+                // The profile photo at the image host.
+                destroyAvatar(avatarUrl),
             ].forEach((op) => op.catch((err) => {
                 logWithRequest(req, { message: 'failed to clean community data on account delete', username: user.username, error: err.message });
             }));
@@ -167,5 +189,77 @@ function deleteAccount(req, res, user) {
             res.status(400).json({ errors: [{ field: 'currentPassword', message: 'Your current password is incorrect.' }] });
         });
 }
+
+// Everything this account holds, in one JSON file: the right to get one's data, for every plan.
+// Secrets (password hash, session and reset tokens) and other people's data are never in it.
+const EXPORT_LIMIT = 5000;
+
+async function usernamesOf(ids) {
+    if (!ids.length) return [];
+    const users = await db.users.findMany({ _id: { $in: ids } }, { projection: { username: 1 } });
+    return users.map((account) => account.username).filter(Boolean).sort();
+}
+
+async function exportAccount(req, res, user) {
+    try {
+        const userId = new ObjectId(user._id);
+        const { publicProfile, ...library } = user.library || {};
+        const billing = user.billing || {};
+
+        const [following, followers, notifications, copies, reports] = await Promise.all([
+            db.follows.findMany({ followerId: userId }, { limit: EXPORT_LIMIT }),
+            db.follows.findMany({ followedId: userId }, { limit: EXPORT_LIMIT }),
+            db.notifications.findMany({ userId }, { limit: EXPORT_LIMIT }),
+            db.listCopies.findMany({ userId: String(user._id) }, { limit: EXPORT_LIMIT }),
+            db.reports.findMany({ reporterId: userId }, { limit: EXPORT_LIMIT }),
+        ]);
+
+        const body = {
+            format: 'zenpak-account-export-v1',
+            exportedAt: new Date().toISOString(),
+            account: {
+                username: user.username,
+                email: user.email || null,
+                emailVerified: !!user.emailVerified,
+                language: user.language || null,
+                signInWithGoogle: !!user.googleId,
+                notificationPreferences: user.notificationPrefs || null,
+                plan: (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free',
+                billing: {
+                    provider: billing.provider || null,
+                    plan: billing.plan || null,
+                    status: billing.status || null,
+                    interval: billing.interval || null,
+                    currentPeriodEnd: billing.currentPeriodEnd || null,
+                    cancelAtPeriodEnd: !!billing.cancelAtPeriodEnd,
+                },
+            },
+            publicProfile: publicProfile || {},
+            library,
+            following: await usernamesOf(following.map((row) => row.followedId)),
+            followers: await usernamesOf(followers.map((row) => row.followerId)),
+            notifications: notifications.map((row) => ({
+                type: row.type, actorUsername: row.actorUsername || null, listName: row.listName || null, createdAt: row.createdAt,
+            })),
+            listCopies: copies.map((row) => ({ externalId: row.externalId, version: row.version })),
+            reportsFiled: reports.map((row) => ({
+                targetType: row.targetType, targetId: row.targetId, reason: row.reason, status: row.status, createdAt: row.createdAt,
+            })),
+        };
+
+        const filename = `zenpak-data-${String(user.username).replace(/[^a-z0-9_-]/gi, '_')}.json`;
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
+        res.setHeader('Cache-Control', 'no-store');
+        return res.status(200).send(JSON.stringify(body, null, 2));
+    } catch (err) {
+        logWithRequest(req, { message: 'failed to export account data', username: user.username, error: err.message });
+        return res.status(500).json({ message: 'An error occurred, please try again later.' });
+    }
+}
+
+router.get('/api/account/export', (req, res) => {
+    authenticateUser(req, res, exportAccount);
+});
 
 module.exports = router;

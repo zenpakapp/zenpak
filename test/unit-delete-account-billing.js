@@ -24,7 +24,13 @@ stubServerModule('db.js', {
     publicLists: quietCollection,
     follows: quietCollection,
     feedEvents: quietCollection,
+    notifications: quietCollection,
+    listCopies: quietCollection,
+    publicListStats: quietCollection,
+    publicListViewers: quietCollection,
+    reports: quietCollection,
 });
+stubServerModule('avatar-storage.js', { destroyAvatar: () => Promise.resolve(false) });
 stubServerModule('auth.js', {
     authenticateUser(req, res, next) { next(req, res, account); },
     verifyPassword(username, password) {

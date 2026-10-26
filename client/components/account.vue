@@ -85,6 +85,18 @@
             </template>
         </section>
 
+        <section class="accountSection">
+            <h3 class="accountSectionTitle">
+                {{ $t('acct.yourData') }}
+            </h3>
+            <p class="accountSectionText">
+                {{ $t('acct.yourDataDesc') }}
+            </p>
+            <div class="accountBackupActions">
+                <a class="lpButton lpButtonSecondary" href="/api/account/export" download>{{ $t('acct.downloadMyData') }}</a>
+            </div>
+        </section>
+
         <section v-if="billing && billing.stripeEnabled" class="accountSection">
             <h3 class="accountSectionTitle">
                 {{ $t('acct.subscription') }}
