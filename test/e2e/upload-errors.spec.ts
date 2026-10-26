@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { registerUser } from "./auth-utils";
+import { grantPlan, registerUser } from "./auth-utils";
 import { testRoot } from "./utils";
 
 // A failed image upload says what is wrong (too large, not an image, empty, nothing sent)
@@ -13,10 +13,12 @@ const PNG_HEADER = Buffer.from([
 const bigPng = (bytes) =>
   Buffer.concat([PNG_HEADER, Buffer.alloc(bytes - PNG_HEADER.length)]);
 
-async function signedInPage(page) {
+async function signedInPage(page, plan = "") {
   const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
   await registerUser(page, `up${now}`, "testtest", `up+${now}@lighterpack.com`);
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+  // The profile photo is a paid feature: its checks need a paid account.
+  if (plan) await grantPlan(`up${now}`, plan);
 }
 
 const upload = (page, path, file) =>
@@ -32,7 +34,7 @@ for (const endpoint of [
     page,
   }) => {
     test.setTimeout(60000);
-    await signedInPage(page);
+    await signedInPage(page, endpoint.path === "/api/profile/avatar" ? "supporter" : "");
 
     const tooLarge = await upload(page, endpoint.path, {
       name: "huge.png",
@@ -67,3 +69,17 @@ for (const endpoint of [
     expect((await nothing.json()).code).toBe("no-file");
   });
 }
+
+test("a free account cannot send a profile photo through the API", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await signedInPage(page);
+  const response = await upload(page, "/api/profile/avatar", {
+    name: "me.png",
+    mimeType: "image/png",
+    buffer: bigPng(2048),
+  });
+  expect(response.status()).toBe(403);
+  expect((await response.json()).code).toBe("plan-required");
+});

@@ -26,7 +26,7 @@ const crypto = require('crypto');
 const express = require('express');
 const { stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
-const user = { _id: 'u1', username: 'alice', library: { publicProfile: { avatarUrl: '' } } };
+const user = { _id: 'u1', username: 'alice', library: { entitlements: { plan: 'supporter' }, publicProfile: { avatarUrl: '' } } };
 const saved = [];
 const synced = [];
 stubServerModule('db.js', {
@@ -69,9 +69,28 @@ function sendAvatar(base, { bytes = png, type = 'image/png' } = {}) {
     const server = await new Promise((resolve) => { const s = app.listen(0, () => resolve(s)); });
     const base = `http://127.0.0.1:${server.address().port}`;
 
+    let response;
+    let body;
+
+    // A free account cannot send a photo, whatever the screen shows: nothing reaches the host.
+    user.library.entitlements = { plan: 'free' };
+    response = await sendAvatar(base);
+    assert.strictEqual(response.status, 403);
+    assert.strictEqual((await response.json()).code, 'plan-required');
+    assert.strictEqual(hostCalls.length, 0, 'the host is not called for a free account');
+    assert.deepStrictEqual(saved, [], 'nothing is saved for a free account');
+    user.library.entitlements = { plan: 'creator' };
+    response = await sendAvatar(base);
+    assert.strictEqual(response.status, 200, 'a Wayfarer account can send a photo');
+    hostCalls.length = 0;
+    saved.length = 0;
+    synced.length = 0;
+    user.library.publicProfile.avatarUrl = '';
+    user.library.entitlements = { plan: 'supporter' };
+
     // A good image is sent to the host, signed, then its address is kept on the profile.
-    let response = await sendAvatar(base);
-    let body = await response.json();
+    response = await sendAvatar(base);
+    body = await response.json();
     assert.strictEqual(response.status, 200);
     assert.strictEqual(body.avatarUrl, hostAnswer.body.secure_url);
     assert.strictEqual(user.library.publicProfile.avatarUrl, hostAnswer.body.secure_url, 'the profile keeps the address');

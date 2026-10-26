@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { registerUser } from "./auth-utils";
+import { grantPlan, registerUser } from "./auth-utils";
 import {
   createEditorLibrary,
   mockSuccessfulEditorInitialization,
@@ -27,7 +27,8 @@ test.describe("avatar upload", () => {
       `ua+${now}@lighterpack.com`,
     );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
-    // The avatar controls are for paying accounts.
+    // The avatar controls are for paying accounts, and the server checks the plan too.
+    await grantPlan(`ua${now}`, "supporter");
     await page.evaluate(() => {
       window.LighterPack.$store.state.library.entitlements = {
         plan: "supporter",
