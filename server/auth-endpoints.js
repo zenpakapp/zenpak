@@ -431,9 +431,11 @@ router.get('/verify-email', (req, res, next) => {
 
     db.users.findOne({ emailVerifyToken: token }, (err, user) => {
         if (err || !user) return res.redirect('/verify-email?error=1');
+        // The link stays valid after use: a mail scanner or a preview may open it before the person
+        // does, and they would then land on an error for an address that is verified. It can only
+        // confirm this same address again, and a new link or a new address replaces it.
         user.emailVerified = true;
-        user.emailVerifyToken = undefined;
-        writeFields(user, ['emailVerified', 'emailVerifyToken']);
+        writeFields(user, ['emailVerified']);
         return res.redirect('/verify-email?success=1');
     });
 });

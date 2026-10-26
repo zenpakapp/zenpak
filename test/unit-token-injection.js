@@ -92,6 +92,13 @@ function call(handler, req) {
     assert.strictEqual(result.url, '/verify-email?success=1');
     assert.strictEqual(stored.emailVerified, true);
 
+    // A mail scanner may open the link first: the person's own click still lands on "verified".
+    result = await call(verify, { query: { token: 'v-live' } });
+    assert.strictEqual(result.url, '/verify-email?success=1', 'the link works a second time');
+    assert.strictEqual(stored.emailVerified, true);
+    result = await call(verify, { query: { token: 'v-other' } });
+    assert.strictEqual(result.url, '/verify-email?error=1', 'a wrong token is still refused');
+
     // Setup token: an operator is refused before any lookup.
     const setUsername = route(oauthRouter, 'post', '/api/auth/google/set-username');
     queries.length = 0;
