@@ -196,6 +196,11 @@ router.post('/register', authLimiter, (req, res) => {
                                 if (err.code === 11000 && err.message.includes('email')) {
                                     return res.status(400).json({ errors: [{ field: 'email', message: 'A user with that email already exists.' }] });
                                 }
+                                // Two registrations of the same name at once both pass the lookup above;
+                                // the unique index stops the second one.
+                                if (err.code === 11000 && err.message.includes('username')) {
+                                    return res.status(400).json({ errors: [{ field: 'username', message: 'That username already exists, please pick a different username.' }] });
+                                }
                                 return res.status(500).json({ errors: [{ message: 'An error occurred, please try again later.' }] });
                             }
 

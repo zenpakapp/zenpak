@@ -8,6 +8,7 @@ const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const { isReservedDisplayName } = require('./username-policy.js');
+const { FEATURES, hasFeature } = require('../client/services/entitlements.js');
 const db = require('./db.js');
 const {
     detectImageType, errorBody, formFailure, storageFailure,
@@ -159,7 +160,12 @@ router.delete('/api/profile/avatar', (req, res) => {
 
 router.post('/api/profile/avatar', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
-        uploadImage(req, res, {
+        // The photo is part of profile customization, a paid feature: the screen hides the button,
+        // the server refuses the request.
+        if (!hasFeature(user.library && user.library.entitlements, FEATURES.PROFILE_CUSTOMIZATION)) {
+            return res.status(403).json({ code: 'plan-required', message: 'A profile photo needs a Kin or Wayfarer plan.' });
+        }
+        return uploadImage(req, res, {
             maxBytes: AVATAR_MAX_BYTES,
             folder: 'lighterpack/avatars',
             transformation: 'w_200,h_200,c_fill,g_face,q_auto,f_auto',

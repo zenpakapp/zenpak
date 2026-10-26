@@ -8,7 +8,8 @@ test("the community tags are grouped by season, gear level, duration and activit
   page,
 }) => {
   test.setTimeout(90000);
-  const now = Date.now();
+  // Parallel runs can start in the same millisecond: a random part keeps the names apart.
+  const now = `${Date.now()}${Math.random().toString(36).slice(2, 6)}`;
   const username = `sg${now}`;
   await registerUser(page, username, "testtest", `sg+${now}@lighterpack.com`);
   await verifyUserEmail(username);

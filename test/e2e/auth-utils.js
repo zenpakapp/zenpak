@@ -47,6 +47,24 @@ export async function verifyUserEmail(username) {
     }
 }
 
+// Gives a test account a plan straight in the database, like an offer from moderation would.
+export async function grantPlan(username, plan) {
+    const databaseUrl = config.get('databaseUrl');
+    const client = new MongoClient(`mongodb://${databaseUrl}`);
+    const dbName = databaseUrl.split('/').pop();
+
+    try {
+        await client.connect();
+        const result = await client.db(dbName).collection('users').updateOne(
+            { username },
+            { $set: { 'library.entitlements.plan': plan } },
+        );
+        if (result.matchedCount === 0) throw new Error(`Unable to grant a plan to ${username}`);
+    } finally {
+        await client.close();
+    }
+}
+
 export async function registerUserWithTemplate(page, username, password, email, templateName) {
     await page.goto(testRoot);
 
