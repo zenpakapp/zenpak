@@ -9,7 +9,7 @@ const {
     incrementPublicListStat,
     rememberPublicListViewer,
 } = require('./public-list-projections.js');
-const { getServedByExternalId } = require('./list-versions.js');
+const { getServedByExternalId, getDeletedForkSources } = require('./list-versions.js');
 const db = require('./db.js');
 
 const router = express.Router();
@@ -86,6 +86,9 @@ router.get('/api/public/list/:externalId', async (req, res) => {
         }
         const stats = db.publicListStats ? await db.publicListStats.findOne({ externalId }) : null;
         payload.copyCount = Number(stats && stats.copyCount) || 0;
+        // A copy whose source author deleted their account must not link to a page that cannot open.
+        const goneSources = payload.forkedFrom ? await getDeletedForkSources({ library: { lists: [{ forkedFrom: payload.forkedFrom }] } }) : [];
+        payload.sourceGone = goneSources.length > 0;
         return res.json(payload);
     } catch (err) {
         logWithRequest(req, { message: 'Public list snapshot error', externalId, error: err.message });

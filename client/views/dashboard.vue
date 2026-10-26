@@ -51,13 +51,14 @@
                     <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" value="New List" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                     <span v-if="forkSource" class="lpForkSource" :title="forkCurrencyNote || null">
                         {{ $t('dash.source') }}
-                        <router-link v-if="forkSource.externalId" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
+                        <router-link v-if="forkSource.externalId && !forkSourceGone" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
                             {{ forkSource.listName }}
                         </router-link>
                         <span v-else>{{ forkSource.listName }}</span>
+                        <span v-if="forkSourceGone" class="lpForkSourceGone">({{ $t('dash.sourceUnavailable') }})</span>
                         <span v-if="forkSource.ownerName" class="lpForkSourceOwner">
                             ·
-                            <router-link v-if="forkSource.ownerUsername" class="lpForkSourceLink" :to="`/u/${forkSource.ownerUsername}`">
+                            <router-link v-if="forkSource.ownerUsername && !forkSourceGone" class="lpForkSourceLink" :to="`/u/${forkSource.ownerUsername}`">
                                 {{ forkSource.ownerName }}
                             </router-link>
                             <span v-else>{{ forkSource.ownerName }}</span>
@@ -293,6 +294,7 @@ export default {
             speedbumpLoader: null,
             currencyNoticeListId: null,
             forkUpdates: [],
+            deletedForkSources: [],
         };
     },
     computed: {
@@ -305,6 +307,10 @@ export default {
         list() {
             if (!this.library || typeof this.library.getListById !== 'function') return null;
             return this.library.getListById(this.library.defaultListId);
+        },
+        forkSourceGone() {
+            const source = this.forkSource;
+            return Boolean(source && source.externalId && this.deletedForkSources.includes(source.externalId));
         },
         forkSource() {
             const forkedFrom = this.list && this.list.forkedFrom;
@@ -495,11 +501,12 @@ export default {
         },
         loadForkUpdates() {
             if (!this.isSignedIn || !this.library || !Array.isArray(this.library.lists)) return;
-            const hasTrackedFork = this.library.lists.some((l) => l.forkedFrom && Number.isInteger(l.forkedFrom.version));
-            if (!hasTrackedFork) return;
+            const hasFork = this.library.lists.some((l) => l.forkedFrom && l.forkedFrom.externalId);
+            if (!hasFork) return;
             fetchJson('/api/lists/fork-updates', { credentials: 'same-origin' })
                 .then((response) => {
                     this.forkUpdates = Array.isArray(response.updates) ? response.updates : [];
+                    this.deletedForkSources = Array.isArray(response.deletedSources) ? response.deletedSources : [];
                 })
                 .catch(() => {});
         },

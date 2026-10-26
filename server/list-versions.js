@@ -189,6 +189,22 @@ async function getForkUpdates(user) {
     }, []);
 }
 
+// The sources of this account's copies whose author has deleted their account. Their published
+// versions went with them, so a copy keeps its own content but no longer has a source to update from
+// or to link to. forkedFrom.ownerId is written by the server at copy time.
+async function getDeletedForkSources(user) {
+    const forks = ((user && user.library && user.library.lists) || []).filter((list) => {
+        const forkedFrom = list && list.forkedFrom;
+        return Boolean(forkedFrom && forkedFrom.externalId && forkedFrom.ownerId && ObjectId.isValid(String(forkedFrom.ownerId)));
+    });
+    if (!forks.length) return [];
+
+    const ownerIds = [...new Set(forks.map((list) => String(list.forkedFrom.ownerId)))];
+    const owners = await db.users.findMany({ _id: { $in: ownerIds.map((id) => new ObjectId(id)) } }, { projection: { _id: 1 } });
+    const alive = new Set(owners.map((owner) => String(owner._id)));
+    return [...new Set(forks.filter((list) => !alive.has(String(list.forkedFrom.ownerId))).map((list) => list.forkedFrom.externalId))];
+}
+
 async function publishVersion(user, externalId, note) {
     const liveList = findLiveList(user, externalId);
     if (!liveList) return { error: 'not-found' };
@@ -319,6 +335,7 @@ module.exports = {
     getLatestOwnedVersion,
     getLatestVersions,
     getForkUpdates,
+    getDeletedForkSources,
     publishVersion,
     getPublishStatus,
     getServedUser,

@@ -2,7 +2,9 @@ const express = require('express');
 
 const auth = require('./auth.js');
 const { logWithRequest } = require('./log.js');
-const { publishVersion, getPublishStatus, getForkUpdates } = require('./list-versions.js');
+const {
+    publishVersion, getPublishStatus, getForkUpdates, getDeletedForkSources,
+} = require('./list-versions.js');
 const { getForkDiff, loadForkPayloads } = require('./fork-diff.js');
 const { recordCopy } = require('./list-copies.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
@@ -74,7 +76,7 @@ router.get('/api/lists/:externalId/publish-status', (req, res) => {
 router.get('/api/lists/fork-updates', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         try {
-            return res.json({ updates: await getForkUpdates(user) });
+            return res.json({ updates: await getForkUpdates(user), deletedSources: await getDeletedForkSources(user) });
         } catch (err) {
             logWithRequest(req, { message: 'fork updates failed', username: user.username, error: err.message });
             return res.status(500).json({ message: 'An error occurred' });

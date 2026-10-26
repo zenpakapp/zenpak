@@ -66,17 +66,18 @@
             </p>
             <p v-if="forkSource" class="lpPublicForkSource">
                 {{ $t('dash.source') }}
-                <router-link v-if="forkSource.externalId" class="lpPublicForkSourceLink" :to="listTo(forkSource.externalId)">
+                <router-link v-if="forkSource.externalId && !sourceGone" class="lpPublicForkSourceLink" :to="listTo(forkSource.externalId)">
                     {{ forkSource.listName }}
                 </router-link>
                 <span v-else>{{ forkSource.listName }}</span>
                 <span v-if="forkSource.ownerName" class="lpPublicForkSourceOwner">
                     ·
-                    <router-link v-if="forkSource.ownerUsername" class="lpPublicForkSourceLink" :to="profileTo(forkSource.ownerUsername)">
+                    <router-link v-if="forkSource.ownerUsername && !sourceGone" class="lpPublicForkSourceLink" :to="profileTo(forkSource.ownerUsername)">
                         {{ forkSource.ownerName }}
                     </router-link>
                     <span v-else>{{ forkSource.ownerName }}</span>
                 </span>
+                <span v-if="sourceGone" class="lpForkSourceGone">({{ $t('dash.sourceUnavailable') }})</span>
             </p>
             <p v-if="copyCount > 0" class="lpPublicListCopies">
                 {{ $t('public.copyCount', { n: copyCount }) }}
@@ -295,6 +296,7 @@ export default {
             creatorCodes: [],
             authorTier: null,
             forkedFrom: null,
+            sourceGone: false,
             copyCount: 0,
             chart: null,
             copying: false,
@@ -413,6 +415,7 @@ export default {
                 this.affiliateDisclosure = payload.affiliateDisclosure;
                 this.creatorCodes = payload.creatorCodes || [];
                 this.forkedFrom = payload.forkedFrom || null;
+                this.sourceGone = payload.sourceGone === true;
                 this.copyCount = Number(payload.copyCount) || 0;
                 this.updateDocumentMeta();
                 this.track('listView');
