@@ -418,6 +418,9 @@ export default {
         setSpeedbumpLoader(this.speedbumpLoader);
         this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
+        // The verification link may be opened on another device: when this tab comes back, ask again.
+        document.addEventListener('visibilitychange', this.refreshEmailVerification);
+        window.addEventListener('focus', this.refreshEmailVerification);
         registerShortcut('s', this.$t('shortcuts.toggleSidebar'), this.toggleSidebar);
         registerShortcut('?', this.$t('shortcuts.showHelp'), () => {
             openDialog('shortcutsHelp');
@@ -451,6 +454,8 @@ export default {
         }
     },
     beforeUnmount() {
+        document.removeEventListener('visibilitychange', this.refreshEmailVerification);
+        window.removeEventListener('focus', this.refreshEmailVerification);
         this.dialogLoaders.forEach(({ name, loader }) => {
             unregisterDialogLoader(name, loader);
         });
@@ -465,6 +470,15 @@ export default {
         }
     },
     methods: {
+        async refreshEmailVerification() {
+            if (this.emailVerified !== false || document.visibilityState !== 'visible') return;
+            try {
+                const response = await fetchJson('/api/auth/me', { credentials: 'same-origin' });
+                if (response && response.emailVerified === true) this.$store.commit('setEmailVerified', true);
+            } catch (e) {
+                // Offline or signed out: the banner stays as it is.
+            }
+        },
         prepareDashboard() {
             if (this.isLoaded) return;
             if (window.matchMedia('(max-width: 768px)').matches) {
