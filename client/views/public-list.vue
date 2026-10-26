@@ -57,6 +57,7 @@
             </h1>
             <p v-if="username" class="lpPublicListAuthor">
                 {{ $t('public.byAuthor') }}
+                <PersonAvatar :avatar-url="authorAvatarUrl" :display-name="authorDisplayName" :username="username" />
                 <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">
                     {{ authorName }}
                 </router-link>
@@ -240,6 +241,7 @@ import ThemeToggle from '../components/theme-toggle.vue';
 import { useBackNav } from '../composables/useBackNav';
 import ReportButton from '../components/report-button.vue';
 import LinkifiedText from '../components/linkified-text.vue';
+import PersonAvatar from '../components/person-avatar.vue';
 import { UGC_REL, SPONSORED_REL } from '../utils/linkify';
 
 const weightUtils = require('../utils/weight.js');
@@ -262,7 +264,9 @@ async function loadChart() {
 
 export default {
     name: 'PublicList',
-    components: { ReportButton, LinkifiedText, ThemeToggle },
+    components: {
+        ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
+    },
     setup() {
         useTheme();
         const router = useRouter();
@@ -278,6 +282,7 @@ export default {
             errorType: null,
             username: null,
             authorDisplayName: '',
+            authorAvatarUrl: '',
             list: null,
             totalUnit: 'oz',
             itemUnit: 'oz',
@@ -395,6 +400,7 @@ export default {
             .then((payload) => {
                 this.username = payload.username;
                 this.authorDisplayName = payload.authorDisplayName || payload.username || '';
+                this.authorAvatarUrl = payload.authorAvatarUrl || '';
                 this.authorTier = payload.authorTier || null;
                 this.list = payload.list;
                 this.totalUnit = localStorage.getItem('lpGuestUnit') || payload.totalUnit || 'oz';

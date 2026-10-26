@@ -151,7 +151,7 @@
                                     {{ list.name }}
                                 </div>
                                 <div class="lpCommunityCardAuthor">
-                                    {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                    {{ $t('public.byAuthor') }} <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
                                         {{ listAuthorName(list) }}
                                     </router-link>
                                     <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
@@ -184,7 +184,7 @@
                                 {{ list.name }}
                             </div>
                             <div class="lpCommunityCardAuthor">
-                                {{ $t('public.byAuthor') }} <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                {{ $t('public.byAuthor') }} <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
                                     {{ listAuthorName(list) }}
                                 </router-link>
                                 <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
@@ -312,6 +312,7 @@ import { useTheme } from '../composables/useTheme';
 import { fetchJson } from '../utils/utils';
 import { tierLabel } from '../services/tier-labels';
 import LpSelect from '../components/lp-select.vue';
+import PersonAvatar from '../components/person-avatar.vue';
 import {
     LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions,
 } from '../data/list-type-options';
@@ -323,7 +324,7 @@ const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "com
 export default {
     name: 'CommunityView',
     components: {
-        CommunityModeration, CommunityPeople, reportButton, LpSelect,
+        CommunityModeration, CommunityPeople, reportButton, LpSelect, PersonAvatar,
     },
     setup() {
         useTheme();

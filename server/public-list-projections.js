@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 
 const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
+const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
 const { buildSearchTokens } = require('./search-text.js');
 const { clipDescription } = require('./text-limits.js');
@@ -64,6 +65,8 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
         ownerUsername: user.username || '',
         ownerDisplayName: profile.displayName || user.username || '',
         ownerTier: normalizeTier(plan),
+        // A private profile keeps its photo to itself, like the rest of the profile.
+        ownerAvatarUrl: isPublicVisibility(profile.visibility) ? (profile.avatarUrl || '') : '',
         name: published.name || '',
         description: clipDescription(published.description),
         visibility: list.visibility || 'private',
@@ -105,6 +108,7 @@ function projectionToDiscoverItem(projection) {
         author: projection.ownerUsername || '',
         authorDisplayName: projection.ownerDisplayName || projection.ownerUsername || '',
         authorTier: projection.ownerTier || 'base',
+        authorAvatarUrl: projection.ownerAvatarUrl || '',
         sourceOwnerName: projection.sourceOwnerName || '',
         sourceOwnerUsername: projection.sourceOwnerUsername || '',
         copyCount: Number(projection.copyCount) || 0,
@@ -205,10 +209,14 @@ async function rememberPublicListViewer(externalId, viewerKey, limit = 500) {
 }
 
 // Projections written before Discover search existed have no `searchTokens`, so the search
-// would never find them. Rebuild them from their owners; returns how many were missing.
+// would never find them; those written before the author's photo was projected have no
+// `ownerAvatarUrl`, so their cards would show an initial. Rebuild them from their owners;
+// returns how many were missing.
 async function reindexMissingSearchTokens() {
     if (!db.publicLists || !db.publicLists.findMany || !db.users) return 0;
-    const missing = await db.publicLists.findMany({ searchTokens: { $exists: false } });
+    const missing = await db.publicLists.findMany({
+        $or: [{ searchTokens: { $exists: false } }, { ownerAvatarUrl: { $exists: false } }],
+    });
     if (!missing.length) return 0;
 
     const ownerIds = [...new Set(missing.map((projection) => String(projection.ownerId)))]

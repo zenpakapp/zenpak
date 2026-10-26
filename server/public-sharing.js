@@ -339,6 +339,7 @@ function buildPublicList(user, externalId) {
         username: user.username || '',
         authorDisplayName: (library.publicProfile && library.publicProfile.displayName) || user.username || '',
         authorTier: normalizeTier(library.entitlements && library.entitlements.plan),
+        authorAvatarUrl: isPublicVisibility(library.publicProfile && library.publicProfile.visibility) ? (library.publicProfile.avatarUrl || '') : '',
         list: sanitizeListSummary(list, { includePrice }),
         forkedFrom: list.forkedFrom || null,
         totalUnit: library.totalUnit || '',

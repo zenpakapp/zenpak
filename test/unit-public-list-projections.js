@@ -26,8 +26,10 @@ const publicListsDb = {
     },
 };
 const ownersForBackfill = [];
+const lacksField = (p, clause) => (clause.searchTokens ? !Array.isArray(p.searchTokens) : false)
+    || (clause.ownerAvatarUrl ? p.ownerAvatarUrl === undefined : false);
 publicListsDb.findMany = (query) => Promise.resolve(
-    projections.filter((p) => !(query.searchTokens && query.searchTokens.$exists === false) || !Array.isArray(p.searchTokens)),
+    projections.filter((p) => (query.$or ? query.$or.some((clause) => lacksField(p, clause)) : lacksField(p, query))),
 );
 stubServerModule('db.js', {
     users: {
@@ -99,6 +101,12 @@ async function run() {
     assert('reindex reports how many projections it filled', reindexed === 1);
     assert('a legacy projection without tokens gets them', projections.find((p) => p.externalId === 'legacy1').searchTokens.includes('legacy'));
     assert('a second reindex finds nothing to do', await reindexMissingSearchTokens() === 0);
+
+    // Projections written before the author's photo was projected get it at startup too.
+    delete projections.find((p) => p.externalId === 'legacy1').ownerAvatarUrl;
+    assert('a projection without the author photo field is reindexed', await reindexMissingSearchTokens() === 1);
+    assert('it has the field again', projections.find((p) => p.externalId === 'legacy1').ownerAvatarUrl === '');
+    assert('and a further reindex finds nothing', await reindexMissingSearchTokens() === 0);
 
     // A banned account has no public list in Discover or search, and gets them back when reinstated.
     const bannedOwner = buildOwnerUser({ externalId: 'ban1', username: 'spammer' });
