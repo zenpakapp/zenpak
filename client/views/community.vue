@@ -151,7 +151,7 @@
                                     {{ list.name }}
                                 </div>
                                 <div class="lpCommunityCardAuthor">
-                                    {{ $t('public.byAuthor') }} <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                    <span class="lpInvisible">{{ $t('public.byAuthor') }}</span> <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
                                         {{ listAuthorName(list) }}
                                     </router-link>
                                     <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
@@ -184,7 +184,7 @@
                                 {{ list.name }}
                             </div>
                             <div class="lpCommunityCardAuthor">
-                                {{ $t('public.byAuthor') }} <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
+                                <span class="lpInvisible">{{ $t('public.byAuthor') }}</span> <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
                                     {{ listAuthorName(list) }}
                                 </router-link>
                                 <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>

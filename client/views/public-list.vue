@@ -56,7 +56,7 @@
                 {{ list.name }}
             </h1>
             <p v-if="username" class="lpPublicListAuthor">
-                {{ $t('public.byAuthor') }}
+                <span class="lpInvisible">{{ $t('public.byAuthor') }}</span>
                 <PersonAvatar :avatar-url="authorAvatarUrl" :display-name="authorDisplayName" :username="username" />
                 <router-link :to="profileTo(username)" class="lpPublicListAuthorLink">
                     {{ authorName }}

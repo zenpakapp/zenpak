@@ -71,6 +71,10 @@ test("Discover cards show the author's photo, or their initial", async ({
   await expect(withoutPhoto).toHaveText("B");
   // The avatar is decoration: the author's name stays the link and the accessible text.
   await expect(withPhoto).toHaveAttribute("aria-hidden", "true");
+  // "By" is no longer shown: the avatar and the name say who wrote it. Screen readers still hear it.
+  const label = cards.nth(0).locator(".lpInvisible");
+  await expect(label).toHaveText("By");
+  expect((await label.boundingBox()).x).toBeLessThan(0);
 });
 
 const listPayload = (authorAvatarUrl) => ({
@@ -123,6 +127,9 @@ test("the public list page shows the author's photo beside their name", async ({
   const avatar = page.locator(".lpPublicListAuthor .lpPersonAvatar");
   await expect(avatar.locator("img")).toHaveAttribute("src", PHOTO);
   await expect(page.locator(".lpPublicListAuthorLink")).toHaveText("Alice");
+  const label = page.locator(".lpPublicListAuthor .lpInvisible");
+  await expect(label).toHaveText("By");
+  expect((await label.boundingBox()).x).toBeLessThan(0);
 });
 
 test("the public list page shows the initial when the photo does not load", async ({
