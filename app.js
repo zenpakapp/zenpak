@@ -178,7 +178,7 @@ const { sweepLapsedPlans } = require('./server/plan-offers.js');
 db.ensureIndexes()
     .then(() => reindexMissingSearchTokens())
     .then((count) => {
-        if (count) logger.info(`Added Discover search tokens to ${count} public lists`);
+        if (count) logger.info(`Refreshed ${count} public list projections (search tokens, author photo)`);
     })
     .catch((err) => logger.error('Index creation or Discover reindex failed', { err }));
 
