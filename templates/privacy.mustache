@@ -102,13 +102,27 @@
         <p>Public lists you choose to share are accessible to anyone with the link.</p>
 
         <h2>5. Your rights (GDPR)</h2>
-        <p>If you are in the EU/EEA, you have the right to access, correct, export, or delete your personal data. To exercise these rights, email <a href="mailto:support@zenpak.app">support@zenpak.app</a>. You may also delete your account directly from the Account settings page — this removes all your data from our servers within 30 days.</p>
+        <p>If you are in the EU/EEA, you have the right to access, correct, export, or delete your personal data. To exercise these rights, email <a href="mailto:support@zenpak.app">support@zenpak.app</a>. You can also do both yourself from the Account settings page: "Download my data" gives you a JSON file of your account, and "Delete account" erases it right away (see section 7 for exactly what is erased and what is kept).</p>
 
         <h2>6. Cookies</h2>
         <p>We use a single session cookie (<code>lp</code>) to keep you logged in. We do not use tracking or advertising cookies, and our visit statistics service sets no cookie either.</p>
 
         <h2>7. Data retention</h2>
-        <p>We retain your data for as long as your account is active. After account deletion, personal data is purged within 30 days. Anonymised usage statistics may be retained indefinitely.</p>
+        <p>We retain your data for as long as your account is active. When you delete your account, the deletion is immediate and covers:</p>
+        <ul>
+            <li>your profile, email address, password hash, library, lists, and published list versions;</li>
+            <li>your follows, followers, activity feed entries, and notifications;</li>
+            <li>the record of lists you copied, the statistics and visitor records of your lists, and the reports you filed;</li>
+            <li>your profile photo, which is also deleted from Cloudinary.</li>
+        </ul>
+        <p>We keep:</p>
+        <ul>
+            <li><strong>Billing records</strong> (your Stripe customer and invoices): we are required to keep accounting records for 10 years. Any active subscription is cancelled immediately when you delete your account.</li>
+            <li><strong>Reports made against your account</strong>, for moderation.</li>
+            <li><strong>Copies of your lists made by other people.</strong> Once copied, a list belongs to the person who copied it. It stays in their library, and its source is shown as no longer available.</li>
+            <li><strong>Item images</strong> you uploaded, as long as a copy made by someone else still uses them.</li>
+        </ul>
+        <p>Anonymised usage statistics may be retained indefinitely.</p>
 
         <h2>8. Security</h2>
         <p>Passwords are stored as bcrypt hashes. All data in transit is encrypted via HTTPS. We apply industry-standard security practices, but no system is 100% secure.</p>
