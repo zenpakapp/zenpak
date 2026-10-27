@@ -107,7 +107,11 @@ import { usePackingMode } from '../composables/usePackingMode';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 import phrasesEn from '../data/packing-phrases.en';
 import phrasesFr from '../data/packing-phrases.fr';
+import { normalizeLocale } from '../../shared/locales';
 import weightUtils from '../utils/weight';
+
+// Completion phrases per language. A language without its own list uses the English one.
+const PACKING_PHRASES = { en: phrasesEn, fr: phrasesFr };
 
 export default {
     name: 'List',
@@ -279,8 +283,7 @@ export default {
             this.showCompletionModal = false;
         },
         pickPhrase() {
-            const lang = (navigator.language || 'en').toLowerCase();
-            const phrases = lang.startsWith('fr') ? phrasesFr : phrasesEn;
+            const phrases = PACKING_PHRASES[normalizeLocale(navigator.language)] || phrasesEn;
             return phrases[Math.floor(Math.random() * phrases.length)];
         },
         cancelIdle(id) {

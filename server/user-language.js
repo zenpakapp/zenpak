@@ -1,11 +1,8 @@
-const SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'es'];
-const DEFAULT_LANGUAGE = 'en';
+const { SUPPORTED_LOCALES, DEFAULT_LOCALE, normalizeLocale } = require('../shared/locales.js');
 
-// "fr-FR" and " FR " are French. Anything that is not one of the app's languages is null.
-function normalizeLanguage(value) {
-    if (typeof value !== 'string') return null;
-    const code = value.trim().slice(0, 2).toLowerCase();
-    return SUPPORTED_LANGUAGES.includes(code) ? code : null;
-}
-
-module.exports = { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE, normalizeLanguage };
+// The languages of the app live in shared/locales.js; these names are what the server code already uses.
+module.exports = {
+    SUPPORTED_LANGUAGES: SUPPORTED_LOCALES,
+    DEFAULT_LANGUAGE: DEFAULT_LOCALE,
+    normalizeLanguage: normalizeLocale,
+};

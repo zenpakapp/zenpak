@@ -122,7 +122,15 @@ Public community projections
 
 ### i18n
 
-4 locales: `client/locales/{fr,en,de,es}.json`  
+Languages are declared once in `shared/locales.js` (code + name written in itself). The client loader, language picker, hreflang links, account language and server messages all read it.
+
+**Adding a language** (`xx`): add it to `shared/locales.js`, then run `node test/unit-locale-registry.js`: it names every file still missing.
+1. `client/locales/xx.json` (same keys as `en.json`, `unit-i18n-hardcoded.js` checks it), `server/locales/xx.json`
+2. a `xx` block in `server/moderation-notice-texts.js`
+3. not checked by a test: packing phrases `client/data/packing-phrases.xx.js` plus its entry in `PACKING_PHRASES` (`list.vue`, falls back to English), content of the 8 templates, legal pages (`templates/privacy.mustache`, `terms.mustache`, English only today), native review
+4. the e2e specs that assume a language set their own `locale`, nothing to change
+
+4 locales today: `client/locales/{fr,en,de,es}.json`  
 Key prefix: `item.` for item-level strings.  
 Recent keys: `item.addToListButtonText` · `item.addToFavorites` · `item.removeFromFavorites`
 

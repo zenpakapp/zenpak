@@ -1,27 +1,22 @@
 import { createI18n } from 'vue-i18n';
 import { setGenericErrorMessage } from './utils/utils';
+import { SUPPORTED_LOCALES as SUPPORTED, DEFAULT_LOCALE, normalizeLocale } from '../shared/locales';
 
-const SUPPORTED = ['en', 'fr', 'de', 'es'];
 const LOCALE_KEY = 'zp-locale';
-const localeLoaders = {
-    en: () => import(/* webpackChunkName: "locale-en" */ './locales/en.json'),
-    fr: () => import(/* webpackChunkName: "locale-fr" */ './locales/fr.json'),
-    de: () => import(/* webpackChunkName: "locale-de" */ './locales/de.json'),
-    es: () => import(/* webpackChunkName: "locale-es" */ './locales/es.json'),
-};
+// One chunk per language, named after the file; the languages themselves are listed in shared/locales.js.
+const loadLocaleFile = (code) => import(/* webpackChunkName: "locale-[request]" */ `./locales/${code}.json`);
 const loadedLocales = {};
 
 function detectLocale() {
     const saved = localStorage.getItem(LOCALE_KEY);
     if (saved && SUPPORTED.includes(saved)) return saved;
-    const lang = (navigator.language || 'en').slice(0, 2).toLowerCase();
-    return SUPPORTED.includes(lang) ? lang : 'en';
+    return normalizeLocale(navigator.language) || DEFAULT_LOCALE;
 }
 
 export const i18n = createI18n({
     legacy: true,
     locale: detectLocale(),
-    fallbackLocale: 'en',
+    fallbackLocale: DEFAULT_LOCALE,
     messages: {},
 });
 
@@ -31,9 +26,9 @@ function syncGenericError() {
 }
 
 export async function loadLocale(locale) {
-    const target = SUPPORTED.includes(locale) ? locale : 'en';
+    const target = SUPPORTED.includes(locale) ? locale : DEFAULT_LOCALE;
     if (!loadedLocales[target]) {
-        const messages = await localeLoaders[target]();
+        const messages = await loadLocaleFile(target);
         i18n.global.setLocaleMessage(target, messages.default || messages);
         loadedLocales[target] = true;
     }
@@ -60,12 +55,11 @@ export async function setLocale(locale, loggedIn = false) {
     let target = locale;
     if (locale === 'auto') {
         localStorage.removeItem(LOCALE_KEY);
-        const lang = (navigator.language || 'en').slice(0, 2).toLowerCase();
-        target = SUPPORTED.includes(lang) ? lang : 'en';
+        target = normalizeLocale(navigator.language) || DEFAULT_LOCALE;
     } else if (SUPPORTED.includes(locale)) {
         localStorage.setItem(LOCALE_KEY, locale);
     } else {
-        target = 'en';
+        target = DEFAULT_LOCALE;
     }
 
     i18n.global.locale = await loadLocale(target);

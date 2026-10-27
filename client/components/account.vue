@@ -215,6 +215,7 @@ import { openDialog, registerDialogOpener, unregisterDialogOpener } from '../ser
 import { fetchJson } from '../utils/utils';
 import { planLabel as planTierLabel, tierLabel } from '../services/tier-labels';
 import { setLocale } from '../i18n';
+import { LOCALES } from '../../shared/locales';
 
 const profileSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-profile" */ './profile-settings.vue'));
 const creatorLinks = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-account-creator" */ './creator-links.vue'));
@@ -266,10 +267,7 @@ export default {
         localeOptions() {
             return [
                 { value: 'auto', label: this.$t('acct.languageAuto') },
-                { value: 'en', label: 'English' },
-                { value: 'fr', label: 'Français' },
-                { value: 'de', label: 'Deutsch' },
-                { value: 'es', label: 'Español' },
+                ...LOCALES.map((locale) => ({ value: locale.code, label: locale.name })),
             ];
         },
     },
