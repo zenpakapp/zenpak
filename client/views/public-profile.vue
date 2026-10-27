@@ -3,13 +3,7 @@
 </style>
 
 <template>
-    <teleport to="head">
-        <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
-        <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
-    </teleport>
+    <HreflangLinks :href="canonicalBase + $route.path" />
     <main class="lpPublicProfile">
         <meta v-if="profile && !profile.allowSearchIndexing" name="robots" content="noindex">
 
@@ -152,12 +146,13 @@ import { tierLabel } from '../services/tier-labels.js';
 import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
+import HreflangLinks from '../components/hreflang-links.vue';
 import ThemeToggle from '../components/theme-toggle.vue';
 import { SPONSORED_REL, USER_LINK_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
-    components: { ReportButton, ThemeToggle },
+    components: { HreflangLinks, ReportButton, ThemeToggle },
     setup() {
         useTheme();
         const route = useRoute();

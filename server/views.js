@@ -2,7 +2,8 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 
-const SUPPORTED_LOCALES = ['en', 'fr', 'de', 'es'];
+const { SUPPORTED_LOCALES, DEFAULT_LOCALE } = require('../shared/locales.js');
+
 const serverLocales = {};
 SUPPORTED_LOCALES.forEach((lang) => {
     serverLocales[lang] = JSON.parse(
@@ -13,7 +14,7 @@ SUPPORTED_LOCALES.forEach((lang) => {
 function resolveLocale(req) {
     const header = req.headers['accept-language'] || '';
     const lang = header.slice(0, 2).toLowerCase();
-    return SUPPORTED_LOCALES.includes(lang) ? lang : 'en';
+    return SUPPORTED_LOCALES.includes(lang) ? lang : DEFAULT_LOCALE;
 }
 
 const router = express.Router();

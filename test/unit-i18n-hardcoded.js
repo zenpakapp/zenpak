@@ -66,7 +66,9 @@ for (const file of vueFiles(CLIENT)) {
 }
 assert.deepStrictEqual(found, [], `Hardcoded copy in templates, use $t():\n${found.join('\n')}`);
 
-const locales = ['en', 'fr', 'de', 'es'].map((code) => ({
+const { SUPPORTED_LOCALES } = require('../shared/locales.js');
+
+const locales = SUPPORTED_LOCALES.map((code) => ({
     code,
     keys: new Set(flatten(JSON.parse(fs.readFileSync(path.join(CLIENT, 'locales', `${code}.json`), 'utf8')))),
 }));

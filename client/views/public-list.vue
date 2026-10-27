@@ -1,12 +1,6 @@
 <template>
     <main class="lpPublicList">
-        <teleport to="head">
-            <link rel="alternate" hreflang="en" :href="canonicalBase + $route.path">
-            <link rel="alternate" hreflang="fr" :href="canonicalBase + $route.path">
-            <link rel="alternate" hreflang="de" :href="canonicalBase + $route.path">
-            <link rel="alternate" hreflang="es" :href="canonicalBase + $route.path">
-            <link rel="alternate" hreflang="x-default" :href="canonicalBase + $route.path">
-        </teleport>
+        <HreflangLinks :href="canonicalBase + $route.path" />
         <meta v-if="list && !list.allowSearchIndexing" name="robots" content="noindex">
 
         <p v-if="isLoading">
@@ -234,6 +228,7 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import HreflangLinks from '../components/hreflang-links.vue';
 import { fetchJson } from '../utils/utils';
 import { trackEvent } from '../utils/analytics';
 import { tierLabel } from '../services/tier-labels';
@@ -266,7 +261,7 @@ async function loadChart() {
 export default {
     name: 'PublicList',
     components: {
-        ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
+        HreflangLinks, ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
     },
     setup() {
         useTheme();
