@@ -431,6 +431,16 @@
       "price": 0,
       "image": "",
       "url": ""
+    },
+    {
+      "id": 43,
+      "name": "Laptop and charger",
+      "description": "Optional: 13-inch laptop with its charger, for remote work",
+      "weight": 1400,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
     }
   ],
   "categories": [
@@ -812,6 +822,14 @@
         {
           "itemId": 42,
           "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 43,
+          "qty": 0,
+          "qtyBeforeOptional": 1,
           "worn": false,
           "consumable": false,
           "star": false

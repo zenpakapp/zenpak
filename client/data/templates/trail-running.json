@@ -236,7 +236,7 @@
       "id": 23,
       "name": "Smartphone",
       "description": "On, with the live tracking app and mobile data",
-      "weight": 145,
+      "weight": 170,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -291,6 +291,16 @@
       "price": 0,
       "image": "",
       "url": ""
+    },
+    {
+      "id": 29,
+      "name": "Folding poles",
+      "description": "Optional: pair of folding carbon poles, for long climbs and races that allow them",
+      "weight": 250,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
     }
   ],
   "categories": [
@@ -301,6 +311,14 @@
         {
           "itemId": 1,
           "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
+        },
+        {
+          "itemId": 29,
+          "qty": 0,
+          "qtyBeforeOptional": 1,
           "worn": false,
           "consumable": false,
           "star": false
@@ -567,7 +585,7 @@
           "star": false
         }
       ],
-      "subtotalWeight": 320,
+      "subtotalWeight": 345,
       "subtotalWornWeight": 30,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
@@ -588,11 +606,11 @@
         106,
         107
       ],
-      "totalWeight": 3459,
+      "totalWeight": 3484,
       "totalWornWeight": 905,
       "totalConsumableWeight": 1350,
-      "totalBaseWeight": 1204,
-      "totalPackWeight": 2554,
+      "totalBaseWeight": 1229,
+      "totalPackWeight": 2579,
       "totalPrice": 0,
       "totalConsumablePrice": 0,
       "totalQty": 33
