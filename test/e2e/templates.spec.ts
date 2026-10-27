@@ -124,7 +124,7 @@ test.describe("Template picker", () => {
 
     const library = JSON.parse(libraryPayload!);
     expect(library.lists[0].name).toBe("Light travel");
-    expect(library.items.length).toBe(42);
+    expect(library.items.length).toBe(43);
     const pack = library.items.find((i) => i.name === "30 L travel backpack");
     expect(pack.weight).toBe(900000);
 
@@ -187,7 +187,7 @@ test.describe("Template picker", () => {
 
     const library = JSON.parse(libraryPayload!);
     expect(library.lists[0].name).toBe("Trail running");
-    expect(library.items.length).toBe(28);
+    expect(library.items.length).toBe(29);
     const vest = library.items.find((i) => i.name === "Trail running vest");
     expect(vest.weight).toBe(129000);
 
