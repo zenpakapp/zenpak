@@ -976,7 +976,7 @@
     "importFromLighterpack": "Von LighterPack importieren",
     "copyList": "Liste duplizieren",
     "newListDefault": "Neue Liste",
-    "deleteListConfirm": "Möchtest du diese Liste wirklich löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteListConfirm": "Möchtest du diese Liste wirklich löschen? Ihre Gegenstände bleiben in „Deine Ausrüstung“. Das kann nicht rückgängig gemacht werden.",
     "confirmImportTitle": "Importieren bestätigen",
     "importItemsCount": "Gegenstände",
     "importAccepted": "akzeptiert",

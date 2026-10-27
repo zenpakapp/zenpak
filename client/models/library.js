@@ -151,9 +151,8 @@ Library.prototype.removeList = function (id) {
     if (this.lists.length === 1) return;
     const list = this.getListById(id);
 
-    for (let i = 0; i < list.categoryIds.length; i++) {
-        this.removeCategory(list.categoryIds[i], true);
-    }
+    // removeCategory takes each id out of list.categoryIds: walk a copy, or every other one is skipped.
+    [...list.categoryIds].forEach((categoryId) => this.removeCategory(categoryId, true));
 
     this.lists.splice(this.lists.indexOf(list), 1);
     delete this.idMap[id];
