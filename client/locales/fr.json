@@ -976,7 +976,7 @@
     "importFromLighterpack": "Importer depuis LighterPack",
     "copyList": "Dupliquer une liste",
     "newListDefault": "Nouvelle liste",
-    "deleteListConfirm": "Êtes-vous sûr de vouloir supprimer cette liste ? Cette action est irréversible.",
+    "deleteListConfirm": "Êtes-vous sûr de vouloir supprimer cette liste ? Ses objets restent dans « Votre équipement ». Cette action est irréversible.",
     "confirmImportTitle": "Confirmer l'importation",
     "importItemsCount": "articles",
     "importAccepted": "acceptés",

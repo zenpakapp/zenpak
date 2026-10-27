@@ -870,7 +870,7 @@
     "importFromLighterpack": "Import from LighterPack",
     "copyList": "Duplicate a list",
     "newListDefault": "New list",
-    "deleteListConfirm": "Are you sure you want to delete this list? This cannot be undone.",
+    "deleteListConfirm": "Are you sure you want to delete this list? Its items stay in “Your Gear”. This cannot be undone.",
     "confirmImportTitle": "Confirm your import",
     "importItemsCount": "items",
     "importAccepted": "accepted",
