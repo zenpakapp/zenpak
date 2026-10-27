@@ -124,7 +124,7 @@ test.describe("Template picker", () => {
 
     const library = JSON.parse(libraryPayload!);
     expect(library.lists[0].name).toBe("Light travel");
-    expect(library.items.length).toBe(41);
+    expect(library.items.length).toBe(42);
     const pack = library.items.find((i) => i.name === "30 L travel backpack");
     expect(pack.weight).toBe(900000);
 

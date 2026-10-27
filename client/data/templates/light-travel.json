@@ -176,7 +176,7 @@
       "id": 17,
       "name": "Flip-flops",
       "description": "For hotel rooms, showers and hostels",
-      "weight": 250,
+      "weight": 150,
       "authorUnit": "g",
       "price": 0,
       "image": "",
@@ -421,6 +421,16 @@
       "price": 0,
       "image": "",
       "url": ""
+    },
+    {
+      "id": 42,
+      "name": "Smartphone",
+      "description": "Photos, maps, tickets and emergency call",
+      "weight": 170,
+      "authorUnit": "g",
+      "price": 0,
+      "image": "",
+      "url": ""
     }
   ],
   "categories": [
@@ -524,14 +534,14 @@
         },
         {
           "itemId": 11,
-          "qty": 5,
+          "qty": 3,
           "worn": false,
           "consumable": false,
           "star": false
         },
         {
           "itemId": 12,
-          "qty": 4,
+          "qty": 3,
           "worn": false,
           "consumable": false,
           "star": false
@@ -579,12 +589,12 @@
           "star": false
         }
       ],
-      "subtotalWeight": 3130,
+      "subtotalWeight": 2830,
       "subtotalWornWeight": 1170,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
       "subtotalConsumablePrice": 0,
-      "subtotalQty": 20
+      "subtotalQty": 17
     },
     {
       "id": 104,
@@ -798,14 +808,21 @@
           "worn": true,
           "consumable": false,
           "star": false
+        },
+        {
+          "itemId": 42,
+          "qty": 1,
+          "worn": false,
+          "consumable": false,
+          "star": false
         }
       ],
-      "subtotalWeight": 880,
+      "subtotalWeight": 1050,
       "subtotalWornWeight": 100,
       "subtotalConsumableWeight": 0,
       "subtotalPrice": 0,
       "subtotalConsumablePrice": 0,
-      "subtotalQty": 9
+      "subtotalQty": 10
     }
   ],
   "lists": [
@@ -822,14 +839,14 @@
         107,
         108
       ],
-      "totalWeight": 6410,
+      "totalWeight": 6280,
       "totalWornWeight": 1270,
       "totalConsumableWeight": 150,
-      "totalBaseWeight": 4990,
-      "totalPackWeight": 5140,
+      "totalBaseWeight": 4860,
+      "totalPackWeight": 5010,
       "totalPrice": 0,
       "totalConsumablePrice": 0,
-      "totalQty": 50
+      "totalQty": 48
     }
   ]
 }
