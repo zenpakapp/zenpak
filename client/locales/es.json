@@ -983,6 +983,7 @@
     "importAccepted": "{count} aceptado | {count} aceptados",
     "importRejected": "{count} rechazado | {count} rechazados",
     "importMergeCount": "{count} se fusionará con equipo existente | {count} se fusionarán con equipo existente",
+    "importNewCount": "{count} nuevo | {count} nuevos",
     "importNeedsReview": "{count} necesita tu revisión | {count} necesitan tu revisión",
     "importRowError": "Fila {rowNumber}: {reason}",
     "importTableHeaderName": "Nombre del artículo",

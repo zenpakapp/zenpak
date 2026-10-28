@@ -983,6 +983,7 @@
     "importAccepted": "{count} akzeptiert | {count} akzeptiert",
     "importRejected": "{count} abgelehnt | {count} abgelehnt",
     "importMergeCount": "{count} wird mit vorhandener Ausrüstung zusammengeführt | {count} werden mit vorhandener Ausrüstung zusammengeführt",
+    "importNewCount": "{count} neu | {count} neu",
     "importNeedsReview": "{count} braucht deine Überprüfung | {count} brauchen deine Überprüfung",
     "importRowError": "Reihe {rowNumber}: {reason}",
     "importTableHeaderName": "Gegenstandsname",

@@ -10,8 +10,9 @@
                 <span class="importBadge">{{ $tc('library.importAccepted', acceptedRowCount) }}</span>
                 <span v-if="rejectedRowCount" class="importBadge isRejected">{{ $tc('library.importRejected', rejectedRowCount) }}</span>
             </p>
-            <p v-if="importData.mergeCount || reviewCount" class="importSummary">
-                <span v-if="importData.mergeCount" class="importBadge">{{ $tc('library.importMergeCount', importData.mergeCount) }}</span>
+            <p v-if="mergeRowCount || reviewCount" class="importSummary">
+                <span v-if="mergeRowCount" class="importBadge">{{ $tc('library.importMergeCount', mergeRowCount) }}</span>
+                <span v-if="newRowCount" class="importBadge">{{ $tc('library.importNewCount', newRowCount) }}</span>
                 <span v-if="reviewCount" class="importBadge isAmbiguous">{{ $tc('library.importNeedsReview', reviewCount) }}</span>
             </p>
             <ul v-if="rejectedRowCount" class="importErrors">
@@ -240,6 +241,16 @@ export default {
         },
         reviewCount() {
             return this.ambiguousRows.length;
+        },
+        // Follow the choices made on the review screen: an item sent to "merge" or "update"
+        // counts as merged, one kept apart as new.
+        mergeRowCount() {
+            if (!this.importData.data) return 0;
+            return this.importData.data.filter((row) => row.match && ['merge', 'update'].includes(row.match.decision)).length;
+        },
+        newRowCount() {
+            if (!this.importData.data) return 0;
+            return this.importData.data.filter((row) => !row.match || row.match.decision === 'new').length;
         },
     },
     mounted() {

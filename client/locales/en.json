@@ -877,6 +877,7 @@
     "importAccepted": "{count} accepted | {count} accepted",
     "importRejected": "{count} rejected | {count} rejected",
     "importMergeCount": "{count} will merge with existing gear | {count} will merge with existing gear",
+    "importNewCount": "{count} new | {count} new",
     "importNeedsReview": "{count} needs your review | {count} need your review",
     "importRowError": "Row {rowNumber}: {reason}",
     "importTableHeaderName": "Item Name",
