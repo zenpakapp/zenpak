@@ -36,4 +36,30 @@ assert.strictEqual(library.defaultListId, first.id, 'the default list falls back
 library.removeList(first.id);
 assert.strictEqual(library.lists.length, 1);
 
+// With removeUnusedItems, the items only that list used leave the gear room; an item another list
+// still uses stays, and so does a gear room item no list ever used.
+const keep = (name) => library.newItem({ name, weight: 10 });
+const onlyHere = keep('Only here');
+const shared = keep('Shared');
+const unused = keep('Never in a list');
+const third = library.newList();
+const thirdCategory = library.newCategory({ list: third });
+thirdCategory.addItem({ itemId: onlyHere.id, qty: 1 });
+thirdCategory.addItem({ itemId: shared.id, qty: 1 });
+library.getCategoryById(library.lists[0].categoryIds[0]).addItem({ itemId: shared.id, qty: 1 });
+
+library.removeList(third.id);
+assert.ok(library.getItemById(onlyHere.id), 'without the option every item stays');
+
+const fourth = library.newList();
+const fourthCategory = library.newCategory({ list: fourth });
+fourthCategory.addItem({ itemId: onlyHere.id, qty: 1 });
+fourthCategory.addItem({ itemId: shared.id, qty: 1 });
+library.removeList(fourth.id, { removeUnusedItems: true });
+assert.strictEqual(library.getItemById(onlyHere.id), undefined, 'an item no other list uses is deleted');
+assert.ok(library.getItemById(shared.id), 'an item another list uses stays');
+assert.ok(library.getItemById(unused.id), 'an item that was never in this list is untouched');
+assert.ok(library.getItemById(tent.id), 'the items of other deleted lists are untouched');
+assert.ok(!library.items.some((item) => item.id === onlyHere.id), 'it is gone from the item list too');
+
 console.log('unit-remove-list: ok');

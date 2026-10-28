@@ -5,6 +5,23 @@
     max-width: 44ch;
 }
 
+.speedbumpCheckbox {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: 8px;
+    margin: 0 0 16px;
+    max-width: 44ch;
+
+    input[type="checkbox"] {
+        accent-color: $color-accent;
+        cursor: pointer;
+        flex-shrink: 0;
+        height: 15px;
+        width: 15px;
+    }
+}
+
 #speedbump.lpModal {
     z-index: $aboveDialog;
 }
@@ -23,6 +40,11 @@
         <p class="speedbumpBody">
             {{ messages.body }}
         </p>
+
+        <label v-if="messages.checkbox" class="speedbumpCheckbox">
+            <input v-model="checked" type="checkbox">
+            {{ messages.checkbox }}
+        </label>
 
         <div class="lpModalActions">
             <button v-focus-on-create class="lpButton" @click="confirmSpeedbump()">
@@ -48,6 +70,7 @@ export default {
         return {
             messages: {},
             callback: null,
+            checked: false,
             shown: false,
         };
     },
@@ -60,6 +83,7 @@ export default {
     methods: {
         initSpeedbump(callback, options) {
             this.callback = callback;
+            this.checked = false;
             this.messages = {
                 title: '',
                 body: '',
@@ -75,11 +99,12 @@ export default {
         },
         confirmSpeedbump() {
             const callback = this.callback;
+            const checked = this.checked;
             this.callback = null;
             this.shown = false;
             this.$nextTick(() => {
                 if (callback && typeof callback === 'function') {
-                    callback(true);
+                    callback(true, { checked });
                 }
             });
         },

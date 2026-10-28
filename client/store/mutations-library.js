@@ -87,7 +87,7 @@ module.exports = {
             });
         }
     },
-    removeList(state, list) { state.library.removeList(list.id); },
+    removeList(state, { list, removeUnusedItems }) { state.library.removeList(list.id, { removeUnusedItems }); },
     reorderList(state, args) {
         state.library.lists = arrayMove(state.library.lists, args.before, args.after);
     },
