@@ -27,6 +27,7 @@ const publicListsDb = {
 };
 const ownersForBackfill = [];
 const lacksField = (p, clause) => (clause.searchTokens ? !Array.isArray(p.searchTokens) : false)
+    || (clause.searchTokensVersion ? p.searchTokensVersion !== clause.searchTokensVersion.$ne : false)
     || (clause.ownerAvatarUrl ? p.ownerAvatarUrl === undefined : false);
 publicListsDb.findMany = (query) => Promise.resolve(
     projections.filter((p) => (query.$or ? query.$or.some((clause) => lacksField(p, clause)) : lacksField(p, query))),
@@ -44,6 +45,7 @@ stubServerModule('db.js', {
 
 const { publishVersion } = require('../server/list-versions.js');
 const { syncUserPublicLists, buildPublicListProjection, reindexMissingSearchTokens } = require('../server/public-list-projections.js');
+const { SEARCH_TOKENS_VERSION } = require('../server/search-text.js');
 
 let passed = 0; let failed = 0;
 function assert(desc, cond) {
@@ -53,6 +55,8 @@ function assert(desc, cond) {
 
 async function run() {
     const owner = buildOwnerUser();
+    owner.library.items.find((item) => item.id === 11).description = 'Abri monoparoi';
+    owner.library.items.find((item) => item.id === 99).description = 'Secretword';
 
     await syncUserPublicLists(owner);
     assert('a discoverable list without a snapshot is not projected', projections.length === 0);
@@ -66,6 +70,9 @@ async function run() {
     assert('projection has search tokens for the list name and its author', tokens.includes('pct') && tokens.includes('alice'));
     assert('projection has search tokens for item names and brands', ['tent', 'zpacks', 'stove', 'brs'].every((t) => tokens.includes(t)));
     assert('items of another list are not in the search tokens', !tokens.includes('unrelated'));
+    assert('projection has search tokens for item descriptions', tokens.includes('abri') && tokens.includes('monoparoi'));
+    assert('descriptions of items of another list are not in the search tokens', !tokens.includes('secretword'));
+    assert('projection records the search index version', projections[0].searchTokensVersion === SEARCH_TOKENS_VERSION);
 
     owner.library.lists[0].name = 'LIVE EDIT';
     owner.library.items[0].weight = 1;
@@ -106,6 +113,12 @@ async function run() {
     delete projections.find((p) => p.externalId === 'legacy1').ownerAvatarUrl;
     assert('a projection without the author photo field is reindexed', await reindexMissingSearchTokens() === 1);
     assert('it has the field again', projections.find((p) => p.externalId === 'legacy1').ownerAvatarUrl === '');
+    assert('and a further reindex finds nothing', await reindexMissingSearchTokens() === 0);
+
+    // Projections indexed before item descriptions joined the index are rebuilt at startup.
+    projections.find((p) => p.externalId === 'legacy1').searchTokensVersion = SEARCH_TOKENS_VERSION - 1;
+    assert('a projection with an older search index version is reindexed', await reindexMissingSearchTokens() === 1);
+    assert('it has the current version again', projections.find((p) => p.externalId === 'legacy1').searchTokensVersion === SEARCH_TOKENS_VERSION);
     assert('and a further reindex finds nothing', await reindexMissingSearchTokens() === 0);
 
     // A banned account has no public list in Discover or search, and gets them back when reinstated.
