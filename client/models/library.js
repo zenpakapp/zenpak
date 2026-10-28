@@ -149,6 +149,17 @@ Library.prototype.newList = function () {
 
 // With `removeUnusedItems`, the items that were only in this list leave the gear room too; an item any
 // other list still uses always stays.
+// Placeholder rows (no name, description, weight or price) that no list uses are just noise in the gear room.
+Library.prototype.purgeBlankItems = function (itemIds) {
+    const stillUsed = new Set();
+    this.categories.forEach((category) => category.categoryItems.forEach((categoryItem) => stillUsed.add(categoryItem.itemId)));
+    [...itemIds].forEach((itemId) => {
+        const item = this.getItemById(itemId);
+        if (!item || stillUsed.has(itemId)) return;
+        if (!item.name && !item.description && !item.weight && !item.price) this.removeItem(itemId);
+    });
+};
+
 Library.prototype.removeList = function (id, { removeUnusedItems = false } = {}) {
     if (this.lists.length === 1) return;
     const list = this.getListById(id);
@@ -164,6 +175,7 @@ Library.prototype.removeList = function (id, { removeUnusedItems = false } = {})
     this.lists.splice(this.lists.indexOf(list), 1);
     delete this.idMap[id];
 
+    if (!removeUnusedItems) this.purgeBlankItems(itemIds);
     if (removeUnusedItems) {
         const stillUsed = new Set();
         this.categories.forEach((category) => category.categoryItems.forEach((categoryItem) => stillUsed.add(categoryItem.itemId)));

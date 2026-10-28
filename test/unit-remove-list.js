@@ -15,7 +15,8 @@ const second = library.newList();
 for (let n = 0; n < 5; n++) {
     library.newCategory({ list: second }).name = `second-${n}`;
 }
-const tent = library.newItem({ name: 'Tent', weight: 1000 });
+const tent = library.newItem({});
+tent.name = 'Tent';
 library.getCategoryById(second.categoryIds[0]).addItem({ itemId: tent.id, qty: 1 });
 
 const secondCategoryIds = [...second.categoryIds];
@@ -38,7 +39,11 @@ assert.strictEqual(library.lists.length, 1);
 
 // With removeUnusedItems, the items only that list used leave the gear room; an item another list
 // still uses stays, and so does a gear room item no list ever used.
-const keep = (name) => library.newItem({ name, weight: 10 });
+const keep = (name) => {
+    const item = library.newItem({});
+    item.name = name;
+    return item;
+};
 const onlyHere = keep('Only here');
 const shared = keep('Shared');
 const unused = keep('Never in a list');
@@ -61,5 +66,15 @@ assert.ok(library.getItemById(shared.id), 'an item another list uses stays');
 assert.ok(library.getItemById(unused.id), 'an item that was never in this list is untouched');
 assert.ok(library.getItemById(tent.id), 'the items of other deleted lists are untouched');
 assert.ok(!library.items.some((item) => item.id === onlyHere.id), 'it is gone from the item list too');
+
+// Blank placeholder rows never pile up in the gear room, option or not; a named item still stays.
+const fifth = library.newList();
+const fifthCategory = library.newCategory({ list: fifth });
+const blank = library.newItem({ category: fifthCategory });
+const named = library.newItem({ category: fifthCategory });
+named.name = 'Named';
+library.removeList(fifth.id);
+assert.strictEqual(library.getItemById(blank.id), undefined, 'a blank item of a deleted list is purged');
+assert.ok(library.getItemById(named.id), 'a named item of a deleted list stays');
 
 console.log('unit-remove-list: ok');
