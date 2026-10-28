@@ -5,7 +5,7 @@
     max-width: 44ch;
 }
 
-.speedbumpCheckbox {
+.lpModal .speedbumpCheckbox {
     align-items: center;
     color: inherit;
     cursor: pointer;
