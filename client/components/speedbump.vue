@@ -7,11 +7,16 @@
 
 .speedbumpCheckbox {
     align-items: center;
+    color: inherit;
     cursor: pointer;
     display: flex;
+    font-size: inherit;
+    font-weight: normal;
     gap: 8px;
+    letter-spacing: normal;
     margin: 0 0 16px;
     max-width: 44ch;
+    text-transform: none;
 
     input[type="checkbox"] {
         accent-color: $color-accent;
