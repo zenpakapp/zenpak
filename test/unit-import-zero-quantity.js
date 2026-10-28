@@ -76,7 +76,7 @@ function run() {
                 worn: false,
                 consumable: false,
                 brand: '',
-                _match: { decision: 'new', item: existing, score: 0.6 },
+                match: { decision: 'new', item: existing, score: 0.6 },
             },
         ],
     });
@@ -100,11 +100,11 @@ function run() {
         data: [
             {
                 name: 'Spork', category: 'Kitchen', description: '', qty: 1, weight: 20, unit: 'g', price: 0, worn: false, consumable: false,
-                _match: { decision: 'merge', item: existingSpork, score: 0.9 },
+                match: { decision: 'merge', item: existingSpork, score: 0.9 },
             },
             {
                 name: 'Spork', category: 'Kitchen', description: '', qty: 1, weight: 20, unit: 'g', price: 0, worn: false, consumable: false,
-                _match: { decision: 'merge', item: existingSpork, score: 0.9 },
+                match: { decision: 'merge', item: existingSpork, score: 0.9 },
             },
         ],
     });

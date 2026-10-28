@@ -25,6 +25,23 @@ function createImportedItem(library, category, row) {
     return item;
 }
 
+// Reviewing an imported item can merge it into the existing one and take the imported details.
+// A detail the import does not have never blanks the existing one.
+function updateItemFromRow(library, item, row) {
+    if (row.name) item.name = row.name;
+    if (row.description) item.description = row.description;
+    if (row.brand) item.brand = row.brand;
+    if (row.url) item.url = row.url;
+    if (row.price) item.price = row.price;
+    if (row.imageUrl) item.imageUrl = row.imageUrl;
+    if (row.category) item.category = resolveGearCategory(row.category);
+    const weight = weightUtils.WeightToMg(parseFloat(row.weight), row.unit);
+    if (weight > 0) {
+        item.weight = weight;
+        item.authorUnit = library.itemUnit || row.unit;
+    }
+}
+
 module.exports = {
     importCSV(state, importData) {
         const list = state.library.newList({});
@@ -38,7 +55,6 @@ module.exports = {
         let mergedCount = 0;
         let newCount = 0;
         const importedUnits = {};
-        const previousItemUnit = state.library.itemUnit;
 
         list.name = importData.name;
         if (importData.listDescription) {
@@ -57,11 +73,12 @@ module.exports = {
             }
             category.name = row.category;
 
-            const decision = row._match ? row._match.decision : 'new';
+            const decision = row.match ? row.match.decision : 'new';
 
-            if (decision === 'merge' && row._match.item) {
-                item = state.library.getItemById(row._match.item.id);
+            if ((decision === 'merge' || decision === 'update') && row.match.item) {
+                item = state.library.getItemById(row.match.item.id);
                 if (item) {
+                    if (decision === 'update') updateItemFromRow(state.library, item, row);
                     if (row.category && !item.category) item.category = resolveGearCategory(row.category);
                     if (row.brand && !item.brand) item.brand = row.brand;
                     if (!category.getCategoryItemById(item.id)) {
