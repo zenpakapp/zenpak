@@ -336,6 +336,7 @@ module.exports = {
     },
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
+        state.library.purgeBlankItems([args.itemId]);
         recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },

@@ -283,7 +283,7 @@ export default {
             });
 
             const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
-            openDialog('itemDetail', { item: newItem, categoryItem: null, category: null });
+            openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, discardOnCancel: true });
         },
         scheduleItemDrag() {
             if (this.dragFrame || this.dragIdle) return;
