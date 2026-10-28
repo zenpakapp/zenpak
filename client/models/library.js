@@ -147,15 +147,30 @@ Library.prototype.newList = function () {
     return temp;
 };
 
-Library.prototype.removeList = function (id) {
+// With `removeUnusedItems`, the items that were only in this list leave the gear room too; an item any
+// other list still uses always stays.
+Library.prototype.removeList = function (id, { removeUnusedItems = false } = {}) {
     if (this.lists.length === 1) return;
     const list = this.getListById(id);
+    const itemIds = new Set();
+    list.categoryIds.forEach((categoryId) => {
+        const category = this.getCategoryById(categoryId);
+        if (category) category.categoryItems.forEach((categoryItem) => itemIds.add(categoryItem.itemId));
+    });
 
     // removeCategory takes each id out of list.categoryIds: walk a copy, or every other one is skipped.
     [...list.categoryIds].forEach((categoryId) => this.removeCategory(categoryId, true));
 
     this.lists.splice(this.lists.indexOf(list), 1);
     delete this.idMap[id];
+
+    if (removeUnusedItems) {
+        const stillUsed = new Set();
+        this.categories.forEach((category) => category.categoryItems.forEach((categoryItem) => stillUsed.add(categoryItem.itemId)));
+        itemIds.forEach((itemId) => {
+            if (!stillUsed.has(itemId)) this.removeItem(itemId);
+        });
+    }
 
     if (this.defaultListId == id) {
         let newId = -1;

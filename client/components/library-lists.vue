@@ -232,11 +232,12 @@ export default {
             this.drake = drake;
         },
         removeList(list) {
-            const callback = () => {
-                this.$store.commit('removeList', list);
+            const callback = (confirmed, { checked } = {}) => {
+                this.$store.commit('removeList', { list, removeUnusedItems: Boolean(checked) });
             };
             const speedbumpOptions = {
                 body: this.$t('library.deleteListConfirm'),
+                checkbox: this.$t('library.deleteListItemsToo'),
             };
             openSpeedbump(callback, speedbumpOptions);
         },
