@@ -4,7 +4,7 @@ const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
-const { buildSearchTokens } = require('./search-text.js');
+const { buildSearchTokens, SEARCH_TOKENS_VERSION } = require('./search-text.js');
 const { clipDescription } = require('./text-limits.js');
 
 function normalizeTagArray(value) {
@@ -25,7 +25,8 @@ function isDiscoverableVisibility(visibility) {
     return visibility === 'discoverable' || visibility === 'indexable';
 }
 
-// Names and brands of the items a list actually contains (not the rest of the library).
+// Names, brands and descriptions of the items a list actually contains (not the rest of the
+// library).
 function listItemTexts(sourceLibrary, list) {
     const categories = Array.isArray(sourceLibrary.categories) ? sourceLibrary.categories : [];
     const items = Array.isArray(sourceLibrary.items) ? sourceLibrary.items : [];
@@ -37,6 +38,7 @@ function listItemTexts(sourceLibrary, list) {
     return {
         itemNames: listItems.map((item) => item.name).filter(Boolean),
         itemBrands: listItems.map((item) => item.brand).filter(Boolean),
+        itemDescriptions: listItems.map((item) => item.description).filter(Boolean),
     };
 }
 
@@ -48,7 +50,7 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
     const totals = version && version.totals;
     const forkedFrom = published.forkedFrom || null;
     const updatedAt = version ? version.publishedAt : (list.updatedAt || list.dateUpdated || new Date(0));
-    const { itemNames, itemBrands } = listItemTexts(version && version.library ? version.library : library, published);
+    const { itemNames, itemBrands, itemDescriptions } = listItemTexts(version && version.library ? version.library : library, published);
     const ownerDisplayName = profile.displayName || user.username || '';
 
     return {
@@ -59,7 +61,9 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
             ownerUsername: user.username,
             itemNames,
             itemBrands,
+            itemDescriptions,
         }),
+        searchTokensVersion: SEARCH_TOKENS_VERSION,
         externalId: list.externalId,
         ownerId: new ObjectId(user._id),
         ownerUsername: user.username || '',
@@ -209,13 +213,18 @@ async function rememberPublicListViewer(externalId, viewerKey, limit = 500) {
 }
 
 // Projections written before Discover search existed have no `searchTokens`, so the search
-// would never find them; those written before the author's photo was projected have no
+// would never find them; those indexed before item descriptions were added have an older
+// `searchTokensVersion`; those written before the author's photo was projected have no
 // `ownerAvatarUrl`, so their cards would show an initial. Rebuild them from their owners;
 // returns how many were missing.
 async function reindexMissingSearchTokens() {
     if (!db.publicLists || !db.publicLists.findMany || !db.users) return 0;
     const missing = await db.publicLists.findMany({
-        $or: [{ searchTokens: { $exists: false } }, { ownerAvatarUrl: { $exists: false } }],
+        $or: [
+            { searchTokens: { $exists: false } },
+            { searchTokensVersion: { $ne: SEARCH_TOKENS_VERSION } },
+            { ownerAvatarUrl: { $exists: false } },
+        ],
     });
     if (!missing.length) return 0;
 

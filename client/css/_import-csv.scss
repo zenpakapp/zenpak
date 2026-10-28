@@ -35,13 +35,19 @@
 }
 
 #importValidate {
-    height: 500px;
+    height: min(500px, calc(100dvh - 48px));
+    overflow-x: hidden;
     overflow-y: scroll;
-    width: 650px;
+    width: min(650px, calc(100vw - 32px));
     background: $color-bg;
 
     .lpButton {
         margin-bottom: 30px;
+    }
+
+    .importReviewActions .lpButton,
+    .importReviewCol .lpButton {
+        margin-bottom: 0;
     }
 
     .importSummary {
@@ -91,7 +97,8 @@
         border: 1px solid $color-border;
         border-radius: 6px;
         margin-bottom: 20px;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
     }
 
     .lpTable {
@@ -140,19 +147,54 @@
 }
 
 .importReviewRow {
-    align-items: center;
+    align-items: flex-start;
     border: 1px solid $color-border;
     border-radius: 6px;
     display: flex;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
     margin-bottom: 8px;
     padding: 10px;
 }
 
-.importReviewCol { flex: 1; }
+.importReviewCol {
+    display: flex;
+    flex: 1 1 40%;
+    flex-direction: column;
+    min-width: 0;
+
+    .lpButton {
+        align-self: flex-start;
+        margin-bottom: 0;
+        margin-top: 10px;
+    }
+}
 .importReviewLabel { color: $color-text-muted; font-size: 11px; font-weight: 700; margin: 0 0 2px; text-transform: uppercase; }
 .importReviewName { font-size: 13px; font-weight: 600; margin: 0 0 2px; }
 .importReviewMeta { color: $color-text-muted; font-size: 12px; margin: 0; }
-.importReviewActions { display: flex; flex-direction: column; gap: 6px; }
+.importReviewActions {
+    border-top: 1px solid $color-border;
+    display: flex;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 6px;
+    padding-top: 10px;
+}
 .lpButtonSm { font-size: 12px; padding: 4px 10px; }
+
+@media (max-width: 640px) {
+    .importReviewCol {
+        flex-basis: 100%;
+    }
+
+    .importReviewActions {
+        flex-direction: column;
+    }
+
+    .importReviewCol .lpButton {
+        align-self: stretch;
+    }
+}
 

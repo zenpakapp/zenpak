@@ -35,6 +35,13 @@ const tokens = buildSearchTokens({
 });
 assert.ok(tokens.includes('pct') && tokens.includes('couchage') && tokens.includes('diamond') && tokens.includes('fxb'));
 assert.strictEqual(tokens.filter((t) => t === 'tarp').length, 1, 'tokens are unique');
+const withDescriptions = buildSearchTokens({ itemNames: ['Lunar Solo'], itemDescriptions: ['Tente, sans piquets'] });
+assert.ok(withDescriptions.includes('tente') && withDescriptions.includes('lunar'), 'item descriptions are indexed');
+const crowded = buildSearchTokens({
+    itemNames: ['Lunar Solo'],
+    itemDescriptions: Array.from({ length: 2000 }, (_, i) => `desc${i}x`),
+});
+assert.ok(crowded.includes('lunar') && crowded.length <= 400, 'descriptions never crowd out item names');
 const many = buildSearchTokens({ itemNames: Array.from({ length: 2000 }, (_, i) => `word${i}x`) });
 assert.ok(many.length <= 400, 'token list is capped');
 

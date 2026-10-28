@@ -5,14 +5,14 @@
 <template>
     <div id="importCSV">
         <modal id="importValidate" :shown="shown" @hide="shown = false">
-            <h2>{{ $t('library.confirmImportTitle') }} <span v-if="importItemCount">({{ importItemCount }} {{ $t('library.importItemsCount') }})</span></h2>
+            <h2>{{ $t('library.confirmImportTitle') }} <span v-if="importItemCount">({{ $tc('library.importItemsCount', importItemCount) }})</span></h2>
             <p class="importSummary">
-                <span class="importBadge">{{ acceptedRowCount }} {{ $t('library.importAccepted') }}</span>
-                <span v-if="rejectedRowCount" class="importBadge isRejected">{{ rejectedRowCount }} {{ $t('library.importRejected') }}</span>
+                <span class="importBadge">{{ $tc('library.importAccepted', acceptedRowCount) }}</span>
+                <span v-if="rejectedRowCount" class="importBadge isRejected">{{ $tc('library.importRejected', rejectedRowCount) }}</span>
             </p>
             <p v-if="importData.mergeCount || reviewCount" class="importSummary">
-                <span v-if="importData.mergeCount" class="importBadge">{{ importData.mergeCount }} {{ $t('library.importMergeCount') }}</span>
-                <span v-if="reviewCount" class="importBadge isAmbiguous">{{ reviewCount }} {{ $t('library.importNeedsReview') }}</span>
+                <span v-if="importData.mergeCount" class="importBadge">{{ $tc('library.importMergeCount', importData.mergeCount) }}</span>
+                <span v-if="reviewCount" class="importBadge isAmbiguous">{{ $tc('library.importNeedsReview', reviewCount) }}</span>
             </p>
             <ul v-if="rejectedRowCount" class="importErrors">
                 <li v-for="row in importData.rejectedRows" :key="row.rowNumber">
@@ -60,22 +60,31 @@
                         <p class="importReviewMeta">
                             {{ row.weight }} {{ row.unit }}<span v-if="row.brand"> · {{ row.brand }}</span>
                         </p>
+                        <p v-if="row.description" class="importReviewMeta">
+                            {{ row.description }}
+                        </p>
+                        <button class="lpButton lpButtonSm" @click="resolveReview(index, 'update')">
+                            {{ $t('library.importReviewUpdateButton') }}
+                        </button>
                     </div>
                     <div class="importReviewCol">
                         <p class="importReviewLabel">
                             {{ $t('library.importReviewLabelExisting') }}
                         </p>
                         <p class="importReviewName">
-                            {{ row._match.item.name }}
+                            {{ row.match.item.name }}
                         </p>
                         <p class="importReviewMeta">
-                            {{ displayWeight(row._match.item.weight, itemUnit) }} {{ itemUnit }}<span v-if="row._match.item.brand"> · {{ row._match.item.brand }}</span>
+                            {{ displayWeight(row.match.item.weight, itemUnit) }} {{ itemUnit }}<span v-if="row.match.item.brand"> · {{ row.match.item.brand }}</span>
                         </p>
-                    </div>
-                    <div class="importReviewActions">
+                        <p v-if="row.match.item.description" class="importReviewMeta">
+                            {{ row.match.item.description }}
+                        </p>
                         <button class="lpButton lpButtonSm" @click="resolveReview(index, 'merge')">
                             {{ $t('library.importReviewMergeButton') }}
                         </button>
+                    </div>
+                    <div class="importReviewActions">
                         <button class="lpButton lpButtonSm lpButtonSecondary" @click="resolveReview(index, 'new')">
                             {{ $t('library.importReviewKeepBothButton') }}
                         </button>
@@ -153,8 +162,8 @@
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
 import { showGlobalAlert } from '../services/user-feedback';
-import { findBestMatch } from '../composables/useGearMatcher.js';
-import { useUtils } from '../composables/useUtils.js';
+import { findBestMatch } from '../composables/useGearMatcher';
+import { useUtils } from '../composables/useUtils';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -179,7 +188,7 @@ function computeDedup(importData, libraryItems) {
         const match = findBestMatch(row, libraryItems, weightMg);
         if (match.decision === 'merge') mergeCount++;
         if (match.decision === 'review') reviewCount++;
-        return { ...row, _match: match };
+        return { ...row, match };
     });
 
     importData.mergeCount = mergeCount;
@@ -227,7 +236,7 @@ export default {
         },
         ambiguousRows() {
             if (!this.importData.data) return [];
-            return this.importData.data.filter((row) => row._match && row._match.decision === 'review');
+            return this.importData.data.filter((row) => row.match && row.match.decision === 'review');
         },
         reviewCount() {
             return this.ambiguousRows.length;
@@ -371,9 +380,9 @@ export default {
         },
         displayWeight,
         resolveReview(rowIndex, decision) {
-            const ambiguous = this.importData.data.filter((row) => row._match && row._match.decision === 'review');
+            const ambiguous = this.importData.data.filter((row) => row.match && row.match.decision === 'review');
             const row = ambiguous[rowIndex];
-            if (row) row._match.decision = decision;
+            if (row) row.match.decision = decision;
         },
     },
 };

@@ -1,7 +1,8 @@
 // Text search for Discover. Each public list is projected with a `searchTokens` array (the
-// normalised words of its name, author, description, item names and brands). A query word
-// matches the start of a token, so "sac" finds "sacs" and typing a word still works, and the
-// lookup is an anchored regex on that array, which a MongoDB index can serve.
+// normalised words of its name, author, description, item names, brands and item
+// descriptions). A query word matches the start of a token, so "sac" finds "sacs" and typing a
+// word still works, and the lookup is an anchored regex on that array, which a MongoDB index
+// can serve.
 
 const MAX_TOKENS = 400;
 const MAX_QUERY_WORDS = 6;
@@ -25,10 +26,17 @@ function tokenize(text) {
         .filter((word) => word.length >= 2);
 }
 
+// Version of what `searchTokens` is built from; a projection with an older one is rebuilt at
+// startup (item descriptions joined the index in version 2).
+const SEARCH_TOKENS_VERSION = 2;
+
+// Item descriptions come last, so the cap drops them before names and brands.
 function buildSearchTokens({
-    name, description, ownerDisplayName, ownerUsername, itemNames = [], itemBrands = [],
+    name, description, ownerDisplayName, ownerUsername, itemNames = [], itemBrands = [], itemDescriptions = [],
 }) {
-    const sources = [name, ownerDisplayName, ownerUsername, description, ...itemNames, ...itemBrands];
+    const sources = [
+        name, ownerDisplayName, ownerUsername, description, ...itemNames, ...itemBrands, ...itemDescriptions,
+    ];
     return [...new Set(sources.flatMap(tokenize))].slice(0, MAX_TOKENS);
 }
 
@@ -68,6 +76,7 @@ function scoreProjection(list, words) {
 }
 
 module.exports = {
+    SEARCH_TOKENS_VERSION,
     normalizeWord,
     tokenize,
     buildSearchTokens,
