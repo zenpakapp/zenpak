@@ -697,6 +697,7 @@
     "originTitle": "L'origine",
     "originP1": "En préparant mon Camino de Santiago, LighterPack était le choix évident. Toute la communauté ultralight l'utilisait. Mais il n'avait pas été mis à jour depuis des années. Il n'avait ni fonctions communautaires, ni profils, ni moyen pour les créateurs de partager des listes avec des liens d'affiliation sans bricoler.",
     "originP2": "Alors je l'ai forké et j'ai modernisé la base technique. J'ai construit les fonctions que je voulais : découverte communautaire, tags de saison, système de suivi, outils pour les créateurs. J'ai gardé ce qui faisait la qualité de LighterPack : la simplicité, le graphique de poids, l'export et l'import CSV.",
+    "originActivities": "Et pourquoi se limiter à la randonnée ? J'ai ajouté d'autres activités.",
     "originP3": "Pas de capital-risque, pas de growth hacking, pas de base de données d'équipement qui vous dit quoi acheter. Vous gérez votre équipement et l'application reste discrète.",
     "differentTitle": "Ce qui est différent",
     "differentItem1": "Parcourez les vraies listes de vraies personnes et filtrez par activité, saison et poids de base.",

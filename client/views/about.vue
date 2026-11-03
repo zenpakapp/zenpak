@@ -93,6 +93,7 @@
         <h2>{{ $t('misc.originTitle') }}</h2>
         <p>{{ $t('misc.originP1') }}</p>
         <p>{{ $t('misc.originP2') }}</p>
+        <p>{{ $t('misc.originActivities') }}</p>
         <p>{{ $t('misc.originP3') }}</p>
 
         <h2>{{ $t('misc.differentTitle') }}</h2>

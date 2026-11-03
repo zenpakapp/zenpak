@@ -697,6 +697,7 @@
     "originTitle": "The origin",
     "originP1": "Planning my Camino de Santiago, LighterPack was the obvious choice. Everyone in the ultralight community used it. But it hadn't been updated in years. It had no community features, no profiles, and no way for gear creators to share lists with affiliate links without hacking something together.",
     "originP2": "So I forked it and modernized the stack. I built the features I wanted: community discovery, season tags, a follow system, creator tools. I kept what made LighterPack good: the simplicity, the weight chart, the CSV round-trip.",
+    "originActivities": "And why stop at hiking? So I added other activities.",
     "originP3": "No VC, no growth hacking, no gear database telling you what to buy. You manage your gear and the app stays out of the way.",
     "differentTitle": "What's different",
     "differentItem1": "Browse real lists from real people and filter them by activity, season and base weight.",

@@ -697,6 +697,7 @@
     "originTitle": "El origen",
     "originP1": "Al planificar mi Camino de Santiago, LighterPack era la opción obvia. Todo el mundo en la comunidad ultraligera lo usaba. Pero llevaba años sin actualizarse. No tenía funciones de comunidad, ni perfiles, ni forma de que los creadores de equipo compartieran listas con enlaces de afiliado sin improvisar.",
     "originP2": "Así que hice un fork y modernicé la base técnica. Construí las funciones que quería: descubrimiento comunitario, etiquetas de estación, sistema de seguimiento, herramientas para creadores. Conservé lo que hacía bueno a LighterPack: la simplicidad, el gráfico de peso, la exportación e importación en CSV.",
+    "originActivities": "¿Y por qué limitarse al senderismo? Así que añadí otras actividades.",
     "originP3": "Sin capital de riesgo, sin growth hacking, sin una base de datos de equipo que te diga qué comprar. Tú gestionas tu equipo y la aplicación no estorba.",
     "differentTitle": "Lo que es diferente",
     "differentItem1": "Explora listas reales de personas reales y filtra por actividad, estación y peso base.",
