@@ -106,9 +106,9 @@
 
         <h2>{{ $t('misc.plansTitle') }}</h2>
         <ul>
-            <li><strong>{{ $t('misc.planNameBase') }}</strong> — {{ $t('misc.planDescBase') }}</li>
-            <li><strong>{{ $t('misc.planNameKin') }}</strong> — {{ $t('misc.planDescKin') }}</li>
-            <li><strong>Wayfarer</strong> — {{ $t('misc.planDescWayfarer') }}</li>
+            <li><strong>{{ $t('misc.planNameBase') }}.</strong> {{ $t('misc.planDescBase') }}</li>
+            <li><strong>{{ $t('misc.planNameKin') }}.</strong> {{ $t('misc.planDescKin') }}</li>
+            <li><strong>{{ $t('misc.planNameWayfarer') }}.</strong> {{ $t('misc.planDescWayfarer') }}</li>
         </ul>
 
         <p class="lpAboutBuiltBy">
@@ -127,7 +127,7 @@
                 </button>
             </div>
             <p class="lpAboutKofiNote">
-                {{ $t('auth.or') }} <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a> — {{ $t('misc.kofiNote') }}.
+                {{ $t('auth.or') }} <a class="lpAboutKofi" href="https://ko-fi.com/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('misc.kofiCta') }}</a>, {{ $t('misc.kofiNote') }}.
             </p>
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />

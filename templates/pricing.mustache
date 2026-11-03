@@ -57,22 +57,35 @@
             background: var(--p-surface);
             border: 1px solid var(--p-border);
             border-radius: 12px;
+            display: flex;
+            flex-direction: column;
             padding: 28px 24px;
         }
         .plan.featured {
             border-color: var(--p-accent);
             border-width: 2px;
+            padding: 27px 23px;
         }
         .plan-name {
             font-size: 18px;
             font-weight: 700;
             margin: 0 0 4px;
+            text-align: center;
         }
         .plan-price {
             font-size: 28px;
             font-weight: 700;
             letter-spacing: -0.02em;
-            margin: 8px 0 4px;
+            margin: 8px 0 0;
+            text-align: center;
+        }
+        .plan-price-alt {
+            color: var(--p-muted);
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 0 0 8px;
+            min-height: 1.4em;
+            text-align: center;
         }
         .plan-price span {
             color: var(--p-muted);
@@ -83,8 +96,11 @@
             color: var(--p-muted);
             font-size: 13px;
             margin: 0 0 20px;
+            min-height: 44px;
+            text-align: center;
         }
         .plan ul {
+            flex: 1;
             list-style: none;
             margin: 0 0 24px;
             padding: 0;
@@ -103,7 +119,7 @@
         }
         .btn {
             background: var(--p-accent);
-            border: none;
+            border: 1px solid transparent;
             border-radius: 8px;
             color: var(--p-on-accent);
             display: block;
@@ -121,17 +137,6 @@
             color: var(--p-text);
         }
         .btn-ghost:hover { background: var(--p-hover); }
-        .badge {
-            background: var(--p-accent-soft);
-            border-radius: 4px;
-            color: var(--p-accent);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-left: 8px;
-            padding: 2px 6px;
-            text-transform: uppercase;
-        }
         .legal-note {
             background: var(--p-note-bg);
             border: 1px solid var(--p-border-soft);
@@ -177,14 +182,15 @@
             <a class="brand" href="/">ZenPak</a>
         </header>
 
-        <h1>Simple, honest pricing</h1>
+        <h1>Plans</h1>
         <p class="subtitle">The core is free and open-source. Paid plans support the hosted service.</p>
 
         <div class="plans">
             <div class="plan">
                 <div class="plan-name">Free</div>
                 <div class="plan-price">€0 <span>/ month</span></div>
-                <div class="plan-desc">Everything you need to pack smarter.</div>
+                <div class="plan-price-alt" aria-hidden="true"></div>
+                <div class="plan-desc">The full app. No paywalled core features.</div>
                 <ul>
                     <li>Unlimited gear lists</li>
                     <li>Reusable item library</li>
@@ -198,14 +204,14 @@
             </div>
 
             <div class="plan featured">
-                <div class="plan-name">Kin <span class="badge">Supporter</span></div>
+                <div class="plan-name">Kin</div>
                 <div class="plan-price">€19 <span>/ year</span></div>
-                <div class="plan-desc">Support the project and unlock your public identity.</div>
+                <div class="plan-price-alt" aria-hidden="true"></div>
+                <div class="plan-desc">Support the project.</div>
                 <ul>
                     <li>Everything in Free</li>
                     <li>Supporter badge on profile</li>
-                    <li>Full profile — avatar, bio, trail name</li>
-                    <li>Priority support</li>
+                    <li>Avatar, bio and travel name</li>
                 </ul>
                 <a href="/welcome" class="btn" data-umami-event="plan-click" data-umami-event-plan="kin">Become Kin</a>
             </div>
@@ -213,14 +219,15 @@
             <div class="plan">
                 <div class="plan-name">Wayfarer</div>
                 <div class="plan-price">€5 <span>/ month</span></div>
-                <div class="plan-desc">€39/year (save 35%). For creators who share and monetise their gear knowledge.</div>
+                <div class="plan-price-alt">or €39 / year (save 35%)</div>
+                <div class="plan-desc">For creators.</div>
                 <ul>
                     <li>Everything in Kin</li>
                     <li>Affiliate links per item</li>
                     <li>Promo codes</li>
                     <li>Guide dashboard</li>
                     <li>View, copy &amp; click insights</li>
-                    <li>Creator badge</li>
+                    <li>Wayfarer badge</li>
                 </ul>
                 <a href="/welcome" class="btn" data-umami-event="plan-click" data-umami-event-plan="wayfarer">Become Wayfarer</a>
             </div>
@@ -250,7 +257,9 @@
         <footer>
             <span>© 2026 FX Bénard — ZenPak</span>
             <span>
+                <a href="/about">About</a> ·
                 <a href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener">Open source</a> ·
+                <a href="/pricing">Pricing</a> ·
                 <a href="/privacy">Privacy</a> ·
                 <a href="/terms">Terms</a> ·
                 <a href="/legal">Legal</a> ·
