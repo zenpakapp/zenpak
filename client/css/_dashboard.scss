@@ -801,4 +801,14 @@
     p {
         margin: 0 0 6px;
     }
+
+    .lpSupportLink {
+        color: $color-accent;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
