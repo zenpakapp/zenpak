@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plans — ZenPak</title>
     <link rel="icon" type="image/svg+xml" href="/brand/zenpak-z-app.svg" />
+    <link rel="stylesheet" href="/css/page-theme.css" />
+    <script src="/js/theme-init.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body {
-            background: #F7F3EB;
-            color: #1A1A1A;
+            background: var(--p-bg);
+            color: var(--p-text);
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 15px;
             line-height: 1.7;
@@ -22,12 +24,12 @@
             padding: 48px 24px 80px;
         }
         header {
-            border-bottom: 1px solid #E0E0E0;
+            border-bottom: 1px solid var(--p-border);
             margin-bottom: 40px;
             padding-bottom: 20px;
         }
         .brand {
-            color: #2D7A4F;
+            color: var(--p-accent);
             font-size: 18px;
             font-weight: 700;
             text-decoration: none;
@@ -40,7 +42,7 @@
             text-align: center;
         }
         .subtitle {
-            color: #6B7280;
+            color: var(--p-muted);
             font-size: 16px;
             margin: 0 0 48px;
             text-align: center;
@@ -52,13 +54,13 @@
             margin-bottom: 48px;
         }
         .plan {
-            background: #fff;
-            border: 1px solid #E0E0E0;
+            background: var(--p-surface);
+            border: 1px solid var(--p-border);
             border-radius: 12px;
             padding: 28px 24px;
         }
         .plan.featured {
-            border-color: #2D7A4F;
+            border-color: var(--p-accent);
             border-width: 2px;
         }
         .plan-name {
@@ -73,12 +75,12 @@
             margin: 8px 0 4px;
         }
         .plan-price span {
-            color: #6B7280;
+            color: var(--p-muted);
             font-size: 14px;
             font-weight: 400;
         }
         .plan-desc {
-            color: #6B7280;
+            color: var(--p-muted);
             font-size: 13px;
             margin: 0 0 20px;
         }
@@ -94,16 +96,16 @@
             position: relative;
         }
         .plan li::before {
-            color: #2D7A4F;
+            color: var(--p-accent);
             content: '✓';
             left: 0;
             position: absolute;
         }
         .btn {
-            background: #2D7A4F;
+            background: var(--p-accent);
             border: none;
             border-radius: 8px;
-            color: #fff;
+            color: var(--p-on-accent);
             display: block;
             font-size: 14px;
             font-weight: 600;
@@ -112,17 +114,17 @@
             text-decoration: none;
             width: 100%;
         }
-        .btn:hover { background: #246040; }
+        .btn:hover { background: var(--p-accent-hover); }
         .btn-ghost {
             background: transparent;
-            border: 1px solid #D1D5DB;
-            color: #1A1A1A;
+            border: 1px solid var(--p-border-control);
+            color: var(--p-text);
         }
-        .btn-ghost:hover { background: #F3F4F6; }
+        .btn-ghost:hover { background: var(--p-hover); }
         .badge {
-            background: #ECFDF5;
+            background: var(--p-accent-soft);
             border-radius: 4px;
-            color: #2D7A4F;
+            color: var(--p-accent);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.04em;
@@ -131,15 +133,15 @@
             text-transform: uppercase;
         }
         .legal-note {
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
+            background: var(--p-note-bg);
+            border: 1px solid var(--p-border-soft);
             border-radius: 8px;
-            color: #6B7280;
+            color: var(--p-muted);
             font-size: 13px;
             margin-bottom: 32px;
             padding: 16px 20px;
         }
-        .legal-note strong { color: #374151; }
+        .legal-note strong { color: var(--p-strong); }
         .faq { margin-bottom: 40px; }
         .faq h2 {
             font-size: 20px;
@@ -151,13 +153,13 @@
             margin: 0 0 4px;
         }
         .faq dd {
-            color: #4B5563;
+            color: var(--p-body-soft);
             margin: 0 0 20px 0;
         }
-        a { color: #2D7A4F; }
+        a { color: var(--p-accent); }
         footer {
-            border-top: 1px solid #E0E0E0;
-            color: #6B7280;
+            border-top: 1px solid var(--p-border);
+            color: var(--p-muted);
             display: flex;
             flex-wrap: wrap;
             font-size: 13px;
@@ -166,7 +168,7 @@
             margin-top: 60px;
             padding-top: 20px;
         }
-        footer a { color: #6B7280; }
+        footer a { color: var(--p-muted); }
     </style>
 </head>
 <body>
