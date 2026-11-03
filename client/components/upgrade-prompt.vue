@@ -117,7 +117,6 @@ const TRAIL_BENEFITS_KEYS = [
 const GUIDE_BENEFITS_KEYS = [
     'guide.upgrade.guideBenefit1',
     'guide.upgrade.guideBenefit2',
-    'guide.upgrade.guideBenefit3',
     'guide.upgrade.guideBenefit4',
     'guide.upgrade.guideBenefit5',
     'guide.upgrade.guideBenefit6',
