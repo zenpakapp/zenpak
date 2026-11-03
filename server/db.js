@@ -1,8 +1,9 @@
 const { MongoClient, ObjectId } = require('mongodb');
 const config = require('config');
 
-const url = `mongodb://${config.get('databaseUrl')}`;
-const dbName = config.get('databaseUrl').split('/').pop();
+const { parseDatabaseUrl } = require('./mongo-url.js');
+
+const { url, dbName } = parseDatabaseUrl(config.get('databaseUrl'));
 
 let _db = null;
 const _client = new MongoClient(url);
@@ -13,6 +14,12 @@ async function connect() {
 }
 
 const ready = connect();
+
+// A real round trip, for /healthz: `ready` only says the first connection worked.
+async function ping() {
+    await ready;
+    await _db.command({ ping: 1 });
+}
 
 ready.catch((err) => {
     console.error('MongoDB connection failed:', err);
@@ -145,6 +152,7 @@ function collection(name) {
 
 module.exports = {
     ready,
+    ping,
     users: collection('users'),
     libraries: collection('libraries'),
     follows: collection('follows'),
@@ -187,7 +195,8 @@ module.exports = {
         try {
             await publicLists.dropIndex('seasons_1_listTypes_1');
         } catch (err) {
-            if (err.codeName !== 'IndexNotFound') throw err;
+            // NamespaceNotFound: the collection does not exist yet (first start on an empty database).
+            if (err.codeName !== 'IndexNotFound' && err.codeName !== 'NamespaceNotFound') throw err;
         }
         await publicLists.createIndex({ externalId: 1 }, { unique: true });
         await publicLists.createIndex({ visibility: 1, updatedAt: -1 });
