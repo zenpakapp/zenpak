@@ -99,6 +99,7 @@
         <h2>{{ $t('misc.differentTitle') }}</h2>
         <ul>
             <li>{{ $t('misc.differentItem1') }}</li>
+            <li>{{ $t('misc.differentItemShare') }}</li>
             <li>{{ $t('misc.differentItem2') }}</li>
             <li>{{ $t('misc.differentItem3') }}</li>
             <li>{{ $t('misc.differentItem4') }}</li>
