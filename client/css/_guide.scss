@@ -131,6 +131,48 @@
     white-space: nowrap;
 }
 
+.lpGuideItemTools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.lpGuideItemSearch {
+    flex: 1 1 200px;
+}
+
+.lpGuideItemCount {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    margin-bottom: 12px;
+}
+
+// Name, the lists using the item and the rule covering it, in one column so the URL keeps its room.
+.lpGuideItemInfo {
+    display: flex;
+    flex: 0 0 170px;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .lpGuideItemName { flex: none; }
+    .lpGuideRuleBadge { align-self: flex-start; }
+}
+
+.lpGuideItemLists {
+    color: $color-text-muted;
+    font-size: $fontSize-xs;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lpGuideInputGrow {
+    flex: 1 1 150px;
+    min-width: 0;
+}
+
 .lpGuideRuleBadge {
     background: rgba(var(--color-accent-rgb), 0.1);
     border-radius: $radius-sm;
@@ -174,17 +216,6 @@
 .lpGuideSavedFeedback {
     color: $color-accent;
     font-size: $fontSize-sm;
-}
-
-.lpGuideListGroup {
-    margin-bottom: 24px;
-}
-
-.lpGuideListName {
-    color: $color-text-muted;
-    font-size: $fontSize-sm;
-    font-weight: $fontWeight-bold;
-    margin-bottom: 8px;
 }
 
 .lpGuideHint {

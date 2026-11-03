@@ -1,11 +1,16 @@
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import { fetchJson } from '../utils/utils';
+
+const {
+    buildItemRows, changedUpdates, markSaved,
+} = require('../utils/guide-items.js');
 
 export function useGuide() {
     const profile = ref({ bio: '', links: [], gearPhilosophy: [] });
     const affiliateRules = ref([]);
     const disclosure = ref('');
-    const itemGroups = reactive([]);
+    const itemRows = ref([]);
+    const itemLists = ref([]);
 
     const savingProfile = ref(false);
     const savingRules = ref(false);
@@ -80,7 +85,8 @@ export function useGuide() {
         error.value = null;
         try {
             const data = await fetchJson('/api/guide/items');
-            itemGroups.splice(0, itemGroups.length, ...data);
+            itemRows.value = buildItemRows(data);
+            itemLists.value = data.map((group) => ({ listId: group.listId, listName: group.listName }));
         } catch (err) {
             error.value = 'Failed to load items.';
         } finally {
@@ -92,19 +98,20 @@ export function useGuide() {
         savingItems.value = true;
         itemsSaved.value = false;
         error.value = null;
-        const updates = itemGroups.flatMap((group) => group.items.map((item) => ({
-            listId: group.listId,
-            itemId: item.itemId,
-            affiliateUrl: item.affiliateUrl,
-            promoCode: item.promoCode,
-            promoLabel: item.promoLabel,
-        })));
+        const updates = changedUpdates(itemRows.value);
+        if (!updates.length) {
+            savingItems.value = false;
+            itemsSaved.value = true;
+            setTimeout(() => { itemsSaved.value = false; }, 2000);
+            return;
+        }
         try {
             await fetchJson('/api/guide/items', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updates),
             });
+            markSaved(itemRows.value);
             itemsSaved.value = true;
             setTimeout(() => { itemsSaved.value = false; }, 2000);
         } catch (err) {
@@ -137,7 +144,8 @@ export function useGuide() {
         rulesSaved,
         addRule,
         removeRule,
-        itemGroups,
+        itemRows,
+        itemLists,
         loadItems,
         saveItems,
         savingItems,

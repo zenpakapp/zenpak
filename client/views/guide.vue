@@ -128,22 +128,54 @@
             <div v-if="loadingItems" class="lpGuideLoading">
                 {{ $t('guide.loadingItems') }}
             </div>
-            <div v-else-if="itemGroups.length === 0" class="lpGuideEmpty">
+            <div v-else-if="itemRows.length === 0" class="lpGuideEmpty">
                 {{ $t('guide.noPublicLists') }}
             </div>
             <div v-else>
-                <div v-for="group in itemGroups" :key="group.listId" class="lpGuideListGroup">
-                    <h3 class="lpGuideListName">
-                        {{ group.listName }}
-                    </h3>
-                    <div v-for="item in group.items" :key="item.itemId" class="lpGuideItemRow">
-                        <span class="lpGuideItemName">{{ item.name }}</span>
-                        <span v-if="item.appliedRule" class="lpGuideRuleBadge">{{ $t('guide.itemRuleBadge', { rule: item.appliedRule }) }}</span>
-                        <input v-model="item.affiliateUrl" class="lpGuideInput" :placeholder="$t('guide.itemAffiliateUrlPlaceholder')" maxlength="500">
-                        <input v-model="item.promoCode" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoCode')" maxlength="100">
-                        <input v-model="item.promoLabel" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoLabel')" maxlength="100">
-                    </div>
+                <div class="lpGuideItemTools">
+                    <input v-model="itemQuery" type="search" class="lpGuideInput lpGuideItemSearch" :placeholder="$t('guide.itemSearchPlaceholder')" :aria-label="$t('guide.itemSearchPlaceholder')">
+                    <select v-model="itemListId" class="lpGuideSelect" :aria-label="$t('guide.itemListFilter')">
+                        <option value="">
+                            {{ $t('guide.itemAllLists') }}
+                        </option>
+                        <option v-for="list in itemLists" :key="list.listId" :value="list.listId">
+                            {{ list.listName }}
+                        </option>
+                    </select>
+                    <select v-model="itemMode" class="lpGuideSelect" :aria-label="$t('guide.itemModeFilter')">
+                        <option value="all">
+                            {{ $t('guide.itemModeAll') }}
+                        </option>
+                        <option value="todo">
+                            {{ $t('guide.itemModeTodo') }}
+                        </option>
+                        <option value="filled">
+                            {{ $t('guide.itemModeFilled') }}
+                        </option>
+                        <option value="rule">
+                            {{ $t('guide.itemModeRule') }}
+                        </option>
+                    </select>
                 </div>
+                <p class="lpGuideItemCount">
+                    {{ $t('guide.itemCount', { shown: filteredRows.length, total: itemRows.length }) }}
+                </p>
+                <div v-if="filteredRows.length === 0" class="lpGuideEmpty">
+                    {{ $t('guide.itemNoMatch') }}
+                </div>
+                <div v-for="row in visibleRows" :key="row.itemId" class="lpGuideItemRow">
+                    <div class="lpGuideItemInfo">
+                        <span class="lpGuideItemName" :title="row.name">{{ row.name }}</span>
+                        <span class="lpGuideItemLists" :title="row.lists.map((list) => list.listName).join(', ')">{{ listsLabel(row) }}</span>
+                        <span v-if="row.appliedRule" class="lpGuideRuleBadge">{{ $t('guide.itemRuleBadge', { rule: row.appliedRule }) }}</span>
+                    </div>
+                    <input v-model="row.affiliateUrl" class="lpGuideInput lpGuideInputGrow" :placeholder="$t('guide.itemAffiliateUrlPlaceholder')" maxlength="500">
+                    <input v-model="row.promoCode" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoCode')" maxlength="100">
+                    <input v-model="row.promoLabel" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoLabel')" maxlength="100">
+                </div>
+                <button v-if="hiddenCount > 0" class="lpGuideAdd" @click="itemLimit += ITEM_PAGE">
+                    {{ $t('guide.itemShowMore', { count: hiddenCount }) }}
+                </button>
             </div>
             <div class="lpGuideSaveRow">
                 <button class="lpButton" :disabled="savingItems || loadingItems" @click="saveItems">
@@ -166,6 +198,10 @@ import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { push } from '../services/navigation.js';
 import promoLink from '../utils/promo-link';
 
+const { filterRows } = require('../utils/guide-items.js');
+
+const ITEM_PAGE = 30;
+
 export default {
     name: 'GuideView',
     setup() {
@@ -173,7 +209,21 @@ export default {
         const nav = useBackNav();
         return { ...guide, backTo: nav.backTo, backLabelKey: nav.backLabelKey };
     },
+    data() {
+        return {
+            itemQuery: '', itemListId: '', itemMode: 'all', itemLimit: ITEM_PAGE, ITEM_PAGE,
+        };
+    },
     computed: {
+        filteredRows() {
+            return filterRows(this.itemRows, { query: this.itemQuery, listId: this.itemListId, mode: this.itemMode });
+        },
+        visibleRows() {
+            return this.filteredRows.slice(0, this.itemLimit);
+        },
+        hiddenCount() {
+            return Math.max(0, this.filteredRows.length - this.itemLimit);
+        },
         isGuide() {
             const billing = this.$store && this.$store.state && this.$store.state.billing;
             if (billing && billing.plan === 'creator') return true;
@@ -185,6 +235,9 @@ export default {
         },
     },
     methods: {
+        listsLabel(row) {
+            return row.lists.length === 1 ? row.lists[0].listName : this.$t('guide.itemInLists', { count: row.lists.length });
+        },
         // A "domain" rule needs a web address, or it matches no item link. An empty value is
         // not flagged: the row is simply unfinished.
         hasDomainProblem(rule) {
@@ -194,6 +247,9 @@ export default {
         },
     },
     watch: {
+        itemQuery() { this.itemLimit = ITEM_PAGE; },
+        itemListId() { this.itemLimit = ITEM_PAGE; },
+        itemMode() { this.itemLimit = ITEM_PAGE; },
         isGuide(val) {
             if (val) {
                 this.loadProfile();
