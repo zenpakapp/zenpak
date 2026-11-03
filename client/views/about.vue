@@ -2,6 +2,23 @@
 @import "../css/_globals";
 
 .lpAbout {
+    #lpWelcomeFooter {
+        background: none;
+        border-top: 1px solid $color-border;
+        color: $color-text-muted;
+        display: block;
+        font-size: 13px;
+        margin-top: 60px;
+        padding: 20px 0 0;
+        position: static;
+        text-align: center;
+        z-index: auto;
+
+        a {
+            color: $color-text-muted;
+        }
+    }
+
     margin: 0 auto;
     max-width: $width-reading;
     padding: 40px 20px 80px;
@@ -13,14 +30,14 @@
     }
 
     h2 {
-        font-size: $fontSize-md;
+        font-size: 18px;
         font-weight: 700;
         margin: 32px 0 8px;
     }
 
     p, li {
         color: $color-text-muted;
-        font-size: $fontSize-sm;
+        font-size: 15px;
         line-height: 1.6;
     }
 
@@ -33,7 +50,7 @@
 
         a {
             color: $color-text-muted;
-            font-size: $fontSize-sm;
+            font-size: 13px;
             text-decoration: none;
 
             &:hover { color: $color-text; }
@@ -42,7 +59,7 @@
 
     .lpAboutBuiltBy {
         color: $color-text-muted;
-        font-size: $fontSize-sm;
+        font-size: 15px;
         margin-top: 24px;
     }
 
@@ -63,7 +80,7 @@
 
     .lpAboutKofiNote {
         color: var(--color-text-muted);
-        font-size: 14px;
+        font-size: 15px;
         margin: 0;
         text-align: center;
     }
@@ -114,9 +131,7 @@
         </ul>
 
         <p class="lpAboutBuiltBy">
-            {{ $t('misc.builtByPrefix') }} <router-link class="lpHref" to="/u/fxbenard">
-                fxbenard
-            </router-link>{{ $t('misc.builtBySuffix') }}
+            {{ $t('misc.builtByPrefix') }} <router-link class="lpAboutKofi" to="/u/fxbenard">fxbenard</router-link>{{ $t('misc.builtBySuffix') }}
         </p>
 
         <div class="lpAboutActions">
@@ -134,17 +149,20 @@
             <upgrade-prompt v-if="showTrailPrompt" tier="trail" feature="publicProfile" mode="modal" :open="showTrailPrompt" @close="showTrailPrompt = false" />
             <upgrade-prompt v-if="showGuidePrompt" tier="guide" feature="creatorLinks" mode="modal" :open="showGuidePrompt" @close="showGuidePrompt = false" />
         </div>
+        <blackout-footer />
     </div>
 </template>
 
 <script>
 import { defineAsyncComponent } from 'vue';
 
+import blackoutFooter from '../components/blackout-footer.vue';
+
 const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "about-upgrade" */ '../components/upgrade-prompt.vue'));
 
 export default {
     name: 'AboutView',
-    components: { upgradePrompt },
+    components: { upgradePrompt, blackoutFooter },
     data() {
         return { showTrailPrompt: false, showGuidePrompt: false };
     },

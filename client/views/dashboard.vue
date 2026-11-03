@@ -157,7 +157,7 @@
                 <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
                 <template v-else>
                     <p>{{ $t('dash.enjoyingApp') }}</p>
-                    <router-link to="/about" class="lpHref">
+                    <router-link to="/about" class="lpSupportLink">
                         {{ $t('dash.learnMore') }}
                     </router-link>
                 </template>

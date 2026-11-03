@@ -453,6 +453,10 @@
     display: flex;
     justify-content: space-between;
     padding: 150px 0 20px;
+
+    a {
+        color: $color-text-muted;
+    }
 }
 
 #lpWelcomeFooter {
