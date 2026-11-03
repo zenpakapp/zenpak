@@ -166,36 +166,6 @@ router.get('/api/backup', (req, res) => {
     });
 });
 
-router.post('/api/restore', (req, res) => {
-    authenticateUser(req, res, async (req, res, user) => {
-        const { library } = req.body || {};
-        if (!library || typeof library !== 'object' || Array.isArray(library)) {
-            return res.status(400).json({ error: 'Invalid backup: missing library object.' });
-        }
-        if (!user.emailVerified) {
-            const storedVisibility = {};
-            ((user.library && user.library.lists) || []).forEach((l) => { storedVisibility[l.id] = l.visibility; });
-            const escalates = (Array.isArray(library.lists) ? library.lists : []).some((l) => (
-                isPublicVisibility(l.visibility) && !isPublicVisibility(storedVisibility[l.id])
-            ));
-            if (escalates) {
-                return res.status(403).json({ error: 'Please verify your email before making lists public.' });
-            }
-        }
-        try {
-            pinServerOwnedFields(library, user.library);
-            await db.users.updateOne({ _id: user._id }, { $set: { library } });
-            syncUserPublicLists({ ...user, library }).catch((err) => {
-                logWithRequest(req, { message: 'public list projection sync failed after restore', username: user.username, error: err.message });
-            });
-            return res.json({ ok: true });
-        } catch (err) {
-            logWithRequest(req, 'restore error', err);
-            return res.status(500).json({ error: 'Restore failed.' });
-        }
-    });
-});
-
 router.post('/api/lists/:listId/hide-source-list-info', (req, res) => {
     authenticateUser(req, res, async (req, res, user) => {
         const listId = String(req.params.listId || '');

@@ -1,5 +1,5 @@
-// Library fields the server owns. A client library arrives through /saveLibrary, /api/restore and
-// /register; none of them may set these, so each path pins them to what is stored (or to nothing
+// Library fields the server owns. A client library arrives through /saveLibrary and
+// /register; neither may set these, so each path pins them to what is stored (or to nothing
 // for a new account).
 
 const SERVER_OWNED_KEYS = ['entitlements', 'creator', 'insights'];
