@@ -6,12 +6,9 @@ const { authenticateUser } = require('./auth.js');
 const { detectVisibilityChanges } = require('./save-library-feed.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
-const dataTypes = require('../client/dataTypes.js');
 const { clipDescription } = require('./text-limits.js');
 const { pinServerOwnedFields } = require('./library-server-fields.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
-
-const Library = dataTypes.Library;
 
 const router = express.Router();
 
