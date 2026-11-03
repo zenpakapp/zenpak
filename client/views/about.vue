@@ -13,10 +13,6 @@
         position: static;
         text-align: center;
         z-index: auto;
-
-        a {
-            color: $color-text-muted;
-        }
     }
 
     margin: 0 auto;
