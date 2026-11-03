@@ -12,6 +12,8 @@
             -
             <a class="lpHref" href="https://github.com/zenpakapp/zenpak" target="_blank" rel="noopener noreferrer">{{ $t('dash.footerOpenSource') }}</a>
             -
+            <a class="lpHref" href="/pricing">{{ $t('dash.footerPricing') }}</a>
+            -
             <a class="lpHref" href="/privacy">{{ $t('dash.footerPrivacy') }}</a>
             -
             <a class="lpHref" href="/terms">{{ $t('dash.footerTerms') }}</a>
