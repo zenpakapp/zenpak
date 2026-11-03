@@ -79,7 +79,6 @@
     text-decoration: none;
 
     &:hover {
-        color: $color-link-hover;
         text-decoration: underline;
     }
 }
@@ -451,11 +450,17 @@
 #lpFooter {
     color: #777;
     display: flex;
+    font-size: 13px;
     justify-content: space-between;
     padding: 150px 0 20px;
 
     a {
         color: $color-text-muted;
+        text-decoration: none;
+
+        &:hover {
+            color: $color-accent;
+        }
     }
 }
 
@@ -472,6 +477,15 @@
 
     .lpHasBlackout & {
         display: block;
+    }
+
+    a {
+        color: $color-text-muted;
+        text-decoration: none;
+
+        &:hover {
+            color: $color-accent;
+        }
     }
 }
 
