@@ -15,7 +15,27 @@ This runbook describes a small production deployment for a self-hosted ZenPak in
 - Node.js: `22` from `.nvmrc`
 - App port: `3000` internally
 - Public ports: `80`, `443`
-- Healthcheck: `GET /healthz`
+- Healthcheck: `GET /healthz` (200 when MongoDB answers, 503 when it does not)
+- One Node process under `systemd`. Do not use `npm run pm2` in production: the rate limiters count in each process's own memory, so several processes multiply the limits.
+
+## Configuration and secrets
+
+The app reads its settings with `node-config`, not from plain environment variables. Only `NODE_ENV`, `PORT`, `DEPLOY_URL` and `TRUST_PROXY` are read directly from the environment.
+
+Put every other setting (database, Stripe, Resend, Cloudinary, Google, analytics) in **one JSON object in `NODE_CONFIG`**, inside the file named by `EnvironmentFile`:
+
+```bash
+# /etc/zenpak/zenpak.env  (chmod 600, owner root)
+NODE_CONFIG='{"deployUrl":"https://your-domain.example","publicUrl":"https://your-domain.example","bindings":["127.0.0.1"],"databaseUrl":"mongodb+srv://USER:PASSWORD@HOST/zenpak?tls=true&authSource=admin","resendAPIKey":"...","stripeSecretKey":"...","stripeWebhookSecret":"...","stripePriceIdTrailAnnual":"...","stripePriceIdGuide":"...","stripePriceIdGuideAnnual":"...","stripePortalConfigurationId":"...","cloudinaryCloudName":"...","cloudinaryApiKey":"...","cloudinaryApiSecret":"...","googleClientId":"...","googleClientSecret":"...","googleCallbackUrl":"https://your-domain.example/api/auth/google/callback","moderators":["..."]}'
+```
+
+- Keep it on one line, wrapped in single quotes. After the first start, check that systemd read it whole: `systemctl show zenpak -p Environment`, then `curl /healthz`.
+- `bindings` makes Node listen on the loopback address only. Without it the default listens on every interface.
+- `deployUrl` must start with `https://`: it turns on secure cookies.
+- `databaseUrl` is either `host/dbname` or a full connection string (`mongodb://…` or `mongodb+srv://…`) ending with `/<database name>`. A string without a database name is refused at start.
+- Never put these values in the repository. Keep an encrypted copy in a password manager.
+- Dev keys (`config/local.json`) are not for production. Use the live Stripe keys, a Google OAuth client with the production callback URL, and a Cloudinary account you choose on purpose.
+- The app creates its MongoDB indexes at start, on an empty database too.
 
 ## Caddy
 
@@ -55,7 +75,7 @@ User=zenpak
 WorkingDirectory=/var/www/zenpak
 Environment=NODE_ENV=production
 EnvironmentFile=/etc/zenpak/zenpak.env
-ExecStart=/usr/bin/npm run start
+ExecStart=/usr/bin/node app.js
 Restart=always
 RestartSec=5
 StandardOutput=journal
@@ -64,6 +84,8 @@ StandardError=journal
 [Install]
 WantedBy=multi-user.target
 ```
+
+`npm run start` is not used here: it rebuilds the front end on every restart. The build runs once in the deploy steps below. Use the absolute path of the `node` that `nvm use` selects if `/usr/bin/node` is not Node 22.
 
 Apply changes:
 
@@ -106,6 +128,8 @@ curl -fsS https://your-domain.example/healthz
 ```
 
 Restore database backups only for data corruption or a destructive migration.
+
+A restore also brings back accounts deleted since the backup. Backups are kept at most 12 months, and the privacy policy and terms say so.
 
 ## MongoDB logical backup
 

@@ -14,6 +14,7 @@ const morgan = require('morgan');
 const path = require('path');
 
 const { logger } = require('./server/log.js');
+const db = require('./server/db.js');
 const { analyticsConfig, analyticsOrigin } = require('./server/analytics.js');
 const { resolveTrustProxy } = require('./server/trust-proxy.js');
 const {
@@ -83,12 +84,18 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/healthz', (req, res) => {
+app.get('/healthz', async (req, res) => {
     res.set('Cache-Control', 'no-store');
-    res.json({
-        ok: true,
+    // 503 when MongoDB does not answer, so an uptime check sees a broken app rather than a running one.
+    const database = await Promise.race([
+        db.ping().then(() => true, () => false),
+        new Promise((resolve) => { setTimeout(() => resolve(false), 3000); }),
+    ]);
+    res.status(database ? 200 : 503).json({
+        ok: database,
         service: 'zenpak',
         environment: runtimeEnvironment,
+        database,
     });
 });
 
@@ -165,7 +172,6 @@ app.use('/dist', express.static(`${__dirname}/public/dist/`, {
     maxAge: runtimeEnvironment === 'production' ? oneYear : oneDay,
 }));
 app.use(express.static(`${__dirname}/public/`, { maxAge: oneDay }));
-const db = require('./server/db.js');
 const endpoints = require('./server/endpoints.js');
 const moderationEndpoints = require('./server/moderation-endpoints.js');
 const notificationEndpoints = require('./server/notification-endpoints.js');
