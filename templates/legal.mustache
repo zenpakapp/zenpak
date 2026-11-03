@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Legal Notice — ZenPak</title>
     <link rel="icon" type="image/svg+xml" href="/brand/zenpak-z-app.svg" />
+    <link rel="stylesheet" href="/css/page-theme.css" />
+    <script src="/js/theme-init.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; }
         body {
-            background: #F7F3EB;
-            color: #1A1A1A;
+            background: var(--p-bg);
+            color: var(--p-text);
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 15px;
             line-height: 1.7;
@@ -22,12 +24,12 @@
             padding: 48px 24px 80px;
         }
         header {
-            border-bottom: 1px solid #E0E0E0;
+            border-bottom: 1px solid var(--p-border);
             margin-bottom: 40px;
             padding-bottom: 20px;
         }
         .brand {
-            color: #2D7A4F;
+            color: var(--p-accent);
             font-size: 18px;
             font-weight: 700;
             text-decoration: none;
@@ -38,7 +40,7 @@
             letter-spacing: -0.02em;
             margin: 0 0 6px;
         }
-        .meta { color: #6B7280; font-size: 13px; }
+        .meta { color: var(--p-muted); font-size: 13px; }
         h2 {
             font-size: 17px;
             font-weight: 700;
@@ -47,10 +49,10 @@
         p { margin: 0 0 14px; }
         ul { margin: 0 0 14px; padding-left: 20px; }
         li { margin-bottom: 6px; }
-        a { color: #2D7A4F; }
+        a { color: var(--p-accent); }
         footer {
-            border-top: 1px solid #E0E0E0;
-            color: #6B7280;
+            border-top: 1px solid var(--p-border);
+            color: var(--p-muted);
             font-size: 13px;
             margin-top: 60px;
             padding-top: 20px;
@@ -59,7 +61,7 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        footer a { color: #6B7280; }
+        footer a { color: var(--p-muted); }
     </style>
 </head>
 <body>

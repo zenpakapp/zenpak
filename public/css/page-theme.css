@@ -1,0 +1,61 @@
+/* Colours of the pages the server renders on its own (pricing, privacy, terms, legal notice).
+   Same light / dark / auto logic as the app (client/css/_theme-vars.scss): the choice made in the
+   app is read by /js/theme-init.js, and without a choice the system setting decides. */
+:root {
+    --p-bg: #F7F3EB;
+    --p-surface: #FFFFFF;
+    --p-text: #1A1A1A;
+    --p-muted: #6B7280;
+    --p-strong: #374151;
+    --p-body-soft: #4B5563;
+    --p-border: #E0E0E0;
+    --p-border-soft: #E5E7EB;
+    --p-border-control: #D1D5DB;
+    --p-note-bg: #F9FAFB;
+    --p-hover: #F3F4F6;
+    --p-accent: #2D7A4F;
+    --p-accent-hover: #246040;
+    --p-accent-soft: #ECFDF5;
+    --p-on-accent: #FFFFFF;
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    --p-bg: #111111;
+    --p-surface: #1C1C1E;
+    --p-text: #E8E8E8;
+    --p-muted: #9CA3AF;
+    --p-strong: #D1D5DB;
+    --p-body-soft: #B8BEC7;
+    --p-border: #2A2A2A;
+    --p-border-soft: #2A2A2A;
+    --p-border-control: #3A3A3E;
+    --p-note-bg: #1C1C1E;
+    --p-hover: #232326;
+    --p-accent: #3A9E67;
+    --p-accent-hover: #2D7A4F;
+    --p-accent-soft: rgba(58, 158, 103, 0.16);
+    --p-on-accent: #FFFFFF;
+    color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-theme="dark"]) {
+        --p-bg: #111111;
+        --p-surface: #1C1C1E;
+        --p-text: #E8E8E8;
+        --p-muted: #9CA3AF;
+        --p-strong: #D1D5DB;
+        --p-body-soft: #B8BEC7;
+        --p-border: #2A2A2A;
+        --p-border-soft: #2A2A2A;
+        --p-border-control: #3A3A3E;
+        --p-note-bg: #1C1C1E;
+        --p-hover: #232326;
+        --p-accent: #3A9E67;
+        --p-accent-hover: #2D7A4F;
+        --p-accent-soft: rgba(58, 158, 103, 0.16);
+        --p-on-accent: #FFFFFF;
+        color-scheme: dark;
+    }
+}
