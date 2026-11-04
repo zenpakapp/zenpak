@@ -69,7 +69,7 @@ export default defineConfig({
   webServer: {
     // AUTH_RATE_LIMIT_MAX: the suite registers dozens of users from one IP, past the default limit of 10.
     command:
-      "NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 AUTH_RATE_LIMIT_MAX=1000 npm run start",
+      "NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 AUTH_RATE_LIMIT_MAX=1000 FORGOT_RATE_LIMIT_MAX=1000 npm run start",
     url: "http://127.0.0.1:3101",
     reuseExistingServer: !process.env.CI,
   },

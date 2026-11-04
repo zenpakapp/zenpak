@@ -28,7 +28,6 @@ router.get('/profile', (req, res) => {
         const creator = user.library.creator || {};
 
         return res.json({
-            bio: profile.bio || '',
             links: Array.isArray(profile.links) ? profile.links : [],
             gearPhilosophy: Array.isArray(profile.gearPhilosophy) ? profile.gearPhilosophy : [],
             affiliateRules: Array.isArray(creator.affiliateRules) ? creator.affiliateRules : [],
@@ -42,7 +41,6 @@ router.put('/profile', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         if (!isGuide(user)) return res.status(403).json({ message: 'Guide tier required' });
 
-        const bio = typeof req.body.bio === 'string' ? req.body.bio.slice(0, 500) : '';
         const links = Array.isArray(req.body.links) ? req.body.links.slice(0, 5).map((l) => ({
             label: String(l.label || '').slice(0, 100),
             url: String(l.url || '').slice(0, 500),
@@ -52,15 +50,13 @@ router.put('/profile', (req, res) => {
             : [];
 
         if (!user.library.publicProfile) user.library.publicProfile = {};
-        user.library.publicProfile.bio = bio;
         user.library.publicProfile.links = links;
         user.library.publicProfile.gearPhilosophy = gearPhilosophy;
 
         try {
-            // Only these three fields are written, so the rest of the account stays as it is.
+            // Only these two fields are written, so the rest of the account stays as it is.
             await db.users.updateOne({ _id: user._id }, {
                 $set: {
-                    'library.publicProfile.bio': bio,
                     'library.publicProfile.links': links,
                     'library.publicProfile.gearPhilosophy': gearPhilosophy,
                 },

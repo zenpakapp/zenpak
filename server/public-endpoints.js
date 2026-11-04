@@ -11,6 +11,7 @@ const {
 } = require('./public-list-projections.js');
 const { getServedByExternalId, getDeletedForkSources } = require('./list-versions.js');
 const db = require('./db.js');
+const { FEATURES, hasFeature } = require('../client/services/entitlements.js');
 
 const router = express.Router();
 
@@ -51,11 +52,12 @@ router.get('/api/public/profile/:username', async (req, res) => {
             return res.status(404).json({ message: 'Profile not found' });
         }
 
-        // Gate enriched profile fields to Guide tier only
-        const plan = (user.library && user.library.entitlements && user.library.entitlements.plan) || 'free';
-        if (plan !== 'creator') {
-            if (payload.profile) {
-                payload.profile.bio = '';
+        // The bio comes with profile customization (Kin and Wayfarer), links and gear philosophy
+        // with the Wayfarer plan only.
+        const entitlements = user.library && user.library.entitlements;
+        if (payload.profile) {
+            if (!hasFeature(entitlements, FEATURES.PROFILE_CUSTOMIZATION)) payload.profile.bio = '';
+            if (!hasFeature(entitlements, FEATURES.CREATOR_LINKS)) {
                 payload.profile.links = [];
                 payload.profile.gearPhilosophy = [];
             }

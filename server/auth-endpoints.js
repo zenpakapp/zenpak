@@ -80,9 +80,10 @@ const authLimiter = rateLimit({
     message: { errors: [{ message: 'Too many attempts. Try again in 15 minutes.' }] },
 });
 
+// Requests per hour per IP on the e-mail routes. FORGOT_RATE_LIMIT_MAX raises it for the e2e suite.
 const forgotLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
-    max: 5,
+    max: authRateLimitMax(process.env.FORGOT_RATE_LIMIT_MAX, 5),
     standardHeaders: true,
     legacyHeaders: false,
     message: { errors: [{ message: 'Too many requests. Try again in 1 hour.' }] },
@@ -255,7 +256,8 @@ router.post('/forgotPassword', forgotLimiter, (req, res) => {
 
     db.users.findOne({ username }, (err, user) => {
         if (err) return res.status(500).json({ errors: [{ message: 'An error occurred, please try again.' }] });
-        if (!user) return res.status(400).json({ errors: [{ message: 'No account found with that username.' }] });
+        // The same answer as for a known account, so the route does not tell who has an account.
+        if (!user) return res.status(200).json({ message: 'A reset link has been sent to your email.' });
 
         const cooldown = 15 * 60 * 1000;
         if (user.resetTokenExpiry && user.resetTokenExpiry - Date.now() > (60 * 60 * 1000 - cooldown)) {

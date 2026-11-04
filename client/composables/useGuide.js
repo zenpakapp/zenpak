@@ -6,7 +6,7 @@ const {
 } = require('../utils/guide-items.js');
 
 export function useGuide() {
-    const profile = ref({ bio: '', links: [], gearPhilosophy: [] });
+    const profile = ref({ links: [], gearPhilosophy: [] });
     const affiliateRules = ref([]);
     const disclosure = ref('');
     const itemRows = ref([]);
@@ -27,7 +27,6 @@ export function useGuide() {
         try {
             const data = await fetchJson('/api/guide/profile');
             profile.value = {
-                bio: data.bio || '',
                 links: data.links || [],
                 gearPhilosophy: data.gearPhilosophy || [],
             };
