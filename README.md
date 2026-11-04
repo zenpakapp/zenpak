@@ -63,7 +63,7 @@ npm run start    # production build + start → http://localhost:3000
 
 | Service | Config keys | Purpose |
 |---------|-------------|---------|
-| Mailpit | `mailpitSmtpPort` | Development email capture |
+| Mailpit | `mailpitSmtpPort` | Development email capture. Run `mailpit` before the e2e suite: the `api-mail-flows` tests read their mail from it and skip without it |
 | Resend | `resendAPIKey`, `resendBaseURL` | Email verification, password reset |
 | Cloudinary | `cloudinaryCloudName`, `cloudinaryApiKey`, `cloudinaryApiSecret` | Item image uploads |
 | Google OAuth | `googleClientId`, `googleClientSecret`, `googleCallbackUrl` | Sign in with Google |

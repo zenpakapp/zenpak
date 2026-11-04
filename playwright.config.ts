@@ -67,9 +67,11 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
+    // NODE_CONFIG: the server runs with NODE_ENV=production, so mail would go to Resend. Only the
+    // `environment` setting is switched, which sends mail to Mailpit (the api-mail-flows tests read it).
     // AUTH_RATE_LIMIT_MAX: the suite registers dozens of users from one IP, past the default limit of 10.
     command:
-      "NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 AUTH_RATE_LIMIT_MAX=1000 FORGOT_RATE_LIMIT_MAX=1000 npm run start",
+      "NO_COLOR= PORT=3101 DEV_SERVER_PORT=8180 DEPLOY_URL=http://127.0.0.1:3101 AUTH_RATE_LIMIT_MAX=1000 FORGOT_RATE_LIMIT_MAX=1000 NODE_CONFIG='{\"environment\":\"development\"}' npm run start",
     url: "http://127.0.0.1:3101",
     reuseExistingServer: !process.env.CI,
   },
