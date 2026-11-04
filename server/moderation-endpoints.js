@@ -176,10 +176,41 @@ router.post('/moderation/offer-plan', (req, res) => {
 
 const LIST_SEARCH_LIMIT = 20;
 
+// The lists a moderator took down. They are private, so they are not among the public lists: they
+// are read from the libraries of their owners.
+async function searchTakenDownLists(req, res, text) {
+    const pattern = text ? new RegExp(escapeRegExp(text), 'i') : null;
+    try {
+        const owners = await db.users.findMany(
+            { 'library.lists.takenDown': true },
+            { projection: { username: 1, 'library.lists': 1 }, limit: LIST_SEARCH_LIMIT },
+        );
+        const results = [];
+        owners.forEach((owner) => {
+            ((owner.library && owner.library.lists) || []).forEach((list) => {
+                if (!list.takenDown || !list.externalId) return;
+                if (pattern && !pattern.test(list.name || '') && !pattern.test(owner.username)) return;
+                results.push({
+                    externalId: list.externalId,
+                    name: list.name,
+                    ownerUsername: owner.username,
+                    featured: false,
+                    takenDown: true,
+                });
+            });
+        });
+        return res.json({ results: results.slice(0, LIST_SEARCH_LIMIT) });
+    } catch (error) {
+        logWithRequest(req, { message: 'MODERATION Taken-down list search error', error: error.message });
+        return res.status(500).json({ message: 'An error occurred' });
+    }
+}
+
 // Finds a published list by its name or its author, to feature or unpublish it without a report.
-// With nothing typed it returns the newest lists.
+// With nothing typed it returns the newest lists. With takenDown=1 it returns the lists taken down.
 async function searchLists(req, res) {
     const text = String(req.query.q || '').trim();
+    if (req.query.takenDown === '1') return searchTakenDownLists(req, res, text);
     const query = {};
     if (text) {
         const pattern = new RegExp(escapeRegExp(text), 'i');

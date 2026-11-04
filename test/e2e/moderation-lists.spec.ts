@@ -112,3 +112,76 @@ test("a moderator finds a list, features it and unpublishes it", async ({
   await expect(rows).toHaveCount(1);
   expect(calls).toContain("unpublish/b2");
 });
+test("a moderator finds a list taken down and lifts the take-down", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
+  await registerUser(page, `ml${now}`, "testtest", `ml+${now}@lighterpack.com`);
+  await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+
+  await page.route("**/api/auth/me", async (route) => {
+    const response = await route.fetch();
+    const body = await response.json();
+    await route.fulfill({ response, json: { ...body, isModerator: true } });
+  });
+  await page.route("**/api/reports", (route) =>
+    route.fulfill({ json: { reports: [] } }),
+  );
+  await page.route("**/moderation/search?*", (route) =>
+    route.fulfill({ json: { results: [] } }),
+  );
+
+  const takenDownFilters = [];
+  let lifted = false;
+  await page.route("**/moderation/search-lists*", (route) => {
+    const params = new URL(route.request().url()).searchParams;
+    takenDownFilters.push(params.get("takenDown"));
+    const results =
+      params.get("takenDown") === "1" && !lifted
+        ? [
+            {
+              externalId: "t1",
+              name: "Taken down list",
+              ownerUsername: "bob",
+              featured: false,
+              takenDown: true,
+            },
+          ]
+        : [];
+    return route.fulfill({ json: { results } });
+  });
+  const calls = [];
+  await page.route("**/api/reports/lift/*", (route) => {
+    calls.push(route.request().url().split("/").pop());
+    lifted = true;
+    return route.fulfill({ json: { ok: true } });
+  });
+
+  await page.evaluate(() =>
+    (window as any).LighterPack.$router.push("/community"),
+  );
+  await page
+    .locator(".lpCommunityTab")
+    .filter({ hasText: "Moderation" })
+    .click();
+
+  await page.locator(".lp-moderation-list-taken-down-only").check();
+  await expect.poll(() => takenDownFilters.at(-1)).toBe("1");
+  const rows = page.locator(".lpModerationListRow");
+  await expect(rows).toHaveCount(1);
+  await expect(rows.nth(0)).toContainText("Taken down list");
+  await expect(rows.nth(0)).toContainText("@bob");
+  await expect(
+    rows.nth(0).locator(".lp-moderation-list-taken-down"),
+  ).toBeVisible();
+  // The list is private: no link to a public page, and no feature or unpublish button.
+  await expect(rows.nth(0).locator("a")).toHaveCount(0);
+  await expect(rows.nth(0).locator(".lp-moderation-list-feature")).toHaveCount(
+    0,
+  );
+
+  await rows.nth(0).locator(".lp-moderation-list-lift").click();
+  await expect(rows).toHaveCount(0);
+  expect(calls).toEqual(["t1"]);
+});
