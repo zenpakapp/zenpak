@@ -17,6 +17,10 @@
                 <input v-model="featuredOnly" type="checkbox" class="lp-moderation-list-featured-only" @change="searchLists">
                 {{ $t('community.moderationFeaturedOnly') }}
             </label>
+            <label class="lpModerationFilter">
+                <input v-model="takenDownOnly" type="checkbox" class="lp-moderation-list-taken-down-only" @change="searchLists">
+                {{ $t('community.moderationTakenDownOnly') }}
+            </label>
         </form>
         <p v-if="error" class="lpCommunityEmpty lp-moderation-list-error">
             {{ error }}
@@ -27,11 +31,18 @@
         <ul v-else class="lpModerationListRows">
             <li v-for="list in lists" :key="list.externalId" class="lpModerationListRow">
                 <div class="lpModerationListInfo">
-                    <a :href="`/p/${list.externalId}`" target="_blank" class="lpHref">{{ list.name || list.externalId }}</a>
+                    <span v-if="list.takenDown">{{ list.name || list.externalId }}</span>
+                    <a v-else :href="`/p/${list.externalId}`" target="_blank" class="lpHref">{{ list.name || list.externalId }}</a>
                     <span class="lpModerationListAuthor">@{{ list.ownerUsername }}</span>
                     <span v-if="list.featured" class="lpCommunityBadge lp-moderation-list-featured">★</span>
+                    <span v-if="list.takenDown" class="lpCommunityBadge lp-moderation-list-taken-down">{{ $t('community.moderationTakenDown') }}</span>
                 </div>
-                <div class="lpModerationReportActions">
+                <div v-if="list.takenDown" class="lpModerationReportActions">
+                    <button class="lpButton lpSmall lp-moderation-list-lift" @click="lift(list)">
+                        {{ $t('community.moderationLift') }}
+                    </button>
+                </div>
+                <div v-else class="lpModerationReportActions">
                     <button class="lpButton lpSmall lp-moderation-list-feature" @click="toggleFeatured(list)">
                         {{ list.featured ? $t('community.moderationUnfeature') : $t('community.moderationFeature') }}
                     </button>
@@ -65,6 +76,7 @@ export default {
             pendingUnpublish: null,
             searchQuery: '',
             featuredOnly: false,
+            takenDownOnly: false,
             lists: [],
             searched: false,
             error: null,
@@ -79,7 +91,8 @@ export default {
             this.error = null;
             try {
                 const featured = this.featuredOnly ? '&featured=1' : '';
-                const response = await fetchJson(`/moderation/search-lists?q=${encodeURIComponent(this.searchQuery)}${featured}`, {
+                const takenDown = this.takenDownOnly ? '&takenDown=1' : '';
+                const response = await fetchJson(`/moderation/search-lists?q=${encodeURIComponent(this.searchQuery)}${featured}${takenDown}`, {
                     method: 'GET',
                     credentials: 'same-origin',
                 });
@@ -100,6 +113,16 @@ export default {
                 }
             } catch {
                 this.error = 'Unable to update featured list.';
+            }
+        },
+        // The owner can publish the list again.
+        async lift(list) {
+            this.error = null;
+            try {
+                await fetchJson(`/api/reports/lift/${list.externalId}`, { method: 'POST' });
+                this.lists = this.lists.filter((l) => l.externalId !== list.externalId);
+            } catch {
+                this.error = 'Unable to lift the take-down.';
             }
         },
         async unpublish() {
