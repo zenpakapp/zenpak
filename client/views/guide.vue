@@ -18,11 +18,6 @@
                 {{ $t('guide.publicProfile') }}
             </h2>
             <div class="lpGuideField">
-                <label class="lpGuideLabel" for="guideBio">{{ $t('guide.bio') }}</label>
-                <textarea id="guideBio" v-model="profile.bio" class="lpGuideTextarea" maxlength="500" rows="4" :placeholder="$t('guide.bioPlaceholder')" />
-                <span class="lpGuideCharCount">{{ profile.bio.length }}/500</span>
-            </div>
-            <div class="lpGuideField">
                 <label class="lpGuideLabel">{{ $t('guide.links') }}</label>
                 <div v-for="(link, i) in profile.links" :key="i" class="lpGuideRow">
                     <input v-model="link.label" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.linksLabel')" maxlength="100">

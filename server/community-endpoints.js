@@ -514,10 +514,10 @@ router.get('/users', async (req, res) => {
         _id: 0,
         username: 1,
         displayName: { $ifNull: ['$library.publicProfile.displayName', '$username'] },
-        // The bio is a Guide feature, as on the public profile page.
+        // The bio comes with Kin and Wayfarer, as on the public profile page.
         bio: {
             $cond: [
-                { $eq: [{ $ifNull: ['$library.entitlements.plan', 'free'] }, 'creator'] },
+                { $in: [{ $ifNull: ['$library.entitlements.plan', 'free'] }, ['supporter', 'creator']] },
                 { $ifNull: ['$library.publicProfile.bio', ''] },
                 '',
             ],

@@ -122,7 +122,9 @@ router.put('/api/profile', (req, res) => {
             change('displayName', displayName);
         }
         if (typeof req.body.trailName === 'string') change('trailName', req.body.trailName.slice(0, 100));
-        if (typeof req.body.bio === 'string') change('bio', req.body.bio.slice(0, 500));
+        // The bio is part of profile customization, like the photo and the travel name.
+        const canCustomize = hasFeature(user.library && user.library.entitlements, FEATURES.PROFILE_CUSTOMIZATION);
+        if (canCustomize && typeof req.body.bio === 'string') change('bio', req.body.bio.slice(0, 500));
         const VALID_VISIBILITY = ['private', 'shareable', 'discoverable', 'indexable'];
         if (VALID_VISIBILITY.includes(req.body.visibility)) {
             // Like a public list, a public profile waits for a verified email.

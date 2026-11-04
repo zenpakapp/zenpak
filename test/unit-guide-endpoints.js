@@ -102,12 +102,11 @@ async function run() {
 
     savedUser = null;
     const profileResult = await callRoute('put', '/profile', {
-        bio: 'New bio',
         links: [{ label: 'Blog', url: 'https://example.com' }],
         gearPhilosophy: ['Ultralight first'],
     });
     assert('PUT /profile returns 200', profileResult && profileResult.status === 200);
-    assert('PUT /profile saves bio', savedUser && savedUser.library.publicProfile.bio === 'New bio');
+    assert('PUT /profile leaves the bio alone', savedUser && savedUser.library.publicProfile.bio === 'Old bio');
     assert('PUT /profile saves links', savedUser && savedUser.library.publicProfile.links.length === 1);
     assert('PUT /profile saves gearPhilosophy', savedUser && savedUser.library.publicProfile.gearPhilosophy[0] === 'Ultralight first');
 

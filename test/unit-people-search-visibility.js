@@ -1,6 +1,6 @@
 /**
  * Unit test: the People search finds link-only (shareable) profiles by exact username only, and
- * shows a bio only for Guide accounts, as the public profile page does.
+ * shows a bio only for Kin and Wayfarer accounts, as the public profile page does.
  * Run with: node test/unit-people-search-visibility.js
  */
 
@@ -62,7 +62,7 @@ function people(q) {
     assert.ok(!JSON.stringify(match).includes('"shareable","discoverable"'), 'shareable is not in the broad visibility list');
 
     const project = pipelines[0].find((stage) => stage.$project).$project;
-    assert.deepStrictEqual(project.bio.$cond[0], { $eq: [{ $ifNull: ['$library.entitlements.plan', 'free'] }, 'creator'] }, 'the bio is read only for creator accounts');
+    assert.deepStrictEqual(project.bio.$cond[0], { $in: [{ $ifNull: ['$library.entitlements.plan', 'free'] }, ['supporter', 'creator']] }, 'the bio is read only for Kin and Wayfarer accounts');
     assert.strictEqual(project.bio.$cond[2], '', 'other accounts get an empty bio');
 
     console.log('unit-people-search-visibility: ok');
