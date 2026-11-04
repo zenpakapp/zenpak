@@ -178,6 +178,11 @@ module.exports = {
             },
         );
         await users.createIndex({ 'library.lists.externalId': 1 }, { sparse: true });
+        // Only the few accounts with a list a moderator took down, to find them without reading every account.
+        await users.createIndex(
+            { 'library.lists.takenDown': 1 },
+            { partialFilterExpression: { 'library.lists.takenDown': true }, name: 'users_lists_taken_down' },
+        );
 
         const follows = _db.collection('follows');
         await follows.createIndex({ followerId: 1, followedId: 1 }, { unique: true });
