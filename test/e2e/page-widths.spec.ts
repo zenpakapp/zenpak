@@ -5,8 +5,8 @@ import { testRoot } from "./utils";
 
 // Every screen uses one of three column widths (client/css/_globals.scss), so moving between
 // pages does not change the width of the content:
-//   reading  720px  About, Guide (the Feed view is not used: /feed shows Discover)
-//   content 1040px  Discover, public list, public profile
+//   reading  720px  About (the Feed view is not used: /feed shows Discover)
+//   content 1040px  Guide, Discover, public list, public profile
 //   app     1200px  editor (sidebar open or hidden), moderation
 const READING = "720px";
 const CONTENT = "1040px";
@@ -45,7 +45,7 @@ test("pages share three column widths", async ({ page }) => {
     app.$router.push("/guide");
   });
   await expect(page.locator(".lpGuide")).toBeVisible();
-  expect(await maxWidth(page, ".lpGuide")).toBe(READING);
+  expect(await maxWidth(page, ".lpGuide")).toBe(CONTENT);
 
   await page.goto(`${testRoot}community`);
   await expect(page.locator(".lpCommunity")).toBeVisible();

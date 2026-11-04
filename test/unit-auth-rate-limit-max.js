@@ -19,6 +19,10 @@ assert('a negative number keeps the default', authRateLimitMax('-5') === 10);
 assert('a decimal keeps the default', authRateLimitMax('5.5') === 10);
 assert('Infinity keeps the default', authRateLimitMax('Infinity') === 10);
 assert('a number like 1e3 keeps the default (digits only)', authRateLimitMax('1e3') === 10);
+assert('another default can be given', authRateLimitMax(undefined, 5) === 5);
+assert('an invalid value falls back to the given default', authRateLimitMax('abc', 5) === 5);
+assert('zero falls back to the given default', authRateLimitMax('0', 5) === 5);
+assert('a valid value wins over the given default', authRateLimitMax('1000', 5) === 1000);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
