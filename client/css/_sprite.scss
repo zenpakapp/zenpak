@@ -130,7 +130,7 @@
 
 [data-theme="dark"] {
     .lpSprite {
-        filter: invert(1) brightness(2);
+        filter: invert(1) hue-rotate(180deg) brightness(2);
     }
 
     .lpTag {
@@ -145,7 +145,7 @@
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]):not([data-theme="dark"]) {
         .lpSprite {
-            filter: invert(1) brightness(2);
+            filter: invert(1) hue-rotate(180deg) brightness(2);
         }
 
         .lpTag {
