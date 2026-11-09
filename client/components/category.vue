@@ -302,7 +302,7 @@ export default {
     display: inline-flex;
     font-size: $fontSize-xs;
     min-height: 24px;
-    opacity: 0.72;
+    opacity: 0.97;
 
     &:hover,
     &:focus-visible {
