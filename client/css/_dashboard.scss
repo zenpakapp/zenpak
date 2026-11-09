@@ -452,6 +452,7 @@
     letter-spacing: -0.01em;
     min-width: 0;
     padding: 7px 14px;
+    text-overflow: ellipsis;
     width: 100%;
 
     &::placeholder {
