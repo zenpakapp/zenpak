@@ -38,27 +38,27 @@
                 <div class="lpWelcomeFeaturesGrid">
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">01</span>
-                        <h3 class="lpWelcomeFeatureTitle">
+                        <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature1Title') }}
-                        </h3>
+                        </h2>
                         <p class="lpWelcomeFeatureText">
                             {{ $t('welcome.feature1Text') }}
                         </p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">02</span>
-                        <h3 class="lpWelcomeFeatureTitle">
+                        <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature2Title') }}
-                        </h3>
+                        </h2>
                         <p class="lpWelcomeFeatureText">
                             {{ $t('welcome.feature2Text') }}
                         </p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
                         <span class="lpWelcomeFeatureNum">03</span>
-                        <h3 class="lpWelcomeFeatureTitle">
+                        <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature3Title') }}
-                        </h3>
+                        </h2>
                         <p class="lpWelcomeFeatureText">
                             {{ $t('welcome.feature3Text') }}
                         </p>
