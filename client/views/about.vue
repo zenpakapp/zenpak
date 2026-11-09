@@ -35,6 +35,8 @@
         color: $color-text-muted;
         font-size: 15px;
         line-height: 1.6;
+        max-width: 58ch;
+        text-wrap: pretty;
     }
 
     ul {
