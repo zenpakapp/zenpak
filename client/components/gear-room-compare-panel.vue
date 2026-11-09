@@ -73,8 +73,8 @@
 }
 
 .lpGearRoomCompareColAttr {
-    width: 140px;
     min-width: 140px;
+    width: 140px;
 }
 
 .lpGearRoomCompareColItem {
@@ -87,10 +87,10 @@
     color: $color-text-muted;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
+    left: 0;
     max-width: 140px;
     min-width: 140px;
     position: sticky;
-    left: 0;
     width: 140px;
 }
 

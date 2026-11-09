@@ -5,8 +5,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 640px;
     max-height: 70vh;
+    max-width: 640px;
     overflow-y: auto;
 }
 

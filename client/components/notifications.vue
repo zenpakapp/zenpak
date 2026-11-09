@@ -42,7 +42,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-md;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     max-height: 360px;
     overflow-y: auto;
     position: absolute;
@@ -62,9 +62,9 @@
 
     span {
         color: $color-text;
-        white-space: nowrap;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
+        white-space: nowrap;
     }
 
     button {
@@ -142,7 +142,7 @@
 </style>
 
 <template>
-    <div class="lpNotifBell" style="position:relative" @click="toggle">
+    <div class="lpNotifBell" style="position: relative;" @click="toggle">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />

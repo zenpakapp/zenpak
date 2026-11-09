@@ -16,7 +16,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-md;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     padding: 16px;
     position: absolute;
     right: 0;
@@ -41,11 +41,11 @@
 
 .lpReportReason {
     align-items: center;
+    color: $color-text-muted;
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
     gap: 8px;
-    color: $color-text-muted;
 
     &:hover { color: $color-text; }
 }
@@ -81,13 +81,13 @@
 .lpReportConfirm {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    text-align: center;
     padding: 4px 0;
+    text-align: center;
 }
 </style>
 
 <template>
-    <div style="position:relative;display:inline-block">
+    <div style="display: inline-block; position: relative;">
         <button class="lpReportBtn" @click.stop.prevent="open = !open">
             {{ $t('misc.report') }}
         </button>
@@ -102,7 +102,7 @@
                         {{ r.label }}
                     </label>
                 </div>
-                <div v-if="error" style="color:var(--color-warning,#e53e3e);font-size:11px;margin-bottom:8px">
+                <div v-if="error" style="color: var(--color-warning, #e53e3e); font-size: 11px; margin-bottom: 8px;">
                     {{ error }}
                 </div>
                 <div class="lpReportActions">

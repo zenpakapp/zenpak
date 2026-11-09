@@ -78,7 +78,7 @@
             </div>
         </modal>
 
-        <form ref="imageUploadForm" style="display:none">
+        <form ref="imageUploadForm" style="display: none;">
             <input id="image" ref="imageInput" type="file" name="image" accept="image/png,image/jpeg,image/gif" @change="uploadImage">
         </form>
     </div>

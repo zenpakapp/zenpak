@@ -90,8 +90,8 @@
 }
 
 .lpLibraryItem {
-    box-sizing: border-box;
     border-top: 1px solid $color-border;
+    box-sizing: border-box;
     color: $color-text;
     height: 52px;
     list-style: none;
@@ -135,8 +135,8 @@
         clear: both;
         color: $color-text-muted;
         display: flex;
-        gap: 4px;
         font-size: $fontSize-sm;
+        gap: 4px;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 235px;

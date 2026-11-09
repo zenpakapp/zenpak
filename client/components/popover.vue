@@ -39,8 +39,8 @@
         &::before {
             background-color: $color-surface-elevated;
             border-left: 1px solid $color-border;
-            border-top: 1px solid $color-border;
             border-radius: 4px 0 0 0;
+            border-top: 1px solid $color-border;
             content: "";
             display: block;
             height: 18px;
@@ -55,11 +55,11 @@
 
         &::after {
             background: $color-surface-elevated;
+            border-radius: $radius-md $radius-md 0 0;
             content: "";
             display: block;
             height: 18px;
             left: 0;
-            border-radius: $radius-md $radius-md 0 0;
             position: absolute;
             top: 0;
             width: 100%;
@@ -78,7 +78,8 @@
             margin-bottom: 0;
         }
 
-        ul, a {
+        ul,
+        a {
             line-height: 1.45;
         }
 

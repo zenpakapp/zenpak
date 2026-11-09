@@ -194,7 +194,7 @@
                     <div class="profileSettingsAvatarActions">
                         <label class="lpButton lpSmall profileSettingsAvatarBtn">
                             {{ avatarUploading ? $t('acct.uploading') : $t('acct.uploadPhoto') }}
-                            <input type="file" accept="image/*" style="display:none" :disabled="avatarUploading" @change="uploadAvatar">
+                            <input type="file" accept="image/*" style="display: none;" :disabled="avatarUploading" @change="uploadAvatar">
                         </label>
                         <button v-if="storeProfile.avatarUrl" class="lpButton lpSmall lpButtonGhost" @click="removeAvatar">
                             {{ $t('acct.remove') }}

@@ -112,16 +112,16 @@
                     ✕
                 </button>
             </div>
-            <div class="lpGearRoomBatchPanelRow" style="flex-direction:column;gap:6px;align-items:stretch">
+            <div class="lpGearRoomBatchPanelRow" style="align-items: stretch; flex-direction: column; gap: 6px;">
                 <button
                     v-for="id in selected"
                     :key="id"
                     :class="['lpGearRoomBatchAction', { 'lpGearRoomMergeKeep': mergeKeepId === id }]"
-                    style="text-align:left"
+                    style="text-align: left;"
                     @click="mergeKeepId = id"
                 >
                     <strong>{{ itemDisplayName(getItemById(id)) }}</strong>
-                    <span style="color:#aaa;margin-left:8px;font-size:11px">{{ getItemById(id).description }}</span>
+                    <span style="color: #aaa; font-size: 11px; margin-left: 8px;">{{ getItemById(id).description }}</span>
                 </button>
             </div>
             <button class="lpGearRoomBatchApply" :disabled="!mergeKeepId" @click="applyMerge">

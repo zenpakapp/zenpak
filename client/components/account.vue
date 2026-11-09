@@ -81,7 +81,7 @@
                         <a class="accountCancelLink" role="button" tabindex="0" @click="restoreConfirm = false; restoreFile = null" @keydown.enter="restoreConfirm = false; restoreFile = null" @keydown.space.prevent="restoreConfirm = false; restoreFile = null">{{ $t('acct.cancel') }}</a>
                     </div>
                 </div>
-                <input ref="restoreInput" type="file" accept=".json" style="display:none" @change="onRestoreFile">
+                <input ref="restoreInput" type="file" accept=".json" style="display: none;" @change="onRestoreFile">
             </template>
         </section>
 

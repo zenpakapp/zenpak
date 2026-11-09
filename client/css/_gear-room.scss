@@ -186,8 +186,17 @@
 
         &.lpGRCheckCol { width: 36px; }
         &.lpGRImgCol { width: 56px; }
-        &.lpGRStarCol { text-align: center; width: 36px; }
-        &.lpGRWeightCol, &.lpGRPriceCol { text-align: right; width: 90px; }
+
+        &.lpGRStarCol {
+            text-align: center;
+            width: 36px;
+        }
+
+        &.lpGRWeightCol,
+        &.lpGRPriceCol {
+            text-align: right;
+            width: 90px;
+        }
         &.lpGRCategoryCol { width: 130px; }
     }
 
@@ -196,10 +205,19 @@
         padding: 8px 12px;
         vertical-align: middle;
 
-        &.lpGRCheckCol { text-align: center; width: 36px; }
+        &.lpGRCheckCol {
+            text-align: center;
+            width: 36px;
+        }
         &.lpGRImgCol { width: 56px; }
-        &.lpGRStarCol { text-align: center; width: 36px; }
-        &.lpGRWeightCol, &.lpGRPriceCol { text-align: right; }
+
+        &.lpGRStarCol {
+            text-align: center;
+            width: 36px;
+        }
+
+        &.lpGRWeightCol,
+        &.lpGRPriceCol { text-align: right; }
     }
 
     tr {

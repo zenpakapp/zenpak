@@ -47,15 +47,18 @@
 }
 
 .guestSettingsSelect {
+    background: transparent;
     border: 1px solid $color-border;
     border-radius: $radius-sm;
-    background: transparent;
     color: $color-text;
+    cursor: pointer;
     font-size: 13px;
     padding: 3px 6px;
-    cursor: pointer;
 
-    &:focus { outline: none; border-color: $color-accent; }
+    &:focus {
+        border-color: $color-accent;
+        outline: none;
+    }
 }
 
 .guestSettingsDivider {
@@ -65,13 +68,13 @@
 }
 
 .guestSettingsListItem {
+    color: $color-text;
     cursor: pointer;
     font-size: 13px;
-    padding: 3px 0;
-    color: $color-text;
-    white-space: nowrap;
     overflow: hidden;
+    padding: 3px 0;
     text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover { color: $color-accent; }
 

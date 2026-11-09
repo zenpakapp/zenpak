@@ -1,45 +1,45 @@
 @import "globals";
 
 .lpImportTextarea {
+    background: $color-surface-elevated;
     border: 1px solid $color-border;
     border-radius: 4px;
-    font-size: 13px;
-    font-family: monospace;
-    padding: 8px 10px;
-    width: 100%;
     box-sizing: border-box;
-    background: $color-surface-elevated;
     color: $color-text;
+    font-family: monospace;
+    font-size: 13px;
+    padding: 8px 10px;
     resize: vertical;
+    width: 100%;
 
     &:focus {
-        outline: none;
         border-color: $color-accent;
+        outline: none;
     }
 }
 
 .lpImportUrlInput {
+    background: $color-surface-elevated;
     border: 1px solid $color-border;
     border-radius: 4px;
+    box-sizing: border-box;
+    color: $color-text;
     font-size: 14px;
     padding: 8px 10px;
     width: 100%;
-    box-sizing: border-box;
-    background: $color-surface-elevated;
-    color: $color-text;
 
     &:focus {
-        outline: none;
         border-color: $color-accent;
+        outline: none;
     }
 }
 
 #importValidate {
+    background: $color-bg;
     height: min(500px, calc(100dvh - 48px));
     overflow-x: hidden;
     overflow-y: scroll;
     width: min(650px, calc(100vw - 32px));
-    background: $color-bg;
 
     .lpButton {
         margin-bottom: 30px;
@@ -77,12 +77,6 @@
             background: rgba(var(--color-danger-rgb), 0.1);
             border-color: rgba(var(--color-danger-rgb), 0.24);
             color: $color-danger;
-        }
-
-        &.isAmbiguous {
-            background: rgba(var(--color-warning-rgb), 0.12);
-            border-color: rgba(var(--color-warning-rgb), 0.32);
-            color: $color-text;
         }
 
         &.isAmbiguous {
@@ -143,7 +137,12 @@
 
 .importReview {
     margin-bottom: 20px;
-    h3 { font-size: 14px; font-weight: 700; margin: 0 0 10px; }
+
+    h3 {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0 0 10px;
+    }
 }
 
 .importReviewRow {
@@ -169,9 +168,27 @@
         margin-top: 10px;
     }
 }
-.importReviewLabel { color: $color-text-muted; font-size: 11px; font-weight: 700; margin: 0 0 2px; text-transform: uppercase; }
-.importReviewName { font-size: 13px; font-weight: 600; margin: 0 0 2px; }
-.importReviewMeta { color: $color-text-muted; font-size: 12px; margin: 0; }
+
+.importReviewLabel {
+    color: $color-text-muted;
+    font-size: 11px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+}
+
+.importReviewName {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 2px;
+}
+
+.importReviewMeta {
+    color: $color-text-muted;
+    font-size: 12px;
+    margin: 0;
+}
+
 .importReviewActions {
     border-top: 1px solid $color-border;
     display: flex;
@@ -182,7 +199,11 @@
     margin-top: 6px;
     padding-top: 10px;
 }
-.lpButtonSm { font-size: 12px; padding: 4px 10px; }
+
+.lpButtonSm {
+    font-size: 12px;
+    padding: 4px 10px;
+}
 
 @media (max-width: 640px) {
     .importReviewCol {
@@ -197,4 +218,3 @@
         align-self: stretch;
     }
 }
-

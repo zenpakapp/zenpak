@@ -19,13 +19,12 @@
 
     @media (max-width: 768px) {
         padding: 0 12px;
+        width: 100%;
 
         .lpHasSidebar & {
             margin-left: 0;
             max-width: 100%;
         }
-
-        width: 100%;
     }
 }
 
