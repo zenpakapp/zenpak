@@ -106,7 +106,7 @@
 }
 
 .lpTemplatePickerError {
-    color: #dc3545;
+    color: $color-danger;
     font-size: $fontSize-xs;
     margin: 0;
 }

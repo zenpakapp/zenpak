@@ -55,6 +55,11 @@
     }
 }
 
+/* The modal styles every input and paragraph with more weight than a single class. */
+.profileSettings .profileSettingsInput.profileSettingsInputInvalid {
+    border-color: $color-danger;
+}
+
 .profileSettingsTextarea {
     min-height: 80px;
     padding: 10px 12px;
@@ -133,6 +138,12 @@
     margin-bottom: 20px;
 }
 
+.profileSettings .profileSettingsActionError {
+    color: $color-danger;
+    font-size: $fontSize-sm;
+    margin: 8px 0 0;
+}
+
 .profileSettingsCheckbox {
     align-items: center;
     color: $color-text;
@@ -209,7 +220,14 @@
 
         <div class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.displayName') }}</span>
-            <input type="text" class="profileSettingsInput" :value="draftProfile.displayName" @input="update('displayName', $event.target.value)">
+            <input
+                type="text"
+                class="profileSettingsInput"
+                :class="{ profileSettingsInputInvalid: displayNameReserved }"
+                :aria-invalid="displayNameReserved ? 'true' : null"
+                :value="draftProfile.displayName"
+                @input="update('displayName', $event.target.value)"
+            >
         </div>
 
         <template v-if="hasProfileCustomization">
@@ -234,7 +252,9 @@
             <button class="lpButton" :disabled="profileSaving" @click="saveProfile">
                 {{ profileSaved ? $t('acct.saved') : $t('acct.saveProfile') }}
             </button>
-            <span v-if="profileError" class="profileSettingsAvatarError">{{ profileError }}</span>
+            <p v-if="profileError" class="profileSettingsActionError" role="alert">
+                {{ profileError }}
+            </p>
         </div>
     </section>
 </template>
@@ -258,6 +278,7 @@ export default {
             profileSaving: false,
             profileSaved: false,
             profileError: null,
+            displayNameReserved: false,
             draftProfile: {
                 displayName: '',
                 trailName: '',
@@ -347,6 +368,7 @@ export default {
             this.draftProfile = { ...this.draftProfile, [field]: value };
             this.profileSaved = false;
             this.profileError = null;
+            this.displayNameReserved = false;
         },
         updateDefaultUnit(field, value) {
             this.$store.commit('setDefaultUnits', {
@@ -387,8 +409,10 @@ export default {
             this.profileSaving = true;
             this.profileSaved = false;
             this.profileError = null;
+            this.displayNameReserved = false;
             if (isReservedDisplayName(this.draftProfile.displayName)) {
                 this.profileSaving = false;
+                this.displayNameReserved = true;
                 this.profileError = this.$t('auth.displayNameReserved');
                 return;
             }
