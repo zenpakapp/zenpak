@@ -60,6 +60,11 @@ test.describe("avatar upload", () => {
     await expect(page.locator(".profileSettingsAvatarError")).toContainText(
       /too large.*2 MB/,
     );
+    // The modal styles paragraphs in the muted grey; the error keeps its own red.
+    await expect(page.locator(".profileSettingsAvatarError")).toHaveCSS(
+      "color",
+      "rgb(206, 24, 54)",
+    );
     expect(uploaded).toBe(false);
   });
 
