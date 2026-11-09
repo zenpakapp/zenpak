@@ -33,7 +33,7 @@
 
     &.lpActive {
         background: rgba(var(--color-accent-rgb), 0.08);
-        color: $color-accent;
+        color: $color-accent-text;
         font-weight: $fontWeight-bold;
 
         .lpRemove {
