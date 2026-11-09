@@ -84,8 +84,8 @@
 .accountActions {
     align-items: center;
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
+    gap: 12px;
     margin-top: 20px;
 
     .lpButton {
@@ -129,8 +129,8 @@
 
 .accountBackupActions {
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
+    gap: 12px;
 }
 
 .accountRestoreConfirm {
@@ -191,8 +191,8 @@
 
 .accountBillingActions {
     display: flex;
-    gap: 16px;
     flex-wrap: wrap;
+    gap: 16px;
 }
 
 .accountBillingOption {
@@ -219,16 +219,16 @@
 
 @media (max-width: 640px) {
     .accountActions {
-        flex-direction: column;
         align-items: stretch;
+        flex-direction: column;
 
         .lpButton {
             width: 100%;
         }
 
         .accountActionsRight {
-            margin-left: 0;
             justify-content: space-between;
+            margin-left: 0;
         }
     }
 }

@@ -189,7 +189,10 @@
     .itemDetailFetchBtn {
         white-space: nowrap;
 
-        &:disabled { cursor: default; opacity: 0.5; }
+        &:disabled {
+            cursor: default;
+            opacity: 0.5;
+        }
     }
 
     .itemDetailFetchError {

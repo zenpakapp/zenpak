@@ -17,13 +17,13 @@
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
     left: 50%;
     max-height: calc(90vh - #{$spacingLarge} * 2);
+    max-width: calc(100vw - #{$spacingLarge} * 2);
     overflow-y: auto;
     padding: 28px;
     position: fixed;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
     width: 640px;
-    max-width: calc(100vw - #{$spacingLarge} * 2);
     z-index: $dialog + 1;
 }
 
@@ -209,10 +209,10 @@
 
 .lpTemplatePickerCardDesc {
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
     color: $color-text-muted;
     display: -webkit-box;
     font-size: $fontSize-sm;
+    -webkit-line-clamp: 4;
     margin: 0;
     overflow: hidden;
 }

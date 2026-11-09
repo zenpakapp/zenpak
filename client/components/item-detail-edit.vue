@@ -122,7 +122,7 @@
                     @drop.prevent="onImageDrop"
                     @click="$refs.imageFileInput.click()"
                 >
-                    <input ref="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" @change="onImageFileChange">
+                    <input ref="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp" style="display: none;" @change="onImageFileChange">
                     <template v-if="editImageUploading">
                         <span class="itemDetailDropZoneUploading">{{ $t('item.editImageUploading') }}</span>
                     </template>

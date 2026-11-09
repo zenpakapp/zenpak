@@ -258,17 +258,21 @@ export default {
 }
 
 .lpAddItemInput {
-    border-radius: $radius-sm;
+    background: transparent;
     border: none;
     border-bottom: 1px solid $color-border;
-    background: transparent;
+    border-radius: $radius-sm;
     color: $color-text;
     font-size: $fontSize-base;
+    max-width: 260px;
     min-height: 42px;
     padding: 8px 10px;
     width: 100%;
-    max-width: 260px;
-    &:focus { outline: none; border-bottom-color: $color-accent; }
+
+    &:focus {
+        border-bottom-color: $color-accent;
+        outline: none;
+    }
 }
 
 .lpAddItemCell {
@@ -310,7 +314,7 @@ export default {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-sm;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     left: 0;
     list-style: none;
     margin: 0;
@@ -330,7 +334,19 @@ export default {
     &:hover { background: rgba(var(--color-accent-rgb), 0.07); }
 }
 
-.lpSuggestionName { flex: 1; font-size: $fontSize-sm; }
-.lpSuggestionBrand { color: $color-text-muted; font-size: $fontSize-sm; }
-.lpSuggestionWeight { color: $color-text-muted; font-size: $fontSize-sm; white-space: nowrap; }
+.lpSuggestionName {
+    flex: 1;
+    font-size: $fontSize-sm;
+}
+
+.lpSuggestionBrand {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+}
+
+.lpSuggestionWeight {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    white-space: nowrap;
+}
 </style>

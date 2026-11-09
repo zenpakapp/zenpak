@@ -144,7 +144,7 @@
                                 v-for="list in featuredLists"
                                 :key="'f-' + list.externalId"
                                 class="lpCommunityCard lpCommunityCardFeatured"
-                                style="cursor:pointer"
+                                style="cursor: pointer;"
                                 @click="$router.push(communityListTo(list))"
                             >
                                 <div class="lpCommunityCardName">
@@ -177,7 +177,7 @@
                             v-for="list in nonFeaturedLists"
                             :key="list.externalId"
                             class="lpCommunityCard"
-                            style="cursor:pointer"
+                            style="cursor: pointer;"
                             @click="$router.push(communityListTo(list))"
                         >
                             <div class="lpCommunityCardName">

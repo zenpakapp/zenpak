@@ -62,7 +62,7 @@
                         </button>
                     </template>
                     <template v-else-if="resendSent">
-                        <p class="lpVerifyMessage" style="margin:0 0 16px;">
+                        <p class="lpVerifyMessage" style="margin: 0 0 16px;">
                             {{ $t('auth.newLinkSent') }}
                         </p>
                         <button class="lpButton lpButtonSecondary" @click="goToPack">

@@ -71,11 +71,11 @@
     left: 0;
     list-style: none;
     margin: 0;
+    max-height: 188px;
+    overflow-y: auto;
     padding: 4px 0;
     position: absolute;
     right: 0;
-    max-height: 188px;
-    overflow-y: auto;
     top: calc(100% + 4px);
     z-index: 10;
 }

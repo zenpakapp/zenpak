@@ -31,7 +31,8 @@
         margin: 32px 0 8px;
     }
 
-    p, li {
+    p,
+    li {
         color: $color-text-muted;
         font-size: 15px;
         line-height: 1.6;

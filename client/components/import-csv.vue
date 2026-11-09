@@ -108,7 +108,7 @@
                 :placeholder="$t('library.textImportPlaceholder')"
                 rows="10"
             />
-            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">{{ $t('library.textImportListNameLabel') }}</label>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px;">{{ $t('library.textImportListNameLabel') }}</label>
             <input
                 v-model="textName"
                 class="lpImportUrlInput"
@@ -135,7 +135,7 @@
                 :placeholder="$t('library.lpImportUrlPlaceholder')"
                 @keyup.enter="importFromLP"
             >
-            <label style="display:block; font-size:13px; font-weight:600; margin: 14px 0 6px;">{{ $t('library.lpImportListNameLabel') }}</label>
+            <label style="display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px;">{{ $t('library.lpImportListNameLabel') }}</label>
             <input
                 v-model="lpName"
                 class="lpImportUrlInput"
