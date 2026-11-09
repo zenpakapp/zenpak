@@ -151,10 +151,10 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
     text-transform: uppercase;
 }
 
-.lpWelcomeFeatureTitle {
-    font-size: 20px;
+.lpWelcomeFeatureItem .lpWelcomeFeatureTitle {
+    font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
-    margin: 0;
+    margin: 0 0 $spacingMedium;
 }
 
 .lpWelcomeFeatureText {
