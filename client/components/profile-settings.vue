@@ -127,7 +127,7 @@
     cursor: pointer;
 }
 
-.profileSettingsAvatarError {
+.profileSettings .profileSettingsAvatarError {
     color: $color-danger;
     font-size: $fontSize-xs;
     margin: 4px 0 0;
