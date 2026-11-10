@@ -21,7 +21,7 @@ test("has title", async ({ page }) => {
   await expect(page).toHaveScreenshot();
 });
 
-test("welcome page prioritizes account creation while keeping sign in and skip visible", async ({
+test("welcome page prioritizes account creation while keeping sign in and no-account use visible", async ({
   page,
 }) => {
   await page.goto(testRoot);
@@ -36,7 +36,7 @@ test("welcome page prioritizes account creation while keeping sign in and skip v
     page.getByRole("heading", { name: "Sign in" }).first(),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Skip account for now" }),
+    page.getByRole("link", { name: "Continue without an account" }),
   ).toBeVisible();
   await expect(page.getByAltText("Gear library")).toBeVisible();
   await expect(

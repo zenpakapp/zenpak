@@ -49,7 +49,7 @@
     "checkInboxMessage": "Enviamos un enlace de verificación a tu correo. Haz clic en él para desbloquear el compartir público en ZenPak. Revisa también el spam.",
     "confirmPassword": "Confirmar contraseña",
     "register": "Registrarse",
-    "skipForNow": "Saltar por ahora",
+    "skipForNow": "Continuar sin cuenta",
     "usernameRequired": "Por favor ingresa un nombre de usuario.",
     "usernameLengthError": "Por favor ingresa un nombre de usuario entre 3 y 32 caracteres.",
     "usernameFormatError": "Los nombres de usuario solo pueden contener minúsculas, números o guiones bajos.",

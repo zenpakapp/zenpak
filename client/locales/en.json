@@ -49,7 +49,7 @@
     "checkInboxMessage": "We sent a verification link to your email. Click it to unlock public sharing on ZenPak. Check your spam folder too.",
     "confirmPassword": "Confirm password",
     "register": "Register",
-    "skipForNow": "Skip account for now",
+    "skipForNow": "Continue without an account",
     "usernameRequired": "Please enter a username.",
     "usernameLengthError": "Please enter a username between 3 and 32 characters.",
     "usernameFormatError": "Usernames can only contain lowercase letters, numbers, or underscores.",
