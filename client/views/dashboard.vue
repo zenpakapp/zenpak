@@ -73,7 +73,7 @@
                         <button class="lpForkSourceDismiss" type="button" :title="$t('dash.hideSourceListInfoAction')" @click="dismissSourceListInfoAction">×</button>
                     </span>
                 </span>
-                <span class="headerItem headerIconItem">
+                <span v-if="!isSignedIn" class="headerItem headerIconItem">
                     <themeToggle />
                 </span>
                 <span v-if="isSignedIn" class="headerItem headerIconItem">

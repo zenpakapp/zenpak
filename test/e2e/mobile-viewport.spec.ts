@@ -55,9 +55,8 @@ test.describe("signed in", () => {
       `mh${now}@lighterpack.com`,
     );
     await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
-    // The theme toggle is a line icon like the bell, not a text glyph (emoji on iOS).
-    await expect(page.locator(".lpThemeItem svg")).toBeVisible();
-    await expect(page.locator(".lpThemeItem")).toHaveText("");
+    // The theme toggle lives in the account menu once signed in, not in the header.
+    await expect(page.locator("#header .lpThemeItem")).toHaveCount(0);
     // Share and list settings use line icons too, not the old black sprite images.
     await expect(page.locator("#header svg.lpHeaderIcon")).toHaveCount(3);
     // Worst case header: the Wayfarer link and the "unpublished changes" badge.
