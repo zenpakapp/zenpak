@@ -84,6 +84,9 @@
                     </span>
                 </li>
             </ul>
+            <div v-if="$slots.default" class="lpTotalsActions">
+                <slot />
+            </div>
         </div>
     </div>
 </template>

@@ -44,13 +44,11 @@
                 </router-link>
             </p>
         </div>
-        <list-summary v-if="!isListNew" :list="list" />
-
-        <div v-if="!isListNew && !isPackingMode" style="margin-bottom: 10px;">
-            <button class="lpPackBtn" @click="enterPackingMode">
+        <list-summary v-if="!isListNew" :list="list">
+            <button v-if="!isPackingMode" class="lpPackBtn" @click="enterPackingMode">
                 🎒 {{ $t('list.packThis') }}
             </button>
-        </div>
+        </list-summary>
 
         <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.guestHint') }}</span>
