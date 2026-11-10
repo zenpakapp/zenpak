@@ -26,7 +26,8 @@ test("the community hint disappears after following its link", async ({
   await hint.locator(".lpCommunityHintCta").click();
   await expect(page).toHaveURL(/\/community/);
 
-  await page.goto("/");
+  // Back in the editor without a reload, which would race the save of the imported list.
+  await page.goBack();
   await expect(page.locator(".lpItem").first()).toBeVisible({ timeout: 35000 });
   await expect(page.locator(".lpCommunityHint")).toHaveCount(0);
 });
