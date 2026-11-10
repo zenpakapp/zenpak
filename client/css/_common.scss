@@ -444,6 +444,7 @@ textarea::placeholder {
     border-radius: $radius-md;
     color: $color-text;
     padding: 10px 12px;
+    text-wrap: pretty;
 }
 
 #lpImageDialog {
