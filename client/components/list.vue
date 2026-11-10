@@ -181,18 +181,22 @@ export default {
         categoryItemStats() {
             const itemIds = [];
             let hasItems = false;
+            let hasContent = false;
 
             this.categories.forEach((category) => {
                 category.categoryItems.forEach((categoryItem) => {
                     hasItems = true;
                     itemIds.push(categoryItem.itemId);
+                    const item = this.library.getItemById(categoryItem.itemId);
+                    if (item && (item.name || item.weight > 0)) hasContent = true;
                 });
             });
 
-            return { hasItems, itemIds };
+            return { hasItems, hasContent, itemIds };
         },
         isListNew() {
-            return this.list.totalWeight === 0 && !this.categoryItemStats.hasItems;
+            // A blank list holds one unnamed, weightless item: it still counts as a new list.
+            return this.list.totalWeight === 0 && !this.categoryItemStats.hasContent;
         },
         allItemIds() {
             return this.categoryItemStats.itemIds;
