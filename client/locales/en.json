@@ -1039,6 +1039,8 @@
     "editLabelImageOptional": "(optional)",
     "editLabelTags": "Tags",
     "editPlaceholderName": "Item name",
+    "nameSuggestionsLabel": "Gear Room suggestions",
+    "nameSuggestionsStatus": "Gear Room suggestions: {count}. Use the up and down arrow keys, then Enter to choose.",
     "editPlaceholderDescription": "Description",
     "editPlaceholderType": "ex: Shelter",
     "editPlaceholderUrl": "https://…",

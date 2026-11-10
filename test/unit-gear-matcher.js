@@ -79,5 +79,21 @@ assert('typing the brand finds the item', suggestItems('black', library)[0] === 
 assert('typing a name still ranks it first', suggestItems('vector', library)[0] === library[1]);
 assert('a word nowhere in the item finds nothing', suggestItems('xylophone', library).length === 0);
 
+// Typing a brand must not list unrelated items that only look alike by chance.
+const gearRoom = [
+    { name: 'Batterie externe', brand: 'Nitecore', weight: g(280), category: 'Electronics' },
+    { name: 'Batterie externe', brand: 'Nitecore', weight: g(150), category: 'Electronics' },
+    { name: 'Frontale', brand: 'Nitecore', weight: g(34), category: 'Electronics' },
+    { name: 'Porte-gourde', brand: '', weight: 0, category: 'Water' },
+    { name: 'Debit card', brand: '', weight: g(5), category: 'Essentials' },
+    { name: 'Vector', description: 'Casque', brand: 'Black Diamond', weight: g(240), category: 'Safety' },
+];
+const nitecore = suggestItems('nitecore', gearRoom, 'Electronics');
+assert('a brand lists only that brand\'s items', nitecore.length === 3 && nitecore.every((i) => i.brand === 'Nitecore'));
+assert('a category boost never rescues an unrelated item', suggestItems('nitecore', gearRoom, 'Water').every((i) => i.brand === 'Nitecore'));
+assert('one typo in a word still finds the item', suggestItems('nitcore', gearRoom).length === 3);
+assert('a typo in a full name still finds it', suggestItems('Frontal', gearRoom)[0] === gearRoom[2]);
+assert('unrelated letters find nothing', suggestItems('zqxw', gearRoom).length === 0);
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
