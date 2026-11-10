@@ -24,18 +24,26 @@
     }
 }
 
+// The details control is a chevron that stays visible at rest: it is the only way into the
+// item dialog besides a double-click, so it must be seen without hovering.
 .lpEdit {
     background: none !important;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 14px;
-    height: auto;
-    line-height: 1;
-    visibility: hidden;
-    width: auto;
+    height: 14px;
+    position: relative;
+    width: 14px;
 
     &::before {
-        content: "✎";
+        border-right: 2px solid currentColor;
+        border-top: 2px solid currentColor;
+        content: "";
+        height: 7px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-70%, -50%) rotate(45deg);
+        width: 7px;
     }
 
     &:hover {
@@ -54,7 +62,9 @@
     .lpDown {
         cursor: pointer;
         left: 0;
-        margin: 2px;
+        // Offset minus the 6px padding of the hit area; 4px higher than before so the pair
+        // is centred on the quantity field.
+        margin: -8px -4px;
         opacity: 0.5;
         position: absolute;
         top: 0;
@@ -166,6 +176,20 @@
 .lpItem .lpActionsCell .lpActionBtn.lpStar3,
 .lpItem .lpActionsCell .lpActionBtn:hover,
 .lpItem .lpActionsCell .lpActionBtn:focus-visible {
+    opacity: 1;
+}
+
+.lpItem .lpActionsCell .lpEdit {
+    opacity: 0.5;
+}
+
+.lpItem:hover .lpActionsCell .lpEdit,
+.lpItem:focus-within .lpActionsCell .lpEdit {
+    opacity: 0.75;
+}
+
+.lpItem .lpActionsCell .lpEdit:hover,
+.lpItem .lpActionsCell .lpEdit:focus-visible {
     opacity: 1;
 }
 

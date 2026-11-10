@@ -63,11 +63,22 @@ test("item row actions and fields are reachable and named for the keyboard", asy
   await expect(optional).toHaveAttribute("aria-pressed", "true");
 
   // Each action has a hit area of at least 24px, as WCAG 2.2 asks.
-  const boxes = await row.locator(".lpActionsCell .lpActionBtn").evaluateAll((els) =>
-    els.map((el) => {
-      const r = el.getBoundingClientRect();
-      return Math.min(r.width, r.height);
-    }),
-  );
+  const boxes = await row
+    .locator(".lpActionsCell .lpActionBtn")
+    .evaluateAll((els) =>
+      els.map((el) => {
+        const r = el.getBoundingClientRect();
+        return Math.min(r.width, r.height);
+      }),
+    );
   for (const size of boxes) expect(size).toBeGreaterThanOrEqual(24);
+
+  // The details control is visible at rest, without hover or focus.
+  await page.mouse.move(2, 2);
+  await page
+    .locator("#header")
+    .focus()
+    .catch(() => {});
+  const resting = page.locator(".lpItem").nth(1).locator(".lpEdit");
+  await expect(resting).toHaveCSS("opacity", "0.5");
 });
