@@ -92,7 +92,7 @@
 
         <hr>
 
-        <a v-if="!isPackingMode" class="lpAdd addCategory" @click="newCategory"><i class="lpSprite lpSpriteAdd" />{{ $t('list.addCategory') }}</a>
+        <a v-if="!isPackingMode" class="lpAdd addCategory" role="button" tabindex="0" @click="newCategory" @keydown.enter="newCategory" @keydown.space.prevent="newCategory"><i class="lpSprite lpSpriteAdd" />{{ $t('list.addCategory') }}</a>
     </div>
 </template>
 

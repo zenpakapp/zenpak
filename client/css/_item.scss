@@ -118,3 +118,124 @@
     font-size: $fontSize-sm;
     padding: 0 4px;
 }
+
+// Row actions are real buttons that keep the sprite look. They stay in the tab order while
+// hidden (opacity, not visibility) and appear on hover and when focus is inside the row.
+:where(button.lpActionBtn) {
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    color: inherit;
+    font: inherit;
+}
+
+.lpActionBtn {
+    // A 26px hit area around the 14px icon; the margin keeps the layout as it was.
+    background-clip: content-box;
+    background-origin: content-box;
+    box-sizing: content-box;
+    cursor: pointer;
+    flex: none;
+    margin: -6px;
+    -webkit-mask-clip: content-box;
+    mask-clip: content-box;
+    -webkit-mask-origin: content-box;
+    mask-origin: content-box;
+    padding: 6px;
+
+    &:focus-visible {
+        border-radius: $radius-sm;
+        outline: 2px solid $color-accent;
+        outline-offset: 1px;
+    }
+}
+
+.lpItem .lpActionsCell .lpActionBtn {
+    opacity: 0;
+    visibility: visible;
+}
+
+.lpItem:hover .lpActionsCell .lpActionBtn,
+.lpItem:focus-within .lpActionsCell .lpActionBtn {
+    opacity: 0.32;
+}
+
+.lpItem .lpActionsCell .lpActionBtn.lpActive,
+.lpItem .lpActionsCell .lpActionBtn.lpStar1,
+.lpItem .lpActionsCell .lpActionBtn.lpStar2,
+.lpItem .lpActionsCell .lpActionBtn.lpStar3,
+.lpItem .lpActionsCell .lpActionBtn:hover,
+.lpItem .lpActionsCell .lpActionBtn:focus-visible {
+    opacity: 1;
+}
+
+.lpItem .lpRemoveItem,
+.lpItemsHeader .lpRemoveCategory {
+    opacity: 0;
+    visibility: visible;
+}
+
+.lpItem:hover .lpRemoveItem,
+.lpItem:focus-within .lpRemoveItem,
+.lpItemsHeader:hover .lpRemoveCategory,
+.lpItemsHeader:focus-within .lpRemoveCategory {
+    opacity: 0.4;
+}
+
+.lpItem .lpRemoveItem:focus-visible,
+.lpItemsHeader .lpRemoveCategory:focus-visible {
+    opacity: 1;
+    outline: 2px solid $color-accent;
+    outline-offset: 1px;
+}
+
+// Touch screens and narrow windows have no hover: the actions are always shown.
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+    .lpItem .lpActionsCell .lpActionBtn {
+        opacity: 0.55;
+    }
+
+    .lpItem .lpActionsCell .lpActionBtn.lpActive,
+    .lpItem .lpActionsCell .lpActionBtn.lpStar1,
+    .lpItem .lpActionsCell .lpActionBtn.lpStar2,
+    .lpItem .lpActionsCell .lpActionBtn.lpStar3 {
+        opacity: 1;
+    }
+
+    .lpItem .lpRemoveItem,
+    .lpItemsHeader .lpRemoveCategory {
+        opacity: 0.4;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .lpItem .lpActionsCell {
+        gap: 8px;
+    }
+
+    .lpItem .lpRemoveItem {
+        padding: 9px;
+    }
+
+    // Two 7px arrows stacked cannot be tapped: put them side by side with a 25px target each.
+    .lpArrows {
+        height: 25px;
+        width: 56px;
+
+        .lpUp,
+        .lpDown {
+            margin: 0;
+            padding: 9px;
+            top: 0;
+        }
+
+        .lpUp {
+            left: 0;
+        }
+
+        .lpDown {
+            left: 28px;
+            top: 0;
+        }
+    }
+}

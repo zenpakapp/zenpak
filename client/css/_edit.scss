@@ -16,6 +16,13 @@
         outline: none;
     }
 
+    // One clear ring for keyboard focus, in place of the thin border.
+    &:focus-visible {
+        border-color: transparent;
+        outline: 2px solid $color-accent;
+        outline-offset: 0;
+    }
+
     &.lpSilentError {
         background-color: lighten(desaturate($red1, 10%), 40%);
         border: 1px solid $red1;

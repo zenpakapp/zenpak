@@ -5,7 +5,7 @@
                 <span class="lpHandleCell">
                     <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" />
                 </span>
-                <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :disabled="isPackingMode" @input="updateCategoryName">
+                <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" :disabled="isPackingMode" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
                 <span class="lpWeightCell">{{ $t('public.weight') }}</span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
@@ -38,8 +38,8 @@
                         @blur="commitNewItemOnBlur"
                     >
                     <span v-else class="lpAddItemActions">
-                        <a class="lpAdd lpAddItem" @click="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
-                        <a class="lpAdd lpAddItemWithDetails" @click="createAndOpenEditor">{{ $t('misc.addItemWithDetails') }}</a>
+                        <a class="lpAdd lpAddItem" role="button" tabindex="0" @click="showAddInput" @keydown.enter="showAddInput" @keydown.space.prevent="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
+                        <a class="lpAdd lpAddItemWithDetails" role="button" tabindex="0" @click="createAndOpenEditor" @keydown.enter="createAndOpenEditor" @keydown.space.prevent="createAndOpenEditor">{{ $t('misc.addItemWithDetails') }}</a>
                     </span>
                     <ul v-if="showSuggestions" class="lpSuggestions">
                         <li
