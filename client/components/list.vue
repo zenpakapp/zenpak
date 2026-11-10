@@ -72,10 +72,14 @@
 
         <div style="clear: both;" />
 
-        <div v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
-            <h3>{{ $t('list.listDescription') }}</h3> <p>{{ $t('list.descriptionHelp') }}</p>
+        <details v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
+            <summary class="lpListDescriptionSummary">
+                <h3>{{ $t('list.listDescription') }}</h3>
+                <span v-if="list.description" class="lpListDescriptionPreview">{{ list.description }}</span>
+            </summary>
+            <p>{{ $t('list.descriptionHelp') }}</p>
             <textarea id="listDescription" v-model="list.description" :maxlength="descriptionMaxLength" @input="updateListDescription" />
-        </div>
+        </details>
 
         <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
             <category
