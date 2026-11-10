@@ -172,6 +172,17 @@ export default {
             if (!this.library || typeof this.library.renderChart !== 'function') return;
             const chartData = this.library.renderChart();
 
+            if (!chartData) {
+                // No weight to draw (empty list, or switched to one): drop the previous list's donut.
+                if (this.chart && typeof this.chart.destroy === 'function') {
+                    this.chart.destroy();
+                    this.chart = null;
+                }
+                const canvas = this.$refs.chartCanvas;
+                const context = canvas && canvas.getContext('2d');
+                if (context) context.clearRect(0, 0, canvas.width, canvas.height);
+            }
+
             if (chartData) {
                 this.chart = markRaw(await renderListChart({
                     chart: this.chart,
