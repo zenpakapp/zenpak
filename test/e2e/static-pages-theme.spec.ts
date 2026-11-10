@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 // The pages the server renders (pricing, privacy, terms, legal notice) follow the same light / dark
 // choice as the app: the stored choice wins, otherwise the system setting decides.
-const LIGHT = "rgb(247, 243, 235)";
+const LIGHT = "rgb(241, 243, 239)";
 const DARK = "rgb(17, 17, 17)";
 const PAGES = ["/pricing", "/privacy", "/terms", "/legal"];
 

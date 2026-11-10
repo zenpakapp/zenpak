@@ -2,7 +2,7 @@
    Same light / dark / auto logic as the app (client/css/_theme-vars.scss): the choice made in the
    app is read by /js/theme-init.js, and without a choice the system setting decides. */
 :root {
-    --p-bg: #F7F3EB;
+    --p-bg: #F1F3EF;
     --p-surface: #FFFFFF;
     --p-text: #1A1A1A;
     --p-muted: #656B78;
