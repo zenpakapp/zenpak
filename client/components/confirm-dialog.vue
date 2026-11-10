@@ -9,6 +9,7 @@
         font-size: $fontSize-sm;
         line-height: 1.5;
         margin: 0 0 20px;
+        text-wrap: pretty;
     }
 }
 </style>

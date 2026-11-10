@@ -9,7 +9,10 @@
     font-size: 11px;
     padding: 2px 6px;
 
-    &:hover { color: var(--color-warning, #e53e3e); }
+    &:hover {
+        color: $color-text;
+        text-decoration: underline;
+    }
 }
 
 .lpReportModal {
@@ -17,9 +20,9 @@
     border: 1px solid $color-border;
     border-radius: $radius-md;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    left: 0;
     padding: 16px;
     position: absolute;
-    right: 0;
     top: calc(100% + 4px);
     width: 220px;
     z-index: 100;
@@ -57,7 +60,7 @@
 }
 
 .lpReportSubmit {
-    background: var(--color-warning, #e53e3e);
+    background: $color-danger-solid;
     border: none;
     border-radius: $radius-sm;
     color: #fff;
