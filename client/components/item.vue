@@ -18,8 +18,8 @@
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
-            <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" :aria-label="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" :aria-label="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
             <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
             <span v-if="hasItemMeta" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
@@ -27,31 +27,31 @@
             </span>
         </span>
         <span v-if="!isPackingMode" class="lpActionsCell">
-            <i class="lpSprite lpCamera" :title="$t('item.imageTitle')" @click="updateItemImage" />
-            <i class="lpSprite lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" @click="updateItemLink" />
-            <i class="lpSprite lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" @click="updateItemMeta" />
-            <i v-if="library.optionalFields['worn']" class="lpSprite lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" @click="toggleWorn" />
-            <i v-if="library.optionalFields['consumable']" class="lpSprite lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" @click="toggleConsumable" />
-            <i class="lpSprite lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" @click="toggleOptional" />
-            <i :class="'lpSprite lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" @click="cycleStar" />
-            <i class="lpSprite lpEdit" :title="$t('item.editTitle')" @click="openDetailEdit" />
+            <button type="button" class="lpSprite lpActionBtn lpCamera" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
+            <button type="button" class="lpSprite lpActionBtn lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
+            <button type="button" class="lpSprite lpActionBtn lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" :aria-label="$t('item.metaTitle')" @click="updateItemMeta" />
+            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" @click="toggleWorn" />
+            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" @click="toggleConsumable" />
+            <button type="button" class="lpSprite lpActionBtn lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" :aria-label="$t('item.optionalTitle')" :aria-pressed="categoryItem.qty === 0" @click="toggleOptional" />
+            <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" :aria-label="$t('item.ratingTitle')" @click="cycleStar" />
+            <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price']" class="lpPriceCell">
-            <input v-model="displayPrice" v-empty-if-zero type="text" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
+            <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
         </span>
         <span class="lpWeightCell lpNumber">
-            <input v-model="displayWeight" v-empty-if-zero type="text" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
+            <input v-model="displayWeight" v-empty-if-zero type="text" :aria-label="$t('item.weightLabel', { name: itemLabel })" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
         <span class="lpQtyCell">
-            <input v-model="displayQty" type="text" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
-            <span class="lpArrows">
-                <span class="lpSprite lpUp" @click="incrementQty($event)" />
-                <span class="lpSprite lpDown" @click="decrementQty($event)" />
+            <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <span class="lpArrows" aria-hidden="true">
+                <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" @click="incrementQty($event)" />
+                <button type="button" class="lpSprite lpActionBtn lpDown" tabindex="-1" @click="decrementQty($event)" />
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" :title="$t('item.removeTitle')" @click="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" role="button" tabindex="0" :title="$t('item.removeTitle')" :aria-label="$t('item.removeTitle')" @click="removeItem" @keydown.enter="removeItem" @keydown.space.prevent="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
         </span>
     </li>
 </template>
@@ -103,6 +103,9 @@ export default {
                 return this.item.imageUrl;
             }
             return '';
+        },
+        itemLabel() {
+            return this.item.name || this.$t('gearroom.unnamedItem');
         },
         isPacked() {
             return this.isPackingMode && this.packedItemIds && this.packedItemIds.has(this.item.id);
