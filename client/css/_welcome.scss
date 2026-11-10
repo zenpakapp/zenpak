@@ -19,6 +19,11 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
     margin: 0 auto;
     max-width: 1180px;
     padding: 0 $spacingMedium;
+
+    // A tablet gets a wider gutter than a phone; above this width the margins around the container do it.
+    @media (min-width: 481px) and (max-width: 1240px) {
+        padding: 0 32px;
+    }
 }
 
 .lpWelcomeHero {
