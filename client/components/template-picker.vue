@@ -167,7 +167,7 @@
 }
 
 .lpTemplatePickerSegmentActive {
-    background: $color-accent;
+    background: $color-accent-solid;
     color: #fff;
 }
 

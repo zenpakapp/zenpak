@@ -1,5 +1,12 @@
 @import "globals";
 
+// The browser default placeholder (#757575) is too faint on dark surfaces.
+input::placeholder,
+textarea::placeholder {
+    color: $color-text-muted;
+    opacity: 1;
+}
+
 @mixin lpFocusRing($color: var(--color-accent-rgb)) {
     box-shadow: 0 0 0 3px rgba($color, 0.18);
     outline: none;
@@ -106,7 +113,7 @@
 
 .lpAdd,
 .lpCopy {
-    color: $color-accent;
+    color: $color-accent-text;
     cursor: pointer;
     display: inline-block;
     font-size: $fontSize-sm;
@@ -227,7 +234,7 @@
 
 .lp .lpButton { /* TODO: find out why this specificity is needed */
     align-items: center;
-    background: $color-accent;
+    background: $color-accent-solid;
     border: 1px solid transparent;
     border-radius: $radius-md;
     box-shadow: $shadow-soft;
@@ -465,8 +472,9 @@
 }
 
 #lpWelcomeFooter {
-    background: rgba(255, 255, 255, 0.65);
+    background: $color-surface;
     bottom: 0;
+    color: $color-text-muted;
     display: flex;
     justify-content: space-between;
     left: 0;
@@ -509,7 +517,7 @@
 }
 
 .lpFollowBtn {
-    background: $color-accent;
+    background: $color-accent-solid;
     border: none;
     border-radius: $radius-sm;
     color: #fff;

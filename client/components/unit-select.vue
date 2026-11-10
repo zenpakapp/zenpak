@@ -62,8 +62,8 @@
             padding: 2px 14px;
 
             &:hover {
-                background: $color-accent;
-                color: $color-surface;
+                background: $color-accent-solid;
+                color: #fff;
             }
         }
     }
