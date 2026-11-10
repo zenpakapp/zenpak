@@ -229,7 +229,7 @@ test.describe("Template picker", () => {
   }) => {
     await page.goto(testRoot);
 
-    await page.getByText("Skip account for now").click();
+    await page.getByText("Continue without an account").click();
     await expect(page.getByText("What is your next adventure?")).toBeVisible();
 
     await page

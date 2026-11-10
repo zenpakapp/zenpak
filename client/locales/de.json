@@ -49,7 +49,7 @@
     "checkInboxMessage": "Wir haben einen Verifizierungslink an deine E-Mail gesendet. Klicke darauf, um das öffentliche Teilen auf ZenPak freizuschalten. Prüfe auch deinen Spam-Ordner.",
     "confirmPassword": "Passwort bestätigen",
     "register": "Registrieren",
-    "skipForNow": "Jetzt überspringen",
+    "skipForNow": "Ohne Konto fortfahren",
     "usernameRequired": "Bitte gib einen Benutzernamen ein.",
     "usernameLengthError": "Bitte gib einen Benutzernamen zwischen 3 und 32 Zeichen ein.",
     "usernameFormatError": "Benutzernamen dürfen nur Kleinbuchstaben, Zahlen oder Unterstriche enthalten.",
