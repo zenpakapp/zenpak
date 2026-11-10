@@ -26,6 +26,11 @@
             max-width: 100%;
         }
     }
+
+    // A tablet gets a wider gutter than a phone, so text outside the cards does not touch the edge.
+    @media (min-width: 481px) and (max-width: 768px) {
+        padding: 0 24px;
+    }
 }
 
 @media (hover: none), (pointer: coarse) {
