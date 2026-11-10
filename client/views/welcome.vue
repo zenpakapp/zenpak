@@ -37,7 +37,6 @@
             <div class="lpContainer">
                 <div class="lpWelcomeFeaturesGrid">
                     <div class="lpWelcomeFeatureItem">
-                        <span class="lpWelcomeFeatureNum">01</span>
                         <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature1Title') }}
                         </h2>
@@ -46,7 +45,6 @@
                         </p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
-                        <span class="lpWelcomeFeatureNum">02</span>
                         <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature2Title') }}
                         </h2>
@@ -55,7 +53,6 @@
                         </p>
                     </div>
                     <div class="lpWelcomeFeatureItem">
-                        <span class="lpWelcomeFeatureNum">03</span>
                         <h2 class="lpWelcomeFeatureTitle">
                             {{ $t('welcome.feature3Title') }}
                         </h2>
@@ -73,7 +70,6 @@
 
                 <aside class="lpWelcomeAuthRail">
                     <section class="lpWelcomeCard lpWelcomeCardPrimary">
-                        <span class="lpWelcomeCardKicker">{{ $t('welcome.kickerRegister') }}</span>
                         <h2 class="lpWelcomeCardTitle">
                             {{ $t('welcome.titleRegister') }}
                         </h2>
@@ -96,7 +92,6 @@
                     </section>
 
                     <section class="lpWelcomeCard lpWelcomeCardSecondary">
-                        <span class="lpWelcomeCardKicker">{{ $t('welcome.kickerSignin') }}</span>
                         <h2 class="lpWelcomeCardTitle">
                             {{ $t('welcome.titleSignin') }}
                         </h2>
