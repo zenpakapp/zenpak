@@ -19,7 +19,10 @@ test("the description field is limited and explains links", async ({
   await mockSuccessfulEditorInitialization(page, library);
   await page.goto(testRoot);
 
+  // Folded until opened, so it does not push the list down.
   const field = page.locator("#listDescription");
+  await expect(field).toBeHidden();
+  await page.locator(".lpListDescriptionSummary").click();
   await expect(field).toBeVisible();
   await expect(field).toHaveAttribute("maxlength", "1000");
 
@@ -31,4 +34,12 @@ test("the description field is limited and explains links", async ({
   // Typing past the limit is cut by the browser.
   await field.fill("x".repeat(1200));
   expect((await field.inputValue()).length).toBe(1000);
+
+  // Folded again, the start of the text stays visible on the summary line.
+  await field.fill("Three days in the Vercors");
+  await page.locator(".lpListDescriptionSummary").click();
+  await expect(field).toBeHidden();
+  await expect(page.locator(".lpListDescriptionPreview")).toContainText(
+    "Three days in the Vercors",
+  );
 });

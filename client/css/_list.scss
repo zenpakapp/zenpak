@@ -431,17 +431,72 @@ input.lpCategoryName { /* specificity */
     }
 }
 
+// Folded by default: the title and the start of the text take one line, the field opens on demand.
 #listDescriptionContainer {
-    margin: 25px 0;
+    // The summary above already leaves 20px; a little less below, so the line reads as part of
+    // the list and not as a section of its own.
+    margin: 0 0 16px;
 
-    h3,
-    p {
-        display: inline-block;
-        margin: 0 0 5px;
+    // Body size: the categories are the page's headings, not this line.
+    h3 {
+        font-size: $fontSize-base;
+        font-weight: $fontWeight-medium;
+        margin: 0;
     }
 
-    h3 {
-        margin-right: 10px;
+    // The help sits under the title and is quieter than it.
+    p {
+        color: $color-text-muted;
+        font-size: $fontSize-sm;
+        margin: 6px 0 8px;
+    }
+
+    .lpListDescriptionSummary {
+        align-items: baseline;
+        cursor: pointer;
+        display: flex;
+        gap: 10px;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        // A chevron that turns when the field is open.
+        &::before {
+            border-bottom: 2px solid $color-text-muted;
+            border-right: 2px solid $color-text-muted;
+            content: "";
+            flex: none;
+            height: 6px;
+            transform: rotate(-45deg);
+            transition: transform 0.15s ease;
+            width: 6px;
+        }
+
+        &:focus-visible {
+            border-radius: $radius-sm;
+            outline: 2px solid $color-accent;
+            outline-offset: 3px;
+        }
+    }
+
+    &[open] .lpListDescriptionSummary::before {
+        transform: rotate(45deg);
+    }
+
+    .lpListDescriptionPreview {
+        color: $color-text-muted;
+        flex: 1;
+        font-size: $fontSize-sm;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &[open] .lpListDescriptionPreview {
+        display: none;
     }
 
     textarea {
