@@ -895,6 +895,8 @@
     "editLabelImageOptional": "(optionnel)",
     "editLabelTags": "Tags",
     "editPlaceholderName": "Nom de l'article",
+    "nameSuggestionsLabel": "Suggestions de la Gear Room",
+    "nameSuggestionsStatus": "Suggestions de la Gear Room : {count}. Utilisez les flèches haut et bas, puis Entrée pour choisir.",
     "editPlaceholderDescription": "Description",
     "editPlaceholderType": "ex: Abri",
     "editPlaceholderUrl": "https://…",

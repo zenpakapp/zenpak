@@ -15,7 +15,45 @@
         <form class="itemDetailEditForm" @submit.prevent="saveEdit">
             <div class="itemDetailField">
                 <label>{{ $t('item.editLabelName') }}</label>
-                <input ref="name" v-model="editName" type="text" :placeholder="$t('item.editPlaceholderName')" :autofocus="initialFocus === 'name'">
+                <div class="itemDetailNameWrap">
+                    <input
+                        ref="name"
+                        v-model="editName"
+                        type="text"
+                        autocomplete="off"
+                        role="combobox"
+                        aria-autocomplete="list"
+                        :aria-label="$t('item.editLabelName')"
+                        :aria-expanded="nameSuggestions.length > 0 ? 'true' : 'false'"
+                        :aria-controls="nameListId"
+                        :aria-activedescendant="nameActiveIndex >= 0 ? `${nameListId}-${nameActiveIndex}` : null"
+                        :placeholder="$t('item.editPlaceholderName')"
+                        :autofocus="initialFocus === 'name'"
+                        @input="onNameInput"
+                        @blur="closeNameSuggestions"
+                        @keydown.down.prevent="moveNameSuggestion(1)"
+                        @keydown.up.prevent="moveNameSuggestion(-1)"
+                        @keydown.enter="onNameEnter"
+                        @keydown.escape="nameSuggestions = []"
+                    >
+                    <ul v-if="nameSuggestions.length" :id="nameListId" ref="nameList" class="itemDetailNameSuggestions" role="listbox" :aria-label="$t('item.nameSuggestionsLabel')">
+                        <li
+                            v-for="(s, i) in nameSuggestions"
+                            :id="`${nameListId}-${i}`"
+                            :key="s.id"
+                            class="itemDetailNameSuggestion"
+                            role="option"
+                            :aria-selected="i === nameActiveIndex ? 'true' : 'false'"
+                            :class="{ active: i === nameActiveIndex }"
+                            @mousedown.prevent="applySuggestion(s)"
+                        >
+                            <span class="itemDetailNameSuggestionName">{{ s.name }}</span>
+                            <span v-if="s.brand" class="itemDetailNameSuggestionBrand">{{ s.brand }}</span>
+                            <span class="itemDetailNameSuggestionWeight">{{ suggestionWeight(s) }}</span>
+                        </li>
+                    </ul>
+                    <span class="itemDetailNameStatus" role="status" aria-live="polite">{{ nameSuggestions.length ? $t('item.nameSuggestionsStatus', { count: nameSuggestions.length }) : '' }}</span>
+                </div>
             </div>
 
             <div class="itemDetailField">
@@ -178,6 +216,7 @@ import { openDialog } from '../services/dialogs';
 import { GEAR_CATEGORIES } from '../data/gear-categories';
 import { normalizeTag, normalizeTags } from '../services/item-tags';
 import { uploadErrorMessage } from '../utils/upload-errors';
+import { suggestItems } from '../composables/useGearMatcher';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -223,6 +262,8 @@ export default {
             fetchError: '',
             fetchSuccess: '',
             showCategoryDropdown: false,
+            nameSuggestions: [],
+            nameActiveIndex: -1,
         };
     },
     computed: {
@@ -243,6 +284,9 @@ export default {
         filteredGearCategories() {
             const q = (this.editCategory || '').toLowerCase();
             return q ? GEAR_CATEGORIES.filter((c) => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
+        },
+        nameListId() {
+            return `itemDetailNameList-${this.item.id}`;
         },
         thumbnailImage() {
             if (this.editImageUrl) return this.editImageUrl;
@@ -410,6 +454,56 @@ export default {
             } finally {
                 this.fetchLoading = false;
             }
+        },
+        // Gear Room suggestions while typing the name. Only user typing opens them, so a name
+        // loaded from the item never pops the list open.
+        onNameInput() {
+            const others = this.library.items.filter((i) => i.id !== this.item.id);
+            this.nameSuggestions = suggestItems(this.editName, others, this.category && this.category.name);
+            this.nameActiveIndex = -1;
+        },
+        closeNameSuggestions() {
+            setTimeout(() => { this.nameSuggestions = []; this.nameActiveIndex = -1; }, 120);
+        },
+        moveNameSuggestion(dir) {
+            if (!this.nameSuggestions.length) return;
+            const max = this.nameSuggestions.length - 1;
+            this.nameActiveIndex = Math.min(Math.max(this.nameActiveIndex + dir, -1), max);
+            this.$nextTick(() => {
+                const active = this.$refs.nameList && this.$refs.nameList.querySelector('.itemDetailNameSuggestion.active');
+                if (active) active.scrollIntoView({ block: 'nearest' });
+            });
+        },
+        // Enter picks the highlighted suggestion; otherwise it behaves as before.
+        onNameEnter(evt) {
+            const picked = this.nameSuggestions[this.nameActiveIndex];
+            if (!picked) return;
+            evt.preventDefault();
+            this.applySuggestion(picked);
+        },
+        suggestionWeight(item) {
+            const unit = this.library.itemUnit;
+            return `${weightUtils.MgToItemWeight(item.weight, unit)} ${unit}`;
+        },
+        // Prefill from a Gear Room item. The name is always replaced; every other field is only
+        // filled when still empty, so details already typed are never overwritten.
+        applySuggestion(item) {
+            this.editName = item.name || '';
+            if (!this.editBrand && item.brand) this.editBrand = item.brand;
+            if (!this.editCategory && item.category) this.editCategory = item.category;
+            if (!this.editDescription && item.description) this.editDescription = item.description;
+            if (!this.editUrl && item.url) this.editUrl = item.url;
+            if (!this.editImageUrl && item.imageUrl) this.editImageUrl = item.imageUrl;
+            if (!parseFloat(this.editPrice) && item.price) this.editPrice = item.price.toFixed(2);
+            if (!parseFloat(this.editWeight) && item.weight) {
+                this.weightMg = item.weight;
+                this.weightTouched = false;
+                this.editWeight = weightUtils.MgToItemWeight(item.weight, this.editUnit);
+                this.shownUnit = this.editUnit;
+            }
+            if (!this.editTags.length && item.tags && item.tags.length) this.editTags = [...item.tags];
+            this.nameSuggestions = [];
+            this.nameActiveIndex = -1;
         },
         selectCategory(cat) {
             this.editCategory = cat;

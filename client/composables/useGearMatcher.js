@@ -101,6 +101,11 @@ function scoreMatch(parsed, libraryItem, weightMg) {
 // Autocomplete score of an item whose name, description or brand contains every typed word:
 // below an exact name, above the 0.3 cut-off.
 const WORDS_MATCH_SCORE = 0.7;
+// Below this an autocomplete suggestion is chance, not a match.
+const SUGGEST_MIN_SCORE = 0.6;
+// A typed word within one typo of an item word (per-word similarity), and the score it earns.
+const FUZZY_WORD_SIMILARITY = 0.75;
+const FUZZY_WORDS_SCORE = 0.65;
 
 // Find best match for a parsed row in the library items array.
 // Returns { item, score, decision: 'merge'|'review'|'new' }
@@ -131,16 +136,30 @@ function suggestItems(query, libraryItems, categoryName, limit = 6) {
         return queryWords.length > 0 && queryWords.every((q) => itemWords.some((w) => w.startsWith(q)));
     };
 
+    // One typo in a word of 4+ letters ("nitcore" for "nitecore") still counts as that word.
+    const wordsAlmostMatch = (item) => {
+        const itemWords = [...identityWords(item), ...words(item.brand)];
+        return queryWords.length > 0 && queryWords.every((q) => itemWords.some((w) => w.startsWith(q)
+            || (q.length >= 4 && 1 - levenshtein(q, w) / Math.max(q.length, w.length) >= FUZZY_WORD_SIMILARITY)));
+    };
+
     return libraryItems
         .map((item) => {
-            let score = Math.max(nameSimilarity(query, item.name), wordsMatch(item) ? WORDS_MATCH_SCORE : 0);
-            // Boost items in same category
-            if (categoryName && item.category && normalizeStr(item.category) === normalizeStr(categoryName)) {
+            // Only a real signal counts: the whole name nearly typed, or every typed word found
+            // in the item. Whole-name Levenshtein on a short query is chance below the cut-off.
+            let score = Math.max(
+                nameSimilarity(query, item.name),
+                wordsMatch(item) ? WORDS_MATCH_SCORE : 0,
+                wordsAlmostMatch(item) ? FUZZY_WORDS_SCORE : 0,
+            );
+            // The category only orders items that already match, it never makes one match.
+            if (score >= SUGGEST_MIN_SCORE && categoryName && item.category
+                && normalizeStr(item.category) === normalizeStr(categoryName)) {
                 score += 0.1;
             }
             return { item, score };
         })
-        .filter((r) => r.score > 0.3)
+        .filter((r) => r.score >= SUGGEST_MIN_SCORE)
         .sort((a, b) => b.score - a.score)
         .slice(0, limit)
         .map((r) => r.item);
