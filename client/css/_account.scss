@@ -155,8 +155,8 @@
 }
 
 .lpButtonDanger {
-    background: $color-danger;
-    border-color: $color-danger;
+    background: $color-danger-solid;
+    border-color: $color-danger-solid;
     color: #fff;
 
     &:hover {

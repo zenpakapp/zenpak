@@ -251,7 +251,7 @@ export default {
 }
 
 .itemDetailAddBack {
-    color: $color-accent;
+    color: $color-accent-text;
     cursor: pointer;
     font-size: $fontSize-sm;
     letter-spacing: normal;
@@ -300,7 +300,7 @@ export default {
 }
 
 .itemDetailAddNewList {
-    color: $color-accent;
+    color: $color-accent-text;
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;

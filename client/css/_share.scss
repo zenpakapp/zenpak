@@ -506,14 +506,14 @@
     transition: color $transitionDurationFast ease;
 
     &:hover {
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
 .sharePublishState {
     background: rgba(var(--color-accent-rgb), 0.1);
     border-radius: $radius-md;
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     margin-left: 6px;

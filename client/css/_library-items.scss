@@ -85,7 +85,7 @@
 
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.08);
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -153,7 +153,7 @@
     .lpLibraryItemTag {
         background: rgba(var(--color-accent-rgb), 0.08);
         border-radius: $radius-sm;
-        color: $color-accent;
+        color: $color-accent-text;
         flex: 0 0 auto;
         font-size: 10px;
         font-weight: 600;
@@ -200,7 +200,7 @@
         transition: opacity $transitionDurationFast ease, color $transitionDurationFast ease;
 
         &:hover {
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 

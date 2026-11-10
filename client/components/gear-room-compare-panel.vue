@@ -50,7 +50,7 @@
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -122,7 +122,7 @@
     padding: 2px 4px;
 
     &:hover {
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 

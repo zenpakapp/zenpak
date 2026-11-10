@@ -85,7 +85,7 @@
     }
 
     .lpAboutKofi {
-        color: $color-accent;
+        color: $color-accent-text;
         font-weight: 600;
         text-decoration: none;
 

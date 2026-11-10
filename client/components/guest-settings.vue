@@ -76,7 +76,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    &:hover { color: $color-accent; }
+    &:hover { color: $color-accent-text; }
 
     &.lpActive {
         font-weight: 600;

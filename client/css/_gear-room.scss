@@ -97,7 +97,7 @@
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 
     &.active {
@@ -269,7 +269,7 @@
 .lpGearRoomCategoryBadge {
     background: rgba(var(--color-accent-rgb), 0.1);
     border-radius: 999px;
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: $fontSize-sm;
     padding: 2px 8px;
     white-space: nowrap;
