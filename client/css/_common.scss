@@ -430,6 +430,28 @@ textarea::placeholder {
     font-weight: $fontWeight-bold;
 }
 
+// Variant B: base weight is the largest number of the totals; the total keeps its look.
+.lpTotals {
+    .lpBaseWeight {
+        .lpCell {
+            padding-bottom: 6px;
+            padding-top: 6px;
+        }
+
+        .lpSubtotal,
+        .lpDisplaySubtotal,
+        .lpSubtotalUnit {
+            color: $color-accent-text;
+        }
+
+        .lpDisplaySubtotal {
+            font-size: 1.5rem;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.1;
+        }
+    }
+}
+
 .lpError {
     color: $red1;
 }
