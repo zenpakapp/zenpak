@@ -44,7 +44,7 @@
                 </router-link>
             </p>
         </div>
-        <list-summary v-if="!isListNew" :list="list">
+        <list-summary v-if="!isListNew" class="lpEditorSummary" :list="list">
             <button v-if="!isPackingMode" class="lpPackBtn" @click="enterPackingMode">
                 🎒 {{ $t('list.packThis') }}
             </button>
