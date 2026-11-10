@@ -531,6 +531,15 @@ input.lpCategoryName { /* specificity */
     transition: width 0.2s ease;
 }
 
+// Under the totals table; the slot only renders when the summary is given an action.
+.lpTotalsActions {
+    margin-top: 12px;
+
+    &:empty {
+        display: none;
+    }
+}
+
 .lpPackBtn {
     background: $color-accent-solid;
     border: none;
