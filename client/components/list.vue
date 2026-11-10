@@ -64,7 +64,7 @@
 
         <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.communityHint') }}</span>
-            <router-link to="/community" class="lpCommunityHintCta">
+            <router-link to="/community" class="lpCommunityHintCta" @click="dismissCommunityHint">
                 {{ $t('list.communityHintCta') }}
             </router-link>
             <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">
