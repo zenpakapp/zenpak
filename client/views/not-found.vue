@@ -54,7 +54,7 @@
     &:hover { opacity: 0.8; }
 
     &--primary {
-        background: $color-accent;
+        background: $color-accent-solid;
         color: #fff;
     }
 

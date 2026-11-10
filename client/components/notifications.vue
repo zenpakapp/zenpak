@@ -24,7 +24,7 @@
 }
 
 .lpNotifBadge {
-    background: $color-accent;
+    background: $color-accent-solid;
     border-radius: 999px;
     color: #fff;
     font-size: 10px;

@@ -520,14 +520,14 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpPackingProgressFill {
-    background: $color-accent;
+    background: $color-accent-solid;
     border-radius: 99px;
     height: 100%;
     transition: width 0.2s ease;
 }
 
 .lpPackBtn {
-    background: $color-accent;
+    background: $color-accent-solid;
     border: none;
     border-radius: $radius-sm;
     color: #fff;
@@ -604,7 +604,7 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpPackModalBtnClose {
-    background: $color-accent;
+    background: $color-accent-solid;
     color: #fff;
 
     &:hover { background: $color-accent-hover; }
