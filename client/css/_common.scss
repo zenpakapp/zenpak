@@ -296,7 +296,7 @@ textarea::placeholder {
 }
 
 .lpButton.lpButtonDanger {
-    background: $color-danger;
+    background: $color-danger-solid;
     color: #fff;
 }
 
@@ -304,11 +304,11 @@ textarea::placeholder {
 .lpButton.lpButtonGhost:hover:not(:disabled):not(.lpButtonDisabled) {
     background: $color-control-hover;
     border-color: $color-accent;
-    color: $color-accent;
+    color: $color-accent-text;
 }
 
 .lpButton.lpButtonDanger:hover:not(:disabled):not(.lpButtonDisabled) {
-    background: $color-danger-hover;
+    background: #a9132b;
 }
 
 .lpIconButton {
@@ -425,7 +425,7 @@ textarea::placeholder {
 
 .lpTotal .lpSubtotal,
 .lpTotalValue {
-    color: $color-accent;
+    color: $color-accent-text;
     font-variant-numeric: tabular-nums;
     font-weight: $fontWeight-bold;
 }
@@ -466,7 +466,7 @@ textarea::placeholder {
         text-decoration: none;
 
         &:hover {
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 }
@@ -492,7 +492,7 @@ textarea::placeholder {
         text-decoration: none;
 
         &:hover {
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 }

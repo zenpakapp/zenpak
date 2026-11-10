@@ -36,7 +36,7 @@ $sidebarPadding: 20px;
         position: relative;
 
         span {
-            color: $color-accent;
+            color: $color-accent-text;
             font-weight: $fontWeight-bold;
         }
     }
@@ -62,7 +62,7 @@ $sidebarPadding: 20px;
     }
 
     .lpHref {
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 

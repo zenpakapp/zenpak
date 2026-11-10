@@ -202,7 +202,7 @@
     }
 
     .itemDetailFetchSuccess {
-        color: $color-accent;
+        color: $color-accent-text;
         font-size: $fontSize-sm;
         margin-top: 4px;
     }
@@ -252,7 +252,7 @@
         text-align: center;
 
         strong {
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 

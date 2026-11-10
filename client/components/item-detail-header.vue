@@ -32,7 +32,7 @@
         background: rgba(var(--color-accent-rgb), 0.14);
         border: 1px solid rgba(var(--color-accent-rgb), 0.18);
         border-radius: 16px;
-        color: $color-accent;
+        color: $color-accent-text;
         display: flex;
         flex-shrink: 0;
         height: 84px;
@@ -70,7 +70,7 @@
     .itemDetailCategoryBadge {
         background: rgba(var(--color-accent-rgb), 0.14);
         border-radius: 99px;
-        color: $color-accent;
+        color: $color-accent-text;
         display: inline-block;
         font-size: $fontSize-base;
         font-weight: $fontWeight-bold;
@@ -81,10 +81,10 @@
     .itemDetailAddCategoryInline {
         background: none;
         border: none;
-        color: $color-accent;
+        color: $color-accent-text;
         cursor: pointer;
         font-size: $fontSize-sm;
-        opacity: 0.6;
+        opacity: 0.9;
         padding: 0;
 
         &:hover { opacity: 1; }

@@ -144,7 +144,7 @@
         &:active {
             background: rgba(var(--color-accent-rgb), 0.08);
             box-shadow: none;
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 
@@ -199,7 +199,7 @@
         &:hover,
         &:focus-visible {
             background: rgba(var(--color-accent-rgb), 0.08);
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 }

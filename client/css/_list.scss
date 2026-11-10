@@ -221,7 +221,7 @@ input.lpCategoryName { /* specificity */
     .lpItemTag {
         background: rgba(var(--color-accent-rgb), 0.08);
         border-radius: $radius-sm;
-        color: $color-accent;
+        color: $color-accent-text;
         display: inline-flex;
         font-size: 10px;
         font-weight: 600;
@@ -628,7 +628,7 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpCommunityHintCta {
-    color: $color-accent;
+    color: $color-accent-text;
     font-weight: $fontWeight-medium;
     white-space: nowrap;
 

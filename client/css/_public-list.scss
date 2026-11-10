@@ -85,7 +85,7 @@
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -134,7 +134,7 @@
 .lpPublicListBadge {
     background: rgba(var(--color-accent-rgb), 0.1);
     border-radius: $radius-sm;
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -214,7 +214,7 @@
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -232,7 +232,7 @@
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -382,7 +382,7 @@
     }
 
     &.lpPublicListItemOptional {
-        opacity: 0.68;
+        opacity: 0.9;
     }
 }
 
@@ -412,7 +412,7 @@
     border-radius: $radius-sm;
     color: $color-text-muted;
     display: inline-block;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     margin-left: 6px;
     padding: 1px 5px;
@@ -443,7 +443,7 @@
 
 // The item name is the link when the list shares links: one link per item, labelled by the name.
 .lpPublicListItemNameLink {
-    color: $color-accent;
+    color: $color-accent-text;
     text-decoration: none;
 
     &:hover,
@@ -502,7 +502,7 @@
 
     &:hover:not(:disabled) {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 
     &:disabled {
@@ -512,7 +512,7 @@
 }
 
 .lpCopyListSignIn {
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: 13px;
     text-decoration: none;
 

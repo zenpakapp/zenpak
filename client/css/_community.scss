@@ -99,7 +99,7 @@
 }
 
 .lpCommunityCardName {
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
     margin-bottom: 4px;
@@ -130,7 +130,7 @@
         text-decoration: none;
 
         &:hover {
-            color: $color-accent;
+            color: $color-accent-text;
             text-decoration: underline;
         }
     }
@@ -139,7 +139,7 @@
 .lpCommunityBadge {
     background: rgba(var(--color-accent-rgb), 0.14);
     border-radius: 4px;
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
@@ -221,7 +221,7 @@
     line-height: 1.4;
 
     a {
-        color: $color-accent;
+        color: $color-accent-text;
         font-weight: $fontWeight-bold;
         text-decoration: none;
 
@@ -249,7 +249,7 @@
 }
 
 .lpCommunityEventListLink {
-    color: $color-accent;
+    color: $color-accent-text;
     display: block;
     text-decoration: none;
     transition: background $transitionDurationFast ease;
@@ -501,7 +501,7 @@
     text-decoration: none;
 
     &:hover .lpCommunityPopularName {
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -513,7 +513,7 @@
     text-decoration: none;
 
     &:hover {
-        color: $color-accent;
+        color: $color-accent-text;
         text-decoration: underline;
     }
 }
@@ -529,7 +529,7 @@
         text-decoration: none;
 
         &:hover {
-            color: $color-accent;
+            color: $color-accent-text;
             text-decoration: underline;
         }
     }
@@ -571,7 +571,7 @@
     position: relative;
 
     &::before {
-        color: $color-accent;
+        color: $color-accent-text;
         content: '★';
         font-size: 10px;
         position: absolute;
@@ -647,7 +647,7 @@
     margin-bottom: 8px;
 
     a {
-        color: $color-accent;
+        color: $color-accent-text;
         text-decoration: none;
         word-break: break-all;
 
@@ -860,7 +860,7 @@
         margin: 0;
     }
 
-    .lp-moderation-offer-result { color: $color-accent; }
+    .lp-moderation-offer-result { color: $color-accent-text; }
 
     .lp-moderation-offer-error { color: #dc3545; }
 }

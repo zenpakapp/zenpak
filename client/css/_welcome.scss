@@ -144,7 +144,7 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
 }
 
 .lpWelcomeFeatureNum {
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.14em;
@@ -270,7 +270,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpWelcomeProofEyebrow {
-    color: $color-accent;
+    color: $color-accent-text;
     display: block;
     font-size: 11px;
     font-weight: $fontWeight-bold;
@@ -314,7 +314,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpWelcomeMiniList li::before {
-    color: $color-accent;
+    color: $color-accent-text;
     content: "•";
     font-size: 18px;
     line-height: 1;
@@ -339,7 +339,7 @@ details[open] .lpWelcomeFaqQ::after {
 
     &:hover {
         border-color: $color-accent;
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 
@@ -426,7 +426,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpWelcomeCardKicker {
-    color: $color-accent;
+    color: $color-accent-text;
     display: block;
     font-size: 11px;
     font-weight: $fontWeight-bold;
@@ -479,7 +479,7 @@ details[open] .lpWelcomeFaqQ::after {
 .lpWelcomeCardSecondary .lpButton:hover {
     background: $color-control-hover;
     border-color: $color-accent;
-    color: $color-accent;
+    color: $color-accent-text;
 }
 
 .lpWelcomeCardSecondary .signin-forgot-password {
@@ -704,6 +704,15 @@ details[open] .lpWelcomeFaqQ::after {
 
     .lpWelcomeHero::before {
         inset: 0;
+    }
+
+    // The three benefit lines sit near the bottom of a short hero: start the fade lower so they
+    // stay on the dark part of the photo.
+    .lpWelcomeHero::after {
+        background:
+            linear-gradient(180deg, transparent 0%, transparent 84%, $welcome-page-transition-hero-soft 92%, $welcome-page-transition-hero 100%),
+            linear-gradient(120deg, rgba(255, 255, 255, 0.12), transparent 55%),
+            radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 35%);
     }
 
     .lpWelcomeHeadline {

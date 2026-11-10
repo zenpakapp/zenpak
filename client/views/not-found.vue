@@ -12,7 +12,7 @@
 }
 
 .lpNotFoundCode {
-    color: $color-accent;
+    color: $color-accent-text;
     font-size: 96px;
     font-weight: 800;
     letter-spacing: -4px;

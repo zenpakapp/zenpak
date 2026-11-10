@@ -102,12 +102,12 @@
         &:hover,
         &.active {
             background: rgba(var(--color-accent-rgb), 0.08);
-            color: $color-accent;
+            color: $color-accent-text;
         }
     }
 
     .lpBrandSuggestionsCreate {
-        color: $color-accent;
+        color: $color-accent-text;
         font-weight: $fontWeight-bold;
     }
 }
@@ -179,7 +179,7 @@
 .lpGearRoomMergeKeep {
     background: rgba(var(--color-accent-rgb), 0.15) !important;
     border-color: $color-accent !important;
-    color: $color-accent !important;
+    color: $color-accent-text !important;
 }
 
 .lpGearRoomBatchApply {

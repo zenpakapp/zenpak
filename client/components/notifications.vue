@@ -75,7 +75,7 @@
         font-size: $fontSize-sm;
         white-space: nowrap;
 
-        &:hover { color: $color-accent; }
+        &:hover { color: $color-accent-text; }
     }
 }
 

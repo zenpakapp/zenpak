@@ -82,7 +82,7 @@
 
     a.itemDetailLink {
         align-items: center;
-        color: $color-accent;
+        color: $color-accent-text;
         display: inline-flex;
         font-size: $fontSize-base;
         gap: 6px;
@@ -127,7 +127,7 @@
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.16);
         border-color: rgba(var(--color-accent-rgb), 0.4);
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 

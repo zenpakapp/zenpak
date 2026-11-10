@@ -126,7 +126,7 @@ export default {
     &:hover,
     &.active {
         background: rgba(var(--color-accent-rgb), 0.08);
-        color: $color-accent;
+        color: $color-accent-text;
     }
 }
 </style>
