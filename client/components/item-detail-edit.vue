@@ -323,6 +323,9 @@ export default {
     mounted() {
         this.focusInitialField();
     },
+    beforeUnmount() {
+        clearTimeout(this.nameCloseTimer);
+    },
     methods: {
         focusInitialField() {
             const field = this.$refs[this.initialFocus] || this.$refs.name;
@@ -463,7 +466,8 @@ export default {
             this.nameActiveIndex = -1;
         },
         closeNameSuggestions() {
-            setTimeout(() => { this.nameSuggestions = []; this.nameActiveIndex = -1; }, 120);
+            clearTimeout(this.nameCloseTimer);
+            this.nameCloseTimer = setTimeout(() => { this.nameSuggestions = []; this.nameActiveIndex = -1; }, 120);
         },
         moveNameSuggestion(dir) {
             if (!this.nameSuggestions.length) return;
