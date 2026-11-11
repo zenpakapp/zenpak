@@ -36,6 +36,7 @@
         </div>
     </div>
     <div v-else-if="isLoaded" id="main" :class="{lpHasSidebar: library.showSidebar}">
+        <a class="lpSkipLink" href="#lpListBody" @click.prevent="skipToList">{{ $t('dash.skipToList') }}</a>
         <sidebar v-if="sidebarReady" @open-gear-room="openGearRoom" />
         <gear-room v-if="gearRoomOpen" @close="$store.commit('setGearRoomOpen', false)" />
         <div v-show="!gearRoomOpen" class="lpList lpTransition">
@@ -477,6 +478,11 @@ export default {
         }
     },
     methods: {
+        // First Tab stop: jump past the sidebar and header to the list itself.
+        skipToList() {
+            const body = document.getElementById('lpListBody');
+            if (body) body.focus();
+        },
         async refreshEmailVerification() {
             if (this.emailVerified !== false || document.visibilityState !== 'visible') return;
             try {

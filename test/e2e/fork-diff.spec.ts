@@ -52,7 +52,7 @@ test.describe("Fork diff", () => {
       const firstPublish = authorPage.waitForResponse(isPublish, {
         timeout: 35000,
       });
-      await authorPage.getByText("Share", { exact: true }).hover();
+      await authorPage.getByText("Share", { exact: true }).click();
       await firstPublish;
       const publishState = authorPage.locator(".sharePublishState");
       await expect(publishState).toHaveText("Published v1", { timeout: 15000 });
@@ -101,7 +101,10 @@ test.describe("Fork diff", () => {
       await expect(publishState).toHaveText("Unpublished changes", {
         timeout: 15000,
       });
-      await authorPage.getByText("Share", { exact: true }).hover();
+      // The popover stays open after a click: open it only if it is closed.
+      if (!(await authorPage.locator(".sharePopover").isVisible())) {
+        await authorPage.getByText("Share", { exact: true }).click();
+      }
       const secondPublish = authorPage.waitForResponse(isPublish, {
         timeout: 35000,
       });
@@ -126,7 +129,10 @@ test.describe("Fork diff", () => {
 
       // A unshares: B reopens the dialog without reloading and gets an error, not a spinner
       await copierPage.keyboard.press("Escape");
-      await authorPage.getByText("Share", { exact: true }).hover();
+      // The popover stays open after a click: open it only if it is closed.
+      if (!(await authorPage.locator(".sharePopover").isVisible())) {
+        await authorPage.getByText("Share", { exact: true }).click();
+      }
       const unshared = authorPage.waitForResponse(isSuccessfulSave, {
         timeout: 35000,
       });

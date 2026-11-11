@@ -813,3 +813,25 @@
         }
     }
 }
+
+// Hidden until it takes keyboard focus, then the first thing on the page.
+.lpSkipLink {
+    background: $color-bg;
+    border: 2px solid $color-accent;
+    border-radius: $radius-sm;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    left: 8px;
+    padding: 8px 12px;
+    position: fixed;
+    top: -64px;
+    z-index: $aboveDialog + 1;
+
+    &:focus {
+        top: 8px;
+    }
+}
+
+#lpListBody:focus {
+    outline: none;
+}

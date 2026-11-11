@@ -36,7 +36,7 @@ test("public list shows Report to other users and the copy count; profile has Re
         r.ok(),
       { timeout: 35000 },
     );
-    await authorPage.getByText("Share", { exact: true }).hover();
+    await authorPage.getByText("Share", { exact: true }).click();
     await publish;
     await expect(authorPage.locator(".sharePublishState")).toHaveText(
       "Published v1",

@@ -1,5 +1,5 @@
 <template>
-    <div class="lpListBody">
+    <div id="lpListBody" class="lpListBody" tabindex="-1">
         <!-- Packing mode bar -->
         <div v-if="isPackingMode" class="lpPackingBar">
             <span class="lpPackingProgress">{{ $t('list.itemsPacked', { packed: packingProgress.packed, total: packingProgress.total }) }}</span>

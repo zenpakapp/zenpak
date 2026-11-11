@@ -33,6 +33,8 @@ test("insights are on the guide page, and the share popover shows this list's nu
   const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
   await registerUser(page, `gn${now}`, "testtest", `gn+${now}@lighterpack.com`);
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+  // The welcome toast sits over the header until it fades.
+  await expect(page.locator(".lpGlobalAlerts")).toHaveCount(0, { timeout: 20000 });
   await page.evaluate(() => {
     const { state } = window.LighterPack.$store;
     state.library.entitlements = { plan: "creator" };
@@ -47,9 +49,9 @@ test("insights are on the guide page, and the share popover shows this list's nu
 
   // This list's numbers, in the share popover.
   await page
-    .locator("#header [title='Share'] svg")
+    .locator("#header [title='Share']")
     .first()
-    .hover({ force: true });
+    .click();
   const line = page.locator(".lpListInsights");
   await expect(line).toContainText("Views 124", { timeout: 15000 });
   await expect(line).toContainText("Copies 9");

@@ -13,7 +13,7 @@ test("the community tags are grouped by season, gear level, duration and activit
   const username = `sg${now}`;
   await registerUser(page, username, "testtest", `sg+${now}@lighterpack.com`);
   await verifyUserEmail(username);
-  await page.getByText("Share", { exact: true }).hover();
+  await page.getByText("Share", { exact: true }).click();
 
   const groups = page.locator(".shareTagGroupBlock");
   await expect(groups).toHaveCount(4, { timeout: 20000 });

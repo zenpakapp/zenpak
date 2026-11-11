@@ -23,7 +23,7 @@ test.describe("List tests", () => {
     const externalIdResponse = page.waitForResponse(isSuccessfulExternalId, {
       timeout: 35000,
     });
-    await page.getByText("Share", { exact: true }).hover();
+    await page.getByText("Share", { exact: true }).click();
     await externalIdResponse;
 
     const shareUrlLocator = page.locator("#shareUrl");
@@ -51,7 +51,7 @@ test.describe("List tests", () => {
     const externalIdResponse = page.waitForResponse(isSuccessfulExternalId, {
       timeout: 35000,
     });
-    await page.getByText("Share", { exact: true }).hover();
+    await page.getByText("Share", { exact: true }).click();
     await externalIdResponse;
 
     const shareUrlLocator = page.locator("#shareUrl");
@@ -65,7 +65,10 @@ test.describe("List tests", () => {
     await saveResponse;
 
     // The public page serves the last published version: a rename is public only after Publish.
-    await page.getByText("Share", { exact: true }).hover();
+    // The popover stays open after the first click: open it only if it is closed.
+    if (!(await page.locator(".sharePopover").isVisible())) {
+      await page.getByText("Share", { exact: true }).click();
+    }
     const publishResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith("/publish") &&

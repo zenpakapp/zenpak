@@ -25,7 +25,7 @@ test.describe("Share popover re-open", () => {
     const externalIdResponse = page.waitForResponse(isSuccessfulExternalId, {
       timeout: 35000,
     });
-    await page.getByText("Share", { exact: true }).hover();
+    await page.getByText("Share", { exact: true }).click();
     await externalIdResponse;
 
     const visibilitySelect = page.locator("#listVisibility");

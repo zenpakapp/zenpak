@@ -31,7 +31,7 @@ test.describe("List publishing", () => {
     await verifyUserEmail(username);
 
     const firstPublish = page.waitForResponse(isPublish, { timeout: 35000 });
-    await page.getByText("Share", { exact: true }).hover();
+    await page.getByText("Share", { exact: true }).click();
     await firstPublish;
 
     const state = page.locator(".sharePublishState");
@@ -51,7 +51,10 @@ test.describe("List publishing", () => {
     await expect(state).toHaveText("Unpublished changes", { timeout: 15000 });
     expect(await publicListName(page, externalId)).toBe(publishedName);
 
-    await page.getByText("Share", { exact: true }).hover();
+    // The popover stays open after the first click: open it only if it is closed.
+    if (!(await page.locator(".sharePopover").isVisible())) {
+      await page.getByText("Share", { exact: true }).click();
+    }
     const secondPublish = page.waitForResponse(isPublish, { timeout: 35000 });
     await page.locator(".sharePublishButton").click();
     await secondPublish;

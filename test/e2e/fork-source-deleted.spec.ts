@@ -47,7 +47,7 @@ test("a copy keeps its content and says its source is gone after the author dele
     await weightSaved;
 
     const published = authorPage.waitForResponse(isPublish, { timeout: 35000 });
-    await authorPage.getByText("Share", { exact: true }).hover();
+    await authorPage.getByText("Share", { exact: true }).click();
     await published;
     await expect(authorPage.locator(".sharePublishState")).toHaveText(
       "Published v1",
@@ -116,7 +116,7 @@ test("a copy keeps its content and says its source is gone after the author dele
     );
 
     // B publishes the copy: its public page says the same, with no link to the gone source.
-    await copierPage.getByText("Share", { exact: true }).hover();
+    await copierPage.getByText("Share", { exact: true }).click();
     await expect(copierPage.locator(".sharePublishState")).toHaveText(
       /Published v1/,
       { timeout: 35000 },
