@@ -39,6 +39,8 @@
                         </button>
                     </div>
 
+                    <list-insights-line v-if="isShared && list.externalId" :external-id="list.externalId" />
+
                     <div v-if="list.visibility === 'shareable'" class="shareSection">
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.copyable" @change="setCopyable($event.target.checked)">
@@ -104,6 +106,7 @@
 
 <script>
 import PopoverHover from './popover-hover.vue';
+import listInsightsLine from './list-insights-line.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { trackEvent } from '../utils/analytics';
 import { fetchJson } from '../utils/utils';
@@ -115,6 +118,7 @@ export default {
     name: 'Share',
     components: {
         PopoverHover,
+        listInsightsLine,
     },
     data() {
         return {

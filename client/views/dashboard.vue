@@ -152,9 +152,8 @@
 
             <upgrade-prompt v-if="showGuideUpgrade" tier="guide" feature="creatorInsights" mode="modal" :open="showGuideUpgrade" @close="showGuideUpgrade = false" />
 
-            <div v-if="isSignedIn" class="lpSupportZone">
-                <profile-insights v-if="isGuide" />
-                <upgrade-prompt v-else-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
+            <div v-if="isSignedIn && !isGuide" class="lpSupportZone">
+                <upgrade-prompt v-if="isTrail" tier="guide" feature="creatorInsights" mode="inline" />
                 <template v-else>
                     <p>{{ $t('dash.enjoyingApp') }}</p>
                     <router-link to="/about" class="lpSupportLink">
@@ -218,7 +217,6 @@ const accountDropdown = defineAsyncComponent(() => import(/* webpackChunkName: "
 const gearRoom = defineAsyncComponent(() => import(/* webpackChunkName: "view-gear-room" */ '../components/gear-room.vue'));
 const notifications = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-notifications" */ '../components/notifications.vue'));
 const share = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-share" */ '../components/share.vue'));
-const profileInsights = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-insights" */ '../components/profile-insights.vue'));
 const upgradePrompt = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-upgrade" */ '../components/upgrade-prompt.vue'));
 const guestSettings = defineAsyncComponent(() => import(/* webpackChunkName: "dashboard-guest-settings" */ '../components/guest-settings.vue'));
 
@@ -272,7 +270,6 @@ export default {
         forkApplyControls,
         forkUndoBanner,
         gearRoom,
-        profileInsights,
         upgradePrompt,
         notifications,
     },
