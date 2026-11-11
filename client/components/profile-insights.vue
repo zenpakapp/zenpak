@@ -1,17 +1,10 @@
 <style lang="scss">
 @import "../css/_globals";
 
-.lpInsights {
-    margin-top: 24px;
-}
-
 .lpInsightsTitle {
-    color: $color-text-muted;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    margin-bottom: 12px;
-    text-transform: uppercase;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
+    margin-bottom: 16px;
 }
 
 .lpInsightsTotals {

@@ -12,6 +12,10 @@
             {{ $t('guide.title') }}
         </h1>
 
+        <section class="lpGuideSection">
+            <profile-insights />
+        </section>
+
         <!-- Section: Public Profile -->
         <section class="lpGuideSection">
             <h2 class="lpGuideSectionTitle">
@@ -192,6 +196,7 @@ import { useBackNav } from '../composables/useBackNav.js';
 import { hasFeature, FEATURES } from '../services/entitlements.js';
 import { push } from '../services/navigation.js';
 import promoLink from '../utils/promo-link';
+import profileInsights from '../components/profile-insights.vue';
 
 const { filterRows } = require('../utils/guide-items.js');
 
@@ -199,6 +204,7 @@ const ITEM_PAGE = 30;
 
 export default {
     name: 'GuideView',
+    components: { profileInsights },
     setup() {
         const guide = useGuide();
         const nav = useBackNav();
