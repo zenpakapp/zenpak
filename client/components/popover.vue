@@ -29,10 +29,13 @@
         position: absolute;
         top: 100%;
         transform: translateX(-50%) translateY(6px);
+        // Hidden once the fade is over, so a closed popover's controls are not tab stops.
         transition:
             opacity $transitionDurationFast ease,
             transform $transitionDurationFast ease,
-            margin-top $transitionDurationFast ease;
+            margin-top $transitionDurationFast ease,
+            visibility 0s linear $transitionDurationFast;
+        visibility: hidden;
         white-space: nowrap;
         z-index: $dialog;
 
@@ -100,7 +103,15 @@
             opacity: 1;
             pointer-events: all;
             transform: translateX(-50%) translateY(0);
+            transition-delay: 0s;
+            visibility: visible;
         }
+    }
+
+    .lpTarget:focus-visible {
+        border-radius: $radius-sm;
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
     }
 
     &.lpPopoverRight {
@@ -126,7 +137,14 @@
 
 <template>
     <div v-click-outside="hide" :class="{'lpPopover': true, 'lpPopoverShown': shown, 'lpPopoverRight': placement === 'right'}">
-        <div class="lpTarget">
+        <div
+            class="lpTarget"
+            :tabindex="focusable ? 0 : undefined"
+            :role="focusable ? 'button' : undefined"
+            :aria-haspopup="focusable ? 'true' : undefined"
+            :aria-expanded="focusable ? String(shown) : undefined"
+            @keydown="onTargetKey"
+        >
             <slot name="target" />
         </div>
         <div class="lpContent">
@@ -153,7 +171,13 @@ export default {
             type: String,
             default: 'center',
         },
+        // Make the target a keyboard-reachable button that asks to toggle on Enter or Space.
+        focusable: {
+            type: Boolean,
+            default: false,
+        },
     },
+    emits: ['hide', 'toggle'],
     mounted() {
         this.bindEscape();
     },
@@ -163,6 +187,14 @@ export default {
     methods: {
         hide() {
             this.$emit('hide');
+        },
+        // Enter or Space on the trigger itself. A control inside the target keeps its own keys.
+        onTargetKey(evt) {
+            if (!this.focusable || evt.target !== evt.currentTarget) return;
+            if (evt.key === 'Enter' || evt.key === ' ') {
+                evt.preventDefault();
+                this.$emit('toggle');
+            }
         },
         bindEscape() {
             addWindowListener('keyup', this.closeOnEscape);

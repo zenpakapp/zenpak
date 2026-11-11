@@ -49,7 +49,7 @@ async function setup(browser, prefix, copierEdit?) {
   const firstPublish = authorPage.waitForResponse(isPublish, {
     timeout: 35000,
   });
-  await authorPage.getByText("Share", { exact: true }).hover();
+  await authorPage.getByText("Share", { exact: true }).click();
   await firstPublish;
   const publishState = authorPage.locator(".sharePublishState");
   await expect(publishState).toHaveText("Published v1", { timeout: 15000 });
@@ -91,7 +91,10 @@ async function setup(browser, prefix, copierEdit?) {
   await expect(publishState).toHaveText("Unpublished changes", {
     timeout: 15000,
   });
-  await authorPage.getByText("Share", { exact: true }).hover();
+  // The popover stays open after the first click: open it only if it is closed.
+  if (!(await authorPage.locator(".sharePopover").isVisible())) {
+    await authorPage.getByText("Share", { exact: true }).click();
+  }
   const secondPublish = authorPage.waitForResponse(isPublish, {
     timeout: 35000,
   });

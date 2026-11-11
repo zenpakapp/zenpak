@@ -157,7 +157,7 @@ html.lpSigningOut body::before {
 
 <template>
     <span class="headerItem hasPopover headerTruncateItem">
-        <PopoverHover id="headerPopover" placement="right">
+        <PopoverHover id="headerPopover" placement="right" focusable>
             <template #target>
                 <span class="accountDropdownTarget" :title="username" :aria-label="accessibleName">
                     <span class="accountDropdownAvatar" :style="{ background: avatarUrl ? '#fff' : avatarBackground }">

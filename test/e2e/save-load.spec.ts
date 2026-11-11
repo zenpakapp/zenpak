@@ -32,7 +32,7 @@ test.describe('Save and reload tests', () => {
     await editedFieldsSave;
 
     const externalIdResponse = page.waitForResponse(isSuccessfulExternalId, { timeout: 35000 });
-    await page.getByText('Share', { exact: true }).hover();
+    await page.getByText('Share', { exact: true }).click();
     await externalIdResponse;
 
     const shareUrlLocator = page.locator('#shareUrl');

@@ -4,7 +4,18 @@
 </style>
 
 <template>
-    <Popover :shown="shown" :placement="placement" @mouseenter="show" @mouseleave="startHideTimeout">
+    <Popover
+        :shown="shown"
+        :placement="placement"
+        :focusable="focusable"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
+        @click="onClick"
+        @focusin="onFocusIn"
+        @focusout="onFocusOut"
+        @toggle="toggle"
+        @hide="onOutside"
+    >
         <template #target>
             <slot name="target" />
         </template>
@@ -27,14 +38,59 @@ export default {
             type: String,
             default: 'center',
         },
+        // 'hover' opens on pointer or keyboard focus; 'click' opens only on click, Enter or Space
+        // and stays open until Escape, a click outside, or the trigger again.
+        trigger: {
+            type: String,
+            default: 'hover',
+        },
+        // The trigger takes keyboard focus. Leave it off when the target already is a control.
+        focusable: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
             shown: false,
             hideTimeout: null,
+            returningFocus: false,
         };
     },
     methods: {
+        onMouseEnter() {
+            if (this.trigger === 'hover') this.show();
+        },
+        onMouseLeave() {
+            if (this.trigger === 'hover') this.startHideTimeout();
+        },
+        onClick(evt) {
+            if (this.trigger === 'click' && evt.target.closest('.lpTarget')) this.toggle();
+        },
+        onFocusIn() {
+            if (this.trigger === 'hover' && !this.returningFocus) this.show();
+        },
+        onFocusOut(evt) {
+            if (this.trigger !== 'hover') return;
+            if (evt.relatedTarget && evt.currentTarget.contains(evt.relatedTarget)) return;
+            this.startHideTimeout();
+        },
+        // Escape or a click outside. With focus inside, it goes back to the trigger.
+        onOutside() {
+            if (!this.shown) return;
+            const target = this.$el.querySelector('.lpTarget');
+            const focusInside = this.$el.contains(document.activeElement);
+            this.hide();
+            if (focusInside && this.focusable && target) {
+                this.returningFocus = true;
+                target.focus();
+                this.$nextTick(() => { this.returningFocus = false; });
+            }
+        },
+        toggle() {
+            if (this.shown) this.hide();
+            else this.show();
+        },
         show() {
             if (this.hideTimeout) {
                 clearTimeout(this.hideTimeout);

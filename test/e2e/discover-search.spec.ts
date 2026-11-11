@@ -34,7 +34,7 @@ test("Discover finds a public list by its name and by its items", async ({
       r.url().endsWith("/publish") && r.request().method() === "POST" && r.ok(),
     { timeout: 35000 },
   );
-  await page.getByText("Share", { exact: true }).hover();
+  await page.getByText("Share", { exact: true }).click();
   await publish;
   await expect(page.locator(".sharePublishState")).toHaveText("Published v1", {
     timeout: 15000,

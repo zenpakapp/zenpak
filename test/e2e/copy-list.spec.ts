@@ -30,7 +30,7 @@ test.describe("Copy list", () => {
       (r) => r.url().includes("/externalId") && r.ok(),
       { timeout: 35000 },
     );
-    await shareTrigger.hover();
+    await shareTrigger.click();
     await externalIdResponse;
 
     // Wait for the share URL to populate

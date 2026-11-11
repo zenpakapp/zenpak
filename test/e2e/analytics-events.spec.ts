@@ -35,7 +35,7 @@ test("signing up and publishing a list send only the name of the action", async 
       response.ok(),
     { timeout: 35000 },
   );
-  await page.getByText("Share", { exact: true }).hover();
+  await page.getByText("Share", { exact: true }).click();
   await published;
   await expect
     .poll(async () => (await events(page)).map((entry) => entry[0]))
