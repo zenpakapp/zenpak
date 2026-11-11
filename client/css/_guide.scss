@@ -72,8 +72,9 @@
     resize: vertical;
     width: 100%;
 
-    &:focus {
+    &:focus-visible {
         border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
         outline: none;
     }
 }
@@ -93,8 +94,9 @@
     min-width: 0;
     padding: 6px 10px;
 
-    &:focus {
+    &:focus-visible {
         border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
         outline: none;
     }
 }
@@ -111,6 +113,12 @@
     flex: 0 0 100px;
     font-size: $fontSize-sm;
     padding: 6px 10px;
+
+    &:focus-visible {
+        border-color: $color-accent;
+        box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
+        outline: none;
+    }
 }
 
 .lpGuideRow,
@@ -192,6 +200,11 @@
     padding: 4px 0;
 
     &:hover { text-decoration: underline; }
+
+    &:focus-visible {
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
+    }
 }
 
 .lpGuideRemove {
@@ -204,6 +217,11 @@
     white-space: nowrap;
 
     &:hover { text-decoration: underline; }
+
+    &:focus-visible {
+        outline: 2px solid $color-danger;
+        outline-offset: 2px;
+    }
 }
 
 .lpGuideSaveRow {
@@ -276,10 +294,11 @@
 }
 
 .lpGuideRuleWarning {
-    border-left: 3px solid var(--color-warning, #d97706);
+    background: rgba(217, 119, 6, 0.1);
+    border-radius: $radius-sm;
     color: $color-text;
     margin-top: 6px;
-    padding-left: 10px;
+    padding: 6px 10px;
 }
 
 .lpGuideLoading,

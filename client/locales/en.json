@@ -451,7 +451,7 @@
     "itemNoMatch": "No item matches.",
     "itemShowMore": "Show {count} more",
     "itemInLists": "{count} lists",
-    "itemsError": "Items saved ✓",
+    "itemsSaved": "Items saved ✓",
     "upgrade": {
       "trailBenefit1": "Supporter badge on your public profile",
       "trailBenefit2": "Public profile with avatar, bio and travel name",

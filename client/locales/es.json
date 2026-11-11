@@ -451,7 +451,7 @@
     "itemNoMatch": "Ningún objeto coincide.",
     "itemShowMore": "Mostrar {count} más",
     "itemInLists": "{count} listas",
-    "itemsError": "Artículos guardados ✓",
+    "itemsSaved": "Artículos guardados ✓",
     "upgrade": {
       "trailBenefit1": "Distintivo de apoyo en tu perfil público",
       "trailBenefit2": "Perfil público con avatar, biografía y nombre de viajero",

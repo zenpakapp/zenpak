@@ -1,5 +1,78 @@
+<template>
+    <div class="lpInsights">
+        <h2 class="lpInsightsTitle">
+            {{ $t('misc.insights') }}
+        </h2>
+
+        <p v-if="loading" class="lpInsightsMessage">
+            {{ $t('misc.loading') }}
+        </p>
+        <p v-else-if="error" class="lpInsightsMessage" role="alert">
+            {{ error }}
+        </p>
+        <template v-else-if="data">
+            <div class="lpInsightsTotals">
+                <div class="lpInsightsStat">
+                    <strong>{{ data.totals.followers }}</strong>
+                    <span>{{ $t('misc.followers') }}</span>
+                </div>
+                <div class="lpInsightsStat">
+                    <strong>{{ data.totals.views }}</strong>
+                    <span>{{ $t('misc.views') }}</span>
+                </div>
+                <div class="lpInsightsStat">
+                    <strong>{{ data.totals.copies }}</strong>
+                    <span>{{ $t('misc.copies') }}</span>
+                </div>
+            </div>
+
+            <table v-if="data.lists.length" class="lpInsightsTable">
+                <thead>
+                    <tr>
+                        <th>{{ $t('public.statLists') }}</th>
+                        <th>{{ $t('misc.views') }}</th>
+                        <th>{{ $t('misc.copies') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="list in data.lists" :key="list.externalId">
+                        <td>{{ list.name }}</td>
+                        <td>{{ list.viewCount }}</td>
+                        <td>{{ list.copyCount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p v-else class="lpInsightsMessage">
+                {{ $t('misc.noPublicLists') }}
+            </p>
+        </template>
+    </div>
+</template>
+
+<script>
+import { fetchJson } from '../utils/utils';
+
+export default {
+    name: 'ProfileInsights',
+    data() {
+        return { loading: true, error: null, data: null };
+    },
+    created() {
+        fetchJson('/api/community/insights')
+            .then((d) => { this.data = d; })
+            .catch(() => { this.error = this.$t('misc.loadInsightsError'); })
+            .finally(() => { this.loading = false; });
+    },
+};
+</script>
+
 <style lang="scss">
 @import "../css/_globals";
+
+.lpInsightsMessage {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+}
 
 .lpInsightsTitle {
     font-size: $fontSize-base;
@@ -54,71 +127,3 @@
     }
 }
 </style>
-
-<template>
-    <div class="lpInsights">
-        <div class="lpInsightsTitle">
-            {{ $t('misc.insights') }}
-        </div>
-
-        <p v-if="loading">
-            {{ $t('misc.loading') }}
-        </p>
-        <p v-else-if="error" style="color: var(--color-text-muted); font-size: 13px;">
-            {{ error }}
-        </p>
-        <template v-else-if="data">
-            <div class="lpInsightsTotals">
-                <div class="lpInsightsStat">
-                    <strong>{{ data.totals.followers }}</strong>
-                    <span>{{ $t('misc.followers') }}</span>
-                </div>
-                <div class="lpInsightsStat">
-                    <strong>{{ data.totals.views }}</strong>
-                    <span>{{ $t('misc.views') }}</span>
-                </div>
-                <div class="lpInsightsStat">
-                    <strong>{{ data.totals.copies }}</strong>
-                    <span>{{ $t('misc.copies') }}</span>
-                </div>
-            </div>
-
-            <table v-if="data.lists.length" class="lpInsightsTable">
-                <thead>
-                    <tr>
-                        <th>{{ $t('public.items') }}</th>
-                        <th>{{ $t('misc.views') }}</th>
-                        <th>{{ $t('misc.copies') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="list in data.lists" :key="list.externalId">
-                        <td>{{ list.name }}</td>
-                        <td>{{ list.viewCount }}</td>
-                        <td>{{ list.copyCount }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p v-else style="color: var(--color-text-muted); font-size: 13px;">
-                {{ $t('misc.noPublicLists') }}
-            </p>
-        </template>
-    </div>
-</template>
-
-<script>
-import { fetchJson } from '../utils/utils';
-
-export default {
-    name: 'ProfileInsights',
-    data() {
-        return { loading: true, error: null, data: null };
-    },
-    created() {
-        fetchJson('/api/community/insights')
-            .then((d) => { this.data = d; })
-            .catch(() => { this.error = this.$t('misc.loadInsightsError'); })
-            .finally(() => { this.loading = false; });
-    },
-};
-</script>

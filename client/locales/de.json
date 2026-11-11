@@ -451,7 +451,7 @@
     "itemNoMatch": "Kein Gegenstand passt.",
     "itemShowMore": "{count} weitere anzeigen",
     "itemInLists": "{count} Listen",
-    "itemsError": "Gegenstände gespeichert ✓",
+    "itemsSaved": "Gegenstände gespeichert ✓",
     "upgrade": {
       "trailBenefit1": "Supporter-Badge auf deinem öffentlichen Profil",
       "trailBenefit2": "Öffentliches Profil mit Avatar, Biografie und Reisename",

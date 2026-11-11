@@ -24,9 +24,9 @@
             <div class="lpGuideField">
                 <label class="lpGuideLabel">{{ $t('guide.links') }}</label>
                 <div v-for="(link, i) in profile.links" :key="i" class="lpGuideRow">
-                    <input v-model="link.label" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.linksLabel')" maxlength="100">
-                    <input v-model="link.url" class="lpGuideInput" :placeholder="$t('guide.linksPlaceholder')" maxlength="500">
-                    <button class="lpGuideRemove" @click="profile.links.splice(i, 1)">
+                    <input v-model="link.label" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.linksLabel')" :aria-label="$t('guide.linksLabel')" maxlength="100">
+                    <input v-model="link.url" class="lpGuideInput" :placeholder="$t('guide.linksPlaceholder')" :aria-label="$t('guide.links')" maxlength="500">
+                    <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${link.label || link.url}`" @click="profile.links.splice(i, 1)">
                         {{ $t('guide.removeButton') }}
                     </button>
                 </div>
@@ -37,8 +37,8 @@
             <div class="lpGuideField">
                 <label class="lpGuideLabel">{{ $t('guide.gearPhilosophy') }}</label>
                 <div v-for="(item, i) in profile.gearPhilosophy" :key="i" class="lpGuideRow">
-                    <input v-model="profile.gearPhilosophy[i]" class="lpGuideInput" :placeholder="$t('guide.gearPhilosophyPlaceholder')" maxlength="100">
-                    <button class="lpGuideRemove" @click="profile.gearPhilosophy.splice(i, 1)">
+                    <input v-model="profile.gearPhilosophy[i]" class="lpGuideInput" :placeholder="$t('guide.gearPhilosophyPlaceholder')" :aria-label="$t('guide.gearPhilosophy')" maxlength="100">
+                    <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${item}`" @click="profile.gearPhilosophy.splice(i, 1)">
                         {{ $t('guide.removeButton') }}
                     </button>
                 </div>
@@ -50,7 +50,7 @@
                 <button class="lpButton" :disabled="savingProfile" @click="saveProfile">
                     {{ savingProfile ? $t('guide.savingLabel') : $t('guide.saveChanges') }}
                 </button>
-                <span v-if="profileSaved" class="lpGuideSavedFeedback">{{ $t('guide.profileSaved') }}</span>
+                <span v-if="profileSaved" class="lpGuideSavedFeedback" role="status">{{ $t('guide.profileSaved') }}</span>
             </div>
         </section>
 
@@ -90,7 +90,7 @@
                         <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldLabel') }}</span>
                         <input v-model="rule.promoLabel" class="lpGuideInput" :placeholder="$t('guide.rulePromoLabelPlaceholder')" maxlength="100">
                     </label>
-                    <button class="lpGuideRemove" @click="removeRule(i)">
+                    <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${rule.match}`" @click="removeRule(i)">
                         {{ $t('guide.removeButton') }}
                     </button>
                 </div>
@@ -112,7 +112,7 @@
                 <button class="lpButton" :disabled="savingRules" @click="saveAffiliateRules">
                     {{ savingRules ? $t('guide.savingLabel') : $t('guide.saveChanges') }}
                 </button>
-                <span v-if="rulesSaved" class="lpGuideSavedFeedback">{{ $t('guide.rulesSaved') }}</span>
+                <span v-if="rulesSaved" class="lpGuideSavedFeedback" role="status">{{ $t('guide.rulesSaved') }}</span>
             </div>
         </section>
 
@@ -180,21 +180,21 @@
                 <button class="lpButton" :disabled="savingItems || loadingItems" @click="saveItems">
                     {{ savingItems ? $t('guide.savingLabel') : $t('guide.saveChanges') }}
                 </button>
-                <span v-if="itemsSaved" class="lpGuideSavedFeedback">{{ $t('guide.itemsError') }}</span>
+                <span v-if="itemsSaved" class="lpGuideSavedFeedback" role="status">{{ $t('guide.itemsSaved') }}</span>
             </div>
         </section>
 
-        <div v-if="error" class="lpGuideError">
+        <div v-if="error" class="lpGuideError" role="alert">
             {{ error }}
         </div>
     </div>
 </template>
 
 <script>
-import { useGuide } from '../composables/useGuide.js';
-import { useBackNav } from '../composables/useBackNav.js';
-import { hasFeature, FEATURES } from '../services/entitlements.js';
-import { push } from '../services/navigation.js';
+import { useGuide } from '../composables/useGuide';
+import { useBackNav } from '../composables/useBackNav';
+import { hasFeature, FEATURES } from '../services/entitlements';
+import { push } from '../services/navigation';
 import promoLink from '../utils/promo-link';
 import profileInsights from '../components/profile-insights.vue';
 
@@ -235,18 +235,6 @@ export default {
             return this.$store && this.$store.state && this.$store.state.loggedIn;
         },
     },
-    methods: {
-        listsLabel(row) {
-            return row.lists.length === 1 ? row.lists[0].listName : this.$t('guide.itemInLists', { count: row.lists.length });
-        },
-        // A "domain" rule needs a web address, or it matches no item link. An empty value is
-        // not flagged: the row is simply unfinished.
-        hasDomainProblem(rule) {
-            return rule.type === 'domain'
-                && String(rule.match || '').trim() !== ''
-                && !promoLink.ruleHostname(rule);
-        },
-    },
     watch: {
         itemQuery() { this.itemLimit = ITEM_PAGE; },
         itemListId() { this.itemLimit = ITEM_PAGE; },
@@ -272,6 +260,18 @@ export default {
             this.loadProfile();
             this.loadItems();
         }
+    },
+    methods: {
+        listsLabel(row) {
+            return row.lists.length === 1 ? row.lists[0].listName : this.$t('guide.itemInLists', { count: row.lists.length });
+        },
+        // A "domain" rule needs a web address, or it matches no item link. An empty value is
+        // not flagged: the row is simply unfinished.
+        hasDomainProblem(rule) {
+            return rule.type === 'domain'
+                && String(rule.match || '').trim() !== ''
+                && !promoLink.ruleHostname(rule);
+        },
     },
 };
 </script>
