@@ -451,7 +451,7 @@
     "itemNoMatch": "Aucun objet ne correspond.",
     "itemShowMore": "Afficher {count} de plus",
     "itemInLists": "{count} listes",
-    "itemsError": "Articles enregistrés ✓",
+    "itemsSaved": "Articles enregistrés ✓",
     "upgrade": {
       "trailBenefit1": "Badge de supporter sur votre profil public",
       "trailBenefit2": "Profil public avec avatar, bio et nom de voyage",
