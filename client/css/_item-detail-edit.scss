@@ -165,6 +165,17 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
 
+    // Narrow screens: weight and unit get a row of their own, price and quantity share the next.
+    @media (max-width: 520px) {
+        .itemDetailFieldRow {
+            grid-template-columns: 1fr 1fr;
+
+            & > .itemDetailField:first-child {
+                grid-column: 1 / -1;
+            }
+        }
+    }
+
     .itemDetailUnitRow {
         display: flex;
         gap: 8px;
