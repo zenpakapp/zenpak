@@ -97,6 +97,7 @@
   "list": {
     "descriptionHelp": "Liens cliquables (3 maximum). Un lien qui vous rémunère (affiliation, parrainage) ? Précisez-le.",
     "addCategory": "Ajouter une catégorie",
+    "categoriesToggle": "Catégories ({count})",
     "packThis": "Préparer ce sac",
     "reset": "Réinitialiser",
     "done": "Terminé",

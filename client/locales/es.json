@@ -97,6 +97,7 @@
   "list": {
     "descriptionHelp": "Enlaces clicables (3 como máximo). ¿Un enlace que te remunera (afiliación, referido)? Indícalo.",
     "addCategory": "Añadir categoría",
+    "categoriesToggle": "Categorías ({count})",
     "packThis": "Empacar esta lista",
     "reset": "Restablecer",
     "done": "Hecho",

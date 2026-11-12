@@ -70,6 +70,8 @@ export async function renderListChart({
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    // Phones show the touched slice in a text line under the donut instead.
+                    filter: () => !(typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches),
                     caretSize: 0,
                     displayColors: false,
                     callbacks: {

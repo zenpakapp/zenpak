@@ -2,9 +2,15 @@
     <div class="lpListSummary">
         <div class="lpChartContainer">
             <canvas ref="chartCanvas" class="lpChart" height="260" width="260" />
+            <p class="lpChartReadout" aria-live="polite">
+                {{ chartReadout }}
+            </p>
         </div>
         <div class="lpTotalsContainer">
-            <ul class="lpTotals lpTable lpDataTable">
+            <button type="button" class="lpCategoriesToggle" :aria-expanded="categoriesOpen ? 'true' : 'false'" @click="categoriesOpen = !categoriesOpen">
+                {{ $t('list.categoriesToggle', { count: categories.length }) }}
+            </button>
+            <ul class="lpTotals lpTable lpDataTable" :class="{ lpCategoriesFolded: !categoriesOpen }">
                 <li class="lpRow lpHeader">
                     <span class="lpCell">&nbsp;</span>
                     <span class="lpCell">
@@ -124,11 +130,18 @@ export default {
             chartFrame: null,
             chartScheduled: false,
             themeObserver: null,
+            categoriesOpen: false,
         };
     },
     computed: {
         library() {
             return this.$store.state.library;
+        },
+        // Phones: the canvas tooltip is too small to read, so the touched slice is named here instead.
+        chartReadout() {
+            const category = this.categories.find((c) => c.id === this.hoveredCategoryId);
+            if (!category) return '';
+            return `${category.name} · ${displayWeight(category.subtotalWeight, this.displayUnit)} ${this.displayUnit}`;
         },
         categories() {
             return this.list.categoryIds
@@ -232,5 +245,52 @@ export default {
     aspect-ratio: 1;
     height: auto !important;
     max-width: 100%;
+}
+
+// Desktop reads the canvas tooltip; the readout is for phones only.
+.lpChartReadout {
+    display: none;
+}
+
+// The toggle only exists on phones, where nine category rows would push the list off the screen.
+.lpCategoriesToggle {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .lpChartReadout {
+        display: block;
+        font-size: $fontSize-sm;
+        margin: 4px 0 0;
+        min-height: 1.4em;
+        text-align: center;
+    }
+
+    .lpCategoriesToggle {
+        background: transparent;
+        border: 0;
+        color: $color-accent-text;
+        cursor: pointer;
+        display: block;
+        font-size: $fontSize-sm;
+        font-weight: $fontWeight-bold;
+        margin: 0 auto 8px;
+        padding: 8px 12px;
+
+        &::after {
+            content: " ▾";
+        }
+
+        &[aria-expanded="true"]::after {
+            content: " ▴";
+        }
+    }
+
+    .lpCategoriesFolded {
+        .lpHeader,
+        .lpTotalCategory {
+            display: none;
+        }
+    }
 }
 </style>
