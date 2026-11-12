@@ -507,6 +507,7 @@ input.lpCategoryName { /* specificity */
     textarea {
         border: 1px solid $color-border;
         border-radius: $radius-sm;
+        box-sizing: border-box;
         height: 100px;
         padding: 10px $spacingSmall;
         resize: vertical;
@@ -595,6 +596,18 @@ input.lpCategoryName { /* specificity */
 // Under the totals table; the slot only renders when the summary is given an action.
 .lpEditorSummary {
     margin-bottom: 20px;
+}
+
+// Phones: a smaller donut so the first item comes sooner.
+@media (max-width: 480px) {
+    .lpEditorSummary {
+        gap: 12px;
+        margin-bottom: 16px;
+
+        .lpChartContainer {
+            max-width: 120px;
+        }
+    }
 }
 
 .lpTotalsActions {

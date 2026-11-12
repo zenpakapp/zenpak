@@ -97,6 +97,7 @@
   "list": {
     "descriptionHelp": "Anklickbare Links (höchstens 3). Ein Link, der dich vergütet (Affiliate, Empfehlung)? Sag es dazu.",
     "addCategory": "Kategorie hinzufügen",
+    "categoriesToggle": "Kategorien ({count})",
     "packThis": "Diese Liste packen",
     "reset": "Zurücksetzen",
     "done": "Fertig",

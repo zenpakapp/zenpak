@@ -97,6 +97,7 @@
   "list": {
     "descriptionHelp": "Clickable links (3 at most). A link that pays you (affiliate, referral)? Say so.",
     "addCategory": "Add new category",
+    "categoriesToggle": "Categories ({count})",
     "packThis": "Pack this list",
     "reset": "Reset",
     "done": "Done",

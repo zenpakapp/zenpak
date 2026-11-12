@@ -50,26 +50,6 @@
             </button>
         </list-summary>
 
-        <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
-            <span>{{ $t('list.guestHint') }}</span>
-            <router-link to="/register" class="lpCommunityHintCta">
-                {{ $t('list.guestHintCta') }}
-            </router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">
-                ✕
-            </button>
-        </div>
-
-        <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
-            <span>{{ $t('list.communityHint') }}</span>
-            <router-link to="/community" class="lpCommunityHintCta" @click="dismissCommunityHint">
-                {{ $t('list.communityHintCta') }}
-            </router-link>
-            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">
-                ✕
-            </button>
-        </div>
-
         <div style="clear: both;" />
 
         <details v-if="library.optionalFields['listDescription']" id="listDescriptionContainer">
@@ -95,6 +75,26 @@
         <hr>
 
         <a v-if="!isPackingMode" class="lpAdd addCategory" role="button" tabindex="0" @click="newCategory" @keydown.enter="newCategory" @keydown.space.prevent="newCategory"><i class="lpSprite lpSpriteAdd" />{{ $t('list.addCategory') }}</a>
+
+        <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
+            <span>{{ $t('list.guestHint') }}</span>
+            <router-link to="/register" class="lpCommunityHintCta">
+                {{ $t('list.guestHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissGuestHint">
+                ✕
+            </button>
+        </div>
+
+        <div v-if="showCommunityHint && !isPackingMode" class="lpCommunityHint">
+            <span>{{ $t('list.communityHint') }}</span>
+            <router-link to="/community" class="lpCommunityHintCta" @click="dismissCommunityHint">
+                {{ $t('list.communityHintCta') }}
+            </router-link>
+            <button class="lpCommunityHintDismiss" @click="dismissCommunityHint">
+                ✕
+            </button>
+        </div>
     </div>
 </template>
 
