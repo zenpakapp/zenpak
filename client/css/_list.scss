@@ -114,6 +114,11 @@ input.lpCategoryName { /* specificity */
     white-space: nowrap;
 }
 
+// Subtotals can use another unit than the rows (oz rows, lb totals): bold sets them apart.
+.lpItemsFooter .lpWeightCell.lpSubtotal {
+    font-weight: $fontWeight-bold;
+}
+
 .lpSubtotalUnit,
 .lpTotalUnit {
     border-left: 1px solid transparent;
