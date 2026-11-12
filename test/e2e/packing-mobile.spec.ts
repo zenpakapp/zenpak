@@ -142,6 +142,23 @@ for (const width of [768, 1280]) {
         return r.getBoundingClientRect().x;
       });
     expect(qtyText - (textBox.x + textBox.w)).toBeGreaterThanOrEqual(8);
+    // Header labels, row text and category totals share one centre per column.
+    const centre = (selector: string, root: typeof row) =>
+      root.locator(selector).first().evaluate((el) => {
+        const r = document.createRange();
+        r.selectNodeContents(el);
+        const b = r.getBoundingClientRect();
+        return (b.left + b.right) / 2;
+      });
+    const foot = page.locator(".lpItemsFooter").first();
+    for (const col of [".lpWeightCell", ".lpQtyCell"]) {
+      const h = await centre(col, head);
+      const r = await centre(col, row);
+      const f = await centre(col, foot);
+      expect(Math.abs(h - r), `${col} header vs row`).toBeLessThanOrEqual(4);
+      expect(Math.abs(f - r), `${col} footer vs row`).toBeLessThanOrEqual(8);
+    }
+
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
     );

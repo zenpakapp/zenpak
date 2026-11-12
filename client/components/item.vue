@@ -38,24 +38,27 @@
             <button type="button" class="lpSprite lpActionBtn lpCamera" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
             <button type="button" class="lpSprite lpActionBtn lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
             <button type="button" class="lpSprite lpActionBtn lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" :aria-label="$t('item.metaTitle')" @click="updateItemMeta" />
-            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" @click="toggleWorn" />
-            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" @click="toggleConsumable" />
+            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
+            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
             <button type="button" class="lpSprite lpActionBtn lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" :aria-label="$t('item.optionalTitle')" :aria-pressed="categoryItem.qty === 0" @click="toggleOptional" />
             <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" :aria-label="$t('item.ratingTitle')" @click="cycleStar" />
             <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price'] && isPackingMode" class="lpPriceCell lpNumber lpPackText">{{ displayPrice || '' }}</span>
         <span v-else-if="library.optionalFields['price']" class="lpPriceCell">
-            <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
+            <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :aria-invalid="priceError" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
+            <span v-if="priceError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
         </span>
         <span v-if="isPackingMode" class="lpWeightCell lpNumber lpPackText">{{ displayWeight || 0 }} {{ library.itemUnit }}</span>
         <span v-else class="lpWeightCell lpNumber">
-            <input v-model="displayWeight" v-empty-if-zero type="text" :aria-label="$t('item.weightLabel', { name: itemLabel })" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
+            <input v-model="displayWeight" v-empty-if-zero type="text" :aria-label="$t('item.weightLabel', { name: itemLabel })" :aria-invalid="weightError" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
             <span class="lpUnit">{{ library.itemUnit }}</span>
+            <span v-if="weightError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
         </span>
         <span v-if="isPackingMode" class="lpQtyCell lpNumber lpPackText">{{ categoryItem.qty }}&times;</span>
         <span v-else class="lpQtyCell">
-            <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :aria-invalid="qtyError" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
+            <span v-if="qtyError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
             <span class="lpArrows" aria-hidden="true">
                 <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" @click="incrementQty($event)" />
                 <button type="button" class="lpSprite lpActionBtn lpDown" tabindex="-1" @click="decrementQty($event)" />
@@ -269,6 +272,7 @@ export default {
         },
         toggleWorn() {
             if (this.categoryItem.consumable) {
+                showGlobalAlert(this.$t('item.wornBlocked'));
                 return;
             }
             this.categoryItem.worn = !this.categoryItem.worn;
@@ -276,6 +280,7 @@ export default {
         },
         toggleConsumable() {
             if (this.categoryItem.worn) {
+                showGlobalAlert(this.$t('item.consumableBlocked'));
                 return;
             }
             this.categoryItem.consumable = !this.categoryItem.consumable;
