@@ -179,6 +179,15 @@
     opacity: 1;
 }
 
+// Worn, consumable and optional change the weight maths: when on they also get a ring, so the
+// state does not rest on the icon colour alone.
+.lpItem .lpActionsCell .lpWorn.lpActive,
+.lpItem .lpActionsCell .lpConsumable.lpActive,
+.lpItem .lpActionsCell .lpOptionDot.lpActive {
+    border-radius: $radius-sm;
+    box-shadow: 0 0 0 1px rgba(var(--color-accent-rgb), 0.6);
+}
+
 .lpItem .lpActionsCell .lpEdit {
     opacity: 0.5;
 }
@@ -215,8 +224,12 @@
 
 // Touch screens and narrow windows have no hover: the actions are always shown.
 @media (hover: none), (pointer: coarse), (max-width: 768px) {
+    // Phone-size targets: at least 32px each way, not the 26px of the pointer layout.
     .lpItem .lpActionsCell .lpActionBtn {
+        margin: 0;
+        min-height: 14px;
         opacity: 0.55;
+        padding: 9px 8px;
     }
 
     .lpItem .lpActionsCell .lpActionBtn.lpActive,
@@ -233,8 +246,9 @@
 }
 
 @media (hover: none), (pointer: coarse) {
+    // The 8px side padding of each button already spaces them.
     .lpItem .lpActionsCell {
-        gap: 8px;
+        gap: 2px;
     }
 
     .lpItem .lpRemoveItem {

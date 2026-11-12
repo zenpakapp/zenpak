@@ -295,11 +295,15 @@ for (const width of [320, 375, 500, 640, 768]) {
         itemRight: Math.round(item.right),
         editVisibility: getComputedStyle(edit).visibility,
         nameBottom: Math.round(name.bottom),
+        nameRight: Math.round(name.right),
         actionsTop: Math.round(actions.top),
         actionsCenter: Math.round(actions.top + actions.height / 2),
         actionsRight: Math.round(actions.right),
         weightLeft: Math.round(weight.left),
         weightRight: Math.round(weight.right),
+        weightBottom: Math.round(weight.bottom),
+        weightTop: Math.round(weight.top),
+        qtyTop: Math.round(qty.top),
         weightCenter: Math.round(weight.top + weight.height / 2),
         qtyLeft: Math.round(qty.left),
         qtyCenter: Math.round(qty.top + qty.height / 2),
@@ -337,14 +341,13 @@ for (const width of [320, 375, 500, 640, 768]) {
     }
 
     if (width <= 500) {
+      // The actions have a full-width row under the name, quantity and weight.
       expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.nameBottom);
-      expect(layout.actionsRight).toBeLessThanOrEqual(layout.weightLeft);
-      expect(
-        Math.abs(layout.actionsCenter - layout.weightCenter),
-      ).toBeLessThanOrEqual(1);
-      expect(
-        Math.abs(layout.nameCenter - layout.qtyCenter),
-      ).toBeLessThanOrEqual(1);
+      expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.weightBottom - 1);
+      expect(layout.actionsRight).toBeLessThanOrEqual(layout.itemRight);
+      // Quantity sits above the weight, both beside the name.
+      expect(layout.qtyTop).toBeLessThan(layout.weightTop);
+      expect(layout.qtyLeft).toBeGreaterThanOrEqual(layout.nameRight);
     }
 
     await page.locator("#hamburger").click();
