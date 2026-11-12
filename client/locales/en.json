@@ -1020,6 +1020,7 @@
     "wornTitle": "Mark as worn",
     "consumableTitle": "Mark as consumable",
     "ratingTitle": "Rate this item",
+    "notCounted": "Not counted",
     "optionalQtyTitle": "Quantity 0 marks this item as optional — its weight isn't counted in totals",
     "optionalTitle": "Mark as optional",
     "editTitle": "Edit details",

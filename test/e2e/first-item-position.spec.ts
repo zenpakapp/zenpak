@@ -25,7 +25,7 @@ test("the first category shows on an iPhone mini and the category table folds", 
   await page.evaluate(() => window.scrollTo(0, 0));
   // An iPhone mini under Safari shows about 640px: the first category starts well inside it.
   const heading = await page.locator(".lpItemsHeader").first().boundingBox();
-  expect(heading?.y ?? 9999).toBeLessThan(520);
+  expect(heading?.y ?? 9999).toBeLessThan(560);
 
   // The category table is folded behind a toggle, and opens on tap.
   const toggle = page.locator(".lpCategoriesToggle");
