@@ -100,7 +100,7 @@
 <script>
 import { markRaw } from 'vue';
 import colorPicker from './colorpicker.vue';
-import { renderListChart } from '../services/list-chart';
+import renderListChart from '../services/list-chart';
 import { useUtils } from '../composables/useUtils';
 
 const colorUtils = require('../utils/color.js');
