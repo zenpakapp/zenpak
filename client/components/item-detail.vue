@@ -135,10 +135,13 @@ export default {
 <style lang="scss">
 @import "../css/_globals";
 
+// The content scrolls, the dialog does not: the close button stays in view whatever the scroll.
 #itemDetailDialog.lpModal {
     border-radius: $radius-md;
-    max-height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    max-height: 90dvh;
+    overflow: hidden;
     padding: 0;
     width: min(480px, 92vw);
 
@@ -147,12 +150,17 @@ export default {
     }
 
     .lpModalClose {
+        background: $color-surface-elevated;
         top: 20px;
+        z-index: 1;
     }
 }
 
 .itemDetail {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
 }
 </style>
