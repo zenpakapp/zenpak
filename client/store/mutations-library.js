@@ -52,8 +52,7 @@ module.exports = {
     },
     newList(state) {
         const list = state.library.newList();
-        const category = state.library.newCategory({ list });
-        state.library.newItem({ category });
+        state.library.newCategory({ list });
         list.calculateTotals();
         state.library.defaultListId = list.id;
     },
