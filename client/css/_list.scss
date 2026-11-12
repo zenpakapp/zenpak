@@ -119,6 +119,65 @@ input.lpCategoryName { /* specificity */
     font-weight: $fontWeight-bold;
 }
 
+// Edit mode: the column labels and the category totals end where the numbers typed in the rows
+// end: 21px in from the weight cell (the unit), 30px in from the quantity cell (input + arrows).
+.lpItemsHeader:not(.lpHeaderPacking) {
+    .lpWeightCell {
+        padding-right: 21px;
+        text-align: right;
+    }
+
+    .lpQtyCell {
+        justify-content: flex-end;
+        padding-right: 30px;
+    }
+}
+
+.lpItemsFooter:not(.lpFooterPacking) {
+    .lpDisplaySubtotal {
+        padding-right: 0;
+    }
+
+    .lpSubtotalUnit {
+        border-left: 0;
+        padding: 0 0 0 4px;
+        white-space: nowrap;
+        width: 21px;
+    }
+
+    .lpQtyCell {
+        box-sizing: border-box;
+        flex: 0 0 66px;
+        justify-content: flex-end;
+        padding-right: 30px;
+
+        .lpQtySubtotal {
+            padding: 0;
+        }
+    }
+}
+
+// Packing mode: the labels and the totals sit centred over the centred row text.
+.lpHeaderPacking .lpQtyCell,
+.lpFooterPacking .lpQtyCell {
+    justify-content: center;
+}
+
+.lpFooterPacking {
+    .lpWeightCell.lpSubtotal {
+        text-align: center;
+    }
+
+    .lpSubtotalUnit {
+        padding: 0 0 0 5px;
+        width: auto;
+    }
+
+    .lpDisplaySubtotal {
+        padding-right: 0;
+    }
+}
+
 .lpSubtotalUnit,
 .lpTotalUnit {
     border-left: 1px solid transparent;
@@ -884,6 +943,32 @@ input.lpCategoryName { /* specificity */
 
         .lpRemoveCell {
             grid-area: remove;
+        }
+    }
+
+    // Phone, edit mode: the quantity total sits under the quantity numbers (right column).
+    .lpItemsFooter:not(.lpFooterPacking) .lpQtyCell {
+        flex: 0 0 64px;
+        padding-right: 21px;
+    }
+
+    // Packing rows end at the row edge: the footer totals line up with them.
+    .lpItemsFooter.lpFooterPacking {
+        .lpRemoveCell {
+            display: none;
+        }
+
+        .lpQtyCell {
+            flex: 0 0 40px;
+            justify-content: flex-end;
+        }
+
+        .lpWeightCell.lpSubtotal {
+            text-align: right;
+        }
+
+        .lpSubtotalUnit {
+            padding-right: 12px;
         }
     }
 

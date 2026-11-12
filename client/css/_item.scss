@@ -304,3 +304,29 @@
         }
     }
 }
+
+// Short message under a field that holds something that is not a number.
+.lpWeightCell,
+.lpQtyCell,
+.lpPriceCell {
+    position: relative;
+}
+
+.lpFieldError {
+    background: $color-surface;
+    color: $red1;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    white-space: nowrap;
+    z-index: 2;
+}
+
+.lpPackCategoryName {
+    align-self: center;
+    font-size: inherit;
+    font-weight: $fontWeight-bold;
+    margin: 0;
+}

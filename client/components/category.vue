@@ -1,11 +1,12 @@
 <template>
     <li :id="category.id" class="lpCategory" :class="{ lpCategorySuggestionsOpen: showSuggestions }" :data-category-id="category.id">
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
-            <li class="lpHeader lpItemsHeader">
+            <li class="lpHeader lpItemsHeader" :class="{ lpHeaderPacking: isPackingMode }">
                 <span class="lpHandleCell">
                     <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" />
                 </span>
-                <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" :disabled="isPackingMode" @input="updateCategoryName">
+                <div v-if="isPackingMode" class="lpCategoryName lpPackCategoryName">{{ category.name || $t('misc.categoryName') }}</div>
+                <input v-else v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
                 <span class="lpWeightCell">{{ $t('public.weight') }} ({{ library.itemUnit }})</span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
@@ -20,7 +21,7 @@
                 :packed-item-ids="packedItemIds"
                 @toggle-pack="$emit('toggle-pack', $event)"
             />
-            <li class="lpFooter lpItemsFooter">
+            <li class="lpFooter lpItemsFooter" :class="{ lpFooterPacking: isPackingMode }">
                 <span v-if="!isPackingMode" class="lpAddItemCell">
                     <input
                         v-if="showSuggestions || newItemName || showInput"
