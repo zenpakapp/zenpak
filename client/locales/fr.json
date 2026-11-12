@@ -879,6 +879,7 @@
     "wornTitle": "Marquer comme porté",
     "consumableTitle": "Marquer comme consommable",
     "ratingTitle": "Noter cet article",
+    "notCounted": "Non compté",
     "optionalQtyTitle": "Quantité 0 marque cet article comme optionnel — son poids n'est pas compté dans les totaux",
     "optionalTitle": "Marquer comme optionnel",
     "editTitle": "Modifier les détails",

@@ -20,7 +20,7 @@
         <span class="lpNameCell">
             <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" :aria-label="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
             <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" :aria-label="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
-            <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge">{{ $t('public.option') }}</span>
+            <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge" :title="$t('item.optionalQtyTitle')">{{ $t('item.notCounted') }}</span>
             <span v-if="hasItemMeta" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
                 <span v-for="tag in itemTags" :key="tag" class="lpItemTag">{{ tag }}</span>
