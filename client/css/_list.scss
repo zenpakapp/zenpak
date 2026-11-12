@@ -822,6 +822,15 @@ input.lpCategoryName { /* specificity */
 }
 
 @media (max-width: 500px) {
+    .lpPackingBar {
+        flex-wrap: wrap;
+    }
+
+    .lpPackingProgressTrack {
+        flex-basis: 100%;
+        order: 3;
+    }
+
     // Rows stack quantity over weight here, so side-by-side column labels would mislead.
     .lpItemsHeader {
         .lpPriceCell,
@@ -875,6 +884,20 @@ input.lpCategoryName { /* specificity */
 
         .lpRemoveCell {
             grid-area: remove;
+        }
+    }
+
+    // Packing rows have no action bar and no remove cell.
+    .lpItem.lpItemPacking {
+        grid-template-areas:
+            "handle image name qty"
+            "handle image name weight";
+        grid-template-columns: 28px auto minmax(0, 1fr) auto;
+        padding: 8px;
+
+        .lpPriceCell,
+        .lpRemoveCell {
+            display: none;
         }
     }
 }

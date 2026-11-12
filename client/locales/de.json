@@ -106,6 +106,8 @@
     "listDescription": "Listenbeschreibung",
     "markdownSupported": "unterstützt",
     "exitPacking": "Packmodus beenden",
+    "hidePacked": "Gepackte ausblenden",
+    "showPacked": "Gepackte anzeigen",
     "itemsPacked": "{packed} / {total} Gegenstände gepackt",
     "packTotal": "Gesamt: {weight}",
     "getStartedTitle": "Willkommen bei ZenPak",

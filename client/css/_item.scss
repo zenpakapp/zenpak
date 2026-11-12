@@ -81,8 +81,35 @@
 
 .lpPackCheckbox {
     cursor: pointer;
-    height: 18px;
-    width: 18px;
+    height: 24px;
+    width: 24px;
+}
+
+// Packing mode: the whole row is the tap target, and the text is read-only.
+.lpItemPacking {
+    cursor: pointer;
+    min-height: 44px;
+
+    .lpPackText {
+        display: block;
+        overflow-wrap: anywhere;
+    }
+
+    // Centred like the column labels above them.
+    .lpWeightCell.lpPackText,
+    .lpQtyCell.lpPackText {
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+    }
+}
+
+.lpItemPacking.lpQtyZero {
+    cursor: default;
+}
+
+.lpHidePacked .lpItemPacked {
+    display: none;
 }
 
 .lpItemOptionalBadge {
