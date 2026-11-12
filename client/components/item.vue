@@ -3,23 +3,31 @@
 </style>
 
 <template>
-    <li :id="item.id" :data-item-id="item.id" :class="itemRowClasses" @dblclick="!isPackingMode && openDetail()">
+    <li :id="item.id" :data-item-id="item.id" :class="itemRowClasses" @click="onRowClick" @dblclick="!isPackingMode && openDetail()">
         <span class="lpHandleCell">
             <input
-                v-if="isPackingMode"
+                v-if="isPackingMode && isCountable"
                 type="checkbox"
                 class="lpPackCheckbox"
                 :checked="isPacked"
+                :aria-label="itemLabel"
+                @click.stop
                 @change="onPackCheckbox"
             >
-            <div v-else class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
+            <div v-else-if="!isPackingMode" class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
             <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
-            <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" :aria-label="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
-            <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" :aria-label="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
+            <template v-if="isPackingMode">
+                <span class="lpName lpPackText">{{ itemLabel }}</span>
+                <span v-if="item.description" class="lpDescription lpPackText">{{ item.description }}</span>
+            </template>
+            <template v-else>
+                <input v-model="editName" v-focus-on-create="categoryItem._isNew" type="text" class="lpName lpSilent" :placeholder="$t('item.namePlaceholder')" :aria-label="$t('item.namePlaceholder')" @change="saveItemText" @blur="saveItemText">
+                <input v-model="editDescription" type="text" class="lpDescription lpSilent" :placeholder="$t('item.descriptionPlaceholder')" :aria-label="$t('item.descriptionPlaceholder')" @change="saveItemText" @blur="saveItemText">
+            </template>
             <span v-if="categoryItem.qty === 0" class="lpItemOptionalBadge" :title="$t('item.optionalQtyTitle')">{{ $t('item.notCounted') }}</span>
             <span v-if="hasItemMeta" class="lpItemMeta">
                 <span v-if="item.brand" class="lpItemBrand">{{ item.brand }}</span>
@@ -36,14 +44,17 @@
             <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" :aria-label="$t('item.ratingTitle')" @click="cycleStar" />
             <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
-        <span v-if="library.optionalFields['price']" class="lpPriceCell">
+        <span v-if="library.optionalFields['price'] && isPackingMode" class="lpPriceCell lpNumber lpPackText">{{ displayPrice || '' }}</span>
+        <span v-else-if="library.optionalFields['price']" class="lpPriceCell">
             <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
         </span>
-        <span class="lpWeightCell lpNumber">
+        <span v-if="isPackingMode" class="lpWeightCell lpNumber lpPackText">{{ displayWeight || 0 }} {{ library.itemUnit }}</span>
+        <span v-else class="lpWeightCell lpNumber">
             <input v-model="displayWeight" v-empty-if-zero type="text" :aria-label="$t('item.weightLabel', { name: itemLabel })" :class="{lpWeight: true, lpNumber: true, lpSilent: true, lpSilentError: weightError}" @input="saveWeight" @keydown.up="incrementWeight($event)" @keydown.down="decrementWeight($event)">
             <span class="lpUnit">{{ library.itemUnit }}</span>
         </span>
-        <span class="lpQtyCell">
+        <span v-if="isPackingMode" class="lpQtyCell lpNumber lpPackText">{{ categoryItem.qty }}&times;</span>
+        <span v-else class="lpQtyCell">
             <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span class="lpArrows" aria-hidden="true">
                 <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" @click="incrementQty($event)" />
@@ -107,6 +118,9 @@ export default {
         itemLabel() {
             return this.item.name || this.$t('gearroom.unnamedItem');
         },
+        isCountable() {
+            return parseFloat(this.categoryItem.qty) > 0;
+        },
         isPacked() {
             return this.isPackingMode && this.packedItemIds && this.packedItemIds.has(this.item.id);
         },
@@ -123,6 +137,7 @@ export default {
                 {
                     lpQtyZero: parseFloat(this.categoryItem.qty) <= 0,
                     lpItemPacked: this.isPacked,
+                    lpItemPacking: this.isPackingMode,
                 },
             ];
         },
@@ -334,6 +349,9 @@ export default {
         },
         onPackCheckbox() {
             this.$emit('toggle-pack', this.item.id);
+        },
+        onRowClick() {
+            if (this.isPackingMode && this.isCountable) this.onPackCheckbox();
         },
     },
 };

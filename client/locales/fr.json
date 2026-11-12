@@ -106,6 +106,8 @@
     "listDescription": "Description de la liste",
     "markdownSupported": "supporté",
     "exitPacking": "Quitter la préparation",
+    "hidePacked": "Masquer les cochés",
+    "showPacked": "Afficher les cochés",
     "itemsPacked": "{packed} / {total} articles préparés",
     "packTotal": "Total : {weight}",
     "getStartedTitle": "Bienvenue sur ZenPak",

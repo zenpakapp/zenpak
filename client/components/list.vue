@@ -1,11 +1,14 @@
 <template>
-    <div id="lpListBody" class="lpListBody" tabindex="-1">
+    <div id="lpListBody" class="lpListBody" :class="{ lpHidePacked: isPackingMode && hidePacked }" tabindex="-1">
         <!-- Packing mode bar -->
         <div v-if="isPackingMode" class="lpPackingBar">
             <span class="lpPackingProgress">{{ $t('list.itemsPacked', { packed: packingProgress.packed, total: packingProgress.total }) }}</span>
             <div class="lpPackingProgressTrack">
                 <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
             </div>
+            <button type="button" class="lpPackBtn lpHidePackedBtn" :aria-pressed="hidePacked" @click="hidePacked = !hidePacked">
+                {{ hidePacked ? $t('list.showPacked') : $t('list.hidePacked') }}
+            </button>
             <button class="lpPackBtn lpPackBtnExit" @click="exitPackingMode">
                 {{ $t('list.exitPacking') }}
             </button>
@@ -144,6 +147,7 @@ export default {
             categoryReorderToken: 0,
             isSwitchingList: false,
             showCompletionModal: false,
+            hidePacked: false,
             completionPhrase: '',
             communityHintDismissed: !!localStorage.getItem('lpCommunityHintDismissed'),
             guestHintDismissed: !!localStorage.getItem('lpGuestHintDismissed'),
@@ -188,7 +192,8 @@ export default {
             this.categories.forEach((category) => {
                 category.categoryItems.forEach((categoryItem) => {
                     hasItems = true;
-                    itemIds.push(categoryItem.itemId);
+                    // Optional items (qty 0) are not counted, so they are not packed either.
+                    if (parseFloat(categoryItem.qty) > 0) itemIds.push(categoryItem.itemId);
                     const item = this.library.getItemById(categoryItem.itemId);
                     if (item && (item.name || item.weight > 0)) hasContent = true;
                 });
