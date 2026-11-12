@@ -52,10 +52,8 @@ $sidebarPadding: 20px;
         margin: 0 0 10px;
     }
 
+    // The sidebar is the panel: its lists are plain rows with dividers, not cards inside a card.
     ul {
-        background: $color-bg;
-        border: 1px solid $color-border;
-        border-radius: $radius-md;
         margin: 0;
         overflow-x: hidden;
         padding: 0;

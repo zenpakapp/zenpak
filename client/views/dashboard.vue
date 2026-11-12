@@ -49,7 +49,7 @@
                     </a>
                 </span>
                 <span class="lpListTitleBlock headerItem">
-                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" value="New List" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                     <span v-if="forkSource" class="lpForkSource" :title="forkCurrencyNote || null">
                         {{ $t('dash.source') }}
                         <router-link v-if="forkSource.externalId && !forkSourceGone" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
@@ -196,7 +196,7 @@
 
 <script>
 import { computed, defineAsyncComponent, markRaw } from 'vue';
-import { fetchJson } from '../utils/utils.js';
+import { fetchJson } from '../utils/utils';
 import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
 import forkApplyControls from '../components/fork-apply-controls.vue';
@@ -205,8 +205,8 @@ import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
 import list from '../components/list.vue';
 import { push } from '../services/navigation';
-import { isBase } from '../services/entitlements.js';
-import { planLabel as planTierLabel } from '../services/tier-labels.js';
+import { isBase } from '../services/entitlements';
+import { planLabel as planTierLabel } from '../services/tier-labels';
 import themeToggle from '../components/theme-toggle.vue';
 import { registerDialogLoader, unregisterDialogLoader, openDialog } from '../services/dialogs';
 
@@ -243,8 +243,8 @@ const lazySpeedbump = {
     component: 'speedbump',
     loader: () => import(/* webpackChunkName: "dialog-speedbump" */ '../components/speedbump.vue'),
 };
-const legacySourceListInfoHiddenField = 'creator' + 'LinksRemoved';
-const legacySourceListInfoDismissedField = 'creator' + 'LinksActionDismissed';
+const legacySourceListInfoHiddenField = 'creatorLinksRemoved';
+const legacySourceListInfoDismissedField = 'creatorLinksActionDismissed';
 
 function scheduleIdle(callback) {
     if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
@@ -556,15 +556,15 @@ export default {
         },
         handleSidebarBreakpoint(event) {
             if (event.matches) {
-                this._sidebarWasOpen = this.library && this.library.showSidebar;
-                if (this._sidebarWasOpen) {
+                this.sidebarWasOpen = this.library && this.library.showSidebar;
+                if (this.sidebarWasOpen) {
                     this.$store.commit('setSidebarOpen', false);
                 }
             } else {
-                if (this._sidebarWasOpen) {
+                if (this.sidebarWasOpen) {
                     this.$store.commit('setSidebarOpen', true);
                 }
-                this._sidebarWasOpen = false;
+                this.sidebarWasOpen = false;
             }
         },
         toggleSidebar() {

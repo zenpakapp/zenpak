@@ -37,7 +37,7 @@ function buildDataset(categories) {
     };
 }
 
-export async function renderListChart({
+export default async function renderListChart({
     chart, canvas, processedData, hoverCallback, unit,
 }) {
     if (!canvas || !processedData) return chart;
@@ -46,8 +46,8 @@ export async function renderListChart({
     const categories = extractCategories(processedData);
 
     if (chart) {
-        chart._categories = categories;
-        chart._unit = unit;
+        chart.lpCategories = categories;
+        chart.lpUnit = unit;
         chart.data.labels = categories.map((c) => c.name);
         const ds = buildDataset(categories);
         chart.data.datasets[0].data = ds.data;
@@ -76,16 +76,16 @@ export async function renderListChart({
                     displayColors: false,
                     callbacks: {
                         label: (context) => {
-                            const cat = context.chart._categories?.[context.dataIndex];
+                            const cat = context.chart.lpCategories?.[context.dataIndex];
                             if (!cat) return null;
-                            const chartUnit = context.chart._unit;
+                            const chartUnit = context.chart.lpUnit;
                             return `${weightUtils.MgToWeight(cat.total, chartUnit)} ${chartUnit} (${Math.round((cat.basePercent || 0) * 100)}%)`;
                         },
                     },
                 },
             },
             onHover(event, elements, c) {
-                const cat = elements.length > 0 ? (c._categories?.[elements[0].index] ?? null) : null;
+                const cat = elements.length > 0 ? (c.lpCategories?.[elements[0].index] ?? null) : null;
                 if (hoverCallback) hoverCallback(cat);
                 if (event.native) {
                     event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
@@ -94,7 +94,7 @@ export async function renderListChart({
         },
     });
 
-    newChart._categories = categories;
-    newChart._unit = unit;
+    newChart.lpCategories = categories;
+    newChart.lpUnit = unit;
     return newChart;
 }

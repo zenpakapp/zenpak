@@ -289,8 +289,8 @@
 
 .lpPublicDisclosure {
     background: $color-surface;
-    border-left: 3px solid $color-accent;
-    border-radius: 0 $radius-sm $radius-sm 0;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
     color: $color-text-muted;
     font-size: 12px;
     margin-top: 16px;
