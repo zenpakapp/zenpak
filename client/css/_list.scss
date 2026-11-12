@@ -822,6 +822,15 @@ input.lpCategoryName { /* specificity */
 }
 
 @media (max-width: 500px) {
+    // Rows stack quantity over weight here, so side-by-side column labels would mislead.
+    .lpItemsHeader {
+        .lpPriceCell,
+        .lpWeightCell,
+        .lpQtyCell {
+            display: none;
+        }
+    }
+
     .lpItem {
         column-gap: 4px;
         display: grid;
