@@ -7,7 +7,7 @@
                 </span>
                 <input v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" :disabled="isPackingMode" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
-                <span class="lpWeightCell">{{ $t('public.weight') }}</span>
+                <span class="lpWeightCell">{{ $t('public.weight') }} ({{ library.itemUnit }})</span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
                 <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" role="button" tabindex="0" :title="$t('misc.deleteCategory')" @click="removeCategory(category)" @keydown.enter="removeCategory(category)" @keydown.space.prevent="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
             </li>
