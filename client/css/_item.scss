@@ -197,6 +197,23 @@
     opacity: 0.32;
 }
 
+// Worn, consumable and optional change the weight maths, so they are never hidden: faint at
+// rest, clearer on the row under the pointer, full when on. The other actions wait for hover.
+.lpItem .lpActionsCell .lpWorn,
+.lpItem .lpActionsCell .lpConsumable,
+.lpItem .lpActionsCell .lpOptionDot {
+    opacity: 0.45;
+}
+
+.lpItem:hover .lpActionsCell .lpWorn,
+.lpItem:hover .lpActionsCell .lpConsumable,
+.lpItem:hover .lpActionsCell .lpOptionDot,
+.lpItem:focus-within .lpActionsCell .lpWorn,
+.lpItem:focus-within .lpActionsCell .lpConsumable,
+.lpItem:focus-within .lpActionsCell .lpOptionDot {
+    opacity: 0.7;
+}
+
 .lpItem .lpActionsCell .lpActionBtn.lpActive,
 .lpItem .lpActionsCell .lpActionBtn.lpStar1,
 .lpItem .lpActionsCell .lpActionBtn.lpStar2,
@@ -257,6 +274,13 @@
         min-height: 14px;
         opacity: 0.55;
         padding: 9px 8px;
+    }
+
+    // With no hover to raise them, the three toggles are a little stronger than the rest.
+    .lpItem .lpActionsCell .lpWorn,
+    .lpItem .lpActionsCell .lpConsumable,
+    .lpItem .lpActionsCell .lpOptionDot {
+        opacity: 0.75;
     }
 
     .lpItem .lpActionsCell .lpActionBtn.lpActive,
