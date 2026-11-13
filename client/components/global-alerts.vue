@@ -18,6 +18,25 @@
     z-index: $aboveDialog;
 }
 
+.lpGlobalAlertsInfo {
+    background: $color-surface-elevated;
+    border: 1px solid $color-border;
+    border-radius: 10px;
+    bottom: 16px;
+    box-shadow: $shadow-popover;
+    color: $color-text;
+    top: auto;
+
+    .lpGlobalAlert {
+        border-bottom-color: $color-border;
+    }
+
+    .lpGlobalAlertDismiss {
+        color: $color-text-muted;
+        opacity: 1;
+    }
+}
+
 .lpGlobalAlert {
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -92,7 +111,7 @@
 </style>
 
 <template>
-    <ul v-if="alerts && alerts.length" class="lpGlobalAlerts">
+    <ul v-if="alerts && alerts.length" class="lpGlobalAlerts" :class="{ lpGlobalAlertsInfo: onlyInfo }">
         <li v-for="alert in alerts" :key="alert.id || alert.message" class="lpGlobalAlert">
             <span class="lpGlobalAlertMessage">{{ displayMessage(alert) }}</span>
             <button v-if="isVerifyEmailAlert(alert)" class="lpGlobalAlertAction" type="button" @click="resendVerification(alert)">
@@ -120,6 +139,11 @@ export default {
     computed: {
         alerts() {
             return this.$store.state.globalAlerts;
+        },
+        // Plain notices (welcome, confirmations) are neutral and stay out of the header; warnings
+        // and errors keep the yellow bar.
+        onlyInfo() {
+            return (this.alerts || []).every((alert) => this.shouldAutoDismiss(alert));
         },
     },
     watch: {
