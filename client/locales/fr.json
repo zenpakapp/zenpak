@@ -911,7 +911,6 @@
     "nameSuggestionsLabel": "Suggestions de la Gear Room",
     "nameSuggestionsStatus": "Suggestions de la Gear Room : {count}. Utilisez les flèches haut et bas, puis Entrée pour choisir.",
     "editPlaceholderDescription": "Description",
-    "editPlaceholderType": "ex: Abri",
     "editPlaceholderUrl": "https://…",
     "editPlaceholderTags": "Ajouter un tag…",
     "editButtonFetch": "⬇ Récupérer",

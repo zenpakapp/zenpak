@@ -911,7 +911,6 @@
     "nameSuggestionsLabel": "Sugerencias de la Gear Room",
     "nameSuggestionsStatus": "Sugerencias de la Gear Room: {count}. Usa las flechas arriba y abajo y Intro para elegir.",
     "editPlaceholderDescription": "Descripción",
-    "editPlaceholderType": "p.ej: Tienda",
     "editPlaceholderUrl": "https://…",
     "editPlaceholderTags": "Añadir etiqueta…",
     "editButtonFetch": "⬇ Obtener",

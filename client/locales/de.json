@@ -911,7 +911,6 @@
     "nameSuggestionsLabel": "Vorschläge aus dem Gear Room",
     "nameSuggestionsStatus": "Vorschläge aus dem Gear Room: {count}. Mit den Pfeiltasten auswählen, mit der Eingabetaste bestätigen.",
     "editPlaceholderDescription": "Beschreibung",
-    "editPlaceholderType": "z.B.: Zelt",
     "editPlaceholderUrl": "https://…",
     "editPlaceholderTags": "Tag hinzufügen…",
     "editButtonFetch": "⬇ Abrufen",

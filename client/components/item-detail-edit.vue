@@ -68,16 +68,16 @@
 
             <div class="itemDetailField">
                 <label>{{ $t('item.editLabelType') }}</label>
-                <div class="itemDetailTypeWrap">
-                    <input v-model="editCategory" type="text" :placeholder="$t('item.editPlaceholderType')"
-                           @focus="showCategoryDropdown = true"
-                           @blur="showCategoryDropdown = false"
-                    >
-                    <ul v-if="showCategoryDropdown && filteredGearCategories.length" class="itemDetailTypeSuggestions">
-                        <li v-for="cat in filteredGearCategories" :key="cat" @mousedown.prevent="selectCategory(cat)">
+                <!-- A closed list, like the tag form: the type is one of GEAR_CATEGORIES. -->
+                <div class="itemDetailSelectWrap itemDetailTypeWrap">
+                    <select v-model="editCategory" class="itemDetailTypeSelect">
+                        <option value="">
+                            {{ $t('item.metaSelectNone') }}
+                        </option>
+                        <option v-for="cat in gearCategories" :key="cat" :value="cat">
                             {{ cat }}
-                        </li>
-                    </ul>
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -261,7 +261,6 @@ export default {
             fetchLoading: false,
             fetchError: '',
             fetchSuccess: '',
-            showCategoryDropdown: false,
             nameSuggestions: [],
             nameActiveIndex: -1,
         };
@@ -281,10 +280,6 @@ export default {
         showConsumableOption() {
             return !!(this.library && this.library.optionalFields && this.library.optionalFields.consumable);
         },
-        filteredGearCategories() {
-            const q = (this.editCategory || '').toLowerCase();
-            return q ? GEAR_CATEGORIES.filter((c) => c.toLowerCase().includes(q)) : GEAR_CATEGORIES;
-        },
         nameListId() {
             return `itemDetailNameList-${this.item.id}`;
         },
@@ -302,7 +297,8 @@ export default {
         this.editName = this.item.name || '';
         this.editDescription = this.item.description || '';
         this.editBrand = this.item.brand || '';
-        this.editCategory = this.item.category || '';
+        // A value outside the list (an old free-text type) shows as "None" instead of a blank select.
+        this.editCategory = GEAR_CATEGORIES.includes(this.item.category) ? this.item.category : '';
         this.editUnit = (this.library && this.library.itemUnit) || 'g';
         this.editWeight = weightUtils.MgToItemWeight(this.item.weight, this.editUnit);
         this.weightMg = this.item.weight || 0;
@@ -494,7 +490,7 @@ export default {
         applySuggestion(item) {
             this.editName = item.name || '';
             if (!this.editBrand && item.brand) this.editBrand = item.brand;
-            if (!this.editCategory && item.category) this.editCategory = item.category;
+            if (!this.editCategory && GEAR_CATEGORIES.includes(item.category)) this.editCategory = item.category;
             if (!this.editDescription && item.description) this.editDescription = item.description;
             if (!this.editUrl && item.url) this.editUrl = item.url;
             if (!this.editImageUrl && item.imageUrl) this.editImageUrl = item.imageUrl;
@@ -508,10 +504,6 @@ export default {
             if (!this.editTags.length && item.tags && item.tags.length) this.editTags = [...item.tags];
             this.nameSuggestions = [];
             this.nameActiveIndex = -1;
-        },
-        selectCategory(cat) {
-            this.editCategory = cat;
-            this.showCategoryDropdown = false;
         },
         addTag() {
             const tag = normalizeTag(this.tagInput);
