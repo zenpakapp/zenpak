@@ -630,6 +630,16 @@ input.lpCategoryName { /* specificity */
     justify-content: space-between;
     margin-bottom: $spacingMedium;
     padding: $spacingSmall $spacingMedium;
+    // Stays under the header while the list scrolls: it is the only progress feedback.
+    position: sticky;
+    top: 60px;
+    z-index: $belowDialog - 10;
+}
+
+.lpPackingBase {
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    white-space: nowrap;
 }
 
 .lpPackingProgress {
@@ -881,13 +891,53 @@ input.lpCategoryName { /* specificity */
 }
 
 @media (max-width: 500px) {
+    // Two short rows, since the bar stays on screen while the list scrolls: the counts on top,
+    // then the two buttons side by side. The progress track is a thin line on the bottom edge.
     .lpPackingBar {
-        flex-wrap: wrap;
+        display: grid;
+        gap: 6px 8px;
+        grid-template-areas:
+            "progress base"
+            "hide exit";
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: hidden;
+        padding: 6px 10px 9px;
+
+        .lpPackBtn {
+            font-size: $fontSize-xs;
+            padding: 5px 8px;
+        }
+    }
+
+    .lpPackingProgress {
+        font-size: $fontSize-xs;
+        grid-area: progress;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .lpPackingBase {
+        font-size: $fontSize-xs;
+        grid-area: base;
+        justify-self: end;
     }
 
     .lpPackingProgressTrack {
-        flex-basis: 100%;
-        order: 3;
+        border-radius: 0;
+        bottom: 0;
+        height: 3px;
+        left: 0;
+        position: absolute;
+        right: 0;
+    }
+
+    .lpHidePackedBtn {
+        grid-area: hide;
+    }
+
+    .lpPackBtnExit {
+        grid-area: exit;
     }
 
     // Rows stack quantity over weight here, so side-by-side column labels would mislead.

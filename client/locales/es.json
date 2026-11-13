@@ -110,6 +110,7 @@
     "showPacked": "Mostrar marcados",
     "itemsPacked": "{packed} / {total} artículos empacados",
     "packTotal": "Total: {weight}",
+    "packBaseWeight": "Peso base: {weight}",
     "getStartedTitle": "Bienvenido a ZenPak",
     "getStartedTitleNamed": "Bienvenido {name} a ZenPak",
     "getStartedText": "Añade tus artículos a las categorías de abajo. Puedes renombrarlas o crear más.",

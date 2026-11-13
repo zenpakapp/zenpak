@@ -35,7 +35,12 @@ async function completeStripeCheckout(page: Page, email: string) {
 
   // The ToS checkbox is custom-styled, so force it.
   const tosCheckbox = form.locator("#paymentForm-termsOfServiceConsentInput");
-  if (await tosCheckbox.count()) await tosCheckbox.check({ force: true });
+  if (await tosCheckbox.count()) {
+    // Stripe's checkbox may not report its state to Playwright's check(); click until set.
+    for (let i = 0; i < 3 && !(await tosCheckbox.isChecked()); i += 1) {
+      await tosCheckbox.click({ force: true });
+    }
+  }
 
   await form.getByTestId("payment-form-submit-button").click();
 

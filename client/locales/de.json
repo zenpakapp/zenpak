@@ -110,6 +110,7 @@
     "showPacked": "Gepackte anzeigen",
     "itemsPacked": "{packed} / {total} Gegenstände gepackt",
     "packTotal": "Gesamt: {weight}",
+    "packBaseWeight": "Basisgewicht: {weight}",
     "getStartedTitle": "Willkommen bei ZenPak",
     "getStartedTitleNamed": "Willkommen {name} bei ZenPak",
     "getStartedText": "Füge deine Gegenstände den Kategorien unten hinzu. Du kannst sie umbenennen oder weitere anlegen.",
