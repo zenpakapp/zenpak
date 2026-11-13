@@ -224,6 +224,7 @@
     border-radius: $radius-sm;
     color: $color-text;
     display: flex;
+    flex-wrap: wrap;
     font-size: 13px;
     gap: 12px;
     margin-bottom: 16px;
@@ -242,6 +243,11 @@
     transition: opacity 0.15s;
     white-space: nowrap;
 
+    @media (pointer: coarse) {
+        min-height: 44px;
+        padding: 3px 14px;
+    }
+
     &:hover { opacity: 0.7; }
 }
 
@@ -256,8 +262,15 @@
     cursor: pointer;
     font-size: 14px;
     margin-left: auto;
+    min-height: 32px;
+    min-width: 32px;
     opacity: 0.6;
     padding: 0 2px;
+
+    @media (pointer: coarse) {
+        min-height: 44px;
+        min-width: 44px;
+    }
 
     &:hover { opacity: 1; }
 }
