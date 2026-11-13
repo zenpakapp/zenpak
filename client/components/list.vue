@@ -39,7 +39,7 @@
                 <zenpak-brand-asset class="lpGetStartedBrandIcon" variant="app" alt="" :decorative="true" />
                 {{ getStartedTitle }}
             </h2>
-            <p>{{ $t('list.getStartedText') }}</p>
+            <p>{{ categories.length ? $t('list.getStartedText') : $t('list.getStartedTextEmpty') }}</p>
             <p class="lpGetStartedCommunity">
                 {{ $t('list.communityHint') }}
                 <router-link to="/community" class="lpHref">
