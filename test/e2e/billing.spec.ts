@@ -11,38 +11,33 @@ async function completeStripeCheckout(page: Page, email: string) {
   // Email is pre-filled read-only by Stripe (the session was created with a
   // known customer email) — there is no editable input to fill.
 
-  // The "Card" payment method starts collapsed; its fields aren't rendered
-  // (and can't be filled) until the accordion row is selected. The radio
-  // input is visually covered by Stripe's custom row styling, so a plain
-  // click doesn't register as a "stable, receives-events" target — force it.
-  await page
-    .locator("#payment-method-accordion-item-title-card")
-    .click({ force: true });
+  // Stripe renders the whole form inside one "Secure embedded form frame" iframe.
+  // The "Card" method starts collapsed; its fields only exist once the row is clicked.
+  const form = page.frameLocator('iframe[title="Secure embedded form frame"]');
+  await form.getByText("Card", { exact: true }).first().click();
 
-  await page.locator("#cardNumber").fill("4242424242424242");
-  await page.locator("#cardExpiry").fill("12/34");
-  await page.locator("#cardCvc").fill("123");
-  await page.locator("#billingName").fill("Test User");
+  await form.locator("#payment-numberInput").fill("4242424242424242");
+  await form.locator("#payment-expiryInput").fill("12/34");
+  await form.locator("#payment-cvcInput").fill("123");
+  await form.locator("#billingAddress-nameInput").fill("Test User");
 
-  // Billing country defaults to France already on this test account; the
-  // address field starts as a single Google-autocomplete input. Switch to
-  // manual entry so the line1/postal/city inputs are fillable directly
-  // instead of driving an autocomplete dropdown.
-  const manualAddressLink = page.getByText("Enter address manually");
+  // The address starts as a single autocomplete input; switch to manual entry so the
+  // line1/postal/city inputs can be filled directly.
+  const manualAddressLink = form.getByText("Enter address manually");
   if (await manualAddressLink.count()) await manualAddressLink.click();
 
-  const line1 = page.locator("#billingAddressLine1");
+  const line1 = form.locator("#billingAddress-addressLine1Input");
   if (await line1.count()) await line1.fill("1 Rue de Test");
-  const postal = page.locator("#billingPostalCode");
+  const postal = form.locator("#billingAddress-postalCodeInput");
   if (await postal.count()) await postal.fill("75001");
-  const locality = page.locator("#billingLocality");
+  const locality = form.locator("#billingAddress-localityInput");
   if (await locality.count()) await locality.fill("Paris");
 
-  // The ToS checkbox is likewise visually custom-styled — force it too.
-  const tosCheckbox = page.locator("#termsOfServiceConsentCheckbox");
+  // The ToS checkbox is custom-styled, so force it.
+  const tosCheckbox = form.locator("#paymentForm-termsOfServiceConsentInput");
   if (await tosCheckbox.count()) await tosCheckbox.check({ force: true });
 
-  await page.getByTestId("hosted-payment-submit-button").click();
+  await form.getByTestId("payment-form-submit-button").click();
 
   // Stripe's success_url is built server-side from DEPLOY_URL, which Playwright's
   // webServer sets to its own origin (falls back to config deployUrl otherwise).
