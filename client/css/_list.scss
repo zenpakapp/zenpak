@@ -431,6 +431,11 @@ input.lpCategoryName { /* specificity */
         text-align: center;
         text-transform: uppercase;
     }
+
+    // Unit symbols are case-sensitive (g, kg, oz, lb): never upper-case them.
+    .lpHeaderUnit {
+        text-transform: none;
+    }
 }
 
 .lpCategoryName,
