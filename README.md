@@ -59,6 +59,8 @@ npm run start    # production build + start → http://localhost:3000
 }
 ```
 
+**Testing on a phone.** Open the app from the phone at `http://<your-computer-LAN-address>:<port>`. Links the server builds (email verification, return from Stripe, sharing) come from `deployUrl`, so with `localhost` the phone follows them to itself and fails with `NSURLErrorDomain`. Start the server with the LAN address instead: `NODE_CONFIG='{"deployUrl":"http://192.168.1.11:3001"}' node app.js`. It overrides `config/local.json` for every link, emails included (`DEPLOY_URL` alone only covers Stripe and the page origin). Use your own address and port; the address can change when the router renews it.
+
 **Optional services.** Leave fields empty to disable:
 
 | Service | Config keys | Purpose |
