@@ -798,6 +798,16 @@
     "help": "Hilfe",
     "signOut": "Abmelden"
   },
+  "card": {
+    "menu": "Meine Karte",
+    "title": "Meine Karte",
+    "qrAlt": "QR-Code des Profils von {name}",
+    "share": "Teilen",
+    "copy": "Link kopieren",
+    "copied": "Link kopiert",
+    "private": "Dein Profil ist privat. Mach es öffentlich, um es zu teilen.",
+    "openSettings": "Profileinstellungen öffnen"
+  },
   "gearroom": {
     "title": "Deine Ausrüstung",
     "newItem": "+ Neuer Gegenstand",

@@ -178,6 +178,7 @@ html.lpSigningOut body::before {
                     </div>
                     <a class="accountDropdownItem" role="button" tabindex="0" @click="showAccount" @keydown.enter="showAccount" @keydown.space.prevent="showAccount">{{ $t('dash.accountSettings') }}</a>
                     <router-link class="accountDropdownItem" :to="`/u/${username}`">{{ $t('dash.profileAndLists') }}</router-link>
+                    <router-link class="accountDropdownItem" to="/card">{{ $t('card.menu') }}</router-link>
                     <a class="accountDropdownItem" role="button" tabindex="0" @click="showHelp" @keydown.enter="showHelp" @keydown.space.prevent="showHelp">{{ $t('dash.help') }}</a>
                     <a class="accountDropdownItem accountDropdownTheme" role="button" tabindex="0" @click="cycleTheme" @keydown.enter="cycleTheme" @keydown.space.prevent="cycleTheme">{{ $t(`theme.short.${mode}`) }}</a>
                     <hr class="accountDropdownDivider">

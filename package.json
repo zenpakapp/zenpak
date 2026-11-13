@@ -44,6 +44,7 @@
     "nodemailer": "^9.0.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "qrcode": "^1.5.4",
     "sass": "1.32.0",
     "sass-loader": "10.1.0",
     "stripe": "^14.25.0",
