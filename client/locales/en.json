@@ -105,7 +105,7 @@
     "listName": "List Name",
     "listDescription": "List Description",
     "markdownSupported": "supported",
-    "exitPacking": "Exit Packing",
+    "exitPacking": "Exit packing",
     "hidePacked": "Hide packed",
     "showPacked": "Show packed",
     "itemsPacked": "{packed} / {total} items packed",

@@ -300,7 +300,7 @@ export default {
             this.showCompletionModal = false;
         },
         pickPhrase() {
-            const phrases = PACKING_PHRASES[normalizeLocale(navigator.language)] || phrasesEn;
+            const phrases = PACKING_PHRASES[normalizeLocale(this.$i18n.locale)] || phrasesEn;
             return phrases[Math.floor(Math.random() * phrases.length)];
         },
         cancelIdle(id) {
