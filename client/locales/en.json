@@ -110,6 +110,7 @@
     "showPacked": "Show packed",
     "itemsPacked": "{packed} / {total} items packed",
     "packTotal": "Total: {weight}",
+    "packBaseWeight": "Base weight: {weight}",
     "getStartedTitle": "Welcome to ZenPak",
     "getStartedTitleNamed": "Welcome {name} to ZenPak",
     "getStartedText": "Add your items to the categories below. You can rename them or add more.",

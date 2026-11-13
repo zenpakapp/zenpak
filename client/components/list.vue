@@ -3,6 +3,7 @@
         <!-- Packing mode bar -->
         <div v-if="isPackingMode" class="lpPackingBar">
             <span class="lpPackingProgress">{{ $t('list.itemsPacked', { packed: packingProgress.packed, total: packingProgress.total }) }}</span>
+            <span v-if="!isListNew" class="lpPackingBase">{{ $t('list.packBaseWeight', { weight: packBaseWeight }) }}</span>
             <div class="lpPackingProgressTrack">
                 <div class="lpPackingProgressFill" :style="{ width: packingProgressPct + '%' }" />
             </div>
@@ -47,7 +48,7 @@
                 </router-link>
             </p>
         </div>
-        <list-summary v-if="!isListNew" class="lpEditorSummary" :list="list">
+        <list-summary v-if="!isListNew && !isPackingMode" class="lpEditorSummary" :list="list">
             <button v-if="!isPackingMode" class="lpPackBtn" @click="enterPackingMode">
                 🎒 {{ $t('list.packThis') }}
             </button>
@@ -217,6 +218,11 @@ export default {
         packingProgressPct() {
             const { packed, total } = this.packingProgress;
             return total > 0 ? Math.round((packed / total) * 100) : 0;
+        },
+        packBaseWeight() {
+            const unit = this.library.totalUnit || 'oz';
+            const val = weightUtils.MgToWeight(this.list.totalBaseWeight || 0, unit);
+            return `${val} ${unit}`;
         },
         packTotalWeight() {
             const unit = this.library.totalUnit || 'oz';

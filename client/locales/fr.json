@@ -110,6 +110,7 @@
     "showPacked": "Afficher les cochés",
     "itemsPacked": "{packed} / {total} articles préparés",
     "packTotal": "Total : {weight}",
+    "packBaseWeight": "Poids de base : {weight}",
     "getStartedTitle": "Bienvenue sur ZenPak",
     "getStartedTitleNamed": "Bienvenue {name} sur ZenPak",
     "getStartedText": "Ajoutez vos articles dans les catégories ci-dessous. Vous pouvez les renommer ou en ajouter.",
