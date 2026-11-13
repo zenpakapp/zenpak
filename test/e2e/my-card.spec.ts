@@ -82,3 +82,22 @@ test("signed out, the card sends to the welcome page", async ({ page }) => {
   await page.goto("/card");
   await expect(page).toHaveURL(/\/welcome/);
 });
+
+test.describe("on a desktop", () => {
+  test.use({
+    viewport: { width: 1280, height: 900 },
+    hasTouch: false,
+    isMobile: false,
+  });
+
+  test("the account menu has a My card entry that opens the card", async ({
+    page,
+  }) => {
+    test.setTimeout(60000);
+    await signUp(page);
+    await page.locator(".accountDropdownTarget").hover();
+    await page.getByRole("link", { name: "My card" }).click();
+    await expect(page).toHaveURL(/\/card$/);
+    await expect(page.locator(".lpMyCard")).toBeVisible();
+  });
+});
