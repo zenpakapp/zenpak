@@ -27,6 +27,7 @@ module.exports = {
         'no-underscore-dangle': ['error', { allow: ['_id'] }], // MongoDB's document id
         'no-plusplus': 'off', // TODO
         'prefer-destructuring': 'off', // TODO
+        'vue/component-tags-order': 'off', // Files mix style/template/script orders; style-first is the majority
         'vue/html-indent': ['error', 4], // Stylistic preference
         'vue/max-attributes-per-line': 'off', // Investigate
     },
