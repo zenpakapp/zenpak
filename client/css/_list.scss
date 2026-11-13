@@ -940,6 +940,29 @@ input.lpCategoryName { /* specificity */
         grid-area: exit;
     }
 
+    // Eight icons on every row is noise on a phone. The three that change the weight maths
+    // (worn, consumable, optional), the tag form and the edit button stay; photo, link and
+    // rating show only once they hold something, and are otherwise in the edit dialog.
+    .lpItem .lpActionsCell {
+        .lpCamera,
+        .lpLink:not(.lpActive),
+        .lpStar0 {
+            display: none;
+        }
+
+        // Wider side padding, not a wider box: the sprite is drawn from the left of the content
+        // box, so widening the content would repeat the icon and push it off centre.
+        button.lpActionBtn {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+    }
+
+    // A gap between the quantity arrows and the delete cross, so one tap cannot hit both.
+    .lpItem .lpRemoveCell {
+        padding-left: 8px;
+    }
+
     // Rows stack quantity over weight here, so side-by-side column labels would mislead.
     .lpItemsHeader {
         .lpPriceCell,
