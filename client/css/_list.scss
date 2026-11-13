@@ -940,13 +940,13 @@ input.lpCategoryName { /* specificity */
         grid-area: exit;
     }
 
-    // Eight icons on every row is noise on a phone. The three that change the weight maths
-    // (worn, consumable, optional), the tag form and the edit button stay; photo, link and
-    // rating show only once they hold something, and are otherwise in the edit dialog.
+    // Five icons on every row, in the desktop order and always the same, so the toggles line up
+    // from row to row: tags, worn, consumable, optional, edit. Photo, link and rating are only
+    // in the edit dialog on a phone, which has all the fields; a row never gains or loses one.
     .lpItem .lpActionsCell {
         .lpCamera,
-        .lpLink:not(.lpActive),
-        .lpStar0 {
+        .lpLink,
+        .lpStar {
             display: none;
         }
 

@@ -40,4 +40,11 @@ test("the edit dialog offers the item type as a closed list and keeps the choice
   await expect(
     page.locator("#itemDetailDialog select.itemDetailTypeSelect"),
   ).toHaveValue("Shelter");
+
+  // An item with a type keeps its tag button on a phone, where an empty one is hidden.
+  await page.locator("#itemDetailDialog .lpModalClose").click();
+  await page.setViewportSize({ width: 375, height: 812 });
+  const tag = row.locator(".lpTag");
+  await expect(tag).toBeVisible();
+  await expect(tag).toHaveClass(/lpActive/);
 });
