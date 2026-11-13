@@ -15,6 +15,7 @@
                         <span class="accountFieldLabel">{{ $t('acct.username') }}</span>
                         <input type="text" name="username" class="accountFieldInput" disabled :value="username">
                     </div>
+                    <email-verification />
                     <div class="accountField">
                         <span class="accountFieldLabel">{{ $t('acct.currentPassword') }}</span>
                         <input v-model="currentPassword" type="password" class="accountFieldInput" :placeholder="$t('acct.requiredToMakeChanges')" name="currentPassword">
@@ -207,6 +208,7 @@
 
 <script>
 import { defineAsyncComponent } from 'vue';
+import emailVerification from './email-verification.vue';
 import errors from './errors.vue';
 import modal from './modal.vue';
 import spinner from './spinner.vue';
@@ -223,6 +225,7 @@ const creatorLinks = defineAsyncComponent(() => import(/* webpackChunkName: "dia
 export default {
     name: 'Account',
     components: {
+        emailVerification,
         errors,
         modal,
         spinner,
