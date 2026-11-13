@@ -47,6 +47,9 @@
     opacity: 0.6;
     padding: 0;
 
+    min-height: 32px;
+    min-width: 32px;
+
     &:hover { opacity: 1; }
 }
 
@@ -61,6 +64,30 @@
     padding: 4px 10px;
 
     &:hover { opacity: 0.75; }
+}
+
+// On a phone the alert sits at the bottom, where the thumb is and the header stays free. It
+// spans the screen so the message is readable, and the controls are big enough to tap.
+@media (max-width: 768px) {
+    .lpGlobalAlerts {
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 10px;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        left: 8px;
+        top: auto;
+        transform: none;
+        width: calc(100% - 16px);
+    }
+
+    .lpGlobalAlertDismiss {
+        font-size: 22px;
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .lpGlobalAlertAction {
+        min-height: 36px;
+    }
 }
 </style>
 
