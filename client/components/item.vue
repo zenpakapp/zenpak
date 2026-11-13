@@ -78,7 +78,12 @@ const weightUtils = require('../utils/weight.js');
 
 export default {
     name: 'Item',
-    props: ['category', 'itemContainer', 'isPackingMode', 'packedItemIds'],
+    props: {
+        category: { type: Object, required: true },
+        itemContainer: { type: Object, required: true },
+        isPackingMode: { type: Boolean, default: false },
+        packedItemIds: { type: Object, default: null },
+    },
     data() {
         return {
             displayWeight: 0,
