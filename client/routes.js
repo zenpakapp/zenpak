@@ -23,6 +23,7 @@ export default [
     { path: '/feed', redirect: '/community/feed' },
     { path: '/community', component: communityView },
     { path: '/community/feed', component: communityView },
+    { path: '/community/people', component: communityView },
     { path: '/u/:username', component: publicProfile },
     { path: '/p/:externalId', component: publicList },
     { path: '/card', component: myCardView },

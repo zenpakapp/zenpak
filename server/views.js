@@ -78,6 +78,7 @@ const vueRoutes = [ /* TODO - get this from same data source as Vue */
     { path: '/feed' },
     { path: '/community' },
     { path: '/community/feed' },
+    { path: '/community/people' },
     { path: '/u/:username' },
     { path: '/p/:externalId' },
     { path: '/about' },

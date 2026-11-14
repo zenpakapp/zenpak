@@ -63,7 +63,7 @@ router.beforeEach(async (to, from) => {
     return true;
 });
 
-const PUBLIC_PATHS = ['/welcome', '/forgot-password', '/reset-password', '/verify-email', '/community', '/guide', '/about'];
+const PUBLIC_PATHS = ['/welcome', '/forgot-password', '/reset-password', '/verify-email', '/community', '/community/people', '/guide', '/about'];
 
 function isPublicPath(pathname) {
     return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith('/u/') || pathname.startsWith('/p/'));
