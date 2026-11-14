@@ -39,7 +39,11 @@ test("the edit dialog offers the item type as a closed list and keeps the choice
   await row.locator(".lpEdit").click();
   await expect(
     page.locator("#itemDetailDialog select.itemDetailTypeSelect"),
-  ).toHaveValue("Shelter");
+  ).toHaveValue("shelter");
+  // The select stores the stable id and shows the label.
+  await expect(
+    page.locator("#itemDetailDialog select.itemDetailTypeSelect option:checked"),
+  ).toHaveText("Shelter");
 
   // An item with a type keeps its tag button on a phone, where an empty one is hidden.
   await page.locator("#itemDetailDialog .lpModalClose").click();

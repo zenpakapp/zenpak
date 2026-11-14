@@ -38,8 +38,8 @@
                         <option value="">
                             {{ $t('item.metaSelectNone') }}
                         </option>
-                        <option v-for="cat in gearCategories" :key="cat" :value="cat">
-                            {{ cat }}
+                        <option v-for="cat in gearCategories" :key="cat.id" :value="cat.id">
+                            {{ cat.label }}
                         </option>
                     </select>
                 </div>
@@ -72,7 +72,7 @@
 <script>
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
-import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { GEAR_CATEGORY_OPTIONS } from '../data/gear-categories';
 import { normalizeTag, normalizeTags } from '../services/item-tags';
 
 export default {
@@ -92,7 +92,7 @@ export default {
     },
     computed: {
         gearCategories() {
-            return GEAR_CATEGORIES;
+            return GEAR_CATEGORY_OPTIONS;
         },
         knownBrands() {
             const library = this.$store.state.library;

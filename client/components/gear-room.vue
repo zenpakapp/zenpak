@@ -71,7 +71,7 @@
                             :class="['lpGearRoomChip', { active: filterCategory === cat }]"
                             @click="filterCategory = cat; filterOrphan = false; filterStarred = false; filterList = ''"
                         >
-                            {{ cat }}
+                            {{ gearCategoryLabel(cat) }}
                         </button>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                                     <span v-if="item.starred" class="lpGearRoomStarBadge">★</span>
                                 </td>
                                 <td class="lpGRCategoryCol" @click="openItemDetail(item)">
-                                    <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
+                                    <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ gearCategoryLabel(item.category) }}</span>
                                 </td>
                                 <td class="lpGRWeightCol" @click="openItemDetail(item)">
                                     {{ displayWeight(item.weight, itemUnit) }} {{ itemUnit }}
@@ -197,6 +197,7 @@
 </template>
 <script>
 import { openDialog } from '../services/dialogs';
+import { gearCategoryLabel } from '../data/gear-categories';
 import { useUtils } from '../composables/useUtils';
 import useGearRoomFilters from '../composables/useGearRoomFilters';
 import { newItemNameFromSearch } from '../services/gear-room-filters';
@@ -262,6 +263,7 @@ export default {
         },
     },
     methods: {
+        gearCategoryLabel,
         displayWeight,
         itemThumb(item) {
             if (item.image) return `https://i.imgur.com/${item.image}s.jpg`;

@@ -2,6 +2,7 @@ import {
     ref, computed, watch, onBeforeUnmount,
 } from 'vue';
 import store from '../store/store';
+import { gearCategoryLabel } from '../data/gear-categories';
 import { buildItemUsageCounts, buildListItemIds } from '../services/gear-room-view';
 import {
     buildSearchableItems, filterSearchableItems, itemDisplayName, sortItems,
@@ -38,7 +39,8 @@ export default function useGearRoomFilters() {
             .map((i) => i.id),
     ));
 
-    const availableCategories = computed(() => [...new Set(allItems.value.map((i) => i.category).filter(Boolean))].sort());
+    const availableCategories = computed(() => [...new Set(allItems.value.map((i) => i.category).filter(Boolean))]
+        .sort((a, b) => gearCategoryLabel(a).localeCompare(gearCategoryLabel(b))));
 
     const filteredItems = computed(() => {
         let items = allItems.value;

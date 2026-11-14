@@ -1,4 +1,5 @@
 // client/composables/useGearMatcher.js
+import { gearCategoryLabel } from '../data/gear-categories.js';
 
 function normalizeStr(str) {
     return (str || '').toLowerCase().trim().replace(/\s+/g, ' ');
@@ -154,7 +155,7 @@ function suggestItems(query, libraryItems, categoryName, limit = 6) {
             );
             // The category only orders items that already match, it never makes one match.
             if (score >= SUGGEST_MIN_SCORE && categoryName && item.category
-                && normalizeStr(item.category) === normalizeStr(categoryName)) {
+                && normalizeStr(gearCategoryLabel(item.category)) === normalizeStr(categoryName)) {
                 score += 0.1;
             }
             return { item, score };

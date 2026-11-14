@@ -232,7 +232,7 @@
                             {{ $t('gearroom.compareType') }}
                         </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
-                            <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ item.category }}</span>
+                            <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ gearCategoryLabel(item.category) }}</span>
                             <span v-else class="lpGearRoomCompareMuted">—</span>
                         </td>
                     </tr>
@@ -280,6 +280,7 @@
 
 <script>
 import { useUtils } from '../composables/useUtils.js';
+import { gearCategoryLabel } from '../data/gear-categories';
 
 const { displayWeight } = useUtils();
 
@@ -313,6 +314,7 @@ export default {
         },
     },
     methods: {
+        gearCategoryLabel,
         displayWeight,
         itemCountLabel(count) {
             return this.$t(count === 1 ? 'gearroom.compareItemCountOne' : 'gearroom.compareItemCountOther', { count });

@@ -77,7 +77,7 @@ test.describe("Smart Gear Library", () => {
 
     await expect(page.locator(".lpLibraryFilterSelect")).toBeVisible();
     await page.locator(".lpLibraryFilterSelect").selectOption("Sleep");
-    await expect(page.locator(".lpLibraryFilterSelect")).toHaveValue("Sleep");
+    await expect(page.locator(".lpLibraryFilterSelect")).toHaveValue("sleep");
     await expect(page.locator(".library .lpLibraryItem")).toHaveCount(1);
     await expect(page.locator(".library .lpLibraryItem .lpName")).toContainText(
       ["Sleeping Bag"],

@@ -12,8 +12,8 @@
                     <option value="">
                         {{ $t('library.allCategories') }}
                     </option>
-                    <option v-for="cat in gearCategories" :key="cat" :value="cat">
-                        {{ cat }}
+                    <option v-for="cat in gearCategories" :key="cat.id" :value="cat.id">
+                        {{ cat.label }}
                     </option>
                 </select>
             </div>
@@ -96,7 +96,7 @@ import { openSpeedbump } from '../services/speedbump';
 import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
-import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { GEAR_CATEGORY_OPTIONS } from '../data/gear-categories';
 
 const { displayWeight } = useUtils();
 
@@ -144,7 +144,7 @@ export default {
             return (this.library && this.library.itemUnit) || 'g';
         },
         gearCategories() {
-            return GEAR_CATEGORIES;
+            return GEAR_CATEGORY_OPTIONS;
         },
         filteredItems() {
             if (!this.library || !this.library.items) return [];

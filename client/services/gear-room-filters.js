@@ -1,3 +1,5 @@
+const { gearCategoryLabel } = require('../data/gear-categories');
+
 function itemDisplayName(item) {
     return [item.brand, item.name].filter(Boolean).join(' ');
 }
@@ -6,7 +8,7 @@ function sortValue(item, key) {
     if (key === 'weight') return item.weight || 0;
     if (key === 'price') return item.price || 0;
     if (key === 'starred') return item.starred ? 1 : 0;
-    if (key === 'category') return (item.category || '').toLowerCase();
+    if (key === 'category') return gearCategoryLabel(item.category).toLowerCase();
     return itemDisplayName(item).toLowerCase();
 }
 
