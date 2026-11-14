@@ -1045,7 +1045,7 @@
     "notCounted": "Option",
     "optionalQtyTitle": "Quantity 0 marks this item as optional — its weight isn't counted in totals",
     "optionalTitle": "Mark as optional",
-    "editTitle": "Edit details",
+    "editTitle": "More options",
     "detailOpenError": "Unable to open this item editor. Please try again.",
     "removeTitle": "Remove",
     "weightLabel": "Weight: {name}",
