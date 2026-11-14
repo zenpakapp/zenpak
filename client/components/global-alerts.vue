@@ -19,20 +19,20 @@
 }
 
 .lpGlobalAlertsInfo {
-    background: $color-surface-elevated;
-    border: 1px solid $color-border;
+    background: $color-accent-solid;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 10px;
     bottom: 16px;
     box-shadow: $shadow-popover;
-    color: $color-text;
+    color: #fff;
     top: auto;
 
     .lpGlobalAlert {
-        border-bottom-color: $color-border;
+        border-bottom-color: rgba(255, 255, 255, 0.25);
     }
 
     .lpGlobalAlertDismiss {
-        color: $color-text-muted;
+        color: #fff;
         opacity: 1;
     }
 }
@@ -140,8 +140,8 @@ export default {
         alerts() {
             return this.$store.state.globalAlerts;
         },
-        // Plain notices (welcome, confirmations) are neutral and stay out of the header; warnings
-        // and errors keep the yellow bar.
+        // Success-only stacks are green and stay out of the header. As soon as one warning or
+        // error is in the stack, the whole stack is the orange bar: one colour, never a mix.
         onlyInfo() {
             return (this.alerts || []).every((alert) => this.shouldAutoDismiss(alert));
         },
