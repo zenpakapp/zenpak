@@ -70,14 +70,14 @@
 
             <div class="itemDetailField">
                 <label for="itemEditType">{{ $t('item.editLabelType') }}</label>
-                <!-- A closed list, like the tag form: the type is one of GEAR_CATEGORIES. -->
+                <!-- A closed list, like the tag form: the type is one of GEAR_CATEGORY_OPTIONS. -->
                 <div class="itemDetailSelectWrap itemDetailTypeWrap">
                     <select id="itemEditType" v-model="editCategory" class="itemDetailTypeSelect">
                         <option value="">
                             {{ $t('item.metaSelectNone') }}
                         </option>
-                        <option v-for="cat in gearCategories" :key="cat" :value="cat">
-                            {{ cat }}
+                        <option v-for="cat in gearCategories" :key="cat.id" :value="cat.id">
+                            {{ cat.label }}
                         </option>
                     </select>
                 </div>
@@ -215,7 +215,7 @@
 import ItemDetailHeader from './item-detail-header.vue';
 import ItemBrandInput from './item-brand-input.vue';
 import { openDialog } from '../services/dialogs';
-import { GEAR_CATEGORIES } from '../data/gear-categories';
+import { GEAR_CATEGORY_OPTIONS, GEAR_CATEGORY_IDS } from '../data/gear-categories';
 import { normalizeTag, normalizeTags } from '../services/item-tags';
 import { uploadErrorMessage } from '../utils/upload-errors';
 import { suggestItems } from '../composables/useGearMatcher';
@@ -271,7 +271,7 @@ export default {
         library() {
             return this.$store.state.library;
         },
-        gearCategories() { return GEAR_CATEGORIES; },
+        gearCategories() { return GEAR_CATEGORY_OPTIONS; },
         units() { return UNITS; },
         hasListContext() {
             return !!(this.categoryItem && this.category);
@@ -300,7 +300,7 @@ export default {
         this.editDescription = this.item.description || '';
         this.editBrand = this.item.brand || '';
         // A value outside the list (an old free-text type) shows as "None" instead of a blank select.
-        this.editCategory = GEAR_CATEGORIES.includes(this.item.category) ? this.item.category : '';
+        this.editCategory = GEAR_CATEGORY_IDS.includes(this.item.category) ? this.item.category : '';
         this.editUnit = (this.library && this.library.itemUnit) || 'g';
         this.editWeight = weightUtils.MgToItemWeight(this.item.weight, this.editUnit);
         this.weightMg = this.item.weight || 0;

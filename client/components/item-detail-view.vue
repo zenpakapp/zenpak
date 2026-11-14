@@ -3,7 +3,7 @@
         <item-detail-header
             :name="item.name || $t('gearroom.unnamedItem')"
             :brand="item.brand || ''"
-            :category="item.category || ''"
+            :category="categoryLabel"
             :image-key="item.image || ''"
             :image-url="item.imageUrl || ''"
             :starred="localStarred"
@@ -128,6 +128,7 @@ import { defineAsyncComponent } from 'vue';
 import ItemDetailHeader from './item-detail-header.vue';
 import { openSpeedbump } from '../services/speedbump';
 import { openDialog } from '../services/dialogs';
+import { gearCategoryLabel } from '../data/gear-categories';
 
 const weightUtils = require('../utils/weight.js');
 
@@ -149,6 +150,7 @@ export default {
         };
     },
     computed: {
+        categoryLabel() { return gearCategoryLabel(this.item && this.item.category); },
         thumbnailImage() {
             if (!this.item) return null;
             if (this.item.image) return `https://i.imgur.com/${this.item.image}l.jpg`;
