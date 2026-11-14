@@ -50,6 +50,17 @@ test("Enter moves through the item details and the fields are labelled", async (
   await page.keyboard.press("Enter");
   expect(await focusedId()).toBe("itemEditDescription");
 
+  // Description: Shift+Enter adds a line and grows the field, Enter moves to Brand.
+  const description = page.locator("#itemEditDescription");
+  await description.fill("one");
+  const oneLine = (await description.boundingBox())!.height;
+  await description.press("Shift+Enter");
+  await page.keyboard.type("two");
+  expect((await description.boundingBox())!.height).toBeGreaterThan(oneLine);
+  expect(await description.inputValue()).toBe("one\ntwo");
+  await page.keyboard.press("Enter");
+  expect(await focusedId()).toBe("itemEditBrand");
+
   await page.locator("#itemEditBrand").focus();
   await page.keyboard.press("Enter");
   expect(await focusedId()).toBe("itemEditType");
