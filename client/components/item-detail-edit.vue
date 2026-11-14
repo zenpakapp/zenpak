@@ -60,7 +60,7 @@
 
             <div class="itemDetailField">
                 <label for="itemEditDescription">{{ $t('item.editLabelDescription') }}</label>
-                <textarea id="itemEditDescription" ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'" />
+                <textarea id="itemEditDescription" ref="description" v-model="editDescription" rows="1" enterkeyhint="next" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'" @input="growDescription" @keydown.enter.exact.prevent="focusAfterDescription" />
             </div>
 
             <div class="itemDetailField">
@@ -320,6 +320,7 @@ export default {
     },
     mounted() {
         this.focusInitialField();
+        this.growDescription();
     },
     beforeUnmount() {
         clearTimeout(this.nameCloseTimer);
@@ -328,6 +329,18 @@ export default {
         focusInitialField() {
             const field = this.$refs[this.initialFocus] || this.$refs.name;
             if (field) field.focus();
+        },
+        // The description is one line that grows with its text. Enter moves to the next field
+        // (Shift+Enter adds a line), so the phone keyboard's Next works as on the other fields.
+        growDescription() {
+            const el = this.$refs.description;
+            if (!el) return;
+            el.style.height = 'auto';
+            el.style.height = `${el.scrollHeight + 2}px`;
+        },
+        focusAfterDescription() {
+            const next = this.$el.querySelector('#itemEditBrand');
+            if (next) next.focus();
         },
         toggleStar() {
             const starred = !this.localStarred;
