@@ -64,6 +64,9 @@
             <p>{{ $t('list.descriptionHelp') }}</p>
             <textarea id="listDescription" v-model="list.description" :maxlength="descriptionMaxLength" @input="updateListDescription" />
         </details>
+        <button v-else-if="!isListNew && !isPackingMode" type="button" class="lpAddListDescription" @click="addListDescription">
+            + {{ $t('list.addListDescription') }}
+        </button>
 
         <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
             <category
@@ -281,6 +284,17 @@ export default {
         },
         updateListDescription() {
             this.$store.commit('updateListDescription', this.list);
+        },
+        // The description is an optional field: this turns it on and opens it, so the setting need
+        // not be found in the list settings first.
+        addListDescription() {
+            this.$store.commit('toggleOptionalField', 'listDescription');
+            this.$nextTick(() => {
+                const box = document.getElementById('listDescriptionContainer');
+                if (box) box.open = true;
+                const field = document.getElementById('listDescription');
+                if (field) field.focus();
+            });
         },
         enterPackingMode() {
             this.activate(this.list.id, this.allItemIds);

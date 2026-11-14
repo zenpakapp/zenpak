@@ -104,6 +104,7 @@
     "close": "Close",
     "listName": "List Name",
     "listDescription": "List Description",
+    "addListDescription": "Add a description",
     "markdownSupported": "supported",
     "exitPacking": "Exit packing",
     "hidePacked": "Hide packed",

@@ -500,6 +500,23 @@ input.lpCategoryName { /* specificity */
     }
 }
 
+// Shown while the optional description is off: one quiet line that turns it on.
+.lpAddListDescription {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    margin: 0 0 16px;
+    min-height: 32px;
+    padding: 0;
+    text-align: left;
+
+    &:hover {
+        color: $color-accent-text;
+    }
+}
+
 // Folded by default: the title and the start of the text take one line, the field opens on demand.
 #listDescriptionContainer {
     // The summary above already leaves 20px; a little less below, so the line reads as part of
