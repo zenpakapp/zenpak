@@ -633,6 +633,7 @@
   "misc": {
     "saveDataError": "Beim Speichern deiner Daten ist ein Fehler aufgetreten.",
     "dismissAlert": "Hinweis schließen",
+    "pickColor": "Farbe wählen",
     "note": "Hinweis:",
     "unknownError": "Ein unbekannter Fehler ist aufgetreten.",
     "genericError": "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.",

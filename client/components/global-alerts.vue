@@ -63,7 +63,7 @@
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
-    opacity: 0.6;
+    opacity: 0.85;
     padding: 0;
 
     min-height: 32px;
