@@ -24,8 +24,8 @@
     }
 }
 
-// The details control is a chevron that stays visible at rest: it is the only way into the
-// item dialog besides a double-click, so it must be seen without hovering.
+// The details control is three dots ("more options") that stay visible at rest: it is the only
+// way to brand, type, tags and "Option" besides a double-click, so it must be seen without hovering.
 .lpEdit {
     background: none !important;
     color: $color-text-muted;
@@ -35,15 +35,16 @@
     width: 14px;
 
     &::before {
-        border-right: 2px solid currentColor;
-        border-top: 2px solid currentColor;
+        background: currentColor;
+        border-radius: 50%;
+        box-shadow: -5px 0 currentColor, 5px 0 currentColor;
         content: "";
-        height: 7px;
+        height: 3px;
         left: 50%;
+        margin: -1.5px 0 0 -1.5px;
         position: absolute;
         top: 50%;
-        transform: translate(-70%, -50%) rotate(45deg);
-        width: 7px;
+        width: 3px;
     }
 
     &:hover {

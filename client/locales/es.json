@@ -904,7 +904,7 @@
     "notCounted": "Opción",
     "optionalQtyTitle": "La cantidad 0 marca este artículo como opcional — su peso no se cuenta en los totales",
     "optionalTitle": "Marcar como opcional",
-    "editTitle": "Editar detalles",
+    "editTitle": "Más opciones",
     "detailOpenError": "No se puede abrir el editor de este artículo. Inténtalo de nuevo.",
     "removeTitle": "Eliminar",
     "weightLabel": "Peso: {name}",

@@ -56,7 +56,7 @@ test("item row actions and fields are reachable and named for the keyboard", asy
   }
   expect(seen).toContain("Mark as worn");
   expect(seen).toContain("Mark as consumable");
-  expect(seen).toContain("Edit details");
+  expect(seen).toContain("More options");
   expect(seen.some((s) => s.startsWith("Weight:"))).toBe(true);
   expect(seen).toContain("Remove");
 
