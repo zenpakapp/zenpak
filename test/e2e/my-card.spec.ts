@@ -78,6 +78,32 @@ test("a public profile shows the QR code, the name, the address and the share bu
   expect(shared.url).toMatch(new RegExp(`/u/${username}$`));
 });
 
+test("on localhost the card uses the configured address, which a phone can reach", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  await page.route("**/api/public/origin", (route) =>
+    route.fulfill({ json: { origin: "http://192.168.1.11:3001" } }),
+  );
+  const username = await signUp(page);
+  await page.goto("/card");
+  await page.evaluate(() => {
+    window.LighterPack.$store.state.library.publicProfile.visibility =
+      "shareable";
+  });
+  await expect(page.locator(".lpMyCardAddress")).toHaveText(
+    `192.168.1.11:3001/u/${username}`,
+  );
+});
+
+test("the server tells the address it is configured with", async ({
+  request,
+}) => {
+  const res = await request.get("/api/public/origin");
+  expect(res.ok()).toBe(true);
+  expect(typeof (await res.json()).origin).toBe("string");
+});
+
 test("signed out, the card sends to the welcome page", async ({ page }) => {
   await page.goto("/card");
   await expect(page).toHaveURL(/\/welcome/);

@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('config');
 const { ObjectId } = require('mongodb');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
@@ -35,6 +36,12 @@ async function resolveViewerKey(req) {
     const ip = String(req.ip || '').trim();
     return `anon:${hashViewerPart(`${ip}|${userAgent}`)}`;
 }
+
+// The address ZenPak is served from, as configured. The profile card needs it when the page is
+// open on localhost, an address another phone cannot reach.
+router.get('/api/public/origin', (req, res) => {
+    res.json({ origin: process.env.DEPLOY_URL || config.get('deployUrl') });
+});
 
 router.get('/api/public/profile/:username', async (req, res) => {
     const username = String(req.params.username || '').toLowerCase().trim();
