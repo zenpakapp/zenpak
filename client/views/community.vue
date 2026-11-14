@@ -381,7 +381,7 @@ export default {
     },
     data() {
         return {
-            activeTab: this.$route.path.endsWith('/feed') ? 'feed' : 'discover',
+            activeTab: this.tabFromPath(this.$route.path),
             searchQuery: '',
             searchTimeout: null,
             filterTimeout: null,
@@ -432,9 +432,14 @@ export default {
     },
     methods: {
         tierLabel,
+        tabFromPath(path) {
+            if (path.endsWith('/feed')) return 'feed';
+            if (path.endsWith('/people')) return 'people';
+            return 'discover';
+        },
         setTab(tab) {
             this.activeTab = tab;
-            const path = tab === 'feed' ? '/community/feed' : '/community';
+            const path = { feed: '/community/feed', people: '/community/people' }[tab] || '/community';
             if (this.$route.path !== path) this.$router.replace(path);
             if (tab === 'feed' && this.feedEvents.length === 0) this.feedLoad();
         },
