@@ -7,12 +7,21 @@
             <ul v-if="open" ref="dropdown" class="itemDetailAddDropdown" :style="dropdownStyle">
                 <template v-if="!selectedListId">
                     <li
-                        v-for="list in allLists"
+                        v-if="currentList"
+                        class="itemDetailAddOption itemDetailAddCurrent"
+                        @click="selectedListId = currentList.id"
+                    >
+                        <span>{{ $t('item.addToListCurrent') }} : {{ currentList.name || $t('gearroom.unnamedList') }}</span>
+                        <span class="itemDetailAddNext" aria-hidden="true">›</span>
+                    </li>
+                    <li
+                        v-for="list in otherLists"
                         :key="list.id"
                         :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
                         @click="selectedListId = list.id"
                     >
-                        {{ list.name || $t('gearroom.unnamedList') }} ›
+                        <span>{{ list.name || $t('gearroom.unnamedList') }}</span>
+                        <span class="itemDetailAddNext" aria-hidden="true">›</span>
                     </li>
                     <li class="itemDetailAddCreate">
                         <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">
@@ -100,6 +109,14 @@ export default {
         allLists() {
             const library = this.$store.state.library;
             return library ? library.lists : [];
+        },
+        // The list open in the editor: the quickest target, so it comes first.
+        currentList() {
+            const library = this.$store.state.library;
+            return library && library.defaultListId ? library.getListById(library.defaultListId) : null;
+        },
+        otherLists() {
+            return this.allLists.filter((list) => !this.currentList || list.id !== this.currentList.id);
         },
         selectedListCategories() {
             const library = this.$store.state.library;
@@ -283,8 +300,12 @@ export default {
 }
 
 .itemDetailAddOption {
+    align-items: center;
     cursor: pointer;
+    display: flex;
     font-size: $fontSize-sm;
+    gap: 12px;
+    justify-content: space-between;
     list-style: none;
     padding: 10px 14px;
 
@@ -297,6 +318,12 @@ export default {
         cursor: default;
         pointer-events: none;
     }
+}
+
+// The arrow sits at the right edge of the row, so a long name wrapping never leaves it alone.
+.itemDetailAddNext {
+    color: $color-text-muted;
+    flex-shrink: 0;
 }
 
 .itemDetailAddNewList {

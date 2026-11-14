@@ -1131,6 +1131,7 @@
     "metaButtonCancel": "Cancel",
     "metaButtonSave": "Save",
     "addToListButtonText": "Add to…",
+    "addToListCurrent": "Current list",
     "addToFavorites": "Add to favorites",
     "removeFromFavorites": "Remove from favorites",
     "addToListNewList": "+ New list",
