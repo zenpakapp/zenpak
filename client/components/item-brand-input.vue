@@ -1,6 +1,7 @@
 <template>
     <div class="itemDetailFieldBrand">
         <input
+            :id="inputId || null"
             :value="modelValue"
             type="text"
             :placeholder="$t('item.brandExample')"
@@ -10,7 +11,7 @@
             @blur="closeDropdown"
             @keydown.down.prevent="moveIndex(1)"
             @keydown.up.prevent="moveIndex(-1)"
-            @keydown.enter.prevent="selectSuggestion(activeIndex)"
+            @keydown.enter="onEnter"
             @keydown.escape="dropdownOpen = false; activeIndex = -1"
         >
         <ul v-if="dropdownOpen && suggestionsFiltered.length" ref="brandList" class="brandSuggestions">
@@ -32,6 +33,7 @@ export default {
     name: 'ItemBrandInput',
     props: {
         modelValue: { type: String, default: '' },
+        inputId: { type: String, default: '' },
     },
     emits: ['update:modelValue'],
     data() {
@@ -77,6 +79,16 @@ export default {
                 const active = list.querySelector('.brandSuggestion.active');
                 if (active) active.scrollIntoView({ block: 'nearest' });
             });
+        },
+        // Picks the highlighted suggestion; with none highlighted Enter is left alone so the
+        // form can move on to the next field.
+        onEnter(evt) {
+            if (this.dropdownOpen && this.activeIndex >= 0 && this.suggestionsFiltered[this.activeIndex]) {
+                evt.preventDefault();
+                this.selectSuggestion(this.activeIndex);
+            } else {
+                this.dropdownOpen = false;
+            }
         },
         selectSuggestion(index) {
             if (index >= 0 && this.suggestionsFiltered[index]) {
