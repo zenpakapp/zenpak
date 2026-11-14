@@ -886,3 +886,16 @@
     padding: 8px;
     width: 100%;
 }
+
+/* ── Touch screens: 44px targets, and a 16px search field so iOS does not zoom on focus ── */
+
+@media (pointer: coarse) {
+    .lpCommunityTab {
+        min-height: 44px;
+    }
+
+    .lpCommunitySearchInput {
+        font-size: 16px;
+        min-height: 44px;
+    }
+}
