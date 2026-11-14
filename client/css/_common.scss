@@ -528,6 +528,42 @@ textarea::placeholder {
     visibility: visible;
 }
 
+// No hover on a touch screen: the handles and delete crosses of the sidebar lists, the category
+// header and the library items are always shown, like the ones on the item rows.
+@media (hover: none), (pointer: coarse) {
+    .lpLibraryList .lpRemove,
+    .lpLibraryList .lpHandle,
+    .lpCategory .lpHeader .lpRemove,
+    .lpCategory .lpHeader .lpHandle,
+    .lpLibraryItem .lpRemove,
+    .lpLibraryItem .lpHandle {
+        visibility: visible;
+    }
+
+    // Finger-sized hit areas around the small icons; the negative margins keep the layout.
+    .lpItemsHeader .lpRemoveCategory {
+        margin: -6px;
+        padding: 12px;
+    }
+
+    .lpLibraryList .lpRemove {
+        margin: -10px -6px;
+        padding: 12px;
+    }
+
+    .lpLibraryList .lpHandle,
+    .lpCategory .lpHeader .lpHandle {
+        background-clip: content-box;
+        background-origin: content-box;
+        background-repeat: no-repeat;
+        box-sizing: content-box;
+        margin-bottom: -3px;
+        margin-left: -8px;
+        margin-right: -8px;
+        padding: 3px 8px;
+    }
+}
+
 .lpPublicStats {
     display: flex;
     font-size: 14px;

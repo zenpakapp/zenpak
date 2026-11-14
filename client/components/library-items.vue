@@ -68,8 +68,8 @@
                 :aria-posinset="virtualWindow.start + index + 1"
                 @dblclick="openDetail(libraryItem)"
             >
-                <a v-if="libraryItem.url" :href="libraryItem.url" target="_blank" class="lpName lpHref">{{ libraryItem.name }}</a>
-                <span v-if="!libraryItem.url" class="lpName">{{ libraryItem.name }}</span>
+                <a v-if="libraryItem.url" :href="libraryItem.url" target="_blank" class="lpName lpHref" :title="libraryItem.name">{{ libraryItem.name }}</a>
+                <span v-if="!libraryItem.url" class="lpName" :title="libraryItem.name">{{ libraryItem.name }}</span>
                 <span class="lpWeight">
                     {{ displayWeight(libraryItem.weight, itemUnit) }}
                     {{ itemUnit }}
