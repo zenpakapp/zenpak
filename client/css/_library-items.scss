@@ -219,7 +219,8 @@
         }
     }
 
-    &:hover .lpLibraryItemEdit {
+    &:hover .lpLibraryItemEdit,
+    .lpLibraryItemEdit:focus-visible {
         opacity: 1;
     }
 

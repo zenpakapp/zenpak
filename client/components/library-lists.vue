@@ -126,7 +126,7 @@
         <ul id="lists" ref="lists">
             <li v-for="list in library.lists" :key="list.id" class="lpLibraryList" :class="{lpActive: (library.defaultListId == list.id)}">
                 <div class="lpHandle" :title="$t('library.reorderItemTitle')" />
-                <span class="lpLibraryListSwitch lpListName" :title="listName(list)" @click="setDefaultList(list)">
+                <span class="lpLibraryListSwitch lpListName" role="button" tabindex="0" :aria-current="library.defaultListId == list.id ? 'true' : null" :title="listName(list)" @click="setDefaultList(list)" @keydown.enter="setDefaultList(list)" @keydown.space.prevent="setDefaultList(list)">
                     {{ listName(list) }}
                     <span v-if="forkUpdateFor(list)" class="lpForkUpdateBadge">{{ $t('list.versioning.updateBadge', { version: forkUpdateFor(list).latestVersion }) }}</span>
                 </span>
