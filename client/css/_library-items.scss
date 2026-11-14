@@ -118,15 +118,19 @@
     .lpName {
         float: left;
         margin: 0;
-        max-width: 190px;
+        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .lpWeight {
         color: $color-text-muted;
-        float: right;
         font-variant-numeric: tabular-nums;
+        position: absolute;
+        right: 58px;
+        top: 7px;
+        white-space: nowrap;
         width: auto;
     }
 
@@ -178,25 +182,36 @@
         visibility: visible;
     }
 
+    // Controls column on the right, centred in the row: details button, then delete cross.
     .lpRemove {
-        bottom: 0;
+        align-items: center;
+        display: flex;
+        height: 30px;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
         position: absolute;
-        right: 14px;
+        right: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
     }
 
     .lpLibraryItemEdit {
         background: transparent;
         border: none;
-        bottom: 0;
         color: $color-text-muted;
         cursor: pointer;
         font-size: 16px;
+        height: 30px;
         line-height: 1;
         opacity: 0;
-        padding: 4px 6px;
+        padding: 0;
         position: absolute;
-        right: 38px;
-        top: 0;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 26px;
         transition: opacity $transitionDurationFast ease, color $transitionDurationFast ease;
 
         &:hover {
@@ -206,6 +221,17 @@
 
     &:hover .lpLibraryItemEdit {
         opacity: 1;
+    }
+
+    // No hover on a touch screen: keep the handle and the details button shown.
+    @media (hover: none), (pointer: coarse) {
+        .lpHandle {
+            visibility: visible;
+        }
+
+        .lpLibraryItemEdit {
+            opacity: 1;
+        }
     }
 
     .library.lpSearching & {
