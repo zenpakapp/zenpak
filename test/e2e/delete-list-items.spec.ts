@@ -23,7 +23,8 @@ async function setup(page, prefix) {
   await page
     .locator("#listContainer .listContainerHeader .lpAdd")
     .first()
-    .click();
+    .hover();
+  await page.getByRole("button", { name: "New blank list" }).click();
   await expect(page.locator("#lists .lpLibraryList")).toHaveCount(2);
   await page.locator(".lpAddItem").first().click();
   await page.locator(".lpAddItemInput").first().fill("Camp stove");

@@ -196,9 +196,10 @@ export default {
         newList() {
             this.$store.commit('newList');
         },
-        // With a mouse the label is a shortcut for a blank list; on touch it only opens the menu.
+        // The label never creates a list by itself: it opens the menu, whose first entry is the blank
+        // list. With a mouse the menu is already open on hover; on touch the popover toggles on click.
         onAddListClick() {
-            if (!this.touchMenu) this.newList();
+            if (!this.touchMenu && this.$refs.addMenu) this.$refs.addMenu.show();
         },
         closeAddMenu() {
             if (this.touchMenu && this.$refs.addMenu) this.$refs.addMenu.hide();
