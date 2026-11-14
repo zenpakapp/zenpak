@@ -137,7 +137,7 @@ import { isPublicVisibility } from '../services/public-visibility';
 export default {
     name: 'MyCardView',
     data() {
-        return { qrSrc: '', copied: false };
+        return { qrSrc: '', copied: false, origin: window.location.origin };
     },
     computed: {
         library() {
@@ -159,7 +159,7 @@ export default {
             return (isTrail && this.profile.displayName) || this.username;
         },
         url() {
-            return `${window.location.origin}/u/${this.username}`;
+            return `${this.origin}/u/${this.username}`;
         },
         shortAddress() {
             return this.url.replace(/^https?:\/\//, '');
@@ -175,8 +175,27 @@ export default {
                 if (isPublic) this.makeQr();
             },
         },
+        url() {
+            if (this.isPublic) this.makeQr();
+        },
+    },
+    created() {
+        this.useReachableOrigin();
     },
     methods: {
+        // On localhost the QR code would point to an address a phone cannot open: take the
+        // address the server is configured with, when that one is reachable.
+        async useReachableOrigin() {
+            const isLocal = (host) => ['localhost', '127.0.0.1', '[::1]'].includes(host);
+            if (!isLocal(window.location.hostname)) return;
+            try {
+                const res = await fetch('/api/public/origin');
+                const { origin } = await res.json();
+                if (origin && !isLocal(new URL(origin).hostname)) this.origin = origin.replace(/\/$/, '');
+            } catch (err) {
+                // Keep the current address.
+            }
+        },
         async makeQr() {
             const { toDataURL } = await import(/* webpackChunkName: "qrcode" */ 'qrcode');
             this.qrSrc = await toDataURL(this.url, {
