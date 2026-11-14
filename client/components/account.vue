@@ -201,7 +201,7 @@
             </div>
         </section>
 
-        <profileSettings />
+        <profileSettings :focus-field="focusField" />
         <creatorLinks />
     </modal>
 </template>
@@ -242,6 +242,8 @@ export default {
             newPassword: '',
             confirmNewPassword: '',
             shown: false,
+            // A part of the profile settings to bring into view when the dialog opens.
+            focusField: '',
             backupLoading: false,
             restoreLoading: false,
             restoreConfirm: false,
@@ -275,7 +277,8 @@ export default {
         },
     },
     mounted() {
-        registerDialogOpener('account', () => {
+        registerDialogOpener('account', (focusField) => {
+            this.focusField = typeof focusField === 'string' ? focusField : '';
             this.shown = true;
             fetch('/api/billing/me', { credentials: 'include' })
                 .then((r) => (r.ok ? r.json() : null))

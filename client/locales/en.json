@@ -801,6 +801,16 @@
     "help": "Help",
     "signOut": "Sign Out"
   },
+  "card": {
+    "menu": "My card",
+    "title": "My card",
+    "qrAlt": "Profile QR code for {name}",
+    "share": "Share",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "private": "Your profile is private. Make it public to share it.",
+    "openSettings": "Open profile settings"
+  },
   "gearroom": {
     "title": "Your Gear",
     "newItem": "+ New item",

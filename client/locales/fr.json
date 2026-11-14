@@ -801,6 +801,16 @@
     "help": "Aide",
     "signOut": "Se déconnecter"
   },
+  "card": {
+    "menu": "Ma carte",
+    "title": "Ma carte",
+    "qrAlt": "QR code du profil de {name}",
+    "share": "Partager",
+    "copy": "Copier le lien",
+    "copied": "Lien copié",
+    "private": "Votre profil est privé. Rendez-le public pour le partager.",
+    "openSettings": "Ouvrir les réglages du profil"
+  },
   "gearroom": {
     "title": "Votre équipement",
     "newItem": "+ Nouvel article",

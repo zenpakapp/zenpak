@@ -801,6 +801,16 @@
     "help": "Ayuda",
     "signOut": "Cerrar sesión"
   },
+  "card": {
+    "menu": "Mi tarjeta",
+    "title": "Mi tarjeta",
+    "qrAlt": "Código QR del perfil de {name}",
+    "share": "Compartir",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "private": "Tu perfil es privado. Hazlo público para compartirlo.",
+    "openSettings": "Abrir los ajustes del perfil"
+  },
   "gearroom": {
     "title": "Tu equipo",
     "newItem": "+ Nuevo artículo",

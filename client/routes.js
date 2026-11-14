@@ -6,6 +6,7 @@ const publicProfile = () => import(/* webpackChunkName: "view-public-profile" */
 const publicList = () => import(/* webpackChunkName: "view-public-list" */ './views/public-list.vue');
 const communityView = () => import(/* webpackChunkName: "view-community" */ './views/community.vue');
 const guideView = () => import(/* webpackChunkName: "view-guide" */ './views/guide.vue');
+const myCardView = () => import(/* webpackChunkName: "view-my-card" */ './views/my-card.vue');
 const aboutView = () => import(/* webpackChunkName: "view-about" */ './views/about.vue');
 const notFound = () => import(/* webpackChunkName: "view-not-found" */ './views/not-found.vue');
 const verifyEmail = () => import(/* webpackChunkName: "view-verify-email" */ './views/verify-email.vue');
@@ -24,6 +25,7 @@ export default [
     { path: '/community/feed', component: communityView },
     { path: '/u/:username', component: publicProfile },
     { path: '/p/:externalId', component: publicList },
+    { path: '/card', component: myCardView },
     { path: '/guide', component: guideView },
     { path: '/about', component: aboutView },
     { path: '/verify-email', component: verifyEmail },

@@ -241,7 +241,7 @@
             </div>
         </template>
 
-        <div class="profileSettingsField">
+        <div ref="visibilityField" class="profileSettingsField">
             <span class="profileSettingsLabel">{{ $t('acct.visibility') }}</span>
             <lp-select :value="draftProfile.visibility" :options="visibilityOptions" @change="update('visibility', $event)" />
             <p v-if="visibilityHint" class="profileSettingsHint">
@@ -270,6 +270,10 @@ import LpSelect from './lp-select.vue';
 export default {
     name: 'ProfileSettings',
     components: { LpSelect },
+    props: {
+        // 'visibility': scroll the visibility setting into view on open.
+        focusField: { type: String, default: '' },
+    },
     data() {
         return {
             units: ['oz', 'lb', 'g', 'kg'],
@@ -352,6 +356,13 @@ export default {
             if (this.profileSaving) return;
             this.draftProfile = this.profileDraftFromStore();
         },
+    },
+    mounted() {
+        if (this.focusField !== 'visibility') return;
+        this.$nextTick(() => {
+            const field = this.$refs.visibilityField;
+            if (field && field.scrollIntoView) field.scrollIntoView({ block: 'center' });
+        });
     },
     methods: {
         profileDraftFromStore() {
