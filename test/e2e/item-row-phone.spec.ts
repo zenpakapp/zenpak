@@ -39,13 +39,11 @@ test("phone rows keep the same five controls and space the delete cross", async 
   for (const cls of [".lpCamera", ".lpLink", ".lpStar"]) {
     await expect(row.locator(cls)).toBeHidden();
   }
-  for (const cls of [
-    ".lpTag",
-    ".lpWorn",
-    ".lpConsumable",
-    ".lpOptionDot",
-    ".lpEdit",
-  ]) {
+  // Brand/tags and "optional" are in the details only: the row keeps three controls.
+  for (const cls of [".lpTag", ".lpOptionDot"]) {
+    await expect(row.locator(cls)).toHaveCount(0);
+  }
+  for (const cls of [".lpWorn", ".lpConsumable", ".lpEdit"]) {
     await expect(row.locator(cls)).toBeVisible();
     // A 40px target around the icon, with the icon drawn once and centred: a wider content
     // box would repeat the sprite (two tags) and push it to one side.

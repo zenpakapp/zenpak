@@ -99,3 +99,15 @@ export async function logoutUser(page) {
     await page.locator('.accountDropdownName').hover();
     await page.getByText('Sign out').click();
 }
+
+// The row has no optional toggle: "Option" is in the item details. Opens them, sets it, saves.
+export async function setOptionalFromDetails(page, row, on = true) {
+    await row.hover();
+    await row.locator('.lpEdit').click();
+    const dialog = page.locator('#itemDetailDialog');
+    await dialog.waitFor({ state: 'visible' });
+    const box = dialog.getByLabel('Option', { exact: true });
+    if ((await box.isChecked()) !== on) await box.setChecked(on);
+    await dialog.locator('.itemDetailEditFooter .lpButton').click();
+    await dialog.waitFor({ state: 'hidden' });
+}

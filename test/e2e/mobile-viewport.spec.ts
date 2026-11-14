@@ -152,27 +152,6 @@ test.describe("signed in", () => {
   });
 });
 
-// The brand/type/tags form had min-width: 320px, wider than the dialog's content box on a
-// 375px phone, so its fields and buttons ran past the dialog's right edge.
-test("brand, type and tags dialog fits inside a phone", async ({ page }) => {
-  await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
-  await page.goto(testRoot);
-  await page.locator(".lpItem .lpTag").first().click();
-  await expect(page.locator(".itemMetaForm")).toBeVisible();
-  const { formRight, dialogRight } = await page.evaluate(() => {
-    const form = document
-      .querySelector(".itemMetaForm")
-      .getBoundingClientRect();
-    const modal = document
-      .querySelector("#itemMetaDialog")
-      .getBoundingClientRect();
-    return { formRight: form.right, dialogRight: modal.right };
-  });
-  expect(formRight).toBeLessThanOrEqual(dialogRight);
-});
-
-// Dialogs with a fixed pixel width (620px here) overrode the modal's min(560px, 100vw - 32px)
-// and, centred with translateX(-50%), ran off both sides of a phone.
 test("forgot password dialog fits a phone with stacked forms", async ({
   page,
 }) => {
@@ -250,11 +229,6 @@ test.describe("dialogs and popovers keep fields at 16px", () => {
   test("item dialogs", async ({ page }) => {
     await mockSuccessfulEditorInitialization(page, createEditorLibrary(12, 4));
     await page.goto(testRoot);
-    await page.locator(".lpItem .lpTag").first().click();
-    await expect(page.locator(".itemMetaForm")).toBeVisible();
-    expect(tooSmall(await visibleFieldSizes(page))).toEqual([]);
-    await page.locator("#itemMetaDialog .lpModalClose").click();
-
     await page.locator(".lpAddItemWithDetails").click();
     await expect(page.locator("#itemDetailDialog")).toBeVisible();
     const sizes = await visibleFieldSizes(page);

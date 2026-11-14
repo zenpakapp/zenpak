@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 
 import { registerUser, importCsvFile } from "./auth-utils";
 
-// Row action buttons are big enough to tap on a phone, and the worn, consumable and optional
+// Row action buttons are big enough to tap on a phone, and the worn and consumable
 // toggles show their state with a ring, not only a colour.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
 
@@ -23,13 +23,15 @@ test("row toggles have phone-size targets on a phone and a ring when on", async 
   const row = page.locator(".lpItem[data-item-id]").first();
   await expect(row).toBeVisible({ timeout: 15000 });
 
-  // Turn "optional" on from the desktop layout, then look at the phone layout.
+  // One of worn / consumable is on (the fixture's first item is consumable, which blocks worn):
+  // turn worn on if neither is, then look at the phone layout.
   await row.hover();
-  const worn = row.locator(".lpOptionDot");
-  if (!(await worn.evaluate((el) => el.classList.contains("lpActive")))) {
-    await worn.click();
+  let worn = row.locator(".lpWorn.lpActive, .lpConsumable.lpActive").first();
+  if ((await worn.count()) === 0) {
+    await row.locator(".lpWorn").click();
+    worn = row.locator(".lpWorn.lpActive");
   }
-  await expect(worn).toHaveClass(/lpActive/);
+  await expect(worn).toBeVisible();
 
   await page.setViewportSize({ width: 375, height: 812 });
   for (const sel of [".lpWorn", ".lpConsumable", ".lpEdit"]) {

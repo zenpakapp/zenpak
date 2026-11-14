@@ -37,10 +37,8 @@
         <span v-if="!isPackingMode" class="lpActionsCell">
             <button type="button" class="lpSprite lpActionBtn lpCamera" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
             <button type="button" class="lpSprite lpActionBtn lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
-            <button type="button" class="lpSprite lpActionBtn lpTag" :class="{lpActive: hasItemMeta}" :title="$t('item.metaTitle')" :aria-label="$t('item.metaTitle')" @click="updateItemMeta" />
             <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="$t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
             <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="$t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
-            <button type="button" class="lpSprite lpActionBtn lpOptionDot" :class="{lpActive: categoryItem.qty === 0}" :title="$t('item.optionalTitle')" :aria-label="$t('item.optionalTitle')" :aria-pressed="categoryItem.qty === 0" @click="toggleOptional" />
             <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" :aria-label="$t('item.ratingTitle')" @click="cycleStar" />
             <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
@@ -265,9 +263,6 @@ export default {
         },
         updateItemLink() {
             openDialog('itemLink', this.item);
-        },
-        updateItemMeta() {
-            openDialog('itemMeta', this.item);
         },
         updateItemImage() {
             openDialog('itemImage', this.item);

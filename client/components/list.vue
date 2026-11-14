@@ -52,6 +52,9 @@
             <button v-if="!isPackingMode" class="lpPackBtn" @click="enterPackingMode">
                 🎒 {{ $t('list.packThis') }}
             </button>
+            <button v-if="!library.optionalFields['listDescription']" type="button" class="lpAddListDescription" @click="addListDescription">
+                + {{ $t('list.addListDescription') }}
+            </button>
         </list-summary>
 
         <div style="clear: both;" />
@@ -64,9 +67,6 @@
             <p>{{ $t('list.descriptionHelp') }}</p>
             <textarea id="listDescription" v-model="list.description" :maxlength="descriptionMaxLength" @input="updateListDescription" />
         </details>
-        <button v-else-if="!isListNew && !isPackingMode" type="button" class="lpAddListDescription" @click="addListDescription">
-            + {{ $t('list.addListDescription') }}
-        </button>
 
         <TransitionGroup ref="categories" :name="isSwitchingList ? '' : 'lp-list'" tag="ul" class="lpCategories" :class="{ lpListSwitching: isSwitchingList }">
             <category

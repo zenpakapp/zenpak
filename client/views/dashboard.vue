@@ -234,7 +234,6 @@ const lazyDialogs = {
     itemDetail: { component: 'itemDetail', loader: () => import(/* webpackChunkName: "dialog-item-detail" */ '../components/item-detail.vue') },
     itemImage: { component: 'itemImage', loader: () => import(/* webpackChunkName: "dialog-item-image" */ '../components/item-image.vue') },
     itemLink: { component: 'itemLink', loader: () => import(/* webpackChunkName: "dialog-item-link" */ '../components/item-link.vue') },
-    itemMeta: { component: 'itemMeta', loader: () => import(/* webpackChunkName: "dialog-item-meta" */ '../components/item-meta.vue') },
     itemViewImage: { component: 'itemViewImage', loader: () => import(/* webpackChunkName: "dialog-item-view-image" */ '../components/item-view-image.vue') },
     shortcutsHelp: { component: 'shortcutsHelp', loader: () => import(/* webpackChunkName: "dialog-shortcuts-help" */ '../components/shortcuts-help.vue') },
 };
@@ -544,7 +543,6 @@ export default {
             scheduleIdle(() => {
                 [
                     lazyDialogs.itemDetail.loader,
-                    lazyDialogs.itemMeta.loader,
                     lazyDialogs.itemLink.loader,
                     lazyDialogs.itemImage.loader,
                     lazyDialogs.itemViewImage.loader,

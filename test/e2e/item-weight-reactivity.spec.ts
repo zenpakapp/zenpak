@@ -4,6 +4,7 @@ import {
   createEditorLibrary,
   mockSuccessfulEditorInitialization,
 } from "./editor-fixture";
+import { setOptionalFromDetails } from "./auth-utils";
 import { testRoot } from "./utils";
 
 test("closes the detail modal after saving an edit opened directly from a list row", async ({
@@ -89,7 +90,7 @@ test("persists list-specific item options after editing via the detail modal", a
   await row.hover();
   await expect(row.locator(".lpWorn")).not.toHaveClass(/lpActive/);
   await expect(row.locator(".lpConsumable")).toHaveClass(/lpActive/);
-  await expect(row.locator(".lpOptionDot")).toHaveClass(/lpActive/);
+  await expect(row).toHaveClass(/lpQtyZero/);
   await expect(row.locator(".lpQty")).toHaveValue("0");
 });
 
@@ -206,8 +207,7 @@ test("updates the restored quantity for an optional item edited from details", a
   await expect(dialog).toBeHidden();
   await expect(qtyInput).toHaveValue("0");
 
-  await row.hover();
-  await row.locator(".lpOptionDot").click();
+  await setOptionalFromDetails(page, row, false);
   await expect(qtyInput).toHaveValue("3");
 });
 
