@@ -49,7 +49,7 @@
                     </a>
                 </span>
                 <span class="lpListTitleBlock headerItem">
-                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
+                    <input id="lpListName" :value="list ? list.name : ''" type="text" class="lpListName lpSilent" :aria-label="$t('dash.listNamePlaceholder')" :placeholder="$t('dash.listNamePlaceholder')" autocomplete="off" name="lastpass-disable-search" @input="updateListName">
                     <span v-if="forkSource" class="lpForkSource" :title="forkCurrencyNote || null">
                         {{ $t('dash.source') }}
                         <router-link v-if="forkSource.externalId && !forkSourceGone" class="lpForkSourceLink" :to="`/p/${forkSource.externalId}`">
@@ -113,7 +113,7 @@
                     </button>
                     <span v-if="verifyResendError" class="lpVerifyBannerError">{{ verifyResendError }}</span>
                 </template>
-                <button class="lpVerifyBannerDismiss" @click="dismissVerifyBanner">
+                <button class="lpVerifyBannerDismiss" type="button" :aria-label="$t('misc.dismissAlert')" @click="dismissVerifyBanner">
                     ✕
                 </button>
             </div>

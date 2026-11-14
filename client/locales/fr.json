@@ -633,6 +633,7 @@
   "misc": {
     "saveDataError": "Une erreur s'est produite lors de l'enregistrement de vos données.",
     "dismissAlert": "Fermer l'alerte",
+    "pickColor": "Choisir une couleur",
     "note": "Remarque :",
     "unknownError": "Une erreur inconnue s'est produite.",
     "genericError": "Une erreur s'est produite, veuillez réessayer plus tard.",

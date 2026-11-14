@@ -22,6 +22,7 @@
                     ref="searchInput"
                     v-model="searchDraft"
                     class="librarySearch"
+                    :aria-label="$t('library.searchPlaceholder')"
                     type="text"
                     :placeholder="$t('library.searchPlaceholder')"
                 >

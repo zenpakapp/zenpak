@@ -27,7 +27,7 @@
 <template>
     <Popover id="lpPickerContainer" :shown="shown" @hide="shown = false">
         <template #target>
-            <span class="lpLegend" :style="{'background-color': color}" @click="shown = true" />
+            <span class="lpLegend" role="button" tabindex="0" :aria-label="$t('misc.pickColor')" :style="{'background-color': color}" @click="shown = true" @keydown.enter.prevent="shown = true" @keydown.space.prevent="shown = true" />
         </template>
         <template #content>
             <input

@@ -633,6 +633,7 @@
   "misc": {
     "saveDataError": "An error occurred while attempting to save your data.",
     "dismissAlert": "Dismiss alert",
+    "pickColor": "Choose a colour",
     "note": "Note:",
     "unknownError": "An unknown error occurred.",
     "genericError": "An error occurred, please try again later.",

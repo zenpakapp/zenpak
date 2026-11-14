@@ -633,6 +633,7 @@
   "misc": {
     "saveDataError": "Se produjo un error al intentar guardar tus datos.",
     "dismissAlert": "Cerrar alerta",
+    "pickColor": "Elegir un color",
     "note": "Nota:",
     "unknownError": "Se produjo un error desconocido.",
     "genericError": "Se produjo un error, inténtalo de nuevo más tarde.",
