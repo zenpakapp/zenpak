@@ -405,6 +405,12 @@
         padding-right: 6px;
     }
 
+    // Icon-only links (Community, Wayfarer): a finger-sized target.
+    .headerItem > a.lpTarget {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
     // Icons keep their width and the list title absorbs the squeeze. (A plain class rule here
     // lost to the later `flex: 0 1 auto`, so the icons shrank into each other.)
     #header .headerTruncateItem {
