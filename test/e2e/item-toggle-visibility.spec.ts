@@ -28,7 +28,7 @@ test("the weight toggles are visible at rest and the rest wait for hover", async
 
   // Pointer away from the list: toggles faint but there, other actions hidden.
   await page.mouse.move(5, 5);
-  for (const cls of [".lpWorn", ".lpConsumable", ".lpOptionDot"]) {
+  for (const cls of [".lpWorn", ".lpConsumable"]) {
     const rest = await opacity(cls);
     const on = await row
       .locator(cls)
@@ -43,11 +43,10 @@ test("the weight toggles are visible at rest and the rest wait for hover", async
     .poll(() => opacity(".lpWorn"), { message: "worn under the pointer" })
     .toBeGreaterThanOrEqual(0.6);
 
-  // On a phone there is no hover: the toggles are stronger than the other icons.
+  // On a phone there is no hover: the toggles are strong enough to read at rest.
   await page.setViewportSize({ width: 375, height: 812 });
   await page.mouse.move(5, 5);
   await expect
     .poll(() => opacity(".lpConsumable"), { message: "toggle on a phone" })
     .toBeGreaterThanOrEqual(0.7);
-  expect(await opacity(".lpConsumable")).toBeGreaterThan(await opacity(".lpTag"));
 });

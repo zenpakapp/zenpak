@@ -123,24 +123,6 @@
     text-transform: uppercase;
 }
 
-.lpOptionDot {
-    background-color: var(--color-text-muted);
-    height: 14px;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4' stroke-dasharray='2.1 2.1'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4' stroke-dasharray='2.1 2.1'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    width: 14px;
-
-    &.lpActive {
-        background-color: var(--color-accent);
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='7' cy='7' r='2.6' fill='black'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='5.3' fill='none' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='7' cy='7' r='2.6' fill='black'/%3E%3C/svg%3E");
-    }
-}
-
 .lpItemPacked {
     opacity: 0.4;
 
@@ -197,20 +179,17 @@
     opacity: 0.32;
 }
 
-// Worn, consumable and optional change the weight maths, so they are never hidden: faint at
+// Worn and consumable change the weight maths, so they are never hidden: faint at
 // rest, clearer on the row under the pointer, full when on. The other actions wait for hover.
 .lpItem .lpActionsCell .lpWorn,
-.lpItem .lpActionsCell .lpConsumable,
-.lpItem .lpActionsCell .lpOptionDot {
+.lpItem .lpActionsCell .lpConsumable {
     opacity: 0.45;
 }
 
 .lpItem:hover .lpActionsCell .lpWorn,
 .lpItem:hover .lpActionsCell .lpConsumable,
-.lpItem:hover .lpActionsCell .lpOptionDot,
 .lpItem:focus-within .lpActionsCell .lpWorn,
-.lpItem:focus-within .lpActionsCell .lpConsumable,
-.lpItem:focus-within .lpActionsCell .lpOptionDot {
+.lpItem:focus-within .lpActionsCell .lpConsumable {
     opacity: 0.7;
 }
 
@@ -223,11 +202,10 @@
     opacity: 1;
 }
 
-// Worn, consumable and optional change the weight maths: when on they also get a ring, so the
+// Worn and consumable change the weight maths: when on they also get a ring, so the
 // state does not rest on the icon colour alone.
 .lpItem .lpActionsCell .lpWorn.lpActive,
-.lpItem .lpActionsCell .lpConsumable.lpActive,
-.lpItem .lpActionsCell .lpOptionDot.lpActive {
+.lpItem .lpActionsCell .lpConsumable.lpActive {
     border-radius: $radius-sm;
     box-shadow: 0 0 0 1px rgba(var(--color-accent-rgb), 0.6);
 }
@@ -276,10 +254,9 @@
         padding: 9px 8px;
     }
 
-    // With no hover to raise them, the three toggles are a little stronger than the rest.
+    // With no hover to raise them, the two toggles are a little stronger than the rest.
     .lpItem .lpActionsCell .lpWorn,
-    .lpItem .lpActionsCell .lpConsumable,
-    .lpItem .lpActionsCell .lpOptionDot {
+    .lpItem .lpActionsCell .lpConsumable {
         opacity: 0.75;
     }
 

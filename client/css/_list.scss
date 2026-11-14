@@ -379,8 +379,6 @@ input.lpCategoryName { /* specificity */
     .lpConsumable,
     .lpCamera,
     .lpLink,
-    .lpTag,
-    .lpOptionDot,
     .lpStar,
     .lpEdit {
         border-radius: $radius-sm;
@@ -410,8 +408,6 @@ input.lpCategoryName { /* specificity */
     .lpWorn.lpActive,
     .lpConsumable.lpActive,
     .lpCamera.lpActive,
-    .lpTag.lpActive,
-    .lpOptionDot.lpActive,
     .lpStar.lpStar1,
     .lpStar.lpStar2,
     .lpStar.lpStar3 {
@@ -500,17 +496,19 @@ input.lpCategoryName { /* specificity */
     }
 }
 
-// Shown while the optional description is off: one quiet line that turns it on.
+// Shown while the optional description is off: a quiet link next to the pack button, on the
+// same row so it takes no height of its own.
 .lpAddListDescription {
     background: none;
     border: none;
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;
-    margin: 0 0 16px;
+    margin-left: 12px;
     min-height: 32px;
     padding: 0;
     text-align: left;
+    vertical-align: middle;
 
     &:hover {
         color: $color-accent-text;
@@ -862,7 +860,6 @@ input.lpCategoryName { /* specificity */
             .lpConsumable,
             .lpCamera,
             .lpLink,
-            .lpTag,
             .lpStar,
             .lpEdit {
                 visibility: visible;

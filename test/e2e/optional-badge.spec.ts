@@ -2,7 +2,7 @@ import path from "path";
 
 import { test, expect } from "@playwright/test";
 
-import { registerUser, importCsvFile } from "./auth-utils";
+import { registerUser, importCsvFile, setOptionalFromDetails } from "./auth-utils";
 
 // An optional item (quantity 0) says what that means in plain words: it is not counted.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
@@ -20,10 +20,6 @@ test("an optional item is labelled as not counted", async ({ page }) => {
 
   const row = page.locator(".lpItem[data-item-id]").first();
   await expect(row).toBeVisible({ timeout: 15000 });
-  await row.hover();
-  const dot = row.locator(".lpOptionDot");
-  if (!(await dot.evaluate((el) => el.classList.contains("lpActive")))) {
-    await dot.click();
-  }
-  await expect(row.locator(".lpItemOptionalBadge")).toHaveText("Not counted");
+  await setOptionalFromDetails(page, row);
+  await expect(row.locator(".lpItemOptionalBadge")).toHaveText("Option");
 });

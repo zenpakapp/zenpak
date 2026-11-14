@@ -2,7 +2,7 @@ import path from "path";
 
 import { test, expect } from "@playwright/test";
 
-import { registerUser, importCsvFile } from "./auth-utils";
+import { registerUser, importCsvFile, setOptionalFromDetails } from "./auth-utils";
 
 // Packing mode on a phone: rows are read-only, the whole row is the tap target, optional items
 // (quantity 0) are not counted, and packed rows can be hidden.
@@ -24,11 +24,7 @@ test("packing mode rows are read-only, tappable and skip optional items", async 
   // Make the first item optional (quantity 0) from the desktop layout.
   const first = page.locator(".lpItem[data-item-id]").first();
   await expect(first).toBeVisible({ timeout: 15000 });
-  await first.hover();
-  const dot = first.locator(".lpOptionDot");
-  if (!(await dot.evaluate((el) => el.classList.contains("lpActive")))) {
-    await dot.click();
-  }
+  await setOptionalFromDetails(page, first);
   await expect(first).toHaveClass(/lpQtyZero/);
 
   await page.setViewportSize({ width: 375, height: 812 });
