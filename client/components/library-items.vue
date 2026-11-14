@@ -78,7 +78,7 @@
                     <span v-if="libraryItem.brand" class="lpLibraryItemBrand">{{ libraryItem.brand }}</span>
                     <span v-for="tag in itemTags(libraryItem)" :key="tag" class="lpLibraryItemTag">{{ tag }}</span>
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" :title="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a class="lpRemove lpRemoveLibraryItem speedbump" role="button" tabindex="0" :title="$t('library.deleteItemTitle')" :aria-label="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)" @keydown.enter="removeItem(libraryItem)" @keydown.space.prevent="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
                     ⋯
                 </button>

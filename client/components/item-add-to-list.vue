@@ -9,7 +9,11 @@
                     <li
                         v-if="currentList"
                         class="itemDetailAddOption itemDetailAddCurrent"
+                        role="button"
+                        tabindex="0"
                         @click="selectedListId = currentList.id"
+                        @keydown.enter.prevent="selectedListId = currentList.id"
+                        @keydown.space.prevent="selectedListId = currentList.id"
                     >
                         <span>{{ $t('item.addToListCurrent') }} : {{ currentList.name || $t('gearroom.unnamedList') }}</span>
                         <span class="itemDetailAddNext" aria-hidden="true">›</span>
@@ -18,13 +22,18 @@
                         v-for="list in otherLists"
                         :key="list.id"
                         :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
+                        role="button"
+                        :tabindex="itemUsedInLists.some(l => l.id === list.id) ? -1 : 0"
+                        :aria-disabled="itemUsedInLists.some(l => l.id === list.id) ? 'true' : null"
                         @click="selectedListId = list.id"
+                        @keydown.enter.prevent="selectedListId = list.id"
+                        @keydown.space.prevent="selectedListId = list.id"
                     >
                         <span>{{ list.name || $t('gearroom.unnamedList') }}</span>
                         <span class="itemDetailAddNext" aria-hidden="true">›</span>
                     </li>
                     <li class="itemDetailAddCreate">
-                        <div v-if="!creatingList" class="itemDetailAddNewList" @click="showNewListInput">
+                        <div v-if="!creatingList" class="itemDetailAddNewList" role="button" tabindex="0" @click="showNewListInput" @keydown.enter.prevent="showNewListInput" @keydown.space.prevent="showNewListInput">
                             {{ $t('item.addToListNewList') }}
                         </div>
                         <div v-else class="itemDetailAddCreateRow">
@@ -44,7 +53,7 @@
                     </li>
                 </template>
                 <template v-else>
-                    <li class="itemDetailAddListHeader itemDetailAddBack" @click="selectedListId = null">
+                    <li class="itemDetailAddListHeader itemDetailAddBack" role="button" tabindex="0" @click="selectedListId = null" @keydown.enter.prevent="selectedListId = null" @keydown.space.prevent="selectedListId = null">
                         {{ $t('item.addToListBack') }}
                     </li>
                     <li class="itemDetailAddOptionalRow">
@@ -62,7 +71,12 @@
                         v-for="cat in selectedListCategories"
                         :key="cat.id"
                         :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
+                        role="button"
+                        :tabindex="cat.getCategoryItemById(item.id) ? -1 : 0"
+                        :aria-disabled="cat.getCategoryItemById(item.id) ? 'true' : null"
                         @click="addToCategory(cat)"
+                        @keydown.enter.prevent="addToCategory(cat)"
+                        @keydown.space.prevent="addToCategory(cat)"
                     >
                         {{ cat.name || 'Unnamed category' }}
                     </li>

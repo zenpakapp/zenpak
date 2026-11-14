@@ -58,8 +58,8 @@
             <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :aria-invalid="qtyError" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span v-if="qtyError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
             <span class="lpArrows" aria-hidden="true">
-                <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" @click="incrementQty($event)" />
-                <button type="button" class="lpSprite lpActionBtn lpDown" tabindex="-1" @click="decrementQty($event)" />
+                <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" :aria-label="$t('item.qtyUp')" @click="incrementQty($event)" />
+                <button type="button" class="lpSprite lpActionBtn lpDown" tabindex="-1" :aria-label="$t('item.qtyDown')" @click="decrementQty($event)" />
             </span>
         </span>
         <span class="lpRemoveCell">
