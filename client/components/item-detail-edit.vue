@@ -12,14 +12,16 @@
         />
 
         <!-- Edit form -->
-        <form class="itemDetailEditForm" @submit.prevent="saveEdit">
+        <form class="itemDetailEditForm" @submit.prevent="saveEdit" @keydown.enter="onFormEnter">
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelName') }}</label>
+                <label for="itemEditName">{{ $t('item.editLabelName') }}</label>
                 <div class="itemDetailNameWrap">
                     <input
+                        id="itemEditName"
                         ref="name"
                         v-model="editName"
                         type="text"
+                        enterkeyhint="next"
                         autocomplete="off"
                         role="combobox"
                         aria-autocomplete="list"
@@ -57,20 +59,20 @@
             </div>
 
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelDescription') }}</label>
-                <textarea ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'" />
+                <label for="itemEditDescription">{{ $t('item.editLabelDescription') }}</label>
+                <textarea id="itemEditDescription" ref="description" v-model="editDescription" :placeholder="$t('item.editPlaceholderDescription')" :autofocus="initialFocus === 'description'" />
             </div>
 
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelBrand') }}</label>
-                <item-brand-input v-model="editBrand" />
+                <label for="itemEditBrand">{{ $t('item.editLabelBrand') }}</label>
+                <item-brand-input v-model="editBrand" input-id="itemEditBrand" />
             </div>
 
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelType') }}</label>
+                <label for="itemEditType">{{ $t('item.editLabelType') }}</label>
                 <!-- A closed list, like the tag form: the type is one of GEAR_CATEGORIES. -->
                 <div class="itemDetailSelectWrap itemDetailTypeWrap">
-                    <select v-model="editCategory" class="itemDetailTypeSelect">
+                    <select id="itemEditType" v-model="editCategory" class="itemDetailTypeSelect">
                         <option value="">
                             {{ $t('item.metaSelectNone') }}
                         </option>
@@ -83,11 +85,11 @@
 
             <div class="itemDetailFieldRow">
                 <div class="itemDetailField">
-                    <label>{{ $t('item.editLabelWeight') }}</label>
+                    <label for="itemEditWeight">{{ $t('item.editLabelWeight') }}</label>
                     <div class="itemDetailUnitRow">
-                        <input v-model="editWeight" type="text" placeholder="0" @input="weightTouched = true">
+                        <input id="itemEditWeight" v-model="editWeight" type="text" inputmode="decimal" enterkeyhint="next" placeholder="0" @input="weightTouched = true">
                         <div class="itemDetailSelectWrap itemDetailSelectUnit">
-                            <select v-model="editUnit" @change="convertWeightUnit($event.target.value)">
+                            <select v-model="editUnit" :aria-label="`${$t('item.editLabelWeight')} (${editUnit})`" @change="convertWeightUnit($event.target.value)">
                                 <option v-for="u in units" :key="u" :value="u">
                                     {{ u }}
                                 </option>
@@ -96,12 +98,12 @@
                     </div>
                 </div>
                 <div class="itemDetailField">
-                    <label>{{ $t('item.editLabelPrice') }}</label>
-                    <input v-model="editPrice" type="text" placeholder="0.00">
+                    <label for="itemEditPrice">{{ $t('item.editLabelPrice') }}</label>
+                    <input id="itemEditPrice" v-model="editPrice" type="text" inputmode="decimal" enterkeyhint="next" placeholder="0.00">
                 </div>
                 <div class="itemDetailField">
-                    <label>{{ $t('item.editLabelQty') }}</label>
-                    <input v-model="editQty" type="text" placeholder="1" :disabled="!hasListContext">
+                    <label for="itemEditQty">{{ $t('item.editLabelQty') }}</label>
+                    <input id="itemEditQty" v-model="editQty" type="text" inputmode="numeric" enterkeyhint="next" placeholder="1" :disabled="!hasListContext">
                 </div>
             </div>
 
@@ -139,9 +141,9 @@
             </div>
 
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelPurchaseUrl') }}</label>
+                <label for="itemEditUrl">{{ $t('item.editLabelPurchaseUrl') }}</label>
                 <div class="itemDetailUrlRow">
-                    <input v-model="editUrl" type="text" :placeholder="$t('item.editPlaceholderUrl')" @keydown.enter.prevent="fetchGear">
+                    <input id="itemEditUrl" v-model="editUrl" type="text" inputmode="url" enterkeyhint="go" :placeholder="$t('item.editPlaceholderUrl')" @keydown.enter.prevent="fetchGear">
                     <button type="button" class="lpButton lpSmall lpButtonSecondary itemDetailFetchBtn" :disabled="fetchLoading || !editUrl" @click="fetchGear">
                         {{ fetchLoading ? $t('item.editButtonFetching') : $t('item.editButtonFetch') }}
                     </button>
@@ -184,7 +186,7 @@
             </div>
 
             <div class="itemDetailField">
-                <label>{{ $t('item.editLabelTags') }}</label>
+                <label for="itemEditTags">{{ $t('item.editLabelTags') }}</label>
                 <div class="itemDetailTagsEdit">
                     <span v-for="tag in editTags" :key="tag" class="itemDetailTagChip">
                         {{ tag }}
@@ -192,7 +194,7 @@
                     </span>
                 </div>
                 <div class="itemDetailTagInput">
-                    <input v-model="tagInput" type="text" :placeholder="$t('item.editPlaceholderTags')" @keydown.enter.prevent="addTag">
+                    <input id="itemEditTags" v-model="tagInput" type="text" enterkeyhint="enter" :placeholder="$t('item.editPlaceholderTags')" @keydown.enter.prevent="addTag">
                     <button type="button" class="lpButton lpSmall lpButtonSecondary" @click="addTag">
                         {{ $t('item.editButtonAddTag') }}
                     </button>
@@ -475,6 +477,19 @@ export default {
             });
         },
         // Enter picks the highlighted suggestion; otherwise it behaves as before.
+        // Enter in a single-line field moves to the next field. Fields with their own Enter action
+        // (the URL fetch, adding a tag, picking a suggestion) already prevented the default.
+        onFormEnter(evt) {
+            const el = evt.target;
+            if (evt.defaultPrevented || !el || el.tagName !== 'INPUT' || el.type !== 'text') return;
+            const fields = Array.from(evt.currentTarget.querySelectorAll(
+                'input:not([type="file"]):not([type="checkbox"]):not([disabled]), select:not([disabled]), textarea:not([disabled])',
+            ));
+            const next = fields[fields.indexOf(el) + 1];
+            if (!next) return;
+            evt.preventDefault();
+            next.focus();
+        },
         onNameEnter(evt) {
             const picked = this.nameSuggestions[this.nameActiveIndex];
             if (!picked) return;
