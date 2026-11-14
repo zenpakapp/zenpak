@@ -41,13 +41,15 @@
     overflow-y: scroll;
     width: min(650px, calc(100vw - 32px));
 
-    .lpButton {
-        margin-bottom: 30px;
-    }
-
-    .importReviewActions .lpButton,
-    .importReviewCol .lpButton {
-        margin-bottom: 0;
+    // The dialog scrolls; the actions stay at the bottom edge. The modal has 24px of padding that
+    // sticky respects, so the bar reaches out by that much to sit flush and cover the content.
+    .lpModalActions {
+        background: $color-bg;
+        bottom: -24px;
+        margin-bottom: -24px;
+        margin-top: 0;
+        padding: 12px 0 24px;
+        position: sticky;
     }
 
     .importSummary {

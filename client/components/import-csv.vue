@@ -93,8 +93,12 @@
                 </div>
             </div>
             <div class="lpModalActions">
-                <a class="lpButton close" @click="shown = false">{{ $t('library.importCancelButton') }}</a>
-                <a id="importConfirm" class="lpButton" @click="importList">{{ $t('library.importConfirmButton') }}</a>
+                <button type="button" class="lpButton close" @click="shown = false">
+                    {{ $t('library.importCancelButton') }}
+                </button>
+                <button id="importConfirm" type="button" class="lpButton" @click="importList">
+                    {{ $t('library.importConfirmButton') }}
+                </button>
             </div>
         </modal>
         <modal id="importText" :shown="showTextInput" @hide="closeTextInput">
@@ -119,8 +123,12 @@
                 {{ textError }}
             </p>
             <div class="lpModalActions">
-                <a class="lpButton lpButtonSecondary" @click="closeTextInput">{{ $t('library.textImportCancelButton') }}</a>
-                <a class="lpButton" @click="importFromText">{{ $t('library.textImportButton') }}</a>
+                <button type="button" class="lpButton lpButtonSecondary" @click="closeTextInput">
+                    {{ $t('library.textImportCancelButton') }}
+                </button>
+                <button type="button" class="lpButton" @click="importFromText">
+                    {{ $t('library.textImportButton') }}
+                </button>
             </div>
         </modal>
         <modal id="importLP" :shown="showLPInput" @hide="closeLPInput">
@@ -147,10 +155,12 @@
                 {{ lpError }}
             </p>
             <div class="lpModalActions">
-                <a class="lpButton lpButtonSecondary" @click="closeLPInput">{{ $t('library.lpImportCancelButton') }}</a>
-                <a class="lpButton" :class="{ disabled: lpLoading }" @click="importFromLP">
+                <button type="button" class="lpButton lpButtonSecondary" @click="closeLPInput">
+                    {{ $t('library.lpImportCancelButton') }}
+                </button>
+                <button type="button" class="lpButton" :class="{ disabled: lpLoading }" :disabled="lpLoading" @click="importFromLP">
                     {{ lpLoading ? $t('library.lpImportLoadingButton') : $t('library.lpImportButton') }}
-                </a>
+                </button>
             </div>
         </modal>
         <form id="csvUpload">
