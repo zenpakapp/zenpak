@@ -150,11 +150,11 @@
     .lpConsumable.lpActive,
     .lpLink.lpActive,
     .lpDown {
-        filter: invert(1) hue-rotate(80deg) brightness(2);
+        filter: invert(1) hue-rotate(80deg) brightness(1) saturate(0.6);
     }
 
     .lpUp {
-        filter: invert(1) hue-rotate(240deg) brightness(2);
+        filter: invert(1) hue-rotate(240deg) brightness(1) saturate(0.6);
     }
 }
 
@@ -164,11 +164,11 @@
         .lpConsumable.lpActive,
         .lpLink.lpActive,
         .lpDown {
-            filter: invert(1) hue-rotate(80deg) brightness(2);
+            filter: invert(1) hue-rotate(80deg) brightness(1) saturate(0.6);
         }
 
         .lpUp {
-            filter: invert(1) hue-rotate(240deg) brightness(2);
+            filter: invert(1) hue-rotate(240deg) brightness(1) saturate(0.6);
         }
     }
 }
