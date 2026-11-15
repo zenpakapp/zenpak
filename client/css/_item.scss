@@ -211,13 +211,14 @@
     box-shadow: 0 0 0 1px rgba(var(--color-accent-rgb), 0.6);
 }
 
+// 0.75 keeps the dots above 3:1 on the card in both themes (0.5 measured 2.1 to 2.7).
 .lpItem .lpActionsCell .lpEdit {
-    opacity: 0.5;
+    opacity: 0.75;
 }
 
 .lpItem:hover .lpActionsCell .lpEdit,
 .lpItem:focus-within .lpActionsCell .lpEdit {
-    opacity: 0.75;
+    opacity: 1;
 }
 
 .lpItem .lpActionsCell .lpEdit:hover,
@@ -235,7 +236,7 @@
 .lpItem:focus-within .lpRemoveItem,
 .lpItemsHeader:hover .lpRemoveCategory,
 .lpItemsHeader:focus-within .lpRemoveCategory {
-    opacity: 0.4;
+    opacity: 0.75;
 }
 
 .lpItem .lpRemoveItem:focus-visible,
@@ -255,9 +256,11 @@
         padding: 9px 8px;
     }
 
-    // With no hover to raise them, the two toggles are a little stronger than the rest.
+    // With no hover to raise them, the two toggles and the details dots are stronger than the
+    // rest: the dots are the only way into brand, tags and "Option".
     .lpItem .lpActionsCell .lpWorn,
-    .lpItem .lpActionsCell .lpConsumable {
+    .lpItem .lpActionsCell .lpConsumable,
+    .lpItem .lpActionsCell .lpEdit {
         opacity: 0.75;
     }
 
@@ -270,7 +273,7 @@
 
     .lpItem .lpRemoveItem,
     .lpItemsHeader .lpRemoveCategory {
-        opacity: 0.4;
+        opacity: 0.75;
     }
 }
 
