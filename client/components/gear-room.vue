@@ -111,7 +111,7 @@
                                     {{ $t('gearroom.tableHeaderItem') }} {{ sortKey === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRSortable lpGRStarCol" :title="$t('gearroom.tableHeaderStarred')" @click="setSort('starred')">
-                                    ★ {{ sortKey === 'starred' ? (sortAsc ? '↑' : '↓') : '' }}
+                                    ♥ {{ sortKey === 'starred' ? (sortAsc ? '↑' : '↓') : '' }}
                                 </th>
                                 <th class="lpGRCategoryCol lpGRSortable" @click="setSort('category')">
                                     {{ $t('gearroom.tableHeaderCategory') }} {{ sortKey === 'category' ? (sortAsc ? '↑' : '↓') : '' }}
@@ -150,7 +150,7 @@
                                     </div>
                                 </td>
                                 <td class="lpGRStarCol" @click="openItemDetail(item)">
-                                    <span v-if="item.starred" class="lpGearRoomStarBadge">★</span>
+                                    <span v-if="item.starred" class="lpGearRoomStarBadge">♥</span>
                                 </td>
                                 <td class="lpGRCategoryCol" @click="openItemDetail(item)">
                                     <span v-if="item.category" class="lpGearRoomCategoryBadge">{{ gearCategoryLabel(item.category) }}</span>
