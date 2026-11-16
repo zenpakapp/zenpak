@@ -256,6 +256,13 @@
         padding: 9px 8px;
     }
 
+    // Fingers: 44px each way on a touch screen, the size iOS and Android ask for.
+    @media (hover: none), (pointer: coarse) {
+        .lpItem .lpActionsCell .lpActionBtn {
+            padding: 15px 16px;
+        }
+    }
+
     // With no hover to raise them, the two toggles and the details dots are stronger than the
     // rest: the dots are the only way into brand, tags and "Option".
     .lpItem .lpActionsCell .lpWorn,
@@ -284,18 +291,24 @@
     }
 
     .lpItem .lpRemoveItem {
-        padding: 9px;
+        padding: 18px;
+    }
+
+    // The 44px delete target reaches 4px into the weight field: keep them apart so a tap on the
+    // weight never deletes the item.
+    .lpItem .lpWeightCell {
+        margin-right: 8px;
     }
 
     // Two 7px arrows stacked cannot be tapped: put them side by side with a 25px target each.
     .lpArrows {
-        height: 25px;
-        width: 56px;
+        height: 44px;
+        width: 88px;
 
         .lpUp,
         .lpDown {
             margin: 0;
-            padding: 9px;
+            padding: 18.5px;
             top: 0;
         }
 
@@ -304,7 +317,7 @@
         }
 
         .lpDown {
-            left: 28px;
+            left: 44px;
             top: 0;
         }
     }
