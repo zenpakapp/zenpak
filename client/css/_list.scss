@@ -959,13 +959,13 @@ input.lpCategoryName { /* specificity */
         grid-area: exit;
     }
 
-    // Five icons on every row, in the desktop order and always the same, so the toggles line up
-    // from row to row: tags, worn, consumable, optional, edit. Photo, link and rating are only
-    // in the edit dialog on a phone, which has all the fields; a row never gains or loses one.
+    // The toggles line up from row to row: worn, consumable, edit, and the rating only when the
+    // item has one (it is set in the edit dialog). Photo and link are only in that dialog on a
+    // phone, which has all the fields.
     .lpItem .lpActionsCell {
         .lpCamera,
         .lpLink,
-        .lpStar {
+        .lpStar:not(.lpStar1):not(.lpStar2):not(.lpStar3) {
             display: none;
         }
 

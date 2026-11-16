@@ -4,12 +4,12 @@ import { test, expect } from "@playwright/test";
 
 import { registerUser, importCsvFile } from "./auth-utils";
 
-// On a phone every row has the same five icons, in the desktop order: tags, worn, consumable,
-// optional, edit. Photo, link and rating are only in the edit dialog, and the delete cross
-// sits clear of the quantity field.
+// On a phone every row has the same three icons, in the desktop order: worn, consumable, edit,
+// plus the rating star only when the item has one. Photo and link are only in the edit dialog,
+// and the delete cross sits clear of the quantity field.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
 
-test("phone rows keep the same five controls and space the delete cross", async ({
+test("phone rows keep the same three controls and space the delete cross", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -34,11 +34,20 @@ test("phone rows keep the same five controls and space the delete cross", async 
     if (!(await dismiss.isVisible().catch(() => false))) break;
     await dismiss.click();
   }
-  // Photo, link and rating are only in the edit dialog on a phone, even when they hold
-  // something, so a row never gains or loses an icon.
-  for (const cls of [".lpCamera", ".lpLink", ".lpStar"]) {
+  // Photo and link are only in the edit dialog on a phone, even when they hold something, so a
+  // row never gains or loses an icon.
+  for (const cls of [".lpCamera", ".lpLink"]) {
     await expect(row.locator(cls)).toBeHidden();
   }
+  // The rating star shows only on rows that have a rating.
+  const stars = page.locator(".lpItem[data-item-id] .lpStar");
+  const rated = page.locator(
+    ".lpItem[data-item-id] :is(.lpStar1, .lpStar2, .lpStar3)",
+  );
+  const shown = await stars.evaluateAll(
+    (els) => els.filter((e) => getComputedStyle(e).display !== "none").length,
+  );
+  expect(shown).toBe(await rated.count());
   // Brand/tags and "optional" are in the details only: the row keeps three controls.
   for (const cls of [".lpTag", ".lpOptionDot"]) {
     await expect(row.locator(cls)).toHaveCount(0);
