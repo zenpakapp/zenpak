@@ -1,15 +1,15 @@
 <template>
     <div class="itemDetailAddToList">
-        <button ref="trigger" class="lpButton lpButtonGhost itemDetailAddBtn" @click="open = !open; selectedListId = null; addAsOptional = false">
+        <button ref="trigger" class="lpButton lpButtonGhost itemDetailAddBtn" aria-haspopup="menu" :aria-expanded="open ? 'true' : 'false'" :aria-controls="menuId" @click="open = !open; selectedListId = null; addAsOptional = false">
             {{ $t('item.addToListButtonText') }}
         </button>
         <teleport to="body">
-            <ul v-if="open" ref="dropdown" class="itemDetailAddDropdown" :style="dropdownStyle">
+            <ul v-if="open" :id="menuId" ref="dropdown" class="itemDetailAddDropdown" role="menu" :aria-label="$t('item.addToListButtonText')" :style="dropdownStyle" @keydown="onMenuKeydown">
                 <template v-if="!selectedListId">
                     <li
                         v-if="currentList"
                         class="itemDetailAddOption itemDetailAddCurrent"
-                        role="button"
+                        role="menuitem"
                         tabindex="0"
                         @click="selectedListId = currentList.id"
                         @keydown.enter.prevent="selectedListId = currentList.id"
@@ -22,7 +22,7 @@
                         v-for="list in otherLists"
                         :key="list.id"
                         :class="['itemDetailAddOption', { dimmed: itemUsedInLists.some(l => l.id === list.id) }]"
-                        role="button"
+                        role="menuitem"
                         :tabindex="itemUsedInLists.some(l => l.id === list.id) ? -1 : 0"
                         :aria-disabled="itemUsedInLists.some(l => l.id === list.id) ? 'true' : null"
                         @click="selectedListId = list.id"
@@ -33,7 +33,7 @@
                         <span class="itemDetailAddNext" aria-hidden="true">›</span>
                     </li>
                     <li class="itemDetailAddCreate">
-                        <div v-if="!creatingList" class="itemDetailAddNewList" role="button" tabindex="0" @click="showNewListInput" @keydown.enter.prevent="showNewListInput" @keydown.space.prevent="showNewListInput">
+                        <div v-if="!creatingList" class="itemDetailAddNewList" role="menuitem" tabindex="0" @click="showNewListInput" @keydown.enter.prevent="showNewListInput" @keydown.space.prevent="showNewListInput">
                             {{ $t('item.addToListNewList') }}
                         </div>
                         <div v-else class="itemDetailAddCreateRow">
@@ -53,7 +53,7 @@
                     </li>
                 </template>
                 <template v-else>
-                    <li class="itemDetailAddListHeader itemDetailAddBack" role="button" tabindex="0" @click="selectedListId = null" @keydown.enter.prevent="selectedListId = null" @keydown.space.prevent="selectedListId = null">
+                    <li class="itemDetailAddListHeader itemDetailAddBack" role="menuitem" tabindex="0" @click="selectedListId = null" @keydown.enter.prevent="selectedListId = null" @keydown.space.prevent="selectedListId = null">
                         {{ $t('item.addToListBack') }}
                     </li>
                     <li class="itemDetailAddOptionalRow">
@@ -71,7 +71,7 @@
                         v-for="cat in selectedListCategories"
                         :key="cat.id"
                         :class="['itemDetailAddOption', { dimmed: cat.getCategoryItemById(item.id) }]"
-                        role="button"
+                        role="menuitem"
                         :tabindex="cat.getCategoryItemById(item.id) ? -1 : 0"
                         :aria-disabled="cat.getCategoryItemById(item.id) ? 'true' : null"
                         @click="addToCategory(cat)"
@@ -120,6 +120,9 @@ export default {
         };
     },
     computed: {
+        menuId() {
+            return `itemAddToListMenu-${this.item.id}`;
+        },
         allLists() {
             const library = this.$store.state.library;
             return library ? library.lists : [];
@@ -151,7 +154,10 @@ export default {
     watch: {
         open(val) {
             if (val) {
-                this.$nextTick(this.positionDropdown);
+                this.$nextTick(() => {
+                    this.positionDropdown();
+                    this.focusFirstEntry();
+                });
                 window.addEventListener('resize', this.positionDropdown);
                 window.addEventListener('scroll', this.positionDropdown, true);
             } else {
@@ -160,7 +166,11 @@ export default {
             }
         },
         selectedListId() {
-            if (this.open) this.$nextTick(this.positionDropdown);
+            if (!this.open) return;
+            this.$nextTick(() => {
+                this.positionDropdown();
+                this.focusFirstEntry();
+            });
         },
     },
     mounted() {
@@ -180,6 +190,59 @@ export default {
         window.removeEventListener('scroll', this.positionDropdown, true);
     },
     methods: {
+        // The menu is drawn in <body> so the dialog cannot clip it, which also puts it outside the
+        // dialog's Tab order: the keyboard goes in by focus() on opening and moves by the arrows.
+        entries() {
+            const menu = this.$refs.dropdown;
+            if (!menu) return [];
+            return Array.from(menu.querySelectorAll('[role="menuitem"]:not([aria-disabled="true"]), input, button'));
+        },
+        focusFirstEntry() {
+            const [first] = this.entries();
+            if (first) first.focus();
+        },
+        closeMenu() {
+            this.open = false;
+            this.creatingList = false;
+            this.$nextTick(() => { this.$refs.trigger && this.$refs.trigger.focus(); });
+        },
+        onMenuKeydown(evt) {
+            const entries = this.entries();
+            const current = entries.indexOf(document.activeElement);
+            const isText = evt.target && evt.target.tagName === 'INPUT' && evt.target.type === 'text';
+            let next = null;
+            if (evt.key === 'ArrowDown') next = (current + 1) % entries.length;
+            else if (evt.key === 'ArrowUp') next = (current - 1 + entries.length) % entries.length;
+            else if (evt.key === 'Home' && !isText) next = 0;
+            else if (evt.key === 'End' && !isText) next = entries.length - 1;
+            if (next !== null && entries.length) {
+                evt.preventDefault();
+                entries[next].focus();
+                return;
+            }
+            if (evt.key === 'Escape') {
+                // The new-list field cancels itself on Escape; a second press closes the menu.
+                if (isText && this.creatingList) return;
+                // Closes the menu only, not the dialog behind it. The dialog closes on the keyup of
+                // Escape (modal.vue), which would reach it once the focus is back on the button:
+                // swallow that one keyup.
+                evt.preventDefault();
+                evt.stopPropagation();
+                const swallowKeyup = (e) => {
+                    if (e.key !== 'Escape') return;
+                    e.stopPropagation();
+                    window.removeEventListener('keyup', swallowKeyup, true);
+                };
+                window.addEventListener('keyup', swallowKeyup, true);
+                setTimeout(() => window.removeEventListener('keyup', swallowKeyup, true), 1000);
+                this.closeMenu();
+            } else if (evt.key === 'Tab') {
+                // Tab leaves the menu: back to the button, and the default move goes on from there.
+                this.open = false;
+                this.creatingList = false;
+                if (this.$refs.trigger) this.$refs.trigger.focus();
+            }
+        },
         positionDropdown() {
             const btn = this.$refs.trigger;
             if (!btn) return;
