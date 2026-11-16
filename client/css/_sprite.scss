@@ -1,5 +1,5 @@
 .lpSprite {
-    background-image: url(/images/sprite2x.png?v=2);
+    background-image: url(/images/sprite2x.png?v=3);
     background-size: 400px;
     display: inline-block;
     height: 14px;
@@ -131,44 +131,31 @@
     }
 }
 
-// The sprite is LighterPack's: blue for active states, lime for the quantity arrow. ZenPak is
-// green, so the hue is turned (blue -65deg, lime +60deg) instead of redrawing the image. The dark
-// theme already inverts every sprite, so its rotation is tuned by eye (80deg for blue, 240deg for lime).
-.lpWorn.lpActive,
-.lpConsumable.lpActive,
-.lpLink.lpActive,
-.lpDown {
-    filter: hue-rotate(-65deg);
-}
-
-.lpUp {
-    filter: hue-rotate(60deg);
-}
-
+// The sprite icons that carry colour are ZenPak green in the image. The dark theme inverts every
+// sprite with a hue rotation that keeps blue blue; green would come out cyan, so these get the
+// rotation that keeps it green.
 [data-theme="dark"] {
+    .lpSpriteAdd,
+    .lpSpriteCopy,
+    .lpUp,
+    .lpDown,
     .lpWorn.lpActive,
     .lpConsumable.lpActive,
-    .lpLink.lpActive,
-    .lpDown {
-        filter: invert(1) hue-rotate(80deg) brightness(1) saturate(0.6);
-    }
-
-    .lpUp {
-        filter: invert(1) hue-rotate(240deg) brightness(1) saturate(0.6);
+    .lpLink.lpActive {
+        filter: invert(1) hue-rotate(175deg) brightness(1.1);
     }
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]):not([data-theme="dark"]) {
+        .lpSpriteAdd,
+        .lpSpriteCopy,
+        .lpUp,
+        .lpDown,
         .lpWorn.lpActive,
         .lpConsumable.lpActive,
-        .lpLink.lpActive,
-        .lpDown {
-            filter: invert(1) hue-rotate(80deg) brightness(1) saturate(0.6);
-        }
-
-        .lpUp {
-            filter: invert(1) hue-rotate(240deg) brightness(1) saturate(0.6);
+        .lpLink.lpActive {
+            filter: invert(1) hue-rotate(175deg) brightness(1.1);
         }
     }
 }
