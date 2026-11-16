@@ -290,6 +290,12 @@ export default {
             this.$store.commit('toggleOptionalItem', { category: this.category, itemId: this.item.id });
         },
         cycleStar() {
+            // On a phone the star only shows when the item is rated, so a tap that cycled back to 0
+            // would make it vanish under the finger: it opens the edit dialog, where the rating is.
+            if (window.matchMedia('(max-width: 500px)').matches) {
+                this.openDetailEdit();
+                return;
+            }
             if (!this.categoryItem.star) {
                 this.categoryItem.star = 0;
             }
