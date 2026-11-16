@@ -111,12 +111,12 @@
         transition: color $transitionDurationFast ease, transform $transitionDurationFast ease;
 
         &:hover {
-            color: #f59e0b;
+            color: $color-accent;
             transform: scale(1.15);
         }
 
         &.active {
-            color: #f59e0b;
+            color: $color-accent;
         }
     }
 }
@@ -141,7 +141,7 @@
             </button>
         </div>
         <button class="itemDetailStar" :class="{ active: starred }" :title="starred ? $t('item.removeFromFavorites') : $t('item.addToFavorites')" @click="$emit('toggle-star')">
-            {{ starred ? '★' : '☆' }}
+            {{ starred ? '♥' : '♡' }}
         </button>
     </div>
 </template>
