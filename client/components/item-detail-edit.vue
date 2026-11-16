@@ -138,6 +138,22 @@
                         <span>{{ $t('public.option') }}</span>
                     </label>
                 </div>
+                <!-- The row's star icon is hidden on a phone, so the rating is set here too. -->
+                <div class="itemDetailRatingRow" role="group" :aria-label="$t('item.viewLabelRating')">
+                    <span class="itemDetailRatingLabel">{{ $t('item.viewLabelRating') }}</span>
+                    <button
+                        v-for="n in 3"
+                        :key="n"
+                        type="button"
+                        class="itemDetailRatingBtn"
+                        :class="{ active: editStar >= n }"
+                        :aria-pressed="editStar === n"
+                        :aria-label="`${$t('item.viewLabelRating')} ${n}/3`"
+                        @click="setStar(n)"
+                    >
+                        ★
+                    </button>
+                </div>
             </div>
 
             <div class="itemDetailField">
@@ -253,6 +269,7 @@ export default {
             editWorn: false,
             editConsumable: false,
             editOptional: false,
+            editStar: 0,
             editUrl: '',
             editImageUrl: '',
             editImageUploading: false,
@@ -314,6 +331,7 @@ export default {
         this.editWorn = !!this.categoryItem?.worn;
         this.editConsumable = !!this.categoryItem?.consumable;
         this.editOptional = this.categoryItem ? this.categoryItem.qty === 0 : false;
+        this.editStar = this.categoryItem?.star || 0;
         this.editUrl = this.item.url || '';
         this.editImageUrl = this.item.imageUrl || '';
         this.editTags = [...(this.item.tags || [])];
@@ -355,6 +373,10 @@ export default {
         },
         onConsumableChange() {
             if (this.editConsumable) this.editWorn = false;
+        },
+        // Same rule as the view: tapping the star already on clears the rating.
+        setStar(n) {
+            this.editStar = this.editStar === n ? 0 : n;
         },
         onOptionalChange() {
             if (!this.editOptional && (!parseFloat(this.editQty) || parseFloat(this.editQty) <= 0)) {
@@ -411,6 +433,7 @@ export default {
                     qty: this.editOptional && wasOptional ? 0 : desiredQty,
                     worn: this.editWorn,
                     consumable: this.editConsumable,
+                    star: this.editStar,
                 };
                 if (this.editOptional && wasOptional) {
                     updatedCategoryItem.qtyBeforeOptional = desiredQty;
