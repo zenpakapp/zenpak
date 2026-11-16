@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 import { registerUser } from "./auth-utils";
 
-// On a phone the rows stack quantity over weight, so the header does not show side-by-side column labels.
+// On a phone the rows stack weight over quantity, so the header does not show side-by-side column labels.
 test.use({ locale: "en-US", viewport: { width: 375, height: 812 } });
 
 test("category header hides column labels on a phone, shows them on desktop", async ({
