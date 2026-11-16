@@ -77,7 +77,7 @@ test("library controls, quantity arrows and the add-to menu work from the keyboa
   const first = page
     .locator(".itemDetailAddDropdown .itemDetailAddOption")
     .first();
-  await expect(first).toHaveAttribute("role", "button");
+  await expect(first).toHaveAttribute("role", "menuitem");
   await expect(first).toHaveAttribute("tabindex", "0");
   await first.focus();
   await page.keyboard.press("Enter");
