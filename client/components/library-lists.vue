@@ -130,7 +130,7 @@
                     {{ listName(list) }}
                     <span v-if="forkUpdateFor(list)" class="lpForkUpdateBadge">{{ $t('list.versioning.updateBadge', { version: forkUpdateFor(list).latestVersion }) }}</span>
                 </span>
-                <a class="lpRemove" role="button" tabindex="0" :title="$t('library.removeListTitle')" @click="removeList(list)" @keydown.enter="removeList(list)" @keydown.space.prevent="removeList(list)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a class="lpRemove" role="button" tabindex="0" :title="$t('library.removeListTitle')" @click="removeList(list)" @keydown.enter="removeList(list)" @keydown.space.prevent="removeList(list)"><icon name="x" :size="12" /></a>
             </li>
         </ul>
         <templatePicker v-if="showTemplatePicker" mode="add" @add="addFromTemplate" @dismiss="showTemplatePicker = false" />
@@ -140,6 +140,7 @@
 <script>
 import { defineAsyncComponent } from 'vue';
 import PopoverHover from './popover-hover.vue';
+import Icon from './icon.vue';
 import { templateToListImport } from '../composables/useTemplatePicker';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
@@ -154,6 +155,7 @@ export default {
     components: {
         PopoverHover,
         templatePicker,
+        Icon,
     },
     inject: {
         forkUpdates: { from: 'forkUpdates', default: () => [] },

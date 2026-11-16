@@ -78,7 +78,7 @@
                     <span v-if="libraryItem.brand" class="lpLibraryItemBrand">{{ libraryItem.brand }}</span>
                     <span v-for="tag in itemTags(libraryItem)" :key="tag" class="lpLibraryItemTag">{{ tag }}</span>
                 </span>
-                <a class="lpRemove lpRemoveLibraryItem speedbump" role="button" tabindex="0" :title="$t('library.deleteItemTitle')" :aria-label="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)" @keydown.enter="removeItem(libraryItem)" @keydown.space.prevent="removeItem(libraryItem)"><i class="lpSprite lpSpriteRemove" /></a>
+                <a class="lpRemove lpRemoveLibraryItem speedbump" role="button" tabindex="0" :title="$t('library.deleteItemTitle')" :aria-label="$t('library.deleteItemTitle')" @click="removeItem(libraryItem)" @keydown.enter="removeItem(libraryItem)" @keydown.space.prevent="removeItem(libraryItem)"><icon name="x" :size="12" /></a>
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
                     ⋯
                 </button>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import Icon from './icon.vue';
 import { useUtils } from '../composables/useUtils';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
@@ -105,6 +106,7 @@ const LIBRARY_OVERSCAN = 6;
 
 export default {
     name: 'LibraryItem',
+    components: { Icon },
     props: {
         item: {
             type: Object,

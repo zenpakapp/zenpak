@@ -991,8 +991,10 @@ input.lpCategoryName { /* specificity */
     }
 
     // A gap between the quantity arrows and the delete cross, so one tap cannot hit both.
+    // The cross hit area is 24px (a 12px SVG and 6px of padding) in a 20px column, centred: 12px
+    // keeps the gap to the arrows at 8px or more.
     .lpItem .lpRemoveCell {
-        padding-left: 8px;
+        padding-left: 12px;
     }
 
     // Rows stack quantity over weight here, so side-by-side column labels would mislead.

@@ -52,20 +52,19 @@
     }
 }
 
+// Two 12px chevrons stacked beside the quantity, each in a 24px hit area (the 6px padding of
+// .lpActionBtn, with the negative margin that keeps the layout).
 .lpArrows {
     display: inline-block;
-    height: 14px;
+    height: 24px;
     position: relative;
     visibility: hidden;
-    width: 10px;
+    width: 12px;
 
     .lpUp,
     .lpDown {
         cursor: pointer;
         left: 0;
-        // Offset minus the 6px padding of the hit area; 4px higher than before so the pair
-        // is centred on the quantity field.
-        margin: -8px -4px;
         opacity: 0.5;
         position: absolute;
         top: 0;
@@ -76,7 +75,7 @@
     }
 
     .lpDown {
-        top: 11px;
+        top: 12px;
     }
 }
 
@@ -349,7 +348,7 @@
     }
 
     .lpItem .lpRemoveItem {
-        padding: 18px;
+        padding: 16px;
     }
 
     // The 44px delete target reaches 4px into the weight field: keep them apart so a tap on the
@@ -358,7 +357,7 @@
         margin-right: 8px;
     }
 
-    // Two 7px arrows stacked cannot be tapped: put them side by side with a 25px target each.
+    // Two 12px arrows stacked cannot be tapped: put them side by side with a 44px target each.
     .lpArrows {
         height: 44px;
         width: 88px;
@@ -366,7 +365,7 @@
         .lpUp,
         .lpDown {
             margin: 0;
-            padding: 18.5px;
+            padding: 16px;
             top: 0;
         }
 
