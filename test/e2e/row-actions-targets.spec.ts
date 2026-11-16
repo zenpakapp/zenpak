@@ -5,10 +5,10 @@ import { test, expect } from "@playwright/test";
 import { registerUser, importCsvFile } from "./auth-utils";
 
 // Row action buttons are big enough to tap on a phone, and the worn and consumable
-// toggles show their state with a ring, not only a colour.
+// toggles are a filled pictogram when on, not only a different colour.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
 
-test("row toggles have phone-size targets on a phone and a ring when on", async ({
+test("row toggles have phone-size targets on a phone and a filled pictogram when on", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -53,7 +53,6 @@ test("row toggles have phone-size targets on a phone and a ring when on", async 
       (edit?.x ?? 0) + (edit?.width ?? 0) <= (weight?.x ?? 0),
   ).toBe(true);
 
-  // On: a ring that does not depend on the icon colour.
-  const ring = await worn.evaluate((el) => getComputedStyle(el).boxShadow);
-  expect(ring).not.toBe("none");
+  // On: the solid pictogram, whose shape does not depend on the colour.
+  await expect(worn.locator("svg")).toHaveAttribute("fill", "currentColor");
 });

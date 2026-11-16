@@ -35,10 +35,10 @@
             </span>
         </span>
         <span v-if="!isPackingMode" ref="actions" class="lpActionsCell" role="toolbar" tabindex="0" :aria-label="$t('item.rowActionsLabel')" @focus.self="enterActions" @focusin="onActionsFocusIn" @focusout="onActionsFocusOut" @keydown="onActionsKeydown">
-            <button type="button" class="lpSprite lpActionBtn lpCamera" tabindex="-1" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
-            <button type="button" class="lpSprite lpActionBtn lpLink" tabindex="-1" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
-            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" tabindex="-1" :class="{lpActive: categoryItem.worn}" :title="categoryItem.consumable ? $t('item.wornBlocked') : $t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
-            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" tabindex="-1" :class="{lpActive: categoryItem.consumable}" :title="categoryItem.worn ? $t('item.consumableBlocked') : $t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
+            <button type="button" class="lpActionBtn lpCamera" tabindex="-1" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage"><icon name="camera" /></button>
+            <button type="button" class="lpActionBtn lpLink" tabindex="-1" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink"><icon name="link" /></button>
+            <button v-if="library.optionalFields['worn']" type="button" class="lpActionBtn lpWorn" tabindex="-1" :class="{lpActive: categoryItem.worn}" :title="categoryItem.consumable ? $t('item.wornBlocked') : $t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn"><icon name="shirt" :filled="!!categoryItem.worn" /></button>
+            <button v-if="library.optionalFields['consumable']" type="button" class="lpActionBtn lpConsumable" tabindex="-1" :class="{lpActive: categoryItem.consumable}" :title="categoryItem.worn ? $t('item.consumableBlocked') : $t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable"><icon name="utensils" :filled="!!categoryItem.consumable" /></button>
             <button type="button" tabindex="-1" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="ratingLabel" :aria-label="ratingLabel" @click="cycleStar" />
             <button type="button" class="lpSprite lpActionBtn lpEdit" tabindex="-1" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import Icon from './icon.vue';
 import { openDialog } from '../services/dialogs';
 import { showGlobalAlert } from '../services/user-feedback';
 
@@ -76,6 +77,7 @@ const weightUtils = require('../utils/weight.js');
 
 export default {
     name: 'Item',
+    components: { Icon },
     props: {
         category: { type: Object, required: true },
         itemContainer: { type: Object, required: true },
