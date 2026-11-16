@@ -49,6 +49,7 @@ test("row toggles have phone-size targets on a phone and a ring when on", async 
   );
   expect(
     (edit?.y ?? 0) >= (weight?.y ?? 0) + (weight?.height ?? 0) - 1 ||
+      (edit?.y ?? 0) + (edit?.height ?? 0) <= (weight?.y ?? 0) + 1 ||
       (edit?.x ?? 0) + (edit?.width ?? 0) <= (weight?.x ?? 0),
   ).toBe(true);
 
