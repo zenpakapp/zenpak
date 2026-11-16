@@ -42,23 +42,34 @@ test("item row actions and fields are reachable and named for the keyboard", asy
   const pressedBefore = await toggle.getAttribute("aria-pressed");
   expect(["true", "false"]).toContain(pressedBefore);
 
-  // Tab from the description reaches the actions, one stop each, then the number fields.
+  // The icons are one toolbar and one Tab stop: Tab goes description, icons, price, weight,
+  // quantity, delete (not one stop per icon), and the arrows move between the icons.
+  const label = () =>
+    page.evaluate(() => {
+      const el = document.activeElement as HTMLElement;
+      return el.getAttribute("aria-label") || el.className;
+    });
   await row.locator(".lpDescription").focus();
-  const seen: string[] = [];
-  for (let i = 0; i < 12; i++) {
+  const tabs: string[] = [];
+  for (let i = 0; i < 5; i++) {
     await page.keyboard.press("Tab");
-    seen.push(
-      await page.evaluate(() => {
-        const el = document.activeElement as HTMLElement;
-        return el.getAttribute("aria-label") || el.className;
-      }),
-    );
+    tabs.push(await label());
   }
-  expect(seen).toContain("Mark as worn");
-  expect(seen).toContain("Mark as consumable");
-  expect(seen).toContain("More options");
-  expect(seen.some((s) => s.startsWith("Weight:"))).toBe(true);
-  expect(seen).toContain("Remove from list");
+  // Icon (any), price (if shown), weight, quantity, delete: five stops, not twelve.
+  expect(tabs.some((s) => s.startsWith("Weight:"))).toBe(true);
+  expect(tabs).toContain("Remove from list");
+
+  // Back into the toolbar with the arrows reaching every icon.
+  await row.locator(".lpDescription").focus();
+  await page.keyboard.press("Tab");
+  const icons: string[] = [await label()];
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press("ArrowRight");
+    icons.push(await label());
+  }
+  expect(icons).toContain("Mark as worn");
+  expect(icons).toContain("Mark as consumable");
+  expect(icons).toContain("More options");
 
   // Space on a toggle flips it.
   await toggle.focus();

@@ -910,6 +910,7 @@
     "qtyDown": "Diminuer la quantité",
     "detailOpenError": "Impossible d'ouvrir l'éditeur de cet article. Réessayez.",
     "removedFromList": "« {name} » retiré de la liste.",
+    "rowActionsLabel": "Actions de l'article",
     "removeTitle": "Retirer de la liste",
     "weightLabel": "Poids : {name}",
     "qtyLabel": "Quantité : {name}",

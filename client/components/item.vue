@@ -34,13 +34,13 @@
                 <span v-for="tag in itemTags" :key="tag" class="lpItemTag">{{ tag }}</span>
             </span>
         </span>
-        <span v-if="!isPackingMode" class="lpActionsCell">
-            <button type="button" class="lpSprite lpActionBtn lpCamera" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
-            <button type="button" class="lpSprite lpActionBtn lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
-            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="categoryItem.consumable ? $t('item.wornBlocked') : $t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
-            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="categoryItem.worn ? $t('item.consumableBlocked') : $t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
-            <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="ratingLabel" :aria-label="ratingLabel" @click="cycleStar" />
-            <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
+        <span v-if="!isPackingMode" ref="actions" class="lpActionsCell" role="toolbar" tabindex="0" :aria-label="$t('item.rowActionsLabel')" @focus.self="enterActions" @focusin="onActionsFocusIn" @focusout="onActionsFocusOut" @keydown="onActionsKeydown">
+            <button type="button" class="lpSprite lpActionBtn lpCamera" tabindex="-1" :title="$t('item.imageTitle')" :aria-label="$t('item.imageTitle')" @click="updateItemImage" />
+            <button type="button" class="lpSprite lpActionBtn lpLink" tabindex="-1" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
+            <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" tabindex="-1" :class="{lpActive: categoryItem.worn}" :title="categoryItem.consumable ? $t('item.wornBlocked') : $t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
+            <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" tabindex="-1" :class="{lpActive: categoryItem.consumable}" :title="categoryItem.worn ? $t('item.consumableBlocked') : $t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
+            <button type="button" tabindex="-1" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="ratingLabel" :aria-label="ratingLabel" @click="cycleStar" />
+            <button type="button" class="lpSprite lpActionBtn lpEdit" tabindex="-1" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price'] && isPackingMode" class="lpPriceCell lpNumber lpPackText">{{ displayPrice || '' }}</span>
         <span v-else-if="library.optionalFields['price']" class="lpPriceCell">
@@ -84,6 +84,7 @@ export default {
     },
     data() {
         return {
+            lastAction: null,
             displayWeight: 0,
             displayPrice: 0,
             displayQty: 0,
@@ -373,6 +374,41 @@ export default {
                     handler: () => this.$store.commit('restoreItemInCategory', { category, categoryItem: snapshot, index }),
                 },
             });
+        },
+        // The row icons are one toolbar and one Tab stop: Tab goes name, description, icons, price,
+        // weight, quantity (not six stops through the icons), and the arrows move between icons.
+        // The span is the stop; it hands the focus to the icon last used, or the first one shown.
+        actionButtons() {
+            const bar = this.$refs.actions;
+            if (!bar) return [];
+            return Array.from(bar.querySelectorAll('button')).filter((b) => getComputedStyle(b).display !== 'none');
+        },
+        enterActions() {
+            const buttons = this.actionButtons();
+            const target = buttons.includes(this.lastAction) ? this.lastAction : buttons[0];
+            if (target) target.focus();
+        },
+        onActionsFocusIn(evt) {
+            if (evt.target === this.$refs.actions) return;
+            this.lastAction = evt.target;
+            // While an icon has the focus the span is not a stop, or Shift+Tab would come back to it.
+            this.$refs.actions.tabIndex = -1;
+        },
+        onActionsFocusOut(evt) {
+            if (!this.$refs.actions.contains(evt.relatedTarget)) this.$refs.actions.tabIndex = 0;
+        },
+        onActionsKeydown(evt) {
+            const keys = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+            if (!(evt.key in keys) || evt.target === this.$refs.actions) return;
+            const buttons = this.actionButtons();
+            const current = buttons.indexOf(evt.target);
+            if (current === -1) return;
+            let next = current + keys[evt.key];
+            if (keys[evt.key] === 'first') next = 0;
+            else if (keys[evt.key] === 'last') next = buttons.length - 1;
+            next = Math.max(0, Math.min(buttons.length - 1, next));
+            evt.preventDefault();
+            buttons[next].focus();
         },
         onPackCheckbox() {
             this.$emit('toggle-pack', this.item.id);

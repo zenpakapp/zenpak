@@ -285,6 +285,11 @@
     outline-offset: 1px;
 }
 
+// The icon toolbar is a Tab stop that passes the focus to an icon at once: no ring of its own.
+.lpItem .lpActionsCell:focus {
+    outline: none;
+}
+
 // Touch screens and narrow windows have no hover: the actions are always shown.
 @media (hover: none), (pointer: coarse), (max-width: 768px) {
     // Phone-size targets: at least 32px each way, not the 26px of the pointer layout.
