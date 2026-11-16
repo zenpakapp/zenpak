@@ -6,9 +6,31 @@ module.exports = (function () {
             hsv.v += Math.round(((100 - hsv.v) / 10) * (index % 10));
             return hsvToRgb(hsv);
         }
-        // colors = [{r:57, g:142, b:221}, {r:251, g:51, b:74}, {r:248, g:202, b:0}, {r:174, g:226, b:57}, {r:184, g:51, b:222}, {r:255, g:142, b:50}, {r:220, g:242, b:51}, {r:86, g:174, b:226}, {r:226, g:86, b:174}, {r:226, g:137, b:86}, {r:86, g:226, b:207}];
-        const colors = [{ r: 27, g: 119, b: 211 }, { r: 206, g: 24, b: 54 }, { r: 242, g: 208, b: 0 }, { r: 122, g: 179, b: 23 }, { r: 130, g: 33, b: 198 }, { r: 232, g: 110, b: 28 }, { r: 220, g: 242, b: 51 }, { r: 86, g: 174, b: 226 }, { r: 226, g: 86, b: 174 }, { r: 226, g: 137, b: 86 }, { r: 86, g: 226, b: 207 }];
-        return colors[index % colors.length];
+        // Default category colours, in the order categories get them: ZenPak green first, then
+        // earth tones that stay apart from each other on the donut (checked by test/unit-category-palette.js).
+        const colors = [
+            { r: 45, g: 122, b: 79 },
+            { r: 217, g: 154, b: 43 },
+            { r: 194, g: 84, b: 58 },
+            { r: 74, g: 106, b: 143 },
+            { r: 155, g: 179, b: 106 },
+            { r: 122, g: 74, b: 110 },
+            { r: 216, g: 196, b: 147 },
+            { r: 64, g: 168, b: 156 },
+            { r: 184, g: 107, b: 134 },
+            { r: 100, g: 70, b: 40 },
+            { r: 143, g: 179, b: 201 },
+        ];
+        // Past the eleventh category the palette comes round again: darker the second time, lighter
+        // the third, so the last slice never has the colour of the first one beside it.
+        // list.js passes the key of a for...in loop, a string: "1" + 2 would be "12", not 3.
+        const position = Number(index);
+        const cycle = Math.floor(position / colors.length) % 3;
+        // Each round starts two colours further on, so the wrap-around neighbours stay apart.
+        const base = colors[(position + cycle * 2) % colors.length];
+        if (cycle === 1) return { r: Math.round(base.r * 0.5), g: Math.round(base.g * 0.5), b: Math.round(base.b * 0.5) };
+        if (cycle === 2) return { r: Math.round(base.r + (255 - base.r) * 0.4), g: Math.round(base.g + (255 - base.g) * 0.4), b: Math.round(base.b + (255 - base.b) * 0.4) };
+        return base;
     }
 
     function hsvToRgb(hsv) {

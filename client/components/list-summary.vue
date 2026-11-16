@@ -25,7 +25,7 @@
                 </li>
                 <li v-for="category in categories" :key="category.id" :class="{'hover': hoveredCategoryId === category.id, 'lpTotalCategory lpRow': true}">
                     <span class="lpCell lpLegendCell">
-                        <colorPicker v-if="category.displayColor" :color="colorToHex(category.displayColor)" @colorChange="updateColor(category, $event)" />
+                        <colorPicker v-if="category.displayColor && category.subtotalWeight > 0" :color="colorToHex(category.displayColor)" @colorChange="updateColor(category, $event)" />
                     </span>
                     <span class="lpCell">
                         {{ category.name }}
