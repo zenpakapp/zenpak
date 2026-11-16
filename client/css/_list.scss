@@ -1069,9 +1069,10 @@ input.lpCategoryName { /* specificity */
 
     // Packing rows have no action bar and no remove cell.
     .lpItem.lpItemPacking {
+        // Weight above quantity, as in the edit rows.
         grid-template-areas:
-            "handle image name qty"
-            "handle image name weight";
+            "handle image name weight"
+            "handle image name qty";
         grid-template-columns: 28px auto minmax(0, 1fr) auto;
         padding: 8px;
 
