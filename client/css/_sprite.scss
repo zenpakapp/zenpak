@@ -39,32 +39,12 @@
         background-position: -25px -25px;
     }
 }
-
-.lpWorn {
-    background-position: -50px 0;
-    width: 17px;
-
-    &.lpActive {
-        background-position: -50px -25px;
-    }
-
-    &.lpWornOne {
-        background-position: -50px -50px;
-    }
-}
-
-.lpLinkBig {
+.lpLinkBig {
     background-position: -75px 0;
     height: 20px;
     width: 18px;
 }
-
-.lpCamera {
-    background-position: -100px 0;
-    width: 18px;
-}
-
-.lpExpand {
+.lpExpand {
     background-position: -125px 0;
 }
 
@@ -73,17 +53,7 @@
     height: 20px;
     width: 20px;
 }
-
-.lpLink {
-    background-position: -175px 0;
-    width: 13px;
-
-    &.lpActive {
-        background-position: -175px -25px;
-    }
-}
-
-.lpUp {
+.lpUp {
     background-position: -200px 0;
     height: 7px;
     width: 7px;
@@ -103,17 +73,7 @@
     &.lpStar2 { background-position: -225px -50px; }
     &.lpStar3 { background-position: -225px -75px; }
 }
-
-.lpConsumable {
-    background-position: -275px 0;
-    width: 17px;
-
-    &.lpActive {
-        background-position: -275px -25px;
-    }
-}
-
-.lpSettings {
+.lpSettings {
     background-position: -300px 0;
 }
 
@@ -138,10 +98,7 @@
     .lpSpriteAdd,
     .lpSpriteCopy,
     .lpUp,
-    .lpDown,
-    .lpWorn.lpActive,
-    .lpConsumable.lpActive,
-    .lpLink.lpActive {
+    .lpDown {
         filter: invert(1) hue-rotate(175deg) brightness(1.1);
     }
 }
@@ -151,10 +108,7 @@
         .lpSpriteAdd,
         .lpSpriteCopy,
         .lpUp,
-        .lpDown,
-        .lpWorn.lpActive,
-        .lpConsumable.lpActive,
-        .lpLink.lpActive {
+        .lpDown {
             filter: invert(1) hue-rotate(175deg) brightness(1.1);
         }
     }

@@ -2,12 +2,11 @@ import { test, expect } from "@playwright/test";
 
 import { registerUser } from "./auth-utils";
 
-// The LighterPack sprite was blue and lime; ZenPak is green. The icons are green in the sprite
-// itself, so no CSS filter has to turn them (a filter also turned the ring around an active worn
-// or consumable button from green to khaki).
+// The row icons are SVG in the text colour; the active ones are ZenPak green and drawn solid. No
+// filter and no ring: a filter once turned the ring around an active button from green to khaki.
 test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });
 
-test("active icons are green in the sprite and the ring stays the accent green", async ({
+test("active row icons are solid green with no ring, light and dark", async ({
   page,
 }) => {
   test.setTimeout(90000);
@@ -24,36 +23,19 @@ test("active icons are green in the sprite and the ring stays the accent green",
   const worn = row.locator(".lpWorn.lpActive");
   await expect(worn).toBeVisible();
 
-  // No filter on the button in light: the sprite is already green and the ring is not recoloured.
+  // No filter on the button in light: the sprite is already green and nothing around it is recoloured.
   await page.mouse.move(5, 5);
   expect(await worn.evaluate((el) => getComputedStyle(el).filter)).toBe("none");
-  const ring = await worn.evaluate((el) => getComputedStyle(el).boxShadow);
-  expect(ring).toContain("45, 122, 79");
+  // The state is the icon, not a box around it.
+  expect(await worn.evaluate((el) => getComputedStyle(el).boxShadow)).toBe(
+    "none",
+  );
 
-  // The sprite pixels of the active worn icon (blue in the original) are green now.
-  const dominant = await page.evaluate(async () => {
-    const img = new Image();
-    img.src = "/images/sprite2x.png?v=3";
-    await img.decode();
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(img, 0, 0);
-    // The active worn icon sits at 100,50 in the 2x sprite, about 34px wide.
-    const { data } = ctx.getImageData(100, 50, 34, 30);
-    let g = 0;
-    let b = 0;
-    for (let i = 0; i < data.length; i += 4) {
-      if (data[i + 3] < 200) continue;
-      g += data[i + 1];
-      b += data[i + 2];
-    }
-    return { g, b };
-  });
-  expect(dominant.g, "green channel above blue").toBeGreaterThan(dominant.b);
-  // Dark theme: the sprite is inverted by a filter, and a wrong rotation turns the green cyan
-  // (hue above 165) or yellow (below 125). The accent green sits near 148.
+  // The active worn icon is the solid pictogram in ZenPak green (it is an SVG in the text colour).
+  await expect(worn.locator("svg")).toHaveAttribute("fill", "currentColor");
+  await expect(worn).toHaveCSS("color", "rgb(45, 122, 79)");
+  // Dark theme: the icon takes the lighter accent green; its hue must stay near 148, not turn cyan
+  // (above 165) or yellow (below 125).
   await page.emulateMedia({ colorScheme: "dark" });
   await page.mouse.move(5, 5);
   await page.waitForTimeout(400);

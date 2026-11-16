@@ -139,8 +139,9 @@
     padding: 0 4px;
 }
 
-// Row actions are real buttons that keep the sprite look. They stay in the tab order while
-// hidden (opacity, not visibility) and appear on hover and when focus is inside the row.
+// Row actions are real buttons holding an SVG icon (icon.vue, in the colour of the text). They stay
+// in the tab order while hidden (opacity, not visibility) and appear on hover and when focus is
+// inside the row.
 :where(button.lpActionBtn) {
     appearance: none;
     background-color: transparent;
@@ -150,23 +151,29 @@
 }
 
 .lpActionBtn {
-    // A 26px hit area around the 14px icon; the margin keeps the layout as it was.
-    background-clip: content-box;
-    background-origin: content-box;
+    // A 28px hit area around the 16px icon; the margin keeps the layout close to what it was.
     box-sizing: content-box;
     cursor: pointer;
     flex: none;
     margin: -6px;
-    -webkit-mask-clip: content-box;
-    mask-clip: content-box;
-    -webkit-mask-origin: content-box;
-    mask-origin: content-box;
     padding: 6px;
 
+    // A button that holds an icon sizes itself on it (the star, the quantity arrows and the dots
+    // still draw themselves in a sprite-sized box).
+    &:not(.lpSprite) {
+        display: inline-flex;
+    }
+
+    // The keyboard focus is a ring in the text colour, drawn apart from the button. "On" is the
+    // solid icon in green, never a box, so nothing that is on looks like the focus.
     &:focus-visible {
         border-radius: $radius-sm;
-        outline: 2px solid $color-accent;
-        outline-offset: 1px;
+        outline: 2px solid $color-text;
+        outline-offset: 3px;
+    }
+
+    &.lpActive {
+        color: $color-accent;
     }
 }
 
@@ -242,13 +249,9 @@
     }
 }
 
-// Worn and consumable change the weight maths: when on they also get a ring, so the
-// state does not rest on the icon colour alone.
-.lpItem .lpActionsCell .lpWorn.lpActive,
-.lpItem .lpActionsCell .lpConsumable.lpActive {
-    border-radius: $radius-sm;
-    box-shadow: 0 0 0 1px rgba(var(--color-accent-rgb), 0.6);
-}
+// Worn and consumable change the weight maths. "On" is the shape, not a box: the same pictogram
+// drawn solid in green, against an outline when it is off, so it reads without telling the colours
+// apart (icon.vue, item.vue).
 
 // 0.75 keeps the dots above 3:1 on the card in both themes (0.5 measured 2.1 to 2.7).
 .lpItem .lpActionsCell .lpEdit {
@@ -292,18 +295,29 @@
 
 // Touch screens and narrow windows have no hover: the actions are always shown.
 @media (hover: none), (pointer: coarse), (max-width: 768px) {
-    // Phone-size targets: at least 32px each way, not the 26px of the pointer layout.
+    // Phone-size targets: at least 32px each way, not the 28px of the pointer layout. A sprite box
+    // is 14px tall and an SVG icon 16px, so the icon buttons take 1px less above and below.
     .lpItem .lpActionsCell .lpActionBtn {
         margin: 0;
         min-height: 14px;
         opacity: 0.55;
         padding: 9px 8px;
+
+        &:not(.lpSprite) {
+            padding-bottom: 8px;
+            padding-top: 8px;
+        }
     }
 
     // Fingers: 44px each way on a touch screen, the size iOS and Android ask for.
     @media (hover: none), (pointer: coarse) {
         .lpItem .lpActionsCell .lpActionBtn {
             padding: 15px 16px;
+
+            &:not(.lpSprite) {
+                padding-bottom: 14px;
+                padding-top: 14px;
+            }
         }
     }
 
