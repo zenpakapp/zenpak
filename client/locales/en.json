@@ -1054,6 +1054,7 @@
     "qtyDown": "Decrease quantity",
     "detailOpenError": "Unable to open this item editor. Please try again.",
     "removedFromList": "\"{name}\" removed from the list.",
+    "rowActionsLabel": "Item actions",
     "removeTitle": "Remove from list",
     "weightLabel": "Weight: {name}",
     "qtyLabel": "Quantity: {name}",
