@@ -994,13 +994,14 @@ input.lpCategoryName { /* specificity */
     .lpItem {
         column-gap: 4px;
         display: grid;
-        // The actions get a full-width row of their own: eight 32px targets do not fit beside the weight.
-        // Weight above quantity: Tab goes name, weight, quantity, the order the eye reads.
+        // The name takes the whole line, the actions get a full-width line of their own (the 44px
+        // targets do not fit beside the numbers), then weight, quantity and the delete cross share
+        // the last line. Same order as the markup, so Tab reads the row top to bottom.
         grid-template-areas:
-            "handle image name weight remove"
-            "handle image name qty remove"
-            "handle image actions actions remove";
-        grid-template-columns: 12px auto minmax(0, 1fr) auto 20px;
+            "handle image name name name name"
+            "handle image actions actions actions actions"
+            "handle image . weight qty remove";
+        grid-template-columns: 12px auto minmax(0, 1fr) auto auto 20px;
         padding: 6px 8px;
         row-gap: 4px;
 
@@ -1019,6 +1020,7 @@ input.lpCategoryName { /* specificity */
 
         .lpActionsCell {
             grid-area: actions;
+            justify-content: center;
             min-width: 0;
             width: 100%;
         }
