@@ -5,8 +5,9 @@
                 <span class="lpHandleCell">
                     <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" />
                 </span>
-                <div v-if="isPackingMode" class="lpCategoryName lpPackCategoryName">{{ category.name || $t('misc.categoryName') }}</div>
-                <input v-else v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" @input="updateCategoryName">
+                <div v-if="isPackingMode" class="lpCategoryName lpPackCategoryName" role="heading" aria-level="3">{{ category.name || $t('misc.categoryName') }}</div>
+                <h3 v-else class="lpSrOnly">{{ category.name || $t('misc.categoryName') }}</h3>
+                <input v-if="!isPackingMode" v-focus-on-create="category._isNew" type="text" :value="category.name" :placeholder="$t('misc.categoryName')" class="lpCategoryName lpSilent" :aria-label="$t('misc.categoryName')" @input="updateCategoryName">
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
                 <span class="lpWeightCell">{{ $t('public.weight') }} <span class="lpHeaderUnit">({{ library.itemUnit }})</span></span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
@@ -55,14 +56,14 @@
                         </li>
                     </ul>
                 </span>
-                <span v-if="library.optionalFields['price']" class="lpPriceCell lpNumber lpSubtotal">
+                <span v-if="library.optionalFields['price']" class="lpPriceCell lpNumber lpSubtotal" role="group" :aria-label="$t('misc.categoryTotalPrice', { name: categoryLabel })">
                     {{ displayPrice(category.subtotalPrice, library.currencySymbol) }}
                 </span>
-                <span class="lpWeightCell lpNumber lpSubtotal">
+                <span class="lpWeightCell lpNumber lpSubtotal" role="group" :aria-label="$t('misc.categoryTotalWeight', { name: categoryLabel })">
                     <span class="lpDisplaySubtotal">{{ displayWeight(category.subtotalWeight, displayUnit) }}</span>
                     <span class="lpSubtotalUnit">{{ displayUnit }}</span>
                 </span>
-                <span class="lpQtyCell lpSubtotal">
+                <span class="lpQtyCell lpSubtotal" role="group" :aria-label="$t('misc.categoryTotalQty', { name: categoryLabel })">
                     <span class="lpQtySubtotal">{{ +category.subtotalQty.toFixed(2) }}</span>
                 </span>
                 <span class="lpRemoveCell" />
@@ -101,6 +102,10 @@ export default {
     computed: {
         library() {
             return this.$store.state.library;
+        },
+        // The name a screen reader hears for this category: its own, or the field label when blank.
+        categoryLabel() {
+            return this.category.name || this.$t('misc.categoryName');
         },
         itemContainers() {
             const itemVersion = this.$store.state.itemVersion;
