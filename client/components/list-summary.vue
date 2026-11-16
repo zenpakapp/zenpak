@@ -156,6 +156,14 @@ export default {
         '$store.state.library.defaultListId': 'scheduleChartUpdate',
         'list.totalWeight': 'scheduleChartUpdate',
         'list.categoryIds': 'scheduleChartUpdate',
+        // The tooltip percentages are shares of the base weight. Marking an item worn or consumable,
+        // or moving one to another category, changes them without changing the total weight.
+        'list.totalBaseWeight': 'scheduleChartUpdate',
+        'list.totalWornWeight': 'scheduleChartUpdate',
+        'list.totalConsumableWeight': 'scheduleChartUpdate',
+        '$store.state.itemVersion': 'scheduleChartUpdate',
+        '$store.state.categoryItemVersion': 'scheduleChartUpdate',
+        displayUnit: 'scheduleChartUpdate',
     },
     mounted() {
         this.scheduleChartUpdate();
@@ -207,6 +215,13 @@ export default {
                     hoverCallback: this.chartHover,
                     unit: this.displayUnit,
                 }));
+            }
+            // What the tooltips show, as text: each slice's share of the base weight. The chart is
+            // drawn on a canvas, so a test cannot read it otherwise.
+            const canvas = this.$refs.chartCanvas;
+            if (canvas) {
+                const slices = (this.chart && this.chart.lpCategories) || [];
+                canvas.dataset.shares = chartData ? slices.map((c) => Math.round((c.basePercent || 0) * 100)).join(',') : '';
             }
             return chartData;
         },
