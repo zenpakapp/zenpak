@@ -58,12 +58,12 @@
             <input v-model="displayQty" type="text" :aria-label="$t('item.qtyLabel', { name: itemLabel })" :aria-invalid="qtyError" :class="{lpQty: true, lpNumber: true, lpSilent: true, lpSilentError: qtyError}" :title="categoryItem.qty === 0 ? $t('item.optionalQtyTitle') : null" @input="saveQty" @keydown.up="incrementQty($event)" @keydown.down="decrementQty($event)">
             <span v-if="qtyError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
             <span class="lpArrows" aria-hidden="true">
-                <button type="button" class="lpSprite lpActionBtn lpUp" tabindex="-1" :aria-label="$t('item.qtyUp')" @click="incrementQty($event)" />
-                <button type="button" class="lpSprite lpActionBtn lpDown" tabindex="-1" :aria-label="$t('item.qtyDown')" @click="decrementQty($event)" />
+                <button type="button" class="lpActionBtn lpUp" tabindex="-1" :aria-label="$t('item.qtyUp')" @click="incrementQty($event)"><icon name="chevron-up" :size="12" /></button>
+                <button type="button" class="lpActionBtn lpDown" tabindex="-1" :aria-label="$t('item.qtyDown')" @click="decrementQty($event)"><icon name="chevron-down" :size="12" /></button>
             </span>
         </span>
         <span class="lpRemoveCell">
-            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" role="button" tabindex="0" :title="$t('item.removeTitle')" :aria-label="$t('item.removeTitle')" @click="removeItem" @keydown.enter="removeItem" @keydown.space.prevent="removeItem"><i class="lpSprite lpSpriteRemove" /></a>
+            <a v-if="!isPackingMode" class="lpRemove lpRemoveItem" role="button" tabindex="0" :title="$t('item.removeTitle')" :aria-label="$t('item.removeTitle')" @click="removeItem" @keydown.enter="removeItem" @keydown.space.prevent="removeItem"><icon name="x" :size="12" /></a>
         </span>
     </li>
 </template>

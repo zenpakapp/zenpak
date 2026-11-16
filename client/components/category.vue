@@ -11,7 +11,7 @@
                 <span v-if="library.optionalFields['price']" class="lpPriceCell">{{ $t('public.price') }}</span>
                 <span class="lpWeightCell">{{ $t('public.weight') }} <span class="lpHeaderUnit">({{ library.itemUnit }})</span></span>
                 <span class="lpQtyCell">{{ $t('public.qty') }}</span>
-                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" role="button" tabindex="0" :title="$t('misc.deleteCategory')" @click="removeCategory(category)" @keydown.enter="removeCategory(category)" @keydown.space.prevent="removeCategory(category)"><i class="lpSprite lpSpriteRemove" /></a></span>
+                <span class="lpRemoveCell"><a v-if="!isPackingMode" class="lpRemove lpRemoveCategory" role="button" tabindex="0" :title="$t('misc.deleteCategory')" @click="removeCategory(category)" @keydown.enter="removeCategory(category)" @keydown.space.prevent="removeCategory(category)"><icon name="x" :size="12" /></a></span>
             </li>
             <item
                 v-for="itemContainer in itemContainers"
@@ -74,6 +74,7 @@
 
 <script>
 import item from './item.vue';
+import Icon from './icon.vue';
 import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { useUtils } from '../composables/useUtils';
@@ -85,6 +86,7 @@ export default {
     name: 'Category',
     components: {
         item,
+        Icon,
     },
     props: {
         category: { type: Object, required: true },
