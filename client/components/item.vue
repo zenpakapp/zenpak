@@ -361,7 +361,18 @@ export default {
             this.saveMeasuredItem();
         },
         removeItem() {
-            this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category: this.category });
+            const index = this.category.categoryItems.findIndex((ci) => ci.itemId === this.item.id);
+            const snapshot = index === -1 ? null : { ...this.category.categoryItems[index] };
+            const { category } = this;
+            this.$store.commit('removeItemFromCategory', { itemId: this.item.id, category });
+            // A blank item is purged with its row: nothing to bring back, so no undo for it.
+            if (!snapshot || !this.$store.state.library.getItemById(snapshot.itemId)) return;
+            showGlobalAlert(this.$t('item.removedFromList', { name: this.itemLabel }), {
+                action: {
+                    label: this.$t('misc.undo'),
+                    handler: () => this.$store.commit('restoreItemInCategory', { category, categoryItem: snapshot, index }),
+                },
+            });
         },
         onPackCheckbox() {
             this.$emit('toggle-pack', this.item.id);

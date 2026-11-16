@@ -339,6 +339,16 @@ module.exports = {
         recalculateListForCategory(state.library, args.category);
         state.categoryItemVersion += 1;
     },
+    // Undo of removeItemFromCategory: puts the same row (quantity, worn, rating) back where it was.
+    restoreItemInCategory(state, args) {
+        const { category, categoryItem, index } = args;
+        if (!category.getCategoryItemById(categoryItem.itemId)) {
+            const at = Math.min(index, category.categoryItems.length);
+            category.categoryItems.splice(at, 0, { ...categoryItem });
+        }
+        recalculateListForCategory(state.library, category);
+        state.categoryItemVersion += 1;
+    },
     copyList(state, listId) {
         const copiedList = state.library.copyList(listId);
         if (!copiedList) return;

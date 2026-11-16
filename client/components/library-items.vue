@@ -350,8 +350,20 @@ export default {
             const callback = () => {
                 this.$store.commit('removeItem', item);
             };
+            const { library } = this.$store.state;
+            const lists = library.lists
+                .filter((list) => list.categoryIds.some((catId) => {
+                    const cat = library.getCategoryById(catId);
+                    return cat && cat.categoryItems.some((ci) => ci.itemId === item.id);
+                }))
+                .map((list) => list.name || this.$t('gearroom.unnamedList'));
+            const name = item.name || this.$t('gearroom.unnamedItem');
             const speedbumpOptions = {
-                body: this.$t('library.deleteItemConfirm'),
+                body: lists.length
+                    ? this.$t('library.deleteItemConfirmUsed', { name, lists: lists.join(', ') })
+                    : this.$t('library.deleteItemConfirmUnused', { name }),
+                confirm: this.$t('library.deleteItemConfirmButton'),
+                destructive: true,
             };
             openSpeedbump(callback, speedbumpOptions);
         },
