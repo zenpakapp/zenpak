@@ -39,7 +39,7 @@
             <button type="button" class="lpSprite lpActionBtn lpLink" :class="{lpActive: item.url}" :title="$t('item.linkTitle')" :aria-label="$t('item.linkTitle')" @click="updateItemLink" />
             <button v-if="library.optionalFields['worn']" type="button" class="lpSprite lpActionBtn lpWorn" :class="{lpActive: categoryItem.worn}" :title="categoryItem.consumable ? $t('item.wornBlocked') : $t('item.wornTitle')" :aria-label="$t('item.wornTitle')" :aria-pressed="!!categoryItem.worn" :aria-disabled="!!categoryItem.consumable" @click="toggleWorn" />
             <button v-if="library.optionalFields['consumable']" type="button" class="lpSprite lpActionBtn lpConsumable" :class="{lpActive: categoryItem.consumable}" :title="categoryItem.worn ? $t('item.consumableBlocked') : $t('item.consumableTitle')" :aria-label="$t('item.consumableTitle')" :aria-pressed="!!categoryItem.consumable" :aria-disabled="!!categoryItem.worn" @click="toggleConsumable" />
-            <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="$t('item.ratingTitle')" :aria-label="$t('item.ratingTitle')" @click="cycleStar" />
+            <button type="button" :class="'lpSprite lpActionBtn lpStar lpStar' + categoryItem.star" :title="ratingLabel" :aria-label="ratingLabel" @click="cycleStar" />
             <button type="button" class="lpSprite lpActionBtn lpEdit" :title="$t('item.editTitle')" :aria-label="$t('item.editTitle')" @click="openDetailEdit" />
         </span>
         <span v-if="library.optionalFields['price'] && isPackingMode" class="lpPriceCell lpNumber lpPackText">{{ displayPrice || '' }}</span>
@@ -123,6 +123,11 @@ export default {
         },
         itemLabel() {
             return this.item.name || this.$t('gearroom.unnamedItem');
+        },
+        // "Rate this item", plus the current rating when there is one: the icon is stars, not a colour.
+        ratingLabel() {
+            const star = this.categoryItem.star || 0;
+            return star ? `${this.$t('item.ratingTitle')} (${star}/3)` : this.$t('item.ratingTitle');
         },
         isCountable() {
             return parseFloat(this.categoryItem.qty) > 0;

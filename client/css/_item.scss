@@ -203,6 +203,45 @@
     opacity: 1;
 }
 
+// The rating is counted, like the stars of the details dialog: one, two or three amber stars,
+// an empty one when there is none. The sprite colours (yellow, red, olive) did not say which
+// was more. The sprite box keeps the size and the padding; the dark theme filter is switched off
+// so the amber stays amber.
+.lpItem .lpActionsCell .lpActionBtn.lpStar.lpSprite {
+    background-image: none;
+    color: $color-text-muted;
+    filter: none;
+    font-size: 14px;
+    line-height: 14px;
+    overflow: visible;
+    // Always the width of three stars, so a rated row does not widen the icon cell and push the
+    // name and description columns to the left of the unrated rows.
+    text-align: center;
+    width: 3em;
+
+    &::before {
+        content: "\2606";
+    }
+
+    &.lpStar1,
+    &.lpStar2,
+    &.lpStar3 {
+        color: $color-star;
+    }
+
+    &.lpStar1::before {
+        content: "\2605";
+    }
+
+    &.lpStar2::before {
+        content: "\2605\2605";
+    }
+
+    &.lpStar3::before {
+        content: "\2605\2605\2605";
+    }
+}
+
 // Worn and consumable change the weight maths: when on they also get a ring, so the
 // state does not rest on the icon colour alone.
 .lpItem .lpActionsCell .lpWorn.lpActive,
