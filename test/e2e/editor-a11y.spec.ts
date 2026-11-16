@@ -58,7 +58,7 @@ test("item row actions and fields are reachable and named for the keyboard", asy
   expect(seen).toContain("Mark as consumable");
   expect(seen).toContain("More options");
   expect(seen.some((s) => s.startsWith("Weight:"))).toBe(true);
-  expect(seen).toContain("Remove");
+  expect(seen).toContain("Remove from list");
 
   // Space on a toggle flips it.
   await toggle.focus();
@@ -86,5 +86,6 @@ test("item row actions and fields are reachable and named for the keyboard", asy
     .focus()
     .catch(() => {});
   const resting = page.locator(".lpItem").nth(1).locator(".lpEdit");
-  await expect(resting).toHaveCSS("opacity", "0.5");
+  // 0.75 keeps the dots above 3:1 on the card (see row-controls-contrast).
+  await expect(resting).toHaveCSS("opacity", "0.75");
 });

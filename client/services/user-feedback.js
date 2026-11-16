@@ -9,7 +9,8 @@ function getAlertKey(message) {
     return `message:${message}`;
 }
 
-export function showGlobalAlert(message) {
+// options.action = { label, handler }: a button in the alert (the undo of a removal).
+export function showGlobalAlert(message, options = {}) {
     if (!message) {
         return;
     }
@@ -20,7 +21,7 @@ export function showGlobalAlert(message) {
     lastAlertKey = key;
     lastAlertAt = now;
 
-    notifyGlobalAlert({ message });
+    notifyGlobalAlert({ message, ...options });
 }
 
 export default {

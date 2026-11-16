@@ -211,6 +211,8 @@ export default {
             };
             openSpeedbump(callback, {
                 body: this.$t('item.deleteConfirm', { name: this.item.name || this.$t('gearroom.unnamedItem') }),
+                confirm: this.$t('library.deleteItemConfirmButton'),
+                destructive: true,
             });
         },
         navigateToList(list) {

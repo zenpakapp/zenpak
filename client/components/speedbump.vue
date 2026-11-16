@@ -52,10 +52,10 @@
         </label>
 
         <div class="lpModalActions">
-            <button v-focus-on-create class="lpButton" @click="confirmSpeedbump()">
+            <button v-focus-on-create="!messages.destructive" class="lpButton" :class="{ lpButtonDanger: messages.destructive }" @click="confirmSpeedbump()">
                 {{ messages.confirm }}
             </button>
-            <button class="lpButton lpButtonSecondary" @click="shown = false">
+            <button v-focus-on-create="!!messages.destructive" class="lpButton lpButtonSecondary" @click="shown = false">
                 {{ messages.cancel }}
             </button>
         </div>

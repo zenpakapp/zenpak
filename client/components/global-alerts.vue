@@ -114,6 +114,9 @@
     <ul v-if="alerts && alerts.length" class="lpGlobalAlerts" :class="{ lpGlobalAlertsInfo: onlyInfo }">
         <li v-for="alert in alerts" :key="alert.id || alert.message" class="lpGlobalAlert">
             <span class="lpGlobalAlertMessage">{{ displayMessage(alert) }}</span>
+            <button v-if="alert.action" class="lpGlobalAlertAction" type="button" @click="runAction(alert)">
+                {{ alert.action.label }}
+            </button>
             <button v-if="isVerifyEmailAlert(alert)" class="lpGlobalAlertAction" type="button" @click="resendVerification(alert)">
                 {{ resendLabel(alert) }}
             </button>
@@ -227,6 +230,11 @@ export default {
                     this.dismiss(alert.id);
                 }, AUTO_DISMISS_MS);
             });
+        },
+        runAction(alert) {
+            const { handler } = alert.action;
+            this.dismiss(alert.id);
+            if (typeof handler === 'function') handler();
         },
         resendLabel(alert) {
             if (alert.resendSent) return this.$t('dash.verificationEmailSent');

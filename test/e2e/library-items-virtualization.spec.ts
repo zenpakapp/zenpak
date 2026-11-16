@@ -75,9 +75,9 @@ test('preserves a later virtual window while visible-row edit and removal remain
         const topElement = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
         return Boolean(topElement && speedbump.contains(topElement));
     })).toBe(true);
-    const confirmDelete = page.getByRole('button', { name: 'Yes', exact: true });
-    await expect(confirmDelete).toBeFocused();
-    await page.keyboard.press('Enter');
+    // A destructive confirm starts on Cancel, so a stray Enter keeps the item.
+    await expect(page.getByRole('button', { name: 'No', exact: true })).toBeFocused();
+    await page.locator('#speedbump').getByRole('button', { name: 'Delete', exact: true }).click();
 
     await expect(page.locator('#speedbump')).toBeHidden();
     await expect(renderedRows.filter({ hasText: 'Fixture item 201 edited' })).toHaveCount(0);
