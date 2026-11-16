@@ -44,7 +44,7 @@
         </span>
         <span v-if="library.optionalFields['price'] && isPackingMode" class="lpPriceCell lpNumber lpPackText">{{ displayPrice || '' }}</span>
         <span v-else-if="library.optionalFields['price']" class="lpPriceCell">
-            <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :aria-invalid="priceError" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @input="savePrice" @blur="setDisplayPrice">
+            <input v-model="displayPrice" v-empty-if-zero type="text" :aria-label="$t('item.priceLabel', { name: itemLabel })" :aria-invalid="priceError" :class="{lpPrice: true, lpNumber: true, lpSilent: true, lpSilentError: priceError}" @focus="priceFocused = true" @input="savePrice" @blur="onPriceBlur">
             <span v-if="priceError" class="lpFieldError" role="alert">{{ $t('item.numberError') }}</span>
         </span>
         <span v-if="isPackingMode" class="lpWeightCell lpNumber lpPackText">{{ displayWeight || 0 }} {{ library.itemUnit }}</span>
@@ -85,6 +85,7 @@ export default {
     data() {
         return {
             lastAction: null,
+            priceFocused: false,
             displayWeight: 0,
             displayPrice: 0,
             displayQty: 0,
@@ -234,8 +235,14 @@ export default {
                 this.weightError = true;
             }
         },
+        // The field is reformatted (1 becomes 1.00) when it is left, never while it has the focus:
+        // rewriting it on every keystroke turned a typed 129 into 1.00.
+        onPriceBlur() {
+            this.priceFocused = false;
+            this.setDisplayPrice();
+        },
         setDisplayPrice() {
-            if (!this.priceError) {
+            if (!this.priceError && !this.priceFocused) {
                 this.displayPrice = (this.item.price ?? 0).toFixed(2);
             }
         },
