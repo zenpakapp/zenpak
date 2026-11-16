@@ -116,11 +116,15 @@ import { usePackingMode } from '../composables/usePackingMode';
 import { registerShortcut, unregisterShortcut } from '../services/shortcuts';
 import phrasesEn from '../data/packing-phrases.en';
 import phrasesFr from '../data/packing-phrases.fr';
+import phrasesDe from '../data/packing-phrases.de';
+import phrasesEs from '../data/packing-phrases.es';
 import { normalizeLocale } from '../../shared/locales';
 import weightUtils from '../utils/weight';
 
 // Completion phrases per language. A language without its own list uses the English one.
-const PACKING_PHRASES = { en: phrasesEn, fr: phrasesFr };
+const PACKING_PHRASES = {
+    en: phrasesEn, fr: phrasesFr, de: phrasesDe, es: phrasesEs,
+};
 
 export default {
     name: 'List',
