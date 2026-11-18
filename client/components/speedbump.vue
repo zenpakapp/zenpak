@@ -12,9 +12,9 @@
     display: flex;
     font-size: inherit;
     font-weight: $fontWeight-normal;
-    gap: 8px;
+    gap: $space-8;
     letter-spacing: normal;
-    margin: 0 0 16px;
+    margin: 0 0 $space-16;
     max-width: 44ch;
     text-transform: none;
 

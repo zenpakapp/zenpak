@@ -5,7 +5,7 @@
     border: 1px solid transparent;
     cursor: pointer;
     display: inline-block;
-    padding: 0 5px;
+    padding: 0 $space-6;
     position: relative;
 
     &:hover,
@@ -59,7 +59,7 @@
 
         li {
             list-style: none;
-            padding: 2px 14px;
+            padding: $space-2 $space-14;
 
             &:hover {
                 background: $color-accent-solid;

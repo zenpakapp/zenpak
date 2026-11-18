@@ -3,20 +3,20 @@
 
 .creatorLinks {
     border-top: 1px solid $color-border;
-    padding-top: 28px;
+    padding-top: $space-28;
 }
 
 .creatorLinksSectionTitle {
     font-size: $fontSize-lg;
     font-weight: $fontWeight-bold;
-    margin: 0 0 16px;
+    margin: 0 0 $space-16;
 }
 
 .creatorLinksField {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: $space-4;
+    margin-bottom: $space-8;
 }
 
 .creatorLinksLabel {
@@ -37,7 +37,7 @@
     font-family: $font-family-base;
     font-size: $fontSize-base;
     min-height: 80px;
-    padding: 10px 12px;
+    padding: $space-10 $space-12;
     resize: vertical;
     width: 100%;
 

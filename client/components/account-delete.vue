@@ -1,4 +1,5 @@
 <style lang="scss">
+@import "../css/_globals";
 #deleteAccount {
     width: min(400px, calc(100vw - 32px));
 }
@@ -6,7 +7,7 @@
 // The subscription notice sits in the same warning box, under the bold line.
 #deleteAccount .lpWarningDetail {
     display: block;
-    margin-top: 8px;
+    margin-top: $space-8;
 }
 </style>
 

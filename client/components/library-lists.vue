@@ -3,7 +3,7 @@
 
 #listContainer {
     flex: 0 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 
     #lists {
         max-height: 150px;
@@ -16,15 +16,15 @@
     color: $color-text;
     display: flex;
     list-style: none;
-    margin: 0 10px;
+    margin: 0 $space-10;
     overflow-y: auto;
-    padding: 8px 10px;
+    padding: $space-8 $space-10;
     position: relative;
     transition: background $transitionDurationFast ease, color $transitionDurationFast ease;
 
     &:first-child {
         border-top: none;
-        padding-top: 10px;
+        padding-top: $space-10;
     }
 
     &:last-child {
@@ -50,7 +50,7 @@
     .lpHandle {
         flex: 0 0 12px;
         height: 18px;
-        margin-right: 5px;
+        margin-right: $space-6;
     }
 
     &:hover .lpHandle {
@@ -87,13 +87,13 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: $space-10;
 }
 
 #addListFlyout {
     .lpContent a {
         display: block;
-        margin-bottom: 5px;
+        margin-bottom: $space-6;
 
         &:last-child {
             margin-bottom: 0;

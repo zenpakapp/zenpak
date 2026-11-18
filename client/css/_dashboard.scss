@@ -47,8 +47,8 @@
     border-right: 1px solid $color-border;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 24px 20px;
+    gap: $space-16;
+    padding: $space-24 $space-20;
 }
 
 .lpEditorLoadingContent {
@@ -61,21 +61,21 @@
     display: flex;
     justify-content: space-between;
     min-height: 60px;
-    padding: 0 24px;
+    padding: 0 $space-24;
 }
 
 .lpEditorLoadingWorkspace {
-    margin: 28px auto;
+    margin: $space-28 auto;
     max-width: 920px;
-    padding: 0 24px;
+    padding: 0 $space-24;
 }
 
 .lpEditorLoadingSummary {
     align-items: center;
     display: grid;
-    gap: 32px;
+    gap: $space-32;
     grid-template-columns: 220px minmax(0, 1fr);
-    margin-bottom: 30px;
+    margin-bottom: $space-32;
 }
 
 .lpEditorLoadingTotals {
@@ -90,14 +90,14 @@
 
 .lpEditorLoadingRows {
     border-top: 1px solid $color-border;
-    margin-top: 12px;
+    margin-top: $space-12;
 }
 
 .lpEditorLoadingRow {
     align-items: center;
     border-bottom: 1px solid $color-border;
     display: grid;
-    gap: 24px;
+    gap: $space-24;
     grid-template-columns: minmax(120px, 2fr) minmax(80px, 1fr) 64px;
     min-height: 58px;
 }
@@ -127,7 +127,7 @@
 
 .lpEditorLoadingTitleMeta {
     height: 10px;
-    margin-left: 14px;
+    margin-left: $space-14;
     margin-right: auto;
     width: 150px;
 }
@@ -181,12 +181,12 @@
     }
 
     .lpEditorLoadingWorkspace {
-        margin-top: 20px;
-        padding: 0 16px;
+        margin-top: $space-20;
+        padding: 0 $space-16;
     }
 
     .lpEditorLoadingSummary {
-        gap: 18px;
+        gap: $space-18;
         grid-template-columns: 120px minmax(0, 1fr);
     }
 
@@ -196,7 +196,7 @@
     }
 
     .lpEditorLoadingRow {
-        gap: 12px;
+        gap: $space-12;
         grid-template-columns: minmax(100px, 2fr) minmax(64px, 1fr) 44px;
     }
 }
@@ -206,11 +206,11 @@
     background: $color-surface;
     border-bottom: 1px solid $color-border;
     display: flex;
-    gap: 4px;
-    margin-bottom: 20px;
-    margin-left: -20px;
+    gap: $space-4;
+    margin-bottom: $space-20;
+    margin-left: (-$space-20);
     min-height: 60px;
-    padding: 0 8px;
+    padding: 0 $space-8;
     position: sticky;
     top: 0;
     width: calc(100% + 40px);
@@ -226,9 +226,9 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-ui;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 10px 14px;
+    gap: $space-12;
+    margin-bottom: $space-16;
+    padding: $space-10 $space-14;
 }
 
 .lpVerifyBannerBtn {
@@ -239,13 +239,13 @@
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
-    padding: 3px 10px;
+    padding: $space-4 $space-10;
     transition: opacity $transitionDurationFast;
     white-space: nowrap;
 
     @media (pointer: coarse) {
         min-height: 44px;
-        padding: 3px 14px;
+        padding: $space-4 $space-14;
     }
 
     &:hover { opacity: 0.7; }
@@ -265,7 +265,7 @@
     min-height: 32px;
     min-width: 32px;
     opacity: 1;
-    padding: 0 2px;
+    padding: 0 $space-2;
 
     @media (pointer: coarse) {
         min-height: 44px;
@@ -281,8 +281,8 @@
     color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    margin-left: 6px;
-    padding: 1px 6px;
+    margin-left: $space-6;
+    padding: 1px $space-6;
     white-space: nowrap;
 }
 
@@ -291,8 +291,8 @@
     border: 1px solid $color-success-border;
     border-radius: $radius-md;
     color: $color-success-text;
-    margin-bottom: 16px;
-    padding: 12px 16px;
+    margin-bottom: $space-16;
+    padding: $space-12 $space-16;
 }
 
 .lpBillingCancelBanner {
@@ -300,8 +300,8 @@
     border: 1px solid $color-warning-border;
     border-radius: $radius-md;
     color: $color-warning-text;
-    margin-bottom: 16px;
-    padding: 12px 16px;
+    margin-bottom: $space-16;
+    padding: $space-12 $space-16;
 }
 
 .lpPastDueBanner {
@@ -311,9 +311,9 @@
     border-radius: $radius-md;
     color: $color-warning-text;
     display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 12px 16px;
+    gap: $space-12;
+    margin-bottom: $space-16;
+    padding: $space-12 $space-16;
 }
 
 #hamburger {
@@ -321,10 +321,10 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $space-4;
     justify-content: center;
     opacity: 0.6;
-    padding: 4px;
+    padding: $space-4;
     transition: transform $transitionDurationSlow, opacity $transitionDurationFast;
 
     &:hover {
@@ -368,8 +368,8 @@
 
     #header {
         gap: 0;
-        margin-left: -12px;
-        padding: 0 10px 0 8px;
+        margin-left: (-$space-12);
+        padding: 0 $space-10 0 $space-8;
         width: calc(100% + 24px);
 
         @include headerBadgeDot;
@@ -383,8 +383,8 @@
     }
 
     #lpListName {
-        padding-left: 6px;
-        padding-right: 6px;
+        padding-left: $space-6;
+        padding-right: $space-6;
     }
 
     .lpForkSource {
@@ -401,8 +401,8 @@
 
     .headerItem .lpTarget {
         justify-content: center;
-        padding-left: 6px;
-        padding-right: 6px;
+        padding-left: $space-6;
+        padding-right: $space-6;
     }
 
     // Icon-only links (Community, Wayfarer): a finger-sized target.
@@ -470,7 +470,7 @@
     font-weight: $fontWeight-bold;
     letter-spacing: -0.01em;
     min-width: 0;
-    padding: 7px 14px;
+    padding: $space-8 $space-14;
     text-overflow: ellipsis;
     width: 100%;
 
@@ -485,7 +485,7 @@
     display: flex;
     flex: 1 1 240px;
     flex-direction: column;
-    gap: 2px;
+    gap: $space-2;
     justify-content: center;
     min-width: 0;
 }
@@ -495,7 +495,7 @@
     display: block;
     font-size: $fontSize-xs;
     line-height: 1.2;
-    margin: 0 14px 5px;
+    margin: 0 $space-14 $space-6;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -505,8 +505,8 @@
     align-items: center;
     align-self: flex-start;
     display: inline-flex;
-    gap: 6px;
-    margin: -4px 14px 5px;
+    gap: $space-6;
+    margin: (-$space-4) $space-14 $space-6;
 }
 
 .lpForkSourceAction,
@@ -581,7 +581,7 @@
     height: 14px;
     justify-content: center;
     line-height: 1;
-    margin-left: 6px;
+    margin-left: $space-6;
     padding: 0;
     vertical-align: 1px;
     width: 14px;
@@ -628,10 +628,10 @@
         color: $color-text;
         display: inline-flex;
         font-weight: $fontWeight-bold;
-        gap: 8px;
+        gap: $space-8;
         line-height: 1;
         min-height: 40px;
-        padding: 10px 14px;
+        padding: $space-10 $space-14;
         text-decoration: none;
         transition:
             background-color $transitionDurationFast ease,
@@ -664,9 +664,9 @@
     }
 
     &.signInRegisterButtons {
-        gap: 8px;
+        gap: $space-8;
         height: auto;
-        padding: 0 16px;
+        padding: 0 $space-16;
     }
 }
 
@@ -719,7 +719,7 @@
 .headerItem .lpPopover .lpTarget > span {
     align-items: center;
     display: inline-flex;
-    gap: 8px;
+    gap: $space-8;
     line-height: 1;
     position: relative;
     top: -5px;
@@ -778,22 +778,22 @@
 
 @media (max-width: 1240px) {
     #header {
-        gap: 2px;
-        padding: 0 6px;
+        gap: $space-2;
+        padding: 0 $space-6;
     }
 
     #lpListName {
         font-size: 15px;
-        padding: 7px 8px;
+        padding: $space-8 $space-8;
     }
 
     .headerItem .lpTarget {
-        gap: 6px;
-        padding: 10px 10px;
+        gap: $space-6;
+        padding: $space-10 $space-10;
     }
 
     .headerItem .lpPopover .lpTarget > span {
-        gap: 6px;
+        gap: $space-6;
     }
 
     .headerTruncateItem .headerMenuLabel {
@@ -804,7 +804,7 @@
 @media (max-width: 1080px) {
     .headerItem .lpTarget {
         font-size: 15px;
-        padding: 10px 8px;
+        padding: $space-10 $space-8;
     }
 
     .headerIconItem {
@@ -820,11 +820,11 @@
     border-top: 1px solid $color-border;
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin-top: 32px;
-    padding: 16px 0 8px;
+    margin-top: $space-32;
+    padding: $space-16 0 $space-8;
 
     p {
-        margin: 0 0 6px;
+        margin: 0 0 $space-6;
     }
 
     .lpSupportLink {
@@ -846,7 +846,7 @@
     color: $color-text;
     font-size: $fontSize-sm;
     left: 8px;
-    padding: 8px 12px;
+    padding: $space-8 $space-12;
     position: fixed;
     top: -64px;
     z-index: $aboveDialog + 1;

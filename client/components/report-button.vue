@@ -7,7 +7,7 @@
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-xs;
-    padding: 2px 6px;
+    padding: $space-2 $space-6;
 
     &:hover {
         color: $color-text;
@@ -21,7 +21,7 @@
     border-radius: $radius-lg;
     box-shadow: 0 8px 24px rgba(var(--color-shadow-rgb), 0.12);
     left: 0;
-    padding: 16px;
+    padding: $space-16;
     position: absolute;
     top: calc(100% + 4px);
     width: 220px;
@@ -32,14 +32,14 @@
     color: $color-text;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin-bottom: 10px;
+    margin-bottom: $space-10;
 }
 
 .lpReportReasons {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: $space-6;
+    margin-bottom: $space-12;
 }
 
 .lpReportReason {
@@ -48,14 +48,14 @@
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 8px;
+    gap: $space-8;
 
     &:hover { color: $color-text; }
 }
 
 .lpReportActions {
     display: flex;
-    gap: 8px;
+    gap: $space-8;
     justify-content: flex-end;
 }
 
@@ -66,7 +66,7 @@
     color: $color-on-solid;
     cursor: pointer;
     font-size: $fontSize-sm;
-    padding: 5px 12px;
+    padding: $space-6 $space-12;
 
     &:disabled { opacity: 0.5; }
 }
@@ -78,13 +78,13 @@
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;
-    padding: 5px 12px;
+    padding: $space-6 $space-12;
 }
 
 .lpReportConfirm {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    padding: 4px 0;
+    padding: $space-4 0;
     text-align: center;
 }
 </style>

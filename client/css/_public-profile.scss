@@ -5,21 +5,21 @@
     background: $color-bg;
     margin: 0 auto;
     max-width: $width-content;
-    padding: 20px 20px 40px;
+    padding: $space-20 $space-20 $space-40;
 }
 
 .lpPublicErrorSub {
     color: $color-text-muted;
     font-size: $fontSize-base;
-    margin: -8px 0 16px;
+    margin: (-$space-8) 0 $space-16;
 }
 
 .lpPublicNav {
     align-items: center;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 
     a {
         color: $color-text-muted;
@@ -36,7 +36,7 @@
 .lpPublicProfileNavRight {
     align-items: center;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
     min-width: 0;
 }
 
@@ -48,14 +48,14 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    margin-bottom: 12px;
-    padding: 20px;
+    margin-bottom: $space-12;
+    padding: $space-20;
 }
 
 .lpPublicHeroInner {
     align-items: flex-start;
     display: flex;
-    gap: 14px;
+    gap: $space-14;
 }
 
 .lpPublicAvatar {
@@ -108,8 +108,8 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    gap: 6px;
-    margin-top: 12px;
+    gap: $space-6;
+    margin-top: $space-12;
 
     .lpFollowBtn {
         margin-top: 0;
@@ -120,8 +120,8 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: $space-8;
+    margin-bottom: $space-4;
 }
 
 .lpPublicName {
@@ -137,7 +137,7 @@
     font-size: 10px;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.04em;
-    padding: 2px 8px;
+    padding: $space-2 $space-8;
     text-transform: uppercase;
 }
 
@@ -145,14 +145,14 @@
     color: $color-text-muted;
     font-size: $fontSize-ui;
     line-height: 1.5;
-    margin: 0 0 10px;
+    margin: 0 0 $space-10;
 }
 
 .lpPublicStats {
     color: $color-text-muted;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 16px;
+    gap: $space-16;
 
     strong {
         color: $color-text;
@@ -163,9 +163,9 @@
 .lpPublicLinks {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: $space-8;
     list-style: none;
-    margin: 12px 0 0;
+    margin: $space-12 0 0;
     padding: 0;
 
     a {
@@ -182,8 +182,8 @@
 .lpPublicTags {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+    gap: $space-6;
+    margin-top: $space-10;
 }
 
 .lpPublicTag {
@@ -192,7 +192,7 @@
     border-radius: $radius-sm;
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    padding: 3px 8px;
+    padding: $space-4 $space-8;
 }
 
 .lpPublicListsHeader {
@@ -200,7 +200,7 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.08em;
-    margin-bottom: 10px;
+    margin-bottom: $space-10;
     text-transform: uppercase;
 }
 
@@ -210,8 +210,8 @@
     border-radius: $radius-lg;
     cursor: pointer;
     display: block;
-    margin-bottom: 8px;
-    padding: 15px 16px;
+    margin-bottom: $space-8;
+    padding: $space-16 $space-16;
     text-decoration: none;
     transition: border-color $transitionDurationFast ease;
 
@@ -234,9 +234,9 @@
 .lpPublicListCardTop {
     align-items: flex-start;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
     justify-content: space-between;
-    margin-bottom: 6px;
+    margin-bottom: $space-6;
 }
 
 .lpPublicListName {
@@ -266,9 +266,9 @@
     display: flex;
     flex-shrink: 0;
     font-size: $fontSize-xs;
-    gap: 10px;
+    gap: $space-10;
     line-height: 1.25;
-    padding-top: 2px;
+    padding-top: $space-2;
     white-space: nowrap;
 }
 
@@ -278,11 +278,11 @@
     }
 
     .lpPublicListName {
-        margin-bottom: 6px;
+        margin-bottom: $space-6;
     }
 
     .lpPublicListMeta {
-        gap: 12px;
+        gap: $space-12;
         padding-top: 0;
     }
 }
@@ -293,6 +293,6 @@
     border-radius: $radius-md;
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin-top: 16px;
-    padding: 10px 14px;
+    margin-top: $space-16;
+    padding: $space-10 $space-14;
 }

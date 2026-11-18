@@ -3,7 +3,7 @@
 
 #csvUrl {
     display: block;
-    margin-top: 15px;
+    margin-top: $space-16;
 }
 
 #lpOptionalFields {
@@ -13,7 +13,7 @@
 
 .lpOptionalField {
     list-style-type: none;
-    margin: 0 0 2px;
+    margin: 0 0 $space-2;
     padding: 0;
 
     label {
@@ -21,8 +21,8 @@
         border-radius: $radius-lg;
         cursor: pointer;
         display: flex;
-        gap: 12px;
-        padding: 9px 10px;
+        gap: $space-12;
+        padding: $space-10 $space-10;
         transition: background-color $transitionDurationFast ease, color $transitionDurationFast ease;
     }
 
@@ -40,7 +40,7 @@
 #lpPriceSettings {
     align-items: center;
     display: flex;
-    gap: 10px;
+    gap: $space-10;
     justify-content: space-between;
 
     label {
@@ -49,7 +49,7 @@
         display: flex;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
-        gap: 10px;
+        gap: $space-10;
         letter-spacing: 0.04em;
         text-transform: uppercase;
     }
@@ -61,7 +61,7 @@
         font-size: $fontSize-md;
         font-weight: $fontWeight-medium;
         margin-left: 0;
-        padding: 8px 10px;
+        padding: $space-8 $space-10;
         width: 64px;
 
         &:focus {

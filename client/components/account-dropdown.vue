@@ -4,7 +4,7 @@
 .accountDropdownTarget {
     align-items: center;
     display: inline-flex;
-    gap: 8px;
+    gap: $space-8;
     max-width: 100%;
     min-width: 0;
 }
@@ -64,7 +64,7 @@
     display: flex;
     flex-direction: column;
     min-width: 180px;
-    padding: 4px 0;
+    padding: $space-4 0;
 }
 
 .accountDropdownUser {
@@ -73,8 +73,8 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin-bottom: 4px;
-    padding: 4px 14px 10px;
+    margin-bottom: $space-4;
+    padding: $space-4 $space-14 $space-10;
     text-transform: uppercase;
 }
 
@@ -84,7 +84,7 @@
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
     letter-spacing: normal;
-    margin-top: 2px;
+    margin-top: $space-2;
     text-transform: none;
 }
 
@@ -105,9 +105,9 @@
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 8px;
-    margin: 0 4px;
-    padding: 8px 10px;
+    gap: $space-8;
+    margin: 0 $space-4;
+    padding: $space-8 $space-10;
     text-decoration: none;
     transition: background $transitionDurationFast ease, color $transitionDurationFast ease;
 
@@ -130,7 +130,7 @@
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-md;
-    padding: 0 8px 0 0;
+    padding: 0 $space-8 0 0;
 
     &:hover {
         color: $color-text;
@@ -140,7 +140,7 @@
 .accountDropdownDivider {
     border: none;
     border-top: 1px solid $color-border;
-    margin: 4px 0;
+    margin: $space-4 0;
 }
 
 html.lpSigningOut body::before {

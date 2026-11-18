@@ -9,7 +9,7 @@
     left: 50%;
     max-height: calc(100dvh - 48px);
     overflow-y: auto;
-    padding: 24px;
+    padding: $space-24;
     position: fixed;
     text-align: left;
     top: 50%;
@@ -21,7 +21,7 @@
     z-index: $dialog;
 
     .lpHalf {
-        padding: 0 14px;
+        padding: 0 $space-14;
 
         &:first-child {
             padding-left: 0;
@@ -37,7 +37,7 @@
         font-weight: $fontWeight-bold;
         letter-spacing: 0;
         line-height: 1.2;
-        margin: 0 0 18px;
+        margin: 0 0 $space-18;
         max-width: none;
     }
 
@@ -45,16 +45,16 @@
         font-size: $fontSize-md;
         font-weight: $fontWeight-bold;
         letter-spacing: -0.02em;
-        margin: 0 0 10px;
+        margin: 0 0 $space-10;
     }
 
     p {
         color: $color-text-muted;
-        margin: 0 0 14px;
+        margin: 0 0 $space-14;
     }
 
     ul {
-        padding-left: 15px;
+        padding-left: $space-16;
     }
 
     label {
@@ -63,7 +63,7 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
         letter-spacing: 0.04em;
-        margin-bottom: 8px;
+        margin-bottom: $space-8;
         text-transform: uppercase;
     }
 
@@ -77,7 +77,7 @@
         border-radius: $radius-md;
         color: $color-text;
         min-height: $control-height-lg;
-        padding: 10px 12px;
+        padding: $space-10 $space-12;
         transition:
             border-color $transitionDurationFast ease,
             box-shadow $transitionDurationFast ease,
@@ -93,7 +93,7 @@
     }
 
     select {
-        padding-right: 36px;
+        padding-right: $space-40;
     }
 
     textarea {
@@ -108,12 +108,12 @@
     .lpModalBody {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: $space-16;
     }
 
     .lpModalSplit {
         display: grid;
-        gap: 18px;
+        gap: $space-18;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 
@@ -121,16 +121,16 @@
         background: $color-surface;
         border: 1px solid $color-border;
         border-radius: $radius-md;
-        padding: 18px;
+        padding: $space-18;
     }
 
     .lpModalActions {
         align-items: center;
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: $space-10;
         justify-content: flex-end;
-        margin-top: 20px;
+        margin-top: $space-20;
     }
 
     .lpButton.close,
@@ -152,7 +152,7 @@
         color: $color-text-muted;
         font-weight: $fontWeight-bold;
         margin-left: 0;
-        padding: 10px 4px;
+        padding: $space-10 $space-4;
 
         &:hover {
             color: $color-text;
@@ -166,7 +166,7 @@
         border-radius: $radius-md;
         color: $color-text;
         margin: 0;
-        padding: 14px 16px;
+        padding: $space-14 $space-16;
     }
 
     .lpContent {

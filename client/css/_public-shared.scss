@@ -1,7 +1,7 @@
 @import "globals";
 
 .lpPublicError {
-    margin: 80px auto;
+    margin: 80px auto; // space-exempt: a layout size, not a step of the scale
     max-width: 400px;
     text-align: center;
 
@@ -9,7 +9,7 @@
         color: $color-text;
         font-size: $fontSize-lg;
         font-weight: $fontWeight-bold;
-        margin: 0 0 16px;
+        margin: 0 0 $space-16;
     }
 }
 
@@ -18,7 +18,7 @@
     font-size: 48px;
     font-weight: $fontWeight-light;
     line-height: 1;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpPublicErrorBack {

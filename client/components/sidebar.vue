@@ -31,8 +31,8 @@ $sidebarPadding: 20px;
         border-bottom: 1px solid $color-border;
         display: flex;
         height: 60px;
-        margin: 0 -20px 20px 0;
-        padding: 20px 0 20px;
+        margin: 0 (-$space-20) $space-20 0;
+        padding: $space-20 0 $space-20;
         position: relative;
 
         span {
@@ -49,7 +49,7 @@ $sidebarPadding: 20px;
         color: $color-text;
         font-size: $fontSize-md;
         font-weight: $fontWeight-bold;
-        margin: 0 0 10px;
+        margin: 0 0 $space-10;
     }
 
     // The sidebar is the panel: its lists are plain rows with dividers, not cards inside a card.
@@ -69,7 +69,7 @@ $sidebarPadding: 20px;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    padding-bottom: 20px;
+    padding-bottom: $space-20;
     position: relative;
     top: 0;
 
@@ -126,7 +126,7 @@ $sidebarPadding: 20px;
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
     justify-content: space-between;
-    margin: 0 0 10px;
+    margin: 0 0 $space-10;
 }
 
 .lpGearRoomBtn {
@@ -141,7 +141,7 @@ $sidebarPadding: 20px;
     cursor: pointer;
     font-size: $fontSize-md;
     line-height: 1;
-    padding: 2px 4px;
+    padding: $space-2 $space-4;
     transition: color $transitionDurationFast;
 
     &:hover {

@@ -1,10 +1,11 @@
 <style lang="scss">
+@import "../css/_globals";
 
 #itemImageDialog {
     width: min(640px, calc(100vw - 32px));
 
     .imageUploadDescription {
-        margin-bottom: 19px;
+        margin-bottom: $space-20;
     }
 }
 

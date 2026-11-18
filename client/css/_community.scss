@@ -3,7 +3,7 @@
 .lpCommunity {
     margin: 0 auto;
     max-width: $width-content;
-    padding: 24px 20px 48px;
+    padding: $space-24 $space-20 $space-48;
 }
 
 /* ── Tabs ── */
@@ -11,7 +11,7 @@
 .lpCommunityTabs {
     border-bottom: 1px solid $color-border;
     display: flex;
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 }
 
 .lpCommunityTab {
@@ -23,7 +23,7 @@
     font-size: $fontSize-base;
     font-weight: $fontWeight-medium;
     margin-bottom: -1px;
-    padding: 10px 16px;
+    padding: $space-10 $space-16;
     transition: color $transitionDurationFast ease, border-color $transitionDurationFast ease;
 
     &.active {
@@ -43,8 +43,8 @@
 .lpCommunitySort {
     align-items: center;
     display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
+    gap: $space-6;
+    margin-bottom: $space-16;
 }
 
 .lpCommunitySortLabel {
@@ -52,7 +52,7 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin-right: 4px;
+    margin-right: $space-4;
     text-transform: uppercase;
 }
 
@@ -65,7 +65,7 @@
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
     height: $control-height-sm;
-    padding: 0 12px;
+    padding: 0 $space-12;
     transition: background $transitionDurationFast ease, color $transitionDurationFast ease, border-color $transitionDurationFast ease;
 
     &:hover {
@@ -87,8 +87,8 @@
     border: 1px solid $color-border;
     border-radius: $radius-lg;
     display: block;
-    margin-bottom: 6px;
-    padding: 14px 16px;
+    margin-bottom: $space-6;
+    padding: $space-14 $space-16;
     text-decoration: none;
     transition: border-color $transitionDurationFast ease, box-shadow $transitionDurationFast ease;
 
@@ -102,13 +102,13 @@
     color: $color-accent-text;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin-bottom: 4px;
+    margin-bottom: $space-4;
 }
 
 .lpCommunityCardAuthor {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin-bottom: 8px;
+    margin-bottom: $space-8;
 
     a {
         color: $color-text;
@@ -122,7 +122,7 @@
 .lpCommunityCardSource {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin: -4px 0 8px;
+    margin: (-$space-4) 0 $space-8;
 
     a {
         color: inherit;
@@ -143,8 +143,8 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin-left: 5px;
-    padding: 1px 5px;
+    margin-left: $space-6;
+    padding: 1px $space-6;
     text-transform: uppercase;
     vertical-align: middle;
 }
@@ -154,13 +154,13 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-xs;
-    gap: 12px;
+    gap: $space-12;
 }
 
 .lpCommunityCardMetaItem {
     align-items: center;
     display: flex;
-    gap: 4px;
+    gap: $space-4;
 }
 
 /* ── Feed events ── */
@@ -169,8 +169,8 @@
     align-items: flex-start;
     border-bottom: 1px solid $color-border;
     display: flex;
-    gap: 12px;
-    padding: 14px 0;
+    gap: $space-12;
+    padding: $space-14 0;
 }
 
 .lpCommunityEventAvatar {
@@ -217,7 +217,7 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-base;
-    gap: 4px;
+    gap: $space-4;
     line-height: 1.4;
 
     a {
@@ -233,8 +233,8 @@
     }
 
     .lpCommunityBadge {
-        margin-left: 2px;
-        margin-right: 2px;
+        margin-left: $space-2;
+        margin-right: $space-2;
     }
 }
 
@@ -244,8 +244,8 @@
     color: $color-text;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
-    margin-top: 6px;
-    padding: 8px 12px;
+    margin-top: $space-6;
+    padding: $space-8 $space-12;
 }
 
 .lpCommunityEventListLink {
@@ -268,13 +268,13 @@
 .lpCommunityEventTime {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin-top: 4px;
+    margin-top: $space-4;
 }
 
 /* ── Nav ── */
 
 .lpCommunityNav {
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 
     a {
         color: $color-text-muted;
@@ -289,7 +289,7 @@
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 
     h1 {
         font-size: $fontSize-md;
@@ -303,7 +303,7 @@
 .lpCommunityEmpty {
     color: $color-text-muted;
     font-size: $fontSize-base;
-    margin-top: 48px;
+    margin-top: $space-48;
     text-align: center;
 }
 
@@ -319,8 +319,8 @@
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
     height: $control-height-md;
-    margin: 20px auto 0;
-    padding: 0 24px;
+    margin: $space-20 auto 0;
+    padding: 0 $space-24;
     transition: border-color $transitionDurationFast ease, color $transitionDurationFast ease;
 
     &:hover:not(:disabled) {
@@ -339,7 +339,7 @@
 .lpCommunityCardUser {
     align-items: center;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
 }
 
 .lpCommunityCardUserAvatar {
@@ -383,14 +383,14 @@
         color: $color-text-muted;
         font-size: $fontSize-sm;
         margin-bottom: 0;
-        margin-top: 2px;
+        margin-top: $space-2;
     }
 }
 
 /* ── Search ── */
 
 .lpCommunitySearch {
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpCommunitySearchInput {
@@ -399,7 +399,7 @@
     border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
-    padding: 8px 12px;
+    padding: $space-8 $space-12;
     width: 100%;
 
     &:focus {
@@ -414,9 +414,9 @@
 
 .lpCommunityFilters {
     display: grid;
-    gap: 8px;
+    gap: $space-8;
     grid-template-columns: repeat(3, minmax(0, 1fr)) 96px 96px auto;
-    margin-bottom: 18px;
+    margin-bottom: $space-18;
 }
 
 .lpCommunityFilterInput {
@@ -426,7 +426,7 @@
     color: $color-text;
     font-size: $fontSize-sm;
     min-height: 36px;
-    padding: 0 10px;
+    padding: 0 $space-10;
     width: 100%;
 
     &:focus {
@@ -444,7 +444,7 @@
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
     min-height: 36px;
-    padding: 0 12px;
+    padding: 0 $space-12;
 
     &:hover {
         color: $color-text;
@@ -454,7 +454,7 @@
 .lpCommunityDiscoverLayout {
     align-items: start;
     display: grid;
-    gap: 22px;
+    gap: $space-24;
     grid-template-columns: minmax(0, 1fr) 260px;
 }
 
@@ -465,8 +465,8 @@
 .lpCommunityTags {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+    gap: $space-6;
+    margin-top: $space-10;
 }
 
 .lpCommunityTag {
@@ -476,12 +476,12 @@
     color: $color-text-muted;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-medium;
-    padding: 2px 7px;
+    padding: $space-2 $space-8;
 }
 
 .lpCommunityPopular {
     border-left: 1px solid $color-border;
-    padding-left: 18px;
+    padding-left: $space-18;
     position: sticky;
     top: 18px;
 }
@@ -490,14 +490,14 @@
     color: $color-text;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin-bottom: 10px;
+    margin-bottom: $space-10;
 }
 
 .lpCommunityPopularItem {
     border-bottom: 1px solid $color-border;
     cursor: pointer;
     display: block;
-    padding: 10px 0;
+    padding: $space-10 0;
     text-decoration: none;
 
     &:hover .lpCommunityPopularName {
@@ -509,7 +509,7 @@
     color: $color-text-muted;
     display: inline-block;
     font-size: $fontSize-xs;
-    margin-top: 3px;
+    margin-top: $space-4;
     text-decoration: none;
 
     &:hover {
@@ -522,7 +522,7 @@
     color: $color-text-muted;
     display: block;
     font-size: $fontSize-xs;
-    margin-top: 2px;
+    margin-top: $space-2;
 
     a {
         color: inherit;
@@ -548,13 +548,13 @@
     color: $color-text-muted;
     display: block;
     font-size: $fontSize-xs;
-    margin-top: 3px;
+    margin-top: $space-4;
 }
 
 /* ── Featured section ── */
 
 .lpCommunityFeatured {
-    margin-bottom: 24px;
+    margin-bottom: $space-24;
 }
 
 .lpCommunityFeaturedLabel {
@@ -562,7 +562,7 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin-bottom: 8px;
+    margin-bottom: $space-8;
     text-transform: uppercase;
 }
 
@@ -593,7 +593,7 @@
         border-left: none;
         border-top: 1px solid $color-border;
         padding-left: 0;
-        padding-top: 18px;
+        padding-top: $space-18;
         position: static;
     }
 }
@@ -612,7 +612,7 @@
 
 .lpModerationReport {
     border-bottom: 1px solid $color-border;
-    padding: 14px 0;
+    padding: $space-14 0;
 
     &:last-child { border-bottom: none; }
 }
@@ -620,8 +620,8 @@
 .lpModerationReportFilters {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: $space-8;
+    margin-bottom: $space-12;
 }
 
 .lpModerationReportCount {
@@ -629,7 +629,7 @@
     border-radius: $radius-sm;
     color: $color-danger;
     font-weight: $fontWeight-bold;
-    padding: 1px 8px;
+    padding: 1px $space-8;
 }
 
 .lpModerationReportMeta {
@@ -638,13 +638,13 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-xs;
-    gap: 8px;
-    margin-bottom: 6px;
+    gap: $space-8;
+    margin-bottom: $space-6;
 }
 
 .lpModerationReportTarget {
     font-size: $fontSize-sm;
-    margin-bottom: 8px;
+    margin-bottom: $space-8;
 
     a {
         color: $color-accent-text;
@@ -658,20 +658,20 @@
 .lpModerationReportActions {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: $space-6;
 }
 
 .lpModerationHeading {
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpModerationFilter {
     align-items: center;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 6px;
+    gap: $space-6;
     white-space: nowrap;
 }
 
@@ -686,9 +686,9 @@
     border-bottom: 1px solid $color-border;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 16px;
+    gap: $space-8 $space-16;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: $space-10 0;
 
     &:last-child { border-bottom: none; }
 }
@@ -698,7 +698,7 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-sm;
-    gap: 8px;
+    gap: $space-8;
 }
 
 .lpModerationListAuthor {
@@ -708,7 +708,7 @@
 
 .lpModerationStatsGrid {
     display: grid;
-    gap: 12px;
+    gap: $space-12;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
@@ -716,7 +716,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    padding: 12px 14px;
+    padding: $space-12 $space-14;
 }
 
 .lpModerationStatsTitle {
@@ -724,7 +724,7 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.04em;
-    margin: 0 0 8px;
+    margin: 0 0 $space-8;
     text-transform: uppercase;
 }
 
@@ -737,7 +737,7 @@
     display: flex;
     font-size: $fontSize-sm;
     justify-content: space-between;
-    padding: 3px 0;
+    padding: $space-4 0;
 
     dt {
         color: $color-text-muted;
@@ -755,22 +755,22 @@
 .lpModerationLists,
 .lpModerationAccounts {
     border-bottom: 1px solid $color-border;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
+    margin-bottom: $space-24;
+    padding-bottom: $space-20;
 }
 
 .lpModerationSearch {
     display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: $space-8;
+    margin-bottom: $space-12;
 }
 
 .lpModerationResults {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: $space-6;
     list-style: none;
-    margin: 0 0 12px;
+    margin: 0 0 $space-12;
     padding: 0;
 
     button {
@@ -780,7 +780,7 @@
         color: $color-text;
         cursor: pointer;
         font-size: $fontSize-sm;
-        padding: 4px 10px;
+        padding: $space-4 $space-10;
 
         &:hover { border-color: $color-accent; }
     }
@@ -789,7 +789,7 @@
 .lpModerationAccount h3 {
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin-bottom: 10px;
+    margin-bottom: $space-10;
 }
 
 .lpModerationRow {
@@ -797,8 +797,8 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-sm;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: $space-10;
+    margin-bottom: $space-16;
 }
 
 .lpModerationOffer {
@@ -809,9 +809,9 @@
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-sm;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding: 14px;
+    gap: $space-12;
+    margin-bottom: $space-16;
+    padding: $space-14;
 
     h4 {
         flex: 0 0 100%;
@@ -825,7 +825,7 @@
         display: flex;
         flex-direction: column;
         font-size: $fontSize-xs;
-        gap: 4px;
+        gap: $space-4;
     }
 
     select,
@@ -836,7 +836,7 @@
         color: $color-text;
         font-size: $fontSize-sm;
         height: 34px;
-        padding: 0 10px;
+        padding: 0 $space-10;
 
         &:focus {
             border-color: $color-accent;
@@ -850,7 +850,7 @@
         align-items: center;
         display: flex;
         flex: 0 0 100%;
-        gap: 12px;
+        gap: $space-12;
         margin: 0;
     }
 
@@ -871,7 +871,7 @@
     summary {
         color: $color-text-muted;
         cursor: pointer;
-        margin-bottom: 8px;
+        margin-bottom: $space-8;
     }
 }
 
@@ -883,7 +883,7 @@
     font-family: monospace;
     font-size: $fontSize-sm;
     height: 12em;
-    padding: 8px;
+    padding: $space-8;
     width: 100%;
 }
 

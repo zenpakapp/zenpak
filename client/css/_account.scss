@@ -7,44 +7,44 @@
 .accountSettingsTitle {
     font-size: 20px;
     font-weight: $fontWeight-bold;
-    margin: 0 0 24px;
+    margin: 0 0 $space-24;
 }
 
 .accountSection {
     border-bottom: 1px solid $color-border;
-    margin-bottom: 28px;
-    padding-bottom: 28px;
+    margin-bottom: $space-28;
+    padding-bottom: $space-28;
 }
 
 .accountSectionTitle {
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin: 0 0 8px;
+    margin: 0 0 $space-8;
 }
 
 .accountSectionText {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin: 0 0 14px;
+    margin: 0 0 $space-14;
 }
 
 .accountFieldGroup {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: $space-10;
+    margin-bottom: $space-16;
 }
 
 .accountFieldGroupDivider {
     border: none;
     border-top: 1px solid $color-border;
-    margin: 4px 0;
+    margin: $space-4 0;
 }
 
 .accountField {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $space-4;
 }
 
 .accountFieldLabel {
@@ -65,7 +65,7 @@
     font-family: $font-family-base;
     font-size: $fontSize-base;
     min-height: 40px;
-    padding: 0 12px;
+    padding: 0 $space-12;
     width: 100%;
 
     &:focus {
@@ -85,8 +85,8 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 20px;
+    gap: $space-12;
+    margin-top: $space-20;
 
     .lpButton {
         min-width: 120px;
@@ -95,7 +95,7 @@
 
 .accountActionsRight {
     display: flex;
-    gap: 12px;
+    gap: $space-12;
     margin-left: auto;
 }
 
@@ -130,28 +130,28 @@
 .accountBackupActions {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: $space-12;
 }
 
 .accountRestoreConfirm {
     background: rgba(var(--color-danger-rgb), 0.06);
     border: 1px solid rgba(var(--color-danger-rgb), 0.2);
     border-radius: $radius-md;
-    margin-top: 14px;
-    padding: 14px 16px;
+    margin-top: $space-14;
+    padding: $space-14 $space-16;
 }
 
 .accountRestoreConfirmText {
     color: $color-text;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin: 0 0 12px;
+    margin: 0 0 $space-12;
 }
 
 .accountRestoreConfirmActions {
     align-items: center;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
 }
 
 .lpButtonDanger {
@@ -170,8 +170,8 @@
     border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
-    margin-bottom: 14px;
-    padding: 14px 16px;
+    margin-bottom: $space-14;
+    padding: $space-14 $space-16;
 }
 
 .accountBillingError {
@@ -180,8 +180,8 @@
     border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
-    margin-bottom: 14px;
-    padding: 10px 14px;
+    margin-bottom: $space-14;
+    padding: $space-10 $space-14;
 }
 
 .accountBillingUpgrade,
@@ -192,13 +192,13 @@
 .accountBillingActions {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: $space-16;
 }
 
 .accountBillingOption {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: $space-8;
 
     .accountBillingKinBtn {
         background: transparent;
@@ -214,7 +214,7 @@
 
 .accountIntervalToggle {
     display: flex;
-    gap: 8px;
+    gap: $space-8;
 }
 
 @media (max-width: 640px) {

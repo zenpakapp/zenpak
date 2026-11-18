@@ -258,11 +258,11 @@ export default {
 @import "../css/_globals";
 
 .lpQtySubtotal {
-    padding-right: 25px;
+    padding-right: $space-24;
 }
 
 .lpPriceSubtotal {
-    padding-right: 4px;
+    padding-right: $space-4;
 }
 
 .lpAddItemInput {
@@ -274,7 +274,7 @@ export default {
     font-size: $fontSize-base;
     max-width: 260px;
     min-height: 42px;
-    padding: 8px 10px;
+    padding: $space-8 $space-10;
     width: 100%;
 
     &:focus {
@@ -297,8 +297,8 @@ export default {
     align-items: flex-start;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-left: 20px;
+    gap: $space-4;
+    margin-left: $space-20;
 
     .lpAddItem {
         margin-left: 0;
@@ -326,7 +326,7 @@ export default {
     left: 0;
     list-style: none;
     margin: 0;
-    padding: 4px 0;
+    padding: $space-4 0;
     position: absolute;
     top: calc(100% + 6px);
     width: 260px;
@@ -337,8 +337,8 @@ export default {
     align-items: center;
     cursor: pointer;
     display: flex;
-    gap: 8px;
-    padding: 6px 10px;
+    gap: $space-8;
+    padding: $space-6 $space-10;
     &:hover { background: rgba(var(--color-accent-rgb), 0.07); }
 }
 

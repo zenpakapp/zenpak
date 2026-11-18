@@ -4,19 +4,19 @@
 .lpVersionDiff {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $space-16;
     max-height: 70vh;
     max-width: 640px;
     overflow-y: auto;
 }
 
 .lpVersionDiff h3 {
-    margin: 0 0 4px;
+    margin: 0 0 $space-4;
 }
 
 .lpVersionDiff ul {
     margin: 0;
-    padding-left: 20px;
+    padding-left: $space-20;
 }
 
 .lpVersionDiffMuted {
@@ -27,8 +27,8 @@
     border: 1px solid currentColor;
     border-radius: $radius-sm;
     font-size: 0.75em;
-    margin-left: 6px;
-    padding: 0 4px;
+    margin-left: $space-6;
+    padding: 0 $space-4;
 }
 </style>
 

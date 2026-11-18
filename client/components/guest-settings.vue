@@ -13,7 +13,7 @@
     cursor: pointer;
     font-size: $fontSize-ui;
     letter-spacing: 0.02em;
-    padding: 4px 6px;
+    padding: $space-4 $space-6;
 
     &:hover { color: $color-text; }
 }
@@ -24,7 +24,7 @@
     border-radius: $radius-lg;
     box-shadow: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
     min-width: 180px;
-    padding: 12px 14px;
+    padding: $space-12 $space-14;
     position: absolute;
     right: 0;
     top: calc(100% + 6px);
@@ -34,9 +34,9 @@
 .guestSettingsRow {
     align-items: center;
     display: flex;
-    gap: 8px;
+    gap: $space-8;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: $space-8;
 
     &:last-child { margin-bottom: 0; }
 }
@@ -53,7 +53,7 @@
     color: $color-text;
     cursor: pointer;
     font-size: $fontSize-ui;
-    padding: 3px 6px;
+    padding: $space-4 $space-6;
 
     &:focus {
         border-color: $color-accent;
@@ -64,7 +64,7 @@
 .guestSettingsDivider {
     border: none;
     border-top: 1px solid $color-border;
-    margin: 8px 0;
+    margin: $space-8 0;
 }
 
 .guestSettingsListItem {
@@ -72,7 +72,7 @@
     cursor: pointer;
     font-size: $fontSize-ui;
     overflow: hidden;
-    padding: 3px 0;
+    padding: $space-4 0;
     text-overflow: ellipsis;
     white-space: nowrap;
 

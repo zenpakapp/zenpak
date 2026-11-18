@@ -77,13 +77,13 @@ export default {
 .lpInsightsTitle {
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpInsightsTotals {
     display: flex;
-    gap: 24px;
-    margin-bottom: 16px;
+    gap: $space-24;
+    margin-bottom: $space-16;
 }
 
 .lpInsightsStat {
@@ -111,7 +111,7 @@ export default {
         color: $color-text-muted;
         font-size: $fontSize-xs;
         font-weight: $fontWeight-bold;
-        padding: 4px 8px;
+        padding: $space-4 $space-8;
         text-align: right;
         text-transform: uppercase;
 
@@ -120,7 +120,7 @@ export default {
 
     td {
         border-bottom: 1px solid $color-border;
-        padding: 6px 8px;
+        padding: $space-6 $space-8;
         text-align: right;
 
         &:first-child { text-align: left; }

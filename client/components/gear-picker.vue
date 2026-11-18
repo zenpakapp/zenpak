@@ -149,7 +149,7 @@ export default {
     background: $color-accent-solid;
     border-radius: $radius-lg $radius-lg 0 0;
     color: $color-on-solid;
-    padding: 16px 20px;
+    padding: $space-16 $space-20;
 }
 
 .gearPickerTitle {
@@ -160,7 +160,7 @@ export default {
 
 .gearPickerSubtitle {
     font-size: $fontSize-sm;
-    margin: 2px 0 0;
+    margin: $space-2 0 0;
     opacity: 0.8;
 }
 
@@ -170,8 +170,8 @@ export default {
     border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
-    margin: 14px 16px 0;
-    padding: 8px 12px;
+    margin: $space-14 $space-16 0;
+    padding: $space-8 $space-12;
     width: calc(100% - 32px);
 
     &:focus {
@@ -187,9 +187,9 @@ export default {
 .gearPickerList {
     flex: 1;
     list-style: none;
-    margin: 8px 0 0;
+    margin: $space-8 0 0;
     overflow-y: auto;
-    padding: 0 0 8px;
+    padding: 0 0 $space-8;
 }
 
 .gearPickerItem {
@@ -197,8 +197,8 @@ export default {
     border-bottom: 1px solid $color-border;
     cursor: pointer;
     display: flex;
-    gap: 10px;
-    padding: 10px 16px;
+    gap: $space-10;
+    padding: $space-10 $space-16;
 
     &:last-child {
         border-bottom: none;
@@ -235,13 +235,13 @@ export default {
 .gearPickerEmpty {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    padding: 20px 16px;
+    padding: $space-20 $space-16;
     text-align: center;
 }
 
 .gearPickerFooter {
     border-top: 1px solid $color-border;
-    padding: 12px 16px;
+    padding: $space-12 $space-16;
 }
 
 .gearPickerCreate {

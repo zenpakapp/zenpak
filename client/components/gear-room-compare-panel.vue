@@ -28,8 +28,8 @@
     border-bottom: 1px solid $color-border;
     display: flex;
     flex-shrink: 0;
-    gap: 12px;
-    padding: 10px 16px;
+    gap: $space-12;
+    padding: $space-10 $space-16;
 }
 
 .lpGearRoomCompareTitle {
@@ -46,7 +46,7 @@
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
-    padding: 4px 10px;
+    padding: $space-4 $space-10;
 
     @include icon-hover-neutral;
 }
@@ -63,7 +63,7 @@
     th,
     td {
         border-bottom: 1px solid $color-border;
-        padding: 8px 12px;
+        padding: $space-8 $space-12;
         vertical-align: middle;
         white-space: nowrap;
     }
@@ -100,14 +100,14 @@
     background: $color-surface;
     border-bottom: 2px solid $color-border;
     display: table-cell;
-    padding: 8px 12px;
+    padding: $space-8 $space-12;
     text-align: left;
 }
 
 .lpGearRoomCompareItemName {
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    margin-right: 8px;
+    margin-right: $space-8;
 }
 
 .lpGearRoomCompareRemove {
@@ -116,7 +116,7 @@
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-xs;
-    padding: 2px 4px;
+    padding: $space-2 $space-4;
 
     &:hover {
         color: $color-accent-text;

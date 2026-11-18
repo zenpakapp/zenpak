@@ -4,11 +4,11 @@
 .lpMyCard {
     margin: 0 auto;
     max-width: 420px;
-    padding: 20px 16px 60px;
+    padding: $space-20 $space-16 60px; // space-exempt: a layout size, not a step of the scale
     text-align: center;
 
     .lpMyCardNav {
-        margin-bottom: 16px;
+        margin-bottom: $space-16;
         text-align: left;
 
         a {
@@ -28,13 +28,13 @@
         border: 1px solid $color-border;
         border-radius: $radius-md;
         color: $ink-950;
-        padding: 24px 16px;
+        padding: $space-24 $space-16;
     }
 
     .lpMyCardQr {
         display: block;
         height: auto;
-        margin: 0 auto 16px;
+        margin: 0 auto $space-16;
         max-width: 320px;
         width: 100%;
     }
@@ -50,14 +50,14 @@
     .lpMyCardHandle {
         color: $ink-500;
         font-size: $fontSize-md;
-        margin: 4px 0 0;
+        margin: $space-4 0 0;
         overflow-wrap: anywhere;
     }
 
     .lpMyCardAddress {
         color: $ink-950;
         font-size: $fontSize-md;
-        margin: 12px 0 0;
+        margin: $space-12 0 0;
         overflow-wrap: anywhere;
         user-select: all;
     }
@@ -65,8 +65,8 @@
     .lpMyCardActions {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
+        gap: $space-10;
+        margin-top: $space-20;
 
         .lpButton {
             min-height: 44px;
@@ -79,7 +79,7 @@
             color: $color-text-muted;
             font-size: 15px;
             line-height: 1.5;
-            margin: 0 0 16px;
+            margin: 0 0 $space-16;
         }
 
         .lpButton {

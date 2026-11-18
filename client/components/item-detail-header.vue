@@ -10,10 +10,10 @@
     border-radius: $radius-lg $radius-lg 0 0;
     color: $color-text;
     display: flex;
-    gap: 18px;
+    gap: $space-18;
     min-height: 132px;
-    padding: 22px 24px;
-    padding-right: 52px;
+    padding: $space-24 $space-24;
+    padding-right: $space-48;
     position: relative;
 
     .itemDetailThumb {
@@ -55,7 +55,7 @@
         font-size: 26px;
         font-weight: $fontWeight-bold;
         line-height: 1.08;
-        margin: 0 0 10px;
+        margin: 0 0 $space-10;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -64,7 +64,7 @@
     .itemDetailBrand {
         color: $color-text-muted;
         font-size: $fontSize-base;
-        margin-bottom: 8px;
+        margin-bottom: $space-8;
     }
 
     .itemDetailCategoryBadge {
@@ -75,7 +75,7 @@
         font-size: $fontSize-base;
         font-weight: $fontWeight-bold;
         line-height: 1;
-        padding: 10px 14px;
+        padding: $space-10 $space-14;
     }
 
     .itemDetailAddCategoryInline {
@@ -107,7 +107,7 @@
         cursor: pointer;
         font-size: 20px;
         line-height: 1;
-        padding: 4px 6px;
+        padding: $space-4 $space-6;
         transition: color $transitionDurationFast ease, transform $transitionDurationFast ease;
 
         &:hover {

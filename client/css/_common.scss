@@ -29,7 +29,7 @@ textarea::placeholder {
     hr {
         border: none;
         border-top: 1px solid $color-border;
-        margin: $spacingLarge 0;
+        margin: $space-32 0;
     }
 
     input,
@@ -46,7 +46,7 @@ textarea::placeholder {
         font-weight: $fontWeight-bold;
         letter-spacing: -0.01em;
         line-height: 1.3;
-        margin: 0 0 $spacingLarge;
+        margin: 0 0 $space-32;
     }
 
     h3 {
@@ -54,7 +54,7 @@ textarea::placeholder {
         font-weight: $fontWeight-bold;
         letter-spacing: -0.01em;
         line-height: 1.3;
-        margin: 0 0 $spacingMedium;
+        margin: 0 0 $space-16;
     }
 
     .hover {
@@ -68,7 +68,7 @@ textarea::placeholder {
         box-shadow: 0 0 5px rgba(var(--color-shadow-rgb), 0.25);
         color: $color-on-solid;
         display: none;
-        padding: 3px;
+        padding: $space-4;
         position: absolute;
         z-index: $aboveDialog;
     }
@@ -102,7 +102,7 @@ textarea::placeholder {
     background: $red1;
     color: $color-on-solid;
     font-size: 24px;
-    padding: 100px;
+    padding: 100px; // space-exempt: a layout size, not a step of the scale
     text-align: center;
 }
 
@@ -129,7 +129,7 @@ textarea::placeholder {
     text-decoration: none;
 
     i {
-        margin-right: 5px;
+        margin-right: $space-6;
     }
 
     &:hover {
@@ -174,7 +174,7 @@ textarea::placeholder {
     justify-content: center;
     line-height: 0;
     opacity: 0.4;
-    padding: 6px;
+    padding: $space-6;
     position: relative;
     vertical-align: middle;
     visibility: hidden;
@@ -184,7 +184,7 @@ textarea::placeholder {
         content: "";
         height: 28px;
         left: 50%;
-        margin: -14px 0 0 -14px;
+        margin: (-$space-14) 0 0 (-$space-14);
         position: absolute;
         top: 50%;
         transition: background-color $transitionDurationFast ease;
@@ -216,7 +216,7 @@ textarea::placeholder {
     cursor: -moz-grab;
     float: left;
     height: 24px;
-    margin-top: 2px;
+    margin-top: $space-2;
     visibility: hidden;
     width: 12px;
 }
@@ -241,8 +241,8 @@ textarea::placeholder {
         border: 1px solid $color-border;
         border-radius: $radius-md;
         display: block;
-        margin: 0 0 $spacingMedium;
-        padding: 10px $spacingSmall;
+        margin: 0 0 $space-16;
+        padding: $space-10 $space-10;
         width: 100%;
 
         &:focus {
@@ -260,7 +260,7 @@ textarea::placeholder {
     text-align: center;
 
     > * {
-        margin-bottom: $spacingMedium;
+        margin-bottom: $space-16;
 
         &:last-child {
             margin-bottom: 0;
@@ -280,11 +280,11 @@ textarea::placeholder {
     font-family: $font-family-base;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    gap: 6px;
+    gap: $space-6;
     justify-content: center;
     line-height: 1;
     min-height: $control-height-lg;
-    padding: 0 18px;
+    padding: 0 $space-18;
     position: relative;
     text-align: center;
     text-decoration: none;
@@ -295,7 +295,7 @@ textarea::placeholder {
     &.lpButtonSm {
         font-size: $fontSize-sm;
         min-height: $control-height-sm;
-        padding: 0 12px;
+        padding: 0 $space-12;
     }
 
     &:hover:not(:disabled):not(.lpButtonDisabled) {
@@ -384,7 +384,7 @@ textarea::placeholder {
     border-radius: $radius-md;
     color: $color-text;
     min-height: $control-height-md;
-    padding: 0 10px;
+    padding: 0 $space-10;
 
     &:focus {
         border-color: $color-accent;
@@ -401,7 +401,7 @@ textarea::placeholder {
     align-items: center;
     display: flex;
     flex-direction: row;
-    gap: 24px;
+    gap: $space-24;
     justify-content: center;
 }
 
@@ -439,7 +439,7 @@ textarea::placeholder {
 .lpCell {
     border-top: 1px dotted $color-border;
     display: table-cell;
-    padding: 1px 8px;
+    padding: 1px $space-8;
 
     &:first-child {
         padding-left: 0;
@@ -470,8 +470,8 @@ textarea::placeholder {
 .lpTotals {
     .lpBaseWeight {
         .lpCell {
-            padding-bottom: 6px;
-            padding-top: 6px;
+            padding-bottom: $space-6;
+            padding-top: $space-6;
         }
 
         .lpSubtotal,
@@ -507,7 +507,7 @@ textarea::placeholder {
     border: 1px solid rgba(var(--color-warning-rgb), 0.32);
     border-radius: $radius-md;
     color: $color-text;
-    padding: 10px 12px;
+    padding: $space-10 $space-12;
     text-wrap: pretty;
 }
 
@@ -524,7 +524,7 @@ textarea::placeholder {
     display: flex;
     font-size: $fontSize-ui;
     justify-content: space-between;
-    padding: 150px 0 20px;
+    padding: 150px 0 $space-20; // space-exempt: a layout size, not a step of the scale
 
     a {
         color: $color-text-muted;
@@ -543,7 +543,7 @@ textarea::placeholder {
     display: flex;
     justify-content: space-between;
     left: 0;
-    padding: $spacingSmall;
+    padding: $space-10;
     position: fixed;
     right: 0;
     z-index: $aboveAll;
@@ -584,13 +584,13 @@ textarea::placeholder {
 
     // Finger-sized hit areas around the small icons; the negative margins keep the layout.
     .lpItemsHeader .lpRemoveCategory {
-        margin: -6px;
-        padding: 10px;
+        margin: (-$space-6);
+        padding: $space-10;
     }
 
     .lpLibraryList .lpRemove {
-        margin: -10px -6px;
-        padding: 10px;
+        margin: (-$space-10) (-$space-6);
+        padding: $space-10;
     }
 
     .lpLibraryList .lpHandle,
@@ -599,18 +599,18 @@ textarea::placeholder {
         background-origin: content-box;
         background-repeat: no-repeat;
         box-sizing: content-box;
-        margin-bottom: -3px;
-        margin-left: -8px;
-        margin-right: -8px;
-        padding: 3px 8px;
+        margin-bottom: (-$space-4);
+        margin-left: (-$space-8);
+        margin-right: (-$space-8);
+        padding: $space-4 $space-8;
     }
 }
 
 .lpPublicStats {
     display: flex;
     font-size: $fontSize-base;
-    gap: 16px;
-    margin-top: 8px;
+    gap: $space-16;
+    margin-top: $space-8;
 
     strong {
         font-weight: $fontWeight-bold;
@@ -624,8 +624,8 @@ textarea::placeholder {
     color: $color-on-solid;
     cursor: pointer;
     font-size: $fontSize-ui;
-    margin-top: 12px;
-    padding: 6px 16px;
+    margin-top: $space-12;
+    padding: $space-6 $space-16;
     transition: opacity $transitionDurationFast;
 
     &:hover:not(:disabled) {

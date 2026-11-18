@@ -53,11 +53,11 @@ export default {
 
 .shortcutsTable {
     border-collapse: collapse;
-    margin-top: 8px;
+    margin-top: $space-8;
     width: 100%;
 
     td {
-        padding: 6px 8px;
+        padding: $space-6 $space-8;
         vertical-align: middle;
     }
 }
@@ -68,13 +68,13 @@ export default {
     border-radius: $radius-sm;
     font-family: monospace;
     font-size: $fontSize-sm;
-    padding: 2px 6px;
+    padding: $space-2 $space-6;
     white-space: nowrap;
 }
 
 .shortcutDesc {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    padding-left: 12px;
+    padding-left: $space-12;
 }
 </style>

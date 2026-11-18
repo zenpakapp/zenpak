@@ -13,20 +13,20 @@
 .lpVerifyIcon {
     font-size: 40px;
     line-height: 1;
-    margin-bottom: 12px;
+    margin-bottom: $space-12;
 }
 
 .lpVerifyMessage {
     color: $color-text-muted;
     font-size: $fontSize-base;
     line-height: 1.6;
-    margin: 0 0 24px;
+    margin: 0 0 $space-24;
 }
 
 .lpVerifyError {
     color: $color-danger;
     font-size: $fontSize-base;
-    margin-top: 12px;
+    margin-top: $space-12;
 }
 </style>
 

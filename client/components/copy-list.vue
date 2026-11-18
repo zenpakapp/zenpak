@@ -4,7 +4,7 @@
 .copyListBody {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $space-16;
 }
 
 </style>

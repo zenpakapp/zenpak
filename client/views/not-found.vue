@@ -7,7 +7,7 @@
     flex-direction: column;
     justify-content: center;
     min-height: 70vh;
-    padding: 40px 20px;
+    padding: $space-40 $space-20;
     text-align: center;
 }
 
@@ -17,28 +17,28 @@
     font-weight: $fontWeight-bold;
     letter-spacing: -4px;
     line-height: 1;
-    margin-bottom: 12px;
+    margin-bottom: $space-12;
 }
 
 .lpNotFoundTitle {
     color: $color-text;
     font-size: 24px;
     font-weight: $fontWeight-bold;
-    margin: 0 0 10px;
+    margin: 0 0 $space-10;
 }
 
 .lpNotFoundSub {
     color: $color-text-muted;
     font-size: 15px;
     line-height: 1.6;
-    margin: 0 0 36px;
+    margin: 0 0 $space-40;
     max-width: 320px;
 }
 
 .lpNotFoundActions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: $space-10;
     justify-content: center;
 }
 
@@ -47,7 +47,7 @@
     cursor: pointer;
     font-size: $fontSize-base;
     font-weight: $fontWeight-medium;
-    padding: 10px 22px;
+    padding: $space-10 $space-24;
     text-decoration: none;
     transition: opacity $transitionDurationFast;
 

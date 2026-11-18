@@ -106,7 +106,7 @@ export default {
 .lpForkApply {
     align-items: center;
     display: inline-flex;
-    gap: $spacingSmall;
+    gap: $space-10;
 }
 
 .lpForkApplyNote {

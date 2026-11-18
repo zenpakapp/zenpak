@@ -6,7 +6,7 @@
     // sidebar never narrows it. Open, it is centred in the space the 320px sidebar leaves.
     max-width: $width-app;
     min-height: 100%;
-    padding: 0 20px;
+    padding: 0 $space-20;
     position: relative;
     transition: all $transitionDurationSlow;
     z-index: $aboveSidebar;
@@ -18,7 +18,7 @@
     }
 
     @media (max-width: 768px) {
-        padding: 0 12px;
+        padding: 0 $space-12;
         width: 100%;
 
         .lpHasSidebar & {
@@ -29,7 +29,7 @@
 
     // A tablet gets a wider gutter than a phone, so text outside the cards does not touch the edge.
     @media (min-width: 481px) and (max-width: 768px) {
-        padding: 0 24px;
+        padding: 0 $space-24;
     }
 }
 
@@ -47,7 +47,7 @@
 
 #totals {
     margin: 0;
-    padding: 0 0 0 10px;
+    padding: 0 0 0 $space-10;
     text-align: left;
 }
 
@@ -69,7 +69,7 @@
     contain-intrinsic-size: auto 180px;
     content-visibility: auto;
     list-style: none;
-    margin: 0 0 14px;
+    margin: 0 0 $space-14;
     overflow: visible;
 
     &.dropAccept {
@@ -123,13 +123,13 @@ input.lpCategoryName { /* specificity */
 // end: 21px in from the weight cell (the unit), 30px in from the quantity cell (input + arrows).
 .lpItemsHeader:not(.lpHeaderPacking) {
     .lpWeightCell {
-        padding-right: 21px;
+        padding-right: 21px; // space-exempt: tied to the fixed width of the cell
         text-align: right;
     }
 
     .lpQtyCell {
         justify-content: flex-end;
-        padding-right: 30px;
+        padding-right: 30px; // space-exempt: tied to the fixed width of the cell
     }
 }
 
@@ -140,7 +140,7 @@ input.lpCategoryName { /* specificity */
 
     .lpSubtotalUnit {
         border-left: 0;
-        padding: 0 0 0 4px;
+        padding: 0 0 0 $space-4;
         white-space: nowrap;
         width: 21px;
     }
@@ -149,7 +149,7 @@ input.lpCategoryName { /* specificity */
         box-sizing: border-box;
         flex: 0 0 66px;
         justify-content: flex-end;
-        padding-right: 30px;
+        padding-right: 30px; // space-exempt: tied to the fixed width of the cell
 
         .lpQtySubtotal {
             padding: 0;
@@ -169,7 +169,7 @@ input.lpCategoryName { /* specificity */
     }
 
     .lpSubtotalUnit {
-        padding: 0 0 0 5px;
+        padding: 0 0 0 5px; // space-exempt: tied to the fixed width of the cell
         width: auto;
     }
 
@@ -182,14 +182,14 @@ input.lpCategoryName { /* specificity */
 .lpTotalUnit {
     border-left: 1px solid transparent;
     display: inline-block;
-    padding-left: 5px;
-    padding-right: 23px;
+    padding-left: 5px; // space-exempt: tied to the fixed width of the cell
+    padding-right: 23px; // space-exempt: tied to the fixed width of the cell
     width: 43px;
 }
 
 .lpDisplaySubtotal,
 .lpTotalValue {
-    padding-right: 4px;
+    padding-right: $space-4;
 }
 
 .lpItems {
@@ -208,7 +208,7 @@ input.lpCategoryName { /* specificity */
     flex-direction: row;
     justify-content: stretch;
     min-height: $row-height-min;
-    padding: 0 12px;
+    padding: 0 $space-12;
 
     &.gu-mirror {
         background: $color-bg;
@@ -237,12 +237,12 @@ input.lpCategoryName { /* specificity */
 
     .lpHandleCell {
         flex: 0 0 12px;
-        padding-right: 4px;
+        padding-right: $space-4;
     }
 
     .lpImageCell {
         flex: 0 0 90px;
-        padding-right: 12px;
+        padding-right: $space-12;
 
         .lpItemImage {
             cursor: pointer;
@@ -256,10 +256,10 @@ input.lpCategoryName { /* specificity */
         display: flex;
         flex: 3 1 350px;
         flex-wrap: wrap;
-        gap: 0 4px;
+        gap: 0 $space-4;
         min-width: 0;
         // The icons' hit areas reach 6px past their glyphs: keep the fields clear of them.
-        padding-right: 8px;
+        padding-right: $space-8;
     }
 
     .lpName {
@@ -281,9 +281,9 @@ input.lpCategoryName { /* specificity */
         flex: 0 0 100%;
         flex-wrap: wrap;
         font-size: $fontSize-sm;
-        gap: 4px;
+        gap: $space-4;
         line-height: 1.25;
-        padding-bottom: 2px;
+        padding-bottom: $space-2;
     }
 
     .lpItemBrand {
@@ -300,7 +300,7 @@ input.lpCategoryName { /* specificity */
         line-height: 1.4;
         max-width: 90px;
         overflow: hidden;
-        padding: 1px 5px;
+        padding: 1px $space-6;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -320,7 +320,7 @@ input.lpCategoryName { /* specificity */
 
     .lpPriceCell {
         flex: 0 0 66px;
-        margin-right: 4px;
+        margin-right: $space-4;
 
         .lpPrice {
             width: 66px;
@@ -331,7 +331,7 @@ input.lpCategoryName { /* specificity */
         align-items: center;
         display: flex;
         flex: 0 0 66px;
-        gap: 4px;
+        gap: $space-4;
 
         .lpQty {
             width: 39px;
@@ -375,7 +375,7 @@ input.lpCategoryName { /* specificity */
 .lpActionsCell {
     align-items: center;
     display: flex;
-    gap: 2px;
+    gap: $space-2;
 
     .lpWorn,
     .lpConsumable,
@@ -506,7 +506,7 @@ input.lpCategoryName { /* specificity */
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;
-    margin-left: 12px;
+    margin-left: $space-12;
     min-height: 32px;
     padding: 0;
     text-align: left;
@@ -521,7 +521,7 @@ input.lpCategoryName { /* specificity */
 #listDescriptionContainer {
     // The summary above already leaves 20px; a little less below, so the line reads as part of
     // the list and not as a section of its own.
-    margin: 0 0 16px;
+    margin: 0 0 $space-16;
 
     // Body size: the categories are the page's headings, not this line.
     h3 {
@@ -534,14 +534,14 @@ input.lpCategoryName { /* specificity */
     p {
         color: $color-text-muted;
         font-size: $fontSize-sm;
-        margin: 6px 0 8px;
+        margin: $space-6 0 $space-8;
     }
 
     .lpListDescriptionSummary {
         align-items: baseline;
         cursor: pointer;
         display: flex;
-        gap: 10px;
+        gap: $space-10;
         list-style: none;
 
         &::-webkit-details-marker {
@@ -590,7 +590,7 @@ input.lpCategoryName { /* specificity */
         border-radius: $radius-md;
         box-sizing: border-box;
         height: 100px;
-        padding: 10px $spacingSmall;
+        padding: $space-10 $space-10;
         resize: vertical;
         width: 100%;
 
@@ -609,9 +609,9 @@ input.lpCategoryName { /* specificity */
     flex-direction: column;
     justify-content: center;
     line-height: 1.7;
-    margin-bottom: $spacingLarge;
+    margin-bottom: $space-32;
     min-height: 150px;
-    padding: $spacingLarge;
+    padding: $space-32;
 
     h2 {
         align-items: center;
@@ -619,16 +619,16 @@ input.lpCategoryName { /* specificity */
         display: flex;
         font-size: $fontSize-xl;
         font-weight: $fontWeight-bold;
-        gap: 10px;
+        gap: $space-10;
         letter-spacing: -0.01em;
         line-height: 1.2;
-        margin: 0 0 $spacingMedium;
+        margin: 0 0 $space-16;
     }
 
     p {
         color: $color-text-muted;
         font-size: $fontSize-base;
-        margin: 0 0 $spacingSmall;
+        margin: 0 0 $space-10;
     }
 
     & > *:last-child {
@@ -648,10 +648,10 @@ input.lpCategoryName { /* specificity */
     border: 1px solid $color-border;
     border-radius: $radius-lg;
     display: flex;
-    gap: $spacingMedium;
+    gap: $space-16;
     justify-content: space-between;
-    margin-bottom: $spacingMedium;
-    padding: $spacingSmall $spacingMedium;
+    margin-bottom: $space-16;
+    padding: $space-10 $space-16;
     // Stays under the header while the list scrolls: it is the only progress feedback.
     position: sticky;
     top: 60px;
@@ -686,14 +686,14 @@ input.lpCategoryName { /* specificity */
 
 // Under the totals table; the slot only renders when the summary is given an action.
 .lpEditorSummary {
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 }
 
 // Phones: a smaller donut so the first item comes sooner.
 @media (max-width: 480px) {
     .lpEditorSummary {
-        gap: 12px;
-        margin-bottom: 16px;
+        gap: $space-12;
+        margin-bottom: $space-16;
 
         .lpChartContainer {
             max-width: 120px;
@@ -715,7 +715,7 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpTotalsActions {
-    margin-top: 12px;
+    margin-top: $space-12;
 
     &:empty {
         display: none;
@@ -741,7 +741,7 @@ input.lpCategoryName { /* specificity */
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    padding: 6px 14px;
+    padding: $space-6 $space-14;
 
     &:hover { background: $color-accent-hover; }
 }
@@ -771,7 +771,7 @@ input.lpCategoryName { /* specificity */
     border-radius: $radius-lg;
     box-shadow: var(--shadow-modal);
     max-width: 400px;
-    padding: $spacingLarge * 1.5;
+    padding: $space-32 * 1.5;
     text-align: center;
     width: 90%;
 }
@@ -780,18 +780,18 @@ input.lpCategoryName { /* specificity */
     font-size: 20px;
     font-weight: $fontWeight-bold;
     line-height: 1.4;
-    margin: 0 0 $spacingMedium;
+    margin: 0 0 $space-16;
 }
 
 .lpPackModalWeight {
     color: $color-text-muted;
     font-size: $fontSize-base;
-    margin: 0 0 $spacingLarge;
+    margin: 0 0 $space-32;
 }
 
 .lpPackModalActions {
     display: flex;
-    gap: $spacingSmall;
+    gap: $space-10;
     justify-content: center;
 }
 
@@ -800,7 +800,7 @@ input.lpCategoryName { /* specificity */
     border-radius: $radius-md;
     cursor: pointer;
     font-size: $fontSize-base;
-    padding: 10px 20px;
+    padding: $space-10 $space-20;
 }
 
 .lpPackModalBtnReset {
@@ -824,9 +824,9 @@ input.lpCategoryName { /* specificity */
     border-radius: $radius-md;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 10px;
-    margin-bottom: 12px;
-    padding: 8px 12px;
+    gap: $space-10;
+    margin-bottom: $space-12;
+    padding: $space-8 $space-12;
 
     span {
         color: $color-text-muted;
@@ -849,7 +849,7 @@ input.lpCategoryName { /* specificity */
     cursor: pointer;
     font-size: $fontSize-xs;
     line-height: 1;
-    padding: 0 2px;
+    padding: 0 $space-2;
 
     &:hover { color: $color-text; }
 }
@@ -889,7 +889,7 @@ input.lpCategoryName { /* specificity */
     }
 
     .lpCategory {
-        margin-bottom: 12px;
+        margin-bottom: $space-12;
     }
 }
 
@@ -897,7 +897,7 @@ input.lpCategoryName { /* specificity */
     .lpItem,
     .lpItemsHeader,
     .lpItemsFooter {
-        padding: 0 8px;
+        padding: 0 $space-8;
 
         .lpWeightCell {
             flex: 0 0 80px;
@@ -929,17 +929,17 @@ input.lpCategoryName { /* specificity */
     // then the two buttons side by side. The progress track is a thin line on the bottom edge.
     .lpPackingBar {
         display: grid;
-        gap: 6px 8px;
+        gap: $space-6 $space-8;
         grid-template-areas:
             "progress base"
             "hide exit";
         grid-template-columns: repeat(2, minmax(0, 1fr));
         overflow: hidden;
-        padding: 6px 10px 9px;
+        padding: $space-6 $space-10 $space-10;
 
         .lpPackBtn {
             font-size: $fontSize-xs;
-            padding: 5px 8px;
+            padding: $space-6 $space-8;
         }
     }
 
@@ -987,8 +987,8 @@ input.lpCategoryName { /* specificity */
         // Wider side padding, not a wider box: the sprite is drawn from the left of the content
         // box, so widening the content would repeat the icon and push it off centre.
         button.lpActionBtn {
-            padding-left: 13px;
-            padding-right: 13px;
+            padding-left: $space-14;
+            padding-right: $space-14;
         }
     }
 
@@ -996,7 +996,7 @@ input.lpCategoryName { /* specificity */
     // The cross hit area is 24px (a 12px SVG and 6px of padding) in a 20px column, centred: 12px
     // keeps the gap to the arrows at 8px or more.
     .lpItem .lpRemoveCell {
-        padding-left: 12px;
+        padding-left: $space-12;
     }
 
     // Rows stack quantity over weight here, so side-by-side column labels would mislead.
@@ -1009,7 +1009,7 @@ input.lpCategoryName { /* specificity */
     }
 
     .lpItem {
-        column-gap: 4px;
+        column-gap: $space-4;
         display: grid;
         // The name takes the whole line, the actions get a full-width line of their own (the 44px
         // targets do not fit beside the numbers), then weight, quantity and the delete cross share
@@ -1019,8 +1019,8 @@ input.lpCategoryName { /* specificity */
             "handle image actions actions actions actions"
             "handle image . weight qty remove";
         grid-template-columns: 12px auto minmax(0, 1fr) auto auto 20px;
-        padding: 6px 8px;
-        row-gap: 4px;
+        padding: $space-6 $space-8;
+        row-gap: $space-4;
 
         .lpHandleCell {
             grid-area: handle;
@@ -1062,7 +1062,7 @@ input.lpCategoryName { /* specificity */
     // Phone, edit mode: the quantity total sits under the quantity numbers (right column).
     .lpItemsFooter:not(.lpFooterPacking) .lpQtyCell {
         flex: 0 0 64px;
-        padding-right: 21px;
+        padding-right: $space-20;
     }
 
     // Packing rows end at the row edge: the footer totals line up with them.
@@ -1081,7 +1081,7 @@ input.lpCategoryName { /* specificity */
         }
 
         .lpSubtotalUnit {
-            padding-right: 12px;
+            padding-right: $space-12;
         }
     }
 
@@ -1092,7 +1092,7 @@ input.lpCategoryName { /* specificity */
             "handle image name weight"
             "handle image name qty";
         grid-template-columns: 28px auto minmax(0, 1fr) auto;
-        padding: 8px;
+        padding: $space-8;
 
         .lpPriceCell,
         .lpRemoveCell {
