@@ -6,7 +6,7 @@
                 {{ chartReadout }}
             </p>
         </div>
-        <div class="lpTotalsContainer">
+        <div ref="totals" class="lpTotalsContainer">
             <button type="button" class="lpCategoriesToggle" :aria-expanded="categoriesOpen ? 'true' : 'false'" @click="categoriesOpen = !categoriesOpen">
                 {{ $t('list.categoriesToggle', { count: categories.length }) }}
             </button>
@@ -151,8 +151,15 @@ export default {
         displayUnit() {
             return this.library.totalUnit;
         },
+        // Consumable, worn and base weight rows show up only once an item is marked, so the table grows.
+        breakdownRows() {
+            const { totalWornWeight, totalConsumableWeight } = this.list;
+            return (totalConsumableWeight ? 1 : 0) + (totalWornWeight ? 1 : 0) + (totalWornWeight || totalConsumableWeight ? 1 : 0);
+        },
     },
     watch: {
+        // flush 'pre' runs before the rows are added or removed, so the old height can still be read.
+        breakdownRows: { handler: 'animateTotalsHeight', flush: 'pre' },
         '$store.state.library.defaultListId': 'scheduleChartUpdate',
         'list.totalWeight': 'scheduleChartUpdate',
         'list.categoryIds': 'scheduleChartUpdate',
@@ -181,6 +188,26 @@ export default {
     methods: {
         displayWeight,
         displayPrice,
+        // Rows of a table cannot animate their own height, so the container takes the change instead:
+        // it holds the old height, then eases to the new one instead of pushing everything below.
+        async animateTotalsHeight() {
+            const el = this.$refs.totals;
+            if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const from = el.offsetHeight;
+            await this.$nextTick();
+            const to = el.offsetHeight;
+            if (!from || from === to) return;
+            el.style.overflow = 'hidden';
+            el.style.height = `${from}px`;
+            el.getBoundingClientRect();
+            el.style.transition = 'height 0.2s ease';
+            el.style.height = `${to}px`;
+            const done = () => {
+                el.removeEventListener('transitionend', done);
+                el.style.cssText = '';
+            };
+            el.addEventListener('transitionend', done);
+        },
         scheduleChartUpdate() {
             if (this.chartScheduled) return;
             this.chartScheduled = true;
