@@ -151,6 +151,13 @@ $transitionDurationFast: 0.1s;
 $transitionDuration: 0.2s;
 $transitionDurationSlow: 0.4s;
 
+// Dialog and overlay fade in and out.
+$transitionDurationDialog: 0.25s;
+
+// Looping loaders.
+$loopDurationSpinner: 0.6s;
+$loopDurationSweep: 1.4s;
+
 @mixin fullBleedLeft() {
     &::before {
         background: inherit;
