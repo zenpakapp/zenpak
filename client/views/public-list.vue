@@ -242,6 +242,7 @@ import { UGC_REL, SPONSORED_REL } from '../utils/linkify';
 
 const weightUtils = require('../utils/weight.js');
 const colorUtils = require('../utils/color.js');
+const { donutDatasetStyle, donutOptions } = require('../services/donut-settings');
 
 let chartModulePromise = null;
 
@@ -463,10 +464,6 @@ export default {
             const baseWeight = cat.subtotalWeight - (cat.subtotalWornWeight || 0) - (cat.subtotalConsumableWeight || 0);
             return `${Math.round((baseWeight / baseTotal) * 100)}%`;
         },
-        getChartBg() {
-            const style = getComputedStyle(document.documentElement);
-            return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
-        },
         async renderChart() {
             const canvas = this.$refs.chartCanvas;
             const categories = this.chartCategories;
@@ -498,17 +495,12 @@ export default {
                     datasets: [{
                         data: weights,
                         backgroundColor: colors,
-                        borderColor: this.getChartBg(),
-                        borderWidth: 3,
-                        hoverBorderColor: 'rgb(50,50,50)',
-                        hoverBorderWidth: 2,
-                        hoverOffset: 0,
+                        ...donutDatasetStyle(),
                     }],
                 },
                 options: {
                     responsive: false,
-                    cutout: '60%',
-                    animation: { duration: 400 },
+                    ...donutOptions(),
                     plugins: {
                         legend: { display: false },
                         tooltip: {
