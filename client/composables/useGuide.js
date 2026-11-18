@@ -1,3 +1,4 @@
+import { FEEDBACK_MS } from '../services/timings';
 import { ref } from 'vue';
 import { fetchJson } from '../utils/utils';
 
@@ -52,7 +53,7 @@ export function useGuide() {
                 body: JSON.stringify(profile.value),
             });
             profileSaved.value = true;
-            setTimeout(() => { profileSaved.value = false; }, 2000);
+            setTimeout(() => { profileSaved.value = false; }, FEEDBACK_MS);
         } catch (err) {
             error.value = 'Failed to save profile.';
         } finally {
@@ -71,7 +72,7 @@ export function useGuide() {
                 body: JSON.stringify({ affiliateRules: affiliateRules.value, disclosure: disclosure.value }),
             });
             rulesSaved.value = true;
-            setTimeout(() => { rulesSaved.value = false; }, 2000);
+            setTimeout(() => { rulesSaved.value = false; }, FEEDBACK_MS);
         } catch (err) {
             error.value = 'Failed to save rules.';
         } finally {
@@ -101,7 +102,7 @@ export function useGuide() {
         if (!updates.length) {
             savingItems.value = false;
             itemsSaved.value = true;
-            setTimeout(() => { itemsSaved.value = false; }, 2000);
+            setTimeout(() => { itemsSaved.value = false; }, FEEDBACK_MS);
             return;
         }
         try {
@@ -112,7 +113,7 @@ export function useGuide() {
             });
             markSaved(itemRows.value);
             itemsSaved.value = true;
-            setTimeout(() => { itemsSaved.value = false; }, 2000);
+            setTimeout(() => { itemsSaved.value = false; }, FEEDBACK_MS);
         } catch (err) {
             error.value = 'Failed to save items.';
         } finally {

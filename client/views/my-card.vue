@@ -131,6 +131,7 @@
 </template>
 
 <script>
+import { FEEDBACK_MS } from '../services/timings';
 import { openDialog } from '../services/dialogs';
 import { isPublicVisibility } from '../services/public-visibility';
 
@@ -216,7 +217,7 @@ export default {
             try {
                 await navigator.clipboard.writeText(this.url);
                 this.copied = true;
-                setTimeout(() => { this.copied = false; }, 2000);
+                setTimeout(() => { this.copied = false; }, FEEDBACK_MS);
             } catch (err) {
                 // No clipboard access (insecure address): the address is shown and selectable.
             }

@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { HOVER_HIDE_MS } from '../services/timings';
 import Popover from './popover.vue';
 
 export default {
@@ -107,7 +108,7 @@ export default {
             this.$emit('shown');
         },
         startHideTimeout() {
-            this.hideTimeout = setTimeout(this.hide, 50);
+            this.hideTimeout = setTimeout(this.hide, HOVER_HIDE_MS);
         },
         hide() {
             this.shown = false;

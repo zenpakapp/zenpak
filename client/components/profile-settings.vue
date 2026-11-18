@@ -259,6 +259,7 @@
 </template>
 
 <script>
+import { FEEDBACK_MS } from '../services/timings';
 import { fetchJson } from '../utils/utils';
 import { hasFeature, FEATURES } from '../services/entitlements';
 import { avatarColor, avatarInitial } from '../utils/avatar';
@@ -440,7 +441,7 @@ export default {
                 });
                 this.$store.commit('updatePublicProfile', this.draftProfile);
                 this.profileSaved = true;
-                setTimeout(() => { this.profileSaved = false; }, 2000);
+                setTimeout(() => { this.profileSaved = false; }, FEEDBACK_MS);
             } catch (error) {
                 this.profileError = error && error.message ? error.message : this.$t('misc.profileSaveFailed');
             } finally {

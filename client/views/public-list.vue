@@ -227,6 +227,7 @@
 </template>
 
 <script>
+import { FEEDBACK_MS } from '../services/timings';
 import { useRouter } from 'vue-router';
 import HreflangLinks from '../components/hreflang-links.vue';
 import { fetchJson } from '../utils/utils';
@@ -544,7 +545,7 @@ export default {
                 trackEvent('list-copied');
                 this.router.push('/');
                 this.copySuccess = true;
-                setTimeout(() => { this.copySuccess = false; }, 2000);
+                setTimeout(() => { this.copySuccess = false; }, FEEDBACK_MS);
             } catch (err) {
                 if (err && err.status === 403 && err.message === 'Cannot copy your own list') {
                     this.copyError = 'public.copyOwnList';

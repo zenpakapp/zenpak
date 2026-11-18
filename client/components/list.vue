@@ -106,6 +106,7 @@
 </template>
 
 <script>
+import { IDLE_TIMEOUT_MS } from '../services/timings';
 import category from './category.vue';
 import Icon from './icon.vue';
 import listSummary from './list-summary.vue';
@@ -340,7 +341,7 @@ export default {
                     this.handleItemReorder();
                 };
                 if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-                    this.itemReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                    this.itemReorderIdle = window.requestIdleCallback(run, { timeout: IDLE_TIMEOUT_MS });
                 } else {
                     this.itemReorderIdle = setTimeout(run, 0);
                 }
@@ -355,7 +356,7 @@ export default {
                     this.handleCategoryReorder();
                 };
                 if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-                    this.categoryReorderIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                    this.categoryReorderIdle = window.requestIdleCallback(run, { timeout: IDLE_TIMEOUT_MS });
                 } else {
                     this.categoryReorderIdle = setTimeout(run, 0);
                 }

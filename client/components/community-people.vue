@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import { DEBOUNCE_MS } from '../services/timings';
 import { avatarColor, avatarInitial } from '../utils/avatar';
 import { fetchJson } from '../utils/utils';
 import { tierLabel } from '../services/tier-labels';
@@ -76,7 +77,7 @@ export default {
         tierLabel,
         onInput() {
             clearTimeout(this.timeout);
-            this.timeout = setTimeout(() => this.search(), 300);
+            this.timeout = setTimeout(() => this.search(), DEBOUNCE_MS);
         },
         avatarBgColor(user) {
             return avatarColor(user && user.username);

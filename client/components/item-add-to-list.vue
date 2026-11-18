@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import { KEYUP_SWALLOW_MS } from '../services/timings';
 export default {
     name: 'ItemAddToList',
     props: {
@@ -234,7 +235,7 @@ export default {
                     window.removeEventListener('keyup', swallowKeyup, true);
                 };
                 window.addEventListener('keyup', swallowKeyup, true);
-                setTimeout(() => window.removeEventListener('keyup', swallowKeyup, true), 1000);
+                setTimeout(() => window.removeEventListener('keyup', swallowKeyup, true), KEYUP_SWALLOW_MS);
                 this.closeMenu();
             } else if (evt.key === 'Tab') {
                 // Tab leaves the menu: back to the button, and the default move goes on from there.

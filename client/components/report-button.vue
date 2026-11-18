@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import { FEEDBACK_MS } from '../services/timings';
 import { fetchJson } from '../utils/utils.js';
 
 export default {
@@ -167,7 +168,7 @@ export default {
                     }),
                 });
                 this.submitted = true;
-                setTimeout(() => { this.open = false; this.submitted = false; }, 2000);
+                setTimeout(() => { this.open = false; this.submitted = false; }, FEEDBACK_MS);
             } catch {
                 this.error = this.$t('misc.reportError');
             } finally {

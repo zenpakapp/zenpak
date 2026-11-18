@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { BLUR_CLOSE_MS } from '../services/timings';
 export default {
     name: 'ItemBrandInput',
     props: {
@@ -67,7 +68,7 @@ export default {
     },
     methods: {
         closeDropdown() {
-            setTimeout(() => { this.dropdownOpen = false; this.activeIndex = -1; }, 120);
+            setTimeout(() => { this.dropdownOpen = false; this.activeIndex = -1; }, BLUR_CLOSE_MS);
         },
         moveIndex(dir) {
             if (!this.dropdownOpen) return;

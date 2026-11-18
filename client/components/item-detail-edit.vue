@@ -228,6 +228,7 @@
 </template>
 
 <script>
+import { BLUR_CLOSE_MS } from '../services/timings';
 import ItemDetailHeader from './item-detail-header.vue';
 import ItemBrandInput from './item-brand-input.vue';
 import { openDialog } from '../services/dialogs';
@@ -501,7 +502,7 @@ export default {
         },
         closeNameSuggestions() {
             clearTimeout(this.nameCloseTimer);
-            this.nameCloseTimer = setTimeout(() => { this.nameSuggestions = []; this.nameActiveIndex = -1; }, 120);
+            this.nameCloseTimer = setTimeout(() => { this.nameSuggestions = []; this.nameActiveIndex = -1; }, BLUR_CLOSE_MS);
         },
         moveNameSuggestion(dir) {
             if (!this.nameSuggestions.length) return;

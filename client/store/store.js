@@ -1,3 +1,4 @@
+import { STORE_POLL_MS } from '../services/timings';
 import { createStore } from 'vuex';
 import { notifyGlobalAlert, notifyUnauthorized } from '../services/app-events';
 import { getLocalLibrary, hasLocalLibrary, setLocalLibrary } from '../services/browser-storage';
@@ -102,7 +103,7 @@ function waitUntilNotSaving(context) {
                 resolve();
                 return;
             }
-            setTimeout(check, 50);
+            setTimeout(check, STORE_POLL_MS);
         };
         check();
     });
