@@ -24,7 +24,7 @@ $welcome-chrome-bottom: #18181b;
     padding: 0 $space-16;
 
     // A tablet gets a wider gutter than a phone; above this width the margins around the container do it.
-    @media (min-width: 481px) and (max-width: 1240px) {
+    @media (min-width: #{$bp-phone + 1}) and (max-width: $bp-wide) {
         padding: 0 $space-32;
     }
 }
@@ -648,7 +648,7 @@ details[open] .lpWelcomeFaqQ::after {
     }
 }
 
-@media (max-width: 980px) {
+@media (max-width: $bp-desktop-s) {
     .lpWelcomeHeroInner,
     .lpWelcomeGrid {
         grid-template-columns: 1fr;
@@ -669,14 +669,14 @@ details[open] .lpWelcomeFaqQ::after {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpWelcomeFeaturesGrid {
         gap: $space-24;
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .lpWelcomeHero {
         padding-top: $space-20;
     }

@@ -207,7 +207,7 @@
     padding: $space-4 $space-10;
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .importReviewCol {
         flex-basis: 100%;
     }

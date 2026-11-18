@@ -199,7 +199,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpGearRoomBatchBar {
         left: 16px;
         right: 16px;

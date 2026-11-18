@@ -293,7 +293,7 @@
 }
 
 // Touch screens and narrow windows have no hover: the actions are always shown.
-@media (hover: none), (pointer: coarse), (max-width: 768px) {
+@media (hover: none), (pointer: coarse), (max-width: $bp-tablet) {
     // Phone-size targets: at least 32px each way, not the 28px of the pointer layout. A sprite box
     // is 14px tall and an SVG icon 16px, so the icon buttons take 1px less above and below.
     .lpItem .lpActionsCell .lpActionBtn {

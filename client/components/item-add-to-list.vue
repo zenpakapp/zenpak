@@ -451,7 +451,7 @@ export default {
     white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .itemDetailAddCreateRow {
         grid-template-columns: minmax(0, 1fr);
     }

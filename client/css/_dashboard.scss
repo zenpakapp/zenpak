@@ -171,7 +171,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpEditorLoading {
         grid-template-columns: 1fr;
     }
@@ -345,7 +345,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     #main {
         overflow-x: clip;
     }
@@ -742,7 +742,7 @@
     display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .headerItem .headerCommunityIcon,
     .headerItem .headerGuideIcon {
         display: block;
@@ -776,7 +776,7 @@
     display: none;
 }
 
-@media (max-width: 1240px) {
+@media (max-width: $bp-wide) {
     #header {
         gap: $space-2;
         padding: 0 $space-6;
@@ -801,7 +801,7 @@
     }
 }
 
-@media (max-width: 1080px) {
+@media (max-width: $bp-desktop-s) {
     .headerItem .lpTarget {
         font-size: 15px;
         padding: $space-10 $space-8;

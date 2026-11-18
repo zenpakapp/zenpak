@@ -217,7 +217,7 @@
     gap: $space-8;
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .accountActions {
         align-items: stretch;
         flex-direction: column;

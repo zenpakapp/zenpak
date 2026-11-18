@@ -145,7 +145,7 @@
     }
 
     // Narrow screens: weight and unit get a row of their own, price and quantity share the next.
-    @media (max-width: 520px) {
+    @media (max-width: $bp-phone) {
         .itemDetailFieldRow {
             grid-template-columns: 1fr 1fr;
 

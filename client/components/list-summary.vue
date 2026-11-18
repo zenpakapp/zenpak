@@ -272,7 +272,7 @@ export default {
     display: none;
 }
 
-@media (max-width: 480px) {
+@media (max-width: $bp-phone) {
     .lpChartReadout {
         display: block;
         font-size: $fontSize-sm;

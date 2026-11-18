@@ -97,7 +97,7 @@
 
 // On a phone the alert sits at the bottom, where the thumb is and the header stays free. It
 // spans the screen so the message is readable, and the controls are big enough to tap.
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpGlobalAlerts {
         border: 1px solid $ink-line;
         border-radius: $radius-md;

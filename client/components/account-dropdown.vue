@@ -47,14 +47,14 @@
     flex: 0 0 auto;
 }
 
-@media (max-width: 1240px) {
+@media (max-width: $bp-wide) {
     .accountDropdownLead {
         display: none;
     }
 }
 
 // On a phone the name is hidden and the avatar is the button: no room for a caret as well.
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .accountDropdownCaret {
         display: none;
     }

@@ -24,7 +24,7 @@
     line-height: 1;
     white-space: nowrap;
 
-    @media (max-width: 600px) {
+    @media (max-width: $bp-tablet-s) {
         display: none;
     }
 }

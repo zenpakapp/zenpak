@@ -1,5 +1,6 @@
 const colorUtils = require('../utils/color.js');
 const weightUtils = require('../utils/weight.js');
+const breakpoints = require('../utils/breakpoints.js');
 
 let chartModulePromise = null;
 
@@ -71,7 +72,7 @@ export default async function renderListChart({
                 legend: { display: false },
                 tooltip: {
                     // Phones show the touched slice in a text line under the donut instead.
-                    filter: () => !(typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches),
+                    filter: () => !(typeof window !== 'undefined' && window.matchMedia(`(max-width: ${breakpoints.phone}px)`).matches),
                     caretSize: 0,
                     displayColors: false,
                     callbacks: {
