@@ -341,13 +341,13 @@ for (const width of [320, 375, 500, 640, 768]) {
     }
 
     if (width <= 500) {
-      // The actions have a full-width row under the name, quantity and weight.
+      // The name has its own line, the actions a full-width line under it, then weight and
+      // quantity share the last line (weight first), as in the grid of the phone layout.
       expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.nameBottom);
-      expect(layout.actionsTop).toBeGreaterThanOrEqual(layout.weightBottom - 1);
       expect(layout.actionsRight).toBeLessThanOrEqual(layout.itemRight);
-      // Quantity sits above the weight, both beside the name.
-      expect(layout.qtyTop).toBeLessThan(layout.weightTop);
-      expect(layout.qtyLeft).toBeGreaterThanOrEqual(layout.nameRight);
+      expect(layout.weightTop).toBeGreaterThanOrEqual(layout.actionsTop);
+      expect(Math.abs(layout.qtyCenter - layout.weightCenter)).toBeLessThanOrEqual(2);
+      expect(layout.weightRight).toBeLessThanOrEqual(layout.qtyLeft);
     }
 
     await page.locator("#hamburger").click();
