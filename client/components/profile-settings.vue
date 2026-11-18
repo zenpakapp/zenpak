@@ -154,7 +154,6 @@
     margin-bottom: $space-28;
 
     input[type="checkbox"] {
-        accent-color: $color-accent;
         cursor: pointer;
         flex-shrink: 0;
         height: 15px;

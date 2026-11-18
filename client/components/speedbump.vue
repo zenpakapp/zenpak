@@ -19,7 +19,6 @@
     text-transform: none;
 
     input[type="checkbox"] {
-        accent-color: $color-accent;
         cursor: pointer;
         flex-shrink: 0;
         height: 15px;

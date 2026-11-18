@@ -32,7 +32,6 @@
     }
 
     input {
-        accent-color: $color-accent;
         flex: 0 0 auto;
     }
 }
