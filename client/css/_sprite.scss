@@ -1,6 +1,7 @@
+// A fixed 14px box. The rating star (text) and the "more options" dots (CSS) of an item row are
+// drawn in it. The icon image this file used to hold is gone: every icon is an SVG now (icon.vue,
+// and the inline SVG of the server-rendered share pages).
 .lpSprite {
-    background-image: url(/images/sprite2x.png?v=3);
-    background-size: 400px;
     display: inline-block;
     height: 14px;
     overflow: hidden;
@@ -10,79 +11,5 @@
 
     &.hidden {
         visibility: hidden;
-    }
-}
-
-.lpSpriteAdd {
-    background-position: 0 0;
-}
-
-.lpSpriteUpload {
-    background-position: -250px 0;
-}
-
-.lpSpriteDownload {
-    background-position: -250px -25px;
-}
-
-.lpSpriteCopy {
-    background-position: 0 -50px;
-}
-.lpLinkBig {
-    background-position: -75px 0;
-    height: 20px;
-    width: 18px;
-}
-.lpExpand {
-    background-position: -125px 0;
-}
-
-.lpHamburger {
-    background-position: -150px 0;
-    height: 20px;
-    width: 20px;
-}
-.lpStar {
-    background-position: -225px 0;
-    height: 14px;
-    width: 14px;
-    &.lpStar1 { background-position: -225px -25px; }
-    &.lpStar2 { background-position: -225px -50px; }
-    &.lpStar3 { background-position: -225px -75px; }
-}
-.lpSettings {
-    background-position: -300px 0;
-}
-
-[data-theme="dark"] {
-    .lpSprite {
-        filter: invert(1) hue-rotate(180deg) brightness(2);
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]):not([data-theme="dark"]) {
-        .lpSprite {
-            filter: invert(1) hue-rotate(180deg) brightness(2);
-        }
-    }
-}
-
-// The sprite icons that carry colour are ZenPak green in the image. The dark theme inverts every
-// sprite with a hue rotation that keeps blue blue; green would come out cyan, so these get the
-// rotation that keeps it green.
-[data-theme="dark"] {
-    .lpSpriteAdd,
-    .lpSpriteCopy {
-        filter: invert(1) hue-rotate(175deg) brightness(1.1);
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]):not([data-theme="dark"]) {
-        .lpSpriteAdd,
-        .lpSpriteCopy {
-            filter: invert(1) hue-rotate(175deg) brightness(1.1);
-        }
     }
 }

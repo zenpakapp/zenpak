@@ -83,7 +83,7 @@
             @keydown="onKeydown"
         >
             <span>{{ selectedLabel }}</span>
-            <i class="lpSprite lpExpand" />
+            <i class="lpGlyph lpExpand"><icon name="chevron-down" :size="12" /></i>
         </div>
         <div v-if="isOpen" class="lpSelectDropdown">
             <div
@@ -100,10 +100,12 @@
 </template>
 
 <script>
+import Icon from './icon.vue';
 import { bindWindowListeners, unbindWindowListeners } from '../services/window-events';
 
 export default {
     name: 'LpSelect',
+    components: { Icon },
     props: {
         value: { type: String, required: true },
         options: { type: Array, required: true },

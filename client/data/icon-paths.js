@@ -18,6 +18,25 @@ module.exports = {
         ],
         fillable: false,
     },
+    plus: {
+        paths: ['M5 12h14', 'M12 5v14'],
+        fillable: false,
+    },
+    upload: {
+        paths: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm17 8-5-5-5 5', 'M12 3v12'],
+        fillable: false,
+    },
+    download: {
+        paths: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'm7 10 5 5 5-5', 'M12 15V3'],
+        fillable: false,
+    },
+    copy: {
+        paths: [
+            'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z',
+            'M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2',
+        ],
+        fillable: false,
+    },
     x: {
         paths: ['M18 6 6 18', 'm6 6 12 12'],
         fillable: false,

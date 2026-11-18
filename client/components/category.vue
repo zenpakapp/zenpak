@@ -40,7 +40,7 @@
                         @blur="commitNewItemOnBlur"
                     >
                     <span v-else class="lpAddItemActions">
-                        <a class="lpAdd lpAddItem" role="button" tabindex="0" @click="showAddInput" @keydown.enter="showAddInput" @keydown.space.prevent="showAddInput"><i class="lpSprite lpSpriteAdd" />{{ $t('misc.addItem') }}</a>
+                        <a class="lpAdd lpAddItem" role="button" tabindex="0" @click="showAddInput" @keydown.enter="showAddInput" @keydown.space.prevent="showAddInput"><i class="lpGlyph"><icon name="plus" :size="14" /></i>{{ $t('misc.addItem') }}</a>
                         <a class="lpAdd lpAddItemWithDetails" role="button" tabindex="0" @click="createAndOpenEditor" @keydown.enter="createAndOpenEditor" @keydown.space.prevent="createAndOpenEditor">{{ $t('misc.addItemWithDetails') }}</a>
                     </span>
                     <ul v-if="showSuggestions" class="lpSuggestions">
