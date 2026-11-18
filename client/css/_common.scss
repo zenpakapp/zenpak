@@ -1,5 +1,11 @@
 @import "globals";
 
+// The native check boxes and radio buttons take the accent, not the system blue.
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: $color-accent;
+}
+
 // The browser default placeholder (#757575) is too faint on dark surfaces.
 input::placeholder,
 textarea::placeholder {

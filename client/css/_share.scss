@@ -450,7 +450,6 @@
     gap: $space-8;
 
     input[type="checkbox"] {
-        accent-color: $color-accent;
         cursor: pointer;
         flex-shrink: 0;
         height: 15px;
@@ -494,7 +493,6 @@
     padding: 0 $space-8;
 
     input[type="checkbox"] {
-        accent-color: $color-accent;
         cursor: pointer;
         height: 13px;
         width: 13px;
