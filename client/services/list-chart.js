@@ -1,6 +1,7 @@
 const colorUtils = require('../utils/color.js');
 const weightUtils = require('../utils/weight.js');
 const breakpoints = require('../utils/breakpoints.js');
+const { donutDatasetStyle, donutOptions } = require('./donut-settings');
 
 let chartModulePromise = null;
 
@@ -21,20 +22,11 @@ function extractCategories(processedData) {
     return Object.values(processedData.points);
 }
 
-function getChartBorderColor() {
-    const style = getComputedStyle(document.documentElement);
-    return style.getPropertyValue('--color-bg').trim() || 'rgb(245,245,245)';
-}
-
 function buildDataset(categories) {
     return {
         data: categories.map((c) => c.total),
         backgroundColor: categories.map((c, i) => colorUtils.rgbToString(c.color || colorUtils.getColor(i))),
-        borderColor: getChartBorderColor(),
-        borderWidth: 3,
-        hoverBorderColor: 'rgb(50,50,50)',
-        hoverBorderWidth: 2,
-        hoverOffset: 0,
+        ...donutDatasetStyle(),
     };
 }
 
@@ -66,8 +58,7 @@ export default async function renderListChart({
         },
         options: {
             responsive: false,
-            cutout: '60%',
-            animation: { duration: 400 },
+            ...donutOptions(),
             plugins: {
                 legend: { display: false },
                 tooltip: {
