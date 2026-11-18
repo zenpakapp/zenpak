@@ -480,10 +480,16 @@ textarea::placeholder {
             color: $color-accent-text;
         }
 
+        // The number column of the totals takes the width of its widest cell, and this one is
+        // the biggest type. Five digits wide at least, so the unit and the other rows do not slide
+        // when the base weight gains or loses a digit (1.77 becoming 1.2).
         .lpDisplaySubtotal {
+            display: inline-block;
             font-size: 1.5rem;
             font-variant-numeric: tabular-nums;
             line-height: 1.1;
+            min-width: 5ch;
+            text-align: right;
         }
     }
 }
