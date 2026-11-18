@@ -33,7 +33,7 @@
                     <div v-if="isShared" class="shareSection">
                         <div class="shareLabel">{{ $t('share.publishTitle') }}</div>
                         <p class="shareVisibilityHint">{{ $t('share.publishHint') }}</p>
-                        <input v-model="publishNote" type="text" class="shareInput" maxlength="200" :placeholder="$t('share.publishNotePlaceholder')" :disabled="publishing">
+                        <input v-model="publishNote" type="text" class="shareInput" :maxlength="limits.publishNote" :placeholder="$t('share.publishNotePlaceholder')" :disabled="publishing">
                         <button type="button" class="sharePublishButton" :disabled="publishing" @click="publish">
                             {{ publishing ? $t('share.publishing') : $t('share.publish') }}
                         </button>
@@ -106,6 +106,7 @@
 
 <script>
 import { STATUS_REFRESH_MS } from '../services/timings';
+import { FIELD_LIMITS } from '../services/field-limits';
 import PopoverHover from './popover-hover.vue';
 import Icon from './icon.vue';
 import listInsightsLine from './list-insights-line.vue';
@@ -126,6 +127,7 @@ export default {
     data() {
         return {
             shareReady: true,
+            limits: FIELD_LIMITS,
             publishStatus: { latestVersion: 0, publishedAt: null, hasUnpublishedChanges: false },
             publishNote: '',
             publishing: false,

@@ -15,7 +15,7 @@
                 class="lpOAuthSetupInput"
                 type="text"
                 :placeholder="$t('misc.oauthSetupPlaceholder')"
-                maxlength="20"
+                :maxlength="limits.oauthUsername"
                 @keyup.enter="submit"
             >
             <div class="lpButtons" style="margin-top: 16px;">
@@ -32,10 +32,13 @@
 </template>
 
 <script>
+import { FIELD_LIMITS } from '../services/field-limits';
+
 export default {
     name: 'WelcomeOauthOverlay',
     data() {
         return {
+            limits: FIELD_LIMITS,
             showUsernameSetup: false,
             setupUsername: '',
             setupToken: '',
