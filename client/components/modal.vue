@@ -239,7 +239,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .lpModal {
         .lpModalActions {
             justify-content: stretch;

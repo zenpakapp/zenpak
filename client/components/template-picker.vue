@@ -213,7 +213,7 @@
     overflow: hidden;
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .lpTemplatePickerSettingsGrid,
     .lpTemplatePickerCards {
         grid-template-columns: 1fr;

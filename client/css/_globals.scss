@@ -24,6 +24,13 @@ $yellow2: #fcefa9;
 $darkYellow: #a58c00;
 
 /* spacing */
+// Breakpoints: one width per step. The same numbers are in utils/breakpoints.js for matchMedia.
+$bp-phone: 520px;
+$bp-tablet-s: 640px;
+$bp-tablet: 768px;
+$bp-desktop-s: 980px;
+$bp-wide: 1240px;
+
 // Spacing: padding, margin and gap take one of these steps (a 1px hairline and 0 are allowed).
 $space-2: 2px;
 $space-4: 4px;

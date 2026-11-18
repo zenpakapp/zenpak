@@ -223,7 +223,7 @@
     to { opacity: 0; }
 }
 
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: $bp-tablet) {
     .lpChart {
         max-width: 100%;
     }
@@ -338,7 +338,7 @@
     }
 }
 
-@media only screen and (max-width: 480px) {
+@media only screen and (max-width: $bp-phone) {
     .lpListSummary {
         flex-direction: column;
         margin-bottom: $space-32;

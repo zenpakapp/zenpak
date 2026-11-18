@@ -293,7 +293,7 @@
 }
 
 // A 200px canvas plus the table side by side leaves the table about 110px on a phone.
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .lpPublicChart {
         align-items: stretch;
         flex-direction: column;
@@ -458,7 +458,7 @@
 
 // Touch screens have no hover: the accent colour and the icon show the name is a link, and the row
 // is tall enough to hit with a finger.
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .lpPublicListItem:has(.lpPublicListItemNameLink) {
         min-height: 44px;
     }

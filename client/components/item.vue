@@ -70,6 +70,7 @@
 
 <script>
 import Icon from './icon.vue';
+import breakpoints from '../utils/breakpoints';
 import { openDialog } from '../services/dialogs';
 import { showGlobalAlert } from '../services/user-feedback';
 
@@ -307,7 +308,7 @@ export default {
         cycleStar() {
             // On a phone the star only shows when the item is rated, so a tap that cycled back to 0
             // would make it vanish under the finger: it opens the edit dialog, where the rating is.
-            if (window.matchMedia('(max-width: 500px)').matches) {
+            if (window.matchMedia(`(max-width: ${breakpoints.phone}px)`).matches) {
                 this.openDetailEdit();
                 return;
             }

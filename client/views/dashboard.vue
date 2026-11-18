@@ -196,6 +196,7 @@
 
 <script>
 import { computed, defineAsyncComponent, markRaw } from 'vue';
+import breakpoints from '../utils/breakpoints';
 import { fetchJson } from '../utils/utils';
 import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
@@ -423,7 +424,7 @@ export default {
         });
         this.speedbumpLoader = () => this.loadDialog(lazySpeedbump.component, lazySpeedbump.loader);
         setSpeedbumpLoader(this.speedbumpLoader);
-        this.sidebarMediaQuery = window.matchMedia('(max-width: 768px)');
+        this.sidebarMediaQuery = window.matchMedia(`(max-width: ${breakpoints.tablet}px)`);
         this.sidebarMediaQuery.addEventListener('change', this.handleSidebarBreakpoint);
         // The verification link may be opened on another device: when this tab comes back, ask again.
         document.addEventListener('visibilitychange', this.refreshEmailVerification);
@@ -493,7 +494,7 @@ export default {
         },
         prepareDashboard() {
             if (this.isLoaded) return;
-            if (window.matchMedia('(max-width: 768px)').matches) {
+            if (window.matchMedia(`(max-width: ${breakpoints.tablet}px)`).matches) {
                 this.$store.commit('setSidebarOpen', false);
             }
 

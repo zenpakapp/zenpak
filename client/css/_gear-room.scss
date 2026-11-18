@@ -288,7 +288,7 @@
     padding: $space-6 $space-12;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpGearRoomFilters {
         border-bottom: 1px solid $color-border;
         border-right: none;

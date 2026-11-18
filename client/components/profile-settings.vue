@@ -161,7 +161,7 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bp-tablet-s) {
     .profileSettingsGrid {
         grid-template-columns: 1fr;
     }

@@ -1,10 +1,11 @@
 <style lang="scss">
+@import "../css/_globals";
 
 #forgotPassword {
     width: min(620px, calc(100vw - 32px));
 
     // The two forms sit side by side only when there is room for both.
-    @media (max-width: 640px) {
+    @media (max-width: $bp-tablet-s) {
         .lpHalf {
             float: none;
             padding: 0;

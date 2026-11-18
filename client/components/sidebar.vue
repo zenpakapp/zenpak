@@ -78,7 +78,7 @@ $sidebarPadding: 20px;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     #sidebar {
         box-shadow: 4px 0 16px rgba(var(--color-shadow-rgb), 0.18);
         margin-left: 0;

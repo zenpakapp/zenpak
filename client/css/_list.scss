@@ -17,7 +17,7 @@
         max-width: min(#{$width-app}, calc(100vw - 320px));
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: $bp-tablet) {
         padding: 0 $space-12;
         width: 100%;
 
@@ -28,7 +28,7 @@
     }
 
     // A tablet gets a wider gutter than a phone, so text outside the cards does not touch the edge.
-    @media (min-width: 481px) and (max-width: 768px) {
+    @media (min-width: #{$bp-phone + 1}) and (max-width: $bp-tablet) {
         padding: 0 $space-24;
     }
 }
@@ -690,7 +690,7 @@ input.lpCategoryName { /* specificity */
 }
 
 // Phones: a smaller donut so the first item comes sooner.
-@media (max-width: 480px) {
+@media (max-width: $bp-phone) {
     .lpEditorSummary {
         gap: $space-12;
         margin-bottom: $space-16;
@@ -854,7 +854,7 @@ input.lpCategoryName { /* specificity */
     &:hover { color: $color-text; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bp-tablet) {
     .lpItem,
     .lpItemsHeader,
     .lpItemsFooter {
@@ -893,7 +893,7 @@ input.lpCategoryName { /* specificity */
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: $bp-phone) {
     .lpItem,
     .lpItemsHeader,
     .lpItemsFooter {
@@ -924,7 +924,7 @@ input.lpCategoryName { /* specificity */
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: $bp-phone) {
     // Two short rows, since the bar stays on screen while the list scrolls: the counts on top,
     // then the two buttons side by side. The progress track is a thin line on the bottom edge.
     .lpPackingBar {

@@ -580,7 +580,7 @@
     }
 }
 
-@media only screen and (max-width: 840px) {
+@media only screen and (max-width: $bp-tablet) {
     .lpCommunity {
         max-width: 680px;
     }
@@ -598,7 +598,7 @@
     }
 }
 
-@media only screen and (max-width: 620px) {
+@media only screen and (max-width: $bp-tablet-s) {
     .lpCommunityFilters {
         grid-template-columns: 1fr 1fr;
     }
