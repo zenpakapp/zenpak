@@ -97,7 +97,7 @@
                     <hr>
                     <label>
                         {{ $t('list.currency') }} :
-                        <input id="currencySymbol" type="text" maxlength="4" :value="library.currencySymbol" @input="updateCurrencySymbol($event)">
+                        <input id="currencySymbol" type="text" :maxlength="limits.currencySymbol" :value="library.currencySymbol" @input="updateCurrencySymbol($event)">
                     </label>
                 </div>
             </div></template>
@@ -107,11 +107,15 @@
 
 <script>
 import PopoverHover from './popover-hover.vue';
+import { FIELD_LIMITS } from '../services/field-limits';
 
 export default {
     name: 'ListSettings',
     components: {
         PopoverHover,
+    },
+    data() {
+        return { limits: FIELD_LIMITS };
     },
     computed: {
         library() {
