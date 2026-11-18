@@ -81,7 +81,7 @@
 
         <hr>
 
-        <a v-if="!isPackingMode" class="lpAdd addCategory" role="button" tabindex="0" @click="newCategory" @keydown.enter="newCategory" @keydown.space.prevent="newCategory"><i class="lpSprite lpSpriteAdd" />{{ $t('list.addCategory') }}</a>
+        <a v-if="!isPackingMode" class="lpAdd addCategory" role="button" tabindex="0" @click="newCategory" @keydown.enter="newCategory" @keydown.space.prevent="newCategory"><i class="lpGlyph"><icon name="plus" :size="14" /></i>{{ $t('list.addCategory') }}</a>
 
         <div v-if="showGuestHint && !isPackingMode" class="lpCommunityHint">
             <span>{{ $t('list.guestHint') }}</span>
@@ -107,6 +107,7 @@
 
 <script>
 import category from './category.vue';
+import Icon from './icon.vue';
 import listSummary from './list-summary.vue';
 import ZenpakBrandAsset from './zenpak-brand-asset.vue';
 import { getElementIndex } from '../utils/utils';
@@ -129,6 +130,7 @@ const PACKING_PHRASES = {
 export default {
     name: 'List',
     components: {
+        Icon,
         listSummary,
         category,
         ZenpakBrandAsset,

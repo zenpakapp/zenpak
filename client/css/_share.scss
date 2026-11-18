@@ -70,6 +70,45 @@
     }
 }
 
+// Icons of an item row on the share and embed pages (templates/t_itemShare.mustache): inline SVG in
+// the colour of the text, green and solid when on, like the editor; the rating is counted in stars.
+.lpActionsCell {
+    i.lpWorn,
+    i.lpConsumable,
+    i.lpStar {
+        align-items: center;
+        display: inline-flex;
+        height: 16px;
+        justify-content: center;
+        vertical-align: middle;
+        width: 16px;
+    }
+
+    i.lpActive {
+        color: $color-accent;
+    }
+
+    i.lpStar {
+        color: $color-star;
+        font-size: 14px;
+        font-style: normal;
+        line-height: 1;
+        width: auto;
+
+        &.lpStar1::before {
+            content: "\2605";
+        }
+
+        &.lpStar2::before {
+            content: "\2605\2605";
+        }
+
+        &.lpStar3::before {
+            content: "\2605\2605\2605";
+        }
+    }
+}
+
 .lpUnitSelect {
     border: 1px solid transparent;
     cursor: pointer;

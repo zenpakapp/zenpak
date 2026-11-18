@@ -109,16 +109,16 @@
             <!-- Hover opens the menu with a mouse. On touch there is no hover: a tap opens it instead. -->
             <PopoverHover id="addListFlyout" ref="addMenu" placement="right" :trigger="touchMenu ? 'click' : 'hover'">
                 <template #target>
-                    <span><a class="lpAdd" role="button" tabindex="0" :aria-haspopup="touchMenu ? 'menu' : null" @click="onAddListClick" @keydown.enter="onAddListClick" @keydown.space.prevent="onAddListClick"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addNewList') }}</a></span>
+                    <span><a class="lpAdd" role="button" tabindex="0" :aria-haspopup="touchMenu ? 'menu' : null" @click="onAddListClick" @keydown.enter="onAddListClick" @keydown.space.prevent="onAddListClick"><i class="lpGlyph"><icon name="plus" :size="14" /></i>{{ $t('library.addNewList') }}</a></span>
                 </template>
                 <template #content>
                     <div style="display: flex; flex-direction: column; gap: 8px;" @click="closeAddMenu">
-                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addBlankList') }}</a>
-                        <a class="lpAdd" role="button" tabindex="0" @click="showTemplatePicker = true" @keydown.enter="showTemplatePicker = true" @keydown.space.prevent="showTemplatePicker = true"><i class="lpSprite lpSpriteAdd" />{{ $t('library.addListFromTemplate') }}</a>
-                        <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpSprite lpSpriteUpload" />{{ $t('library.pasteGearList') }}</a>
-                        <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importCSV') }}</a>
-                        <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpSprite lpSpriteUpload" />{{ $t('library.importFromLighterpack') }}</a>
-                        <a class="lpCopy" role="button" tabindex="0" @click="copyList" @keydown.enter="copyList" @keydown.space.prevent="copyList"><i class="lpSprite lpSpriteCopy" />{{ $t('library.copyList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="newList" @keydown.enter="newList" @keydown.space.prevent="newList"><i class="lpGlyph"><icon name="plus" :size="14" /></i>{{ $t('library.addBlankList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="showTemplatePicker = true" @keydown.enter="showTemplatePicker = true" @keydown.space.prevent="showTemplatePicker = true"><i class="lpGlyph"><icon name="plus" :size="14" /></i>{{ $t('library.addListFromTemplate') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importText" @keydown.enter="importText" @keydown.space.prevent="importText"><i class="lpGlyph"><icon name="upload" :size="14" /></i>{{ $t('library.pasteGearList') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importCSV" @keydown.enter="importCSV" @keydown.space.prevent="importCSV"><i class="lpGlyph"><icon name="upload" :size="14" /></i>{{ $t('library.importCSV') }}</a>
+                        <a class="lpAdd" role="button" tabindex="0" @click="importLP" @keydown.enter="importLP" @keydown.space.prevent="importLP"><i class="lpGlyph"><icon name="upload" :size="14" /></i>{{ $t('library.importFromLighterpack') }}</a>
+                        <a class="lpCopy" role="button" tabindex="0" @click="copyList" @keydown.enter="copyList" @keydown.space.prevent="copyList"><i class="lpGlyph"><icon name="copy" :size="14" /></i>{{ $t('library.copyList') }}</a>
                     </div>
                 </template>
             </PopoverHover>

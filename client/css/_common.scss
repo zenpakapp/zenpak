@@ -111,6 +111,13 @@ textarea::placeholder {
     text-align: right;
 }
 
+// An icon beside a word: inline, level with the text, in the colour of the text.
+.lpGlyph {
+    align-items: center;
+    display: inline-flex;
+    vertical-align: -2px;
+}
+
 .lpAdd,
 .lpCopy {
     color: $color-accent-text;

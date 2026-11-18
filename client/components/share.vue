@@ -95,7 +95,7 @@
 
                     <div class="shareFooter">
                         <a :href="csvUrl" target="_blank" class="shareCsvLink">
-                            <i class="lpSprite lpSpriteDownload" /> {{ $t('share.exportToCsv') }}
+                            <i class="lpGlyph"><icon name="download" :size="14" /></i> {{ $t('share.exportToCsv') }}
                         </a>
                     </div>
                 </div>
@@ -106,6 +106,7 @@
 
 <script>
 import PopoverHover from './popover-hover.vue';
+import Icon from './icon.vue';
 import listInsightsLine from './list-insights-line.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { trackEvent } from '../utils/analytics';
@@ -117,6 +118,7 @@ import {
 export default {
     name: 'Share',
     components: {
+        Icon,
         PopoverHover,
         listInsightsLine,
     },

@@ -167,7 +167,7 @@ html.lpSigningOut body::before {
                         </template>
                     </span>
                     <strong class="accountDropdownName">{{ navLabel }}</strong>
-                    <i class="lpSprite lpExpand accountDropdownCaret" />
+                    <i class="lpGlyph lpExpand accountDropdownCaret"><icon name="chevron-down" :size="12" /></i>
                 </span>
             </template>
             <template #content>
@@ -191,6 +191,7 @@ html.lpSigningOut body::before {
 
 <script>
 import PopoverHover from './popover-hover.vue';
+import Icon from './icon.vue';
 import { openDialog } from '../services/dialogs';
 import { redirect } from '../services/navigation';
 import { useTheme } from '../composables/useTheme';
@@ -199,6 +200,7 @@ import { avatarColor, avatarInitial } from '../utils/avatar';
 export default {
     name: 'AccountDropdown',
     components: {
+        Icon,
         PopoverHover,
     },
     setup() {

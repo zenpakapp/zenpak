@@ -78,7 +78,7 @@
             </option>
         </select>
         <span class="lpDisplay">{{ unit }}</span>
-        <i class="lpSprite lpExpand" />
+        <i class="lpGlyph lpExpand"><icon name="chevron-down" :size="12" /></i>
         <ul :class="'lpUnitDropdown ' + unit">
             <li v-for="unit in units" :key="unit" :class="unit" @click="select(unit)">
                 {{ unit }}
@@ -88,10 +88,12 @@
 </template>
 
 <script>
+import Icon from './icon.vue';
 import { bindWindowListeners, unbindWindowListeners } from '../services/window-events';
 
 export default {
     name: 'UnitSelect',
+    components: { Icon },
     props: ['weight', 'unit'],
     emits: ['change'],
     data() {
