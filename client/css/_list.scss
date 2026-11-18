@@ -769,7 +769,7 @@ input.lpCategoryName { /* specificity */
 .lpPackModalInner {
     background: $color-surface;
     border-radius: $radius-lg;
-    box-shadow: var(--shadow-modal);
+    box-shadow: $shadow-modal;
     max-width: 400px;
     padding: $space-32 * 1.5;
     text-align: center;

@@ -5,7 +5,7 @@
 @mixin headerBadgeDot {
     .sharePublishState {
         border-radius: $radius-round;
-        box-shadow: 0 0 0 2px $color-surface;
+        box-shadow: 0 0 0 2px $color-surface; // shadow-exempt: a ring that separates the dot from its background
         font-size: 0;
         height: 8px;
         margin: 0;

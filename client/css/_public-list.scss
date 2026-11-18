@@ -68,7 +68,7 @@
 
 .lpPublicUnavailablePrimary {
     background: $color-accent-solid;
-    box-shadow: 0 0 0 5px rgba(var(--color-accent-rgb), 0.12);
+    box-shadow: $shadow-focus-ring;
     color: $color-on-solid;
     margin-bottom: $space-18;
 

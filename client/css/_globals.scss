@@ -77,6 +77,9 @@ $color-control-muted: var(--color-control-muted);
 $shadow-soft: var(--shadow-soft);
 $shadow-popover: var(--shadow-popover);
 $shadow-modal: var(--shadow-modal);
+$shadow-raised: var(--shadow-raised);
+$shadow-bar: var(--shadow-bar);
+$shadow-drawer: var(--shadow-drawer);
 
 /* design system — largeurs de page : trois tailles, pour que passer d'un écran à l'autre ne change pas la largeur du contenu */
 $width-reading: 720px; /* pages de texte : À propos, Fil d'activité */

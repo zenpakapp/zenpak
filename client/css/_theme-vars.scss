@@ -36,6 +36,9 @@
     --shadow-soft: 0 1px 3px rgba(var(--color-shadow-rgb), 0.08);
     --shadow-popover: 0 12px 28px rgba(var(--color-shadow-rgb), 0.16);
     --shadow-modal: 0 24px 56px rgba(var(--color-shadow-rgb), 0.24);
+    --shadow-raised: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
+    --shadow-bar: 0 -4px 24px rgba(var(--color-shadow-rgb), 0.14);
+    --shadow-drawer: 4px 0 16px rgba(var(--color-shadow-rgb), 0.18);
     --color-text: #1a1a1a;
     --color-text-muted: #62665e;
     --color-border: #e4e7e1;
@@ -80,6 +83,9 @@
     --shadow-soft: 0 1px 3px rgba(var(--color-shadow-rgb), 0.28);
     --shadow-popover: 0 14px 32px rgba(var(--color-shadow-rgb), 0.4);
     --shadow-modal: 0 26px 64px rgba(var(--color-shadow-rgb), 0.48);
+    --shadow-raised: 0 4px 16px rgba(var(--color-shadow-rgb), 0.3);
+    --shadow-bar: 0 -4px 24px rgba(var(--color-shadow-rgb), 0.36);
+    --shadow-drawer: 4px 0 16px rgba(var(--color-shadow-rgb), 0.4);
     --color-text: #e8e8e8;
     --color-text-muted: #9ca3af;
     --color-border: #2a2a2a;
@@ -125,6 +131,9 @@
         --shadow-soft: 0 1px 3px rgba(var(--color-shadow-rgb), 0.28);
         --shadow-popover: 0 14px 32px rgba(var(--color-shadow-rgb), 0.4);
         --shadow-modal: 0 26px 64px rgba(var(--color-shadow-rgb), 0.48);
+        --shadow-raised: 0 4px 16px rgba(var(--color-shadow-rgb), 0.3);
+        --shadow-bar: 0 -4px 24px rgba(var(--color-shadow-rgb), 0.36);
+        --shadow-drawer: 4px 0 16px rgba(var(--color-shadow-rgb), 0.4);
         --color-text: #e8e8e8;
         --color-text-muted: #9ca3af;
         --color-border: #2a2a2a;

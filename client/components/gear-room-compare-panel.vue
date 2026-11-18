@@ -5,7 +5,7 @@
     background: $color-surface;
     border-top: 1px solid $color-border;
     bottom: 0;
-    box-shadow: 0 -4px 24px rgba(var(--color-shadow-rgb), 0.14);
+    box-shadow: $shadow-bar;
     display: flex;
     flex-direction: column;
     height: 50vh;

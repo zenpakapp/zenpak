@@ -117,7 +117,7 @@ export default {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
+    box-shadow: $shadow-raised;
     left: 0;
     list-style: none;
     margin: 0;

@@ -180,7 +180,7 @@
 .lpDialog {
     animation: fadein 0.25s linear 0s 1 forwards;
     background: $color-surface;
-    box-shadow: 0 0 30px rgba(var(--color-shadow-rgb), 0.4);
+    box-shadow: $shadow-modal;
     color: $color-text;
     left: 50%;
     opacity: 0;

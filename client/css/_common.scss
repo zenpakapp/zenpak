@@ -14,7 +14,7 @@ textarea::placeholder {
 }
 
 @mixin lpFocusRing($color: var(--color-accent-rgb)) {
-    box-shadow: 0 0 0 3px rgba($color, 0.18);
+    box-shadow: 0 0 0 3px rgba($color, 0.18); // shadow-exempt: a ring in the colour passed to the mixin
     outline: none;
 }
 
@@ -71,7 +71,7 @@ textarea::placeholder {
     .tooltip {
         background: $ink-600;
         border: 1px solid $paper;
-        box-shadow: 0 0 5px rgba(var(--color-shadow-rgb), 0.25);
+        box-shadow: $shadow-soft;
         color: $color-on-solid;
         display: none;
         padding: $space-4;
