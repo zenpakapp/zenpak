@@ -133,6 +133,15 @@
     }
 }
 
+// Reduced motion: the popover fades, it does not rise.
+@media (prefers-reduced-motion: reduce) {
+    .lpPopover .lpContent {
+        transition:
+            opacity $transitionDurationFast ease,
+            visibility 0s linear $transitionDurationFast;
+    }
+}
+
 </style>
 
 <template>

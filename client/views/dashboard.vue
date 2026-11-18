@@ -197,6 +197,7 @@
 <script>
 import { BANNER_MS, DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
 import { computed, defineAsyncComponent, markRaw } from 'vue';
+import { scrollBehavior } from '../utils/motion';
 import breakpoints from '../utils/breakpoints';
 import { fetchJson } from '../utils/utils';
 import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
@@ -444,12 +445,12 @@ export default {
                 .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingSuccess = true;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: scrollBehavior() });
             setTimeout(() => { this.billingSuccess = false; }, BANNER_MS);
         }
         if (this.$route && this.$route.query.billing === 'cancel') {
             this.billingCancelled = true;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: scrollBehavior() });
             setTimeout(() => { this.billingCancelled = false; }, BANNER_MS);
         }
         if (this.$route && this.$route.query.billing === 'managed') {
@@ -458,7 +459,7 @@ export default {
                 .then((data) => { if (data) this.$store.commit('setBilling', data); })
                 .catch(() => {});
             this.billingManaged = true;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: scrollBehavior() });
             setTimeout(() => { this.billingManaged = false; }, BANNER_MS);
         }
     },

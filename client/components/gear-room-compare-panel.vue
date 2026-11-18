@@ -163,6 +163,13 @@
     color: $color-success-text;
     font-weight: $fontWeight-bold;
 }
+
+// Reduced motion: the panel appears in place, it does not slide up.
+@media (prefers-reduced-motion: reduce) {
+    .lpGearRoomComparePanel {
+        transition: none;
+    }
+}
 </style>
 
 <template>

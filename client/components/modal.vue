@@ -252,6 +252,16 @@
     }
 }
 
+// Reduced motion: the dialog fades in place, it does not drift or shrink.
+@media (prefers-reduced-motion: reduce) {
+    .lpModal-enter,
+    .lpModal-leave-active {
+        &.lpModal {
+            transform: translateX(-50%) translateY(-50%);
+        }
+    }
+}
+
 </style>
 
 <template>

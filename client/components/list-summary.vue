@@ -101,6 +101,7 @@
 import { SUMMARY_IDLE_MS, TOTALS_GROWTH_MS } from '../services/timings';
 import { markRaw } from 'vue';
 import colorPicker from './colorpicker.vue';
+import { prefersReducedMotion } from '../utils/motion';
 import renderListChart from '../services/list-chart';
 import { useUtils } from '../composables/useUtils';
 
@@ -193,7 +194,7 @@ export default {
         // it holds the old height, then eases to the new one instead of pushing everything below.
         async animateTotalsHeight() {
             const el = this.$refs.totals;
-            if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            if (!el || prefersReducedMotion()) return;
             const from = el.offsetHeight;
             await this.$nextTick();
             const to = el.offsetHeight;

@@ -149,6 +149,12 @@ $sidebarPadding: 20px;
     }
 }
 
+// Reduced motion: the drawer appears and fades, it does not slide.
+@media (prefers-reduced-motion: reduce) {
+    :root #sidebar {
+        transition: opacity $transitionDuration ease;
+    }
+}
 </style>
 
 <template>
