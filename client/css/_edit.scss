@@ -3,24 +3,21 @@
 .lpSilent {
     background: transparent;
     border: 1px solid transparent;
+    border-radius: $radius-md;
 
     &:hover {
         background-color: $color-surface;
         border: 1px solid $color-border;
     }
 
-    &:focus {
+    // A 1px accent border (3:1 against the surface) and the soft ring every other field uses.
+    // The 2px outline it replaces showed on every click in a text field, not only for the keyboard.
+    &:focus,
+    &:focus-visible {
         background-color: $color-surface;
         border: 1px solid $color-accent;
-        box-shadow: 0 1px 3px rgba(var(--color-shadow-rgb), 0.15) inset;
+        box-shadow: $shadow-focus-ring;
         outline: none;
-    }
-
-    // One clear ring for keyboard focus, in place of the thin border.
-    &:focus-visible {
-        border-color: transparent;
-        outline: 2px solid $color-accent;
-        outline-offset: 0;
     }
 
     &.lpSilentError {
@@ -28,8 +25,10 @@
         border: 1px solid $red1;
         outline-color: $red1;
 
-        &:focus {
+        &:focus,
+        &:focus-visible {
             background-color: $color-surface;
+            box-shadow: 0 0 0 4px rgba($red1, 0.15); // shadow-exempt: the focus ring in the error colour
         }
     }
 }
