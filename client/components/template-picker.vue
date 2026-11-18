@@ -49,7 +49,7 @@
 }
 
 .lpTemplatePickerTitle {
-    font-size: 28px;
+    font-size: $fontSize-3xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-6;
 }

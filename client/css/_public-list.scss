@@ -40,7 +40,7 @@
 
     p {
         color: $color-text-muted;
-        font-size: 15px;
+        font-size: $fontSize-md;
         line-height: 1.5;
         margin: 0 0 $space-24;
     }
@@ -48,7 +48,7 @@
 
 .lpPublicUnavailableIcon {
     color: $color-danger;
-    font-size: 42px;
+    font-size: 42px; // font-size-exempt: a decorative glyph or hero size
     font-weight: $fontWeight-light;
     line-height: 1;
     margin-bottom: $space-16;
@@ -59,7 +59,7 @@
     align-items: center;
     border-radius: $radius-md;
     display: flex;
-    font-size: 15px;
+    font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
     justify-content: center;
     min-height: 48px;
@@ -137,12 +137,12 @@
     color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.04em;
+    letter-spacing: $letterSpacing-loose;
     padding: $space-2 $space-8;
 }
 
 .lpPublicListTitle {
-    font-size: 28px;
+    font-size: $fontSize-3xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-4;
 }

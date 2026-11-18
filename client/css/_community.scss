@@ -573,7 +573,7 @@
     &::before {
         color: $color-accent-text;
         content: '★';
-        font-size: 10px;
+        font-size: $fontSize-2xs;
         position: absolute;
         right: 12px;
         top: 12px;
@@ -723,7 +723,7 @@
     color: $color-text-muted;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.04em;
+    letter-spacing: $letterSpacing-loose;
     margin: 0 0 $space-8;
     text-transform: uppercase;
 }

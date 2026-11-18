@@ -468,7 +468,7 @@
     color: $color-text;
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
-    letter-spacing: -0.01em;
+    letter-spacing: $letterSpacing-tight;
     min-width: 0;
     padding: $space-8 $space-14;
     text-overflow: ellipsis;
@@ -535,7 +535,7 @@
     color: $color-text-muted;
     cursor: help;
     display: inline-flex;
-    font-size: 10px;
+    font-size: $fontSize-2xs;
     height: 14px;
     justify-content: center;
     line-height: 1;
@@ -577,7 +577,7 @@
     color: $color-text-muted;
     cursor: help;
     display: inline-flex;
-    font-size: 10px;
+    font-size: $fontSize-2xs;
     height: 14px;
     justify-content: center;
     line-height: 1;
@@ -783,7 +783,7 @@
     }
 
     #lpListName {
-        font-size: 15px;
+        font-size: $fontSize-md;
         padding: $space-8 $space-8;
     }
 
@@ -803,7 +803,7 @@
 
 @media (max-width: $bp-desktop-s) {
     .headerItem .lpTarget {
-        font-size: 15px;
+        font-size: $fontSize-md;
         padding: $space-10 $space-8;
     }
 

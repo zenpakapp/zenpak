@@ -333,7 +333,7 @@ export default {
     color: $color-text-muted;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.06em;
+    letter-spacing: $letterSpacing-caps;
     padding: $space-10 $space-14 $space-4;
     text-transform: uppercase;
 

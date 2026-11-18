@@ -11,7 +11,7 @@
 }
 
 .lpVerifyIcon {
-    font-size: 40px;
+    font-size: 40px; // font-size-exempt: a decorative glyph or hero size
     line-height: 1;
     margin-bottom: $space-12;
 }

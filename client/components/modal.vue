@@ -44,7 +44,7 @@
     h3 {
         font-size: $fontSize-md;
         font-weight: $fontWeight-bold;
-        letter-spacing: -0.02em;
+        letter-spacing: $letterSpacing-tight;
         margin: 0 0 $space-10;
     }
 
@@ -62,7 +62,7 @@
         display: block;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
-        letter-spacing: 0.04em;
+        letter-spacing: $letterSpacing-loose;
         margin-bottom: $space-8;
         text-transform: uppercase;
     }

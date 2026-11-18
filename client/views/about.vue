@@ -20,7 +20,7 @@
     padding: $space-40 $space-20 80px; // space-exempt: a layout size, not a step of the scale
 
     h1 {
-        font-size: 28px;
+        font-size: $fontSize-3xl;
         font-weight: $fontWeight-bold;
         margin-bottom: $space-8;
     }
@@ -34,7 +34,7 @@
     p,
     li {
         color: $color-text-muted;
-        font-size: 15px;
+        font-size: $fontSize-md;
         line-height: 1.6;
         max-width: 58ch;
         text-wrap: pretty;
@@ -58,7 +58,7 @@
 
     .lpAboutBuiltBy {
         color: $color-text-muted;
-        font-size: 15px;
+        font-size: $fontSize-md;
         margin-top: $space-24;
     }
 
@@ -79,7 +79,7 @@
 
     .lpAboutKofiNote {
         color: var(--color-text-muted);
-        font-size: 15px;
+        font-size: $fontSize-md;
         margin: 0;
         text-align: center;
     }

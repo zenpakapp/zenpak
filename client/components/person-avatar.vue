@@ -9,7 +9,7 @@
     color: $color-on-solid;
     display: inline-flex;
     flex: 0 0 auto;
-    font-size: 10px;
+    font-size: $fontSize-2xs;
     font-weight: $fontWeight-bold;
     height: 20px;
     justify-content: center;

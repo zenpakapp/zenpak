@@ -12,7 +12,7 @@
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-ui;
-    letter-spacing: 0.02em;
+    letter-spacing: $letterSpacing-loose;
     padding: $space-4 $space-6;
 
     &:hover { color: $color-text; }

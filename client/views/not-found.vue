@@ -13,23 +13,23 @@
 
 .lpNotFoundCode {
     color: $color-accent-text;
-    font-size: 96px;
+    font-size: 96px; // font-size-exempt: a decorative glyph or hero size
     font-weight: $fontWeight-bold;
-    letter-spacing: -4px;
+    letter-spacing: $letterSpacing-display;
     line-height: 1;
     margin-bottom: $space-12;
 }
 
 .lpNotFoundTitle {
     color: $color-text;
-    font-size: 24px;
+    font-size: $fontSize-2xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-10;
 }
 
 .lpNotFoundSub {
     color: $color-text-muted;
-    font-size: 15px;
+    font-size: $fontSize-md;
     line-height: 1.6;
     margin: 0 0 $space-40;
     max-width: 320px;

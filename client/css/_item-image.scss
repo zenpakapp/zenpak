@@ -5,7 +5,7 @@
 }
 
 .itemImageTitle {
-    font-size: 20px;
+    font-size: $fontSize-xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-20;
 }
@@ -96,7 +96,7 @@
 
 .itemImageDropIcon {
     color: $color-text-muted;
-    font-size: 28px;
+    font-size: $fontSize-3xl;
     line-height: 1;
 }
 

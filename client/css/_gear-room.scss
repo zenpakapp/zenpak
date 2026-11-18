@@ -52,7 +52,7 @@
     color: $color-text-muted;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.05em;
+    letter-spacing: $letterSpacing-caps;
     margin-bottom: $space-6;
     text-transform: uppercase;
 }
