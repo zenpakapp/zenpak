@@ -12,3 +12,4 @@ export const DASHBOARD_IDLE_FALLBACK_MS = 1500; // dashboard idle work without r
 export const KEYUP_SWALLOW_MS = 1000; // drop the stray keyup after a shortcut
 export const STATUS_REFRESH_MS = 800; // publish status refresh after a change
 export const NOTIFICATIONS_POLL_MS = 60000; // notification bell poll
+export const TOTALS_GROWTH_MS = 200; // height easing when the totals gain a row, same as $transitionDuration
