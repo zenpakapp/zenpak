@@ -287,29 +287,29 @@
 }
 
 .lpBillingSuccessBanner {
-    background: #d1fae5;
-    border: 1px solid #34d399;
+    background: $color-success-bg;
+    border: 1px solid $color-success-border;
     border-radius: $radius-md;
-    color: #065f46;
+    color: $color-success-text;
     margin-bottom: 16px;
     padding: 12px 16px;
 }
 
 .lpBillingCancelBanner {
-    background: #fef3c7;
-    border: 1px solid #fbbf24;
+    background: $color-warning-bg;
+    border: 1px solid $color-warning-border;
     border-radius: $radius-md;
-    color: #92400e;
+    color: $color-warning-text;
     margin-bottom: 16px;
     padding: 12px 16px;
 }
 
 .lpPastDueBanner {
     align-items: center;
-    background: #fff3cd;
-    border: 1px solid #ffc107;
+    background: $color-warning-bg;
+    border: 1px solid $color-warning-border;
     border-radius: $radius-md;
-    color: #856404;
+    color: $color-warning-text;
     display: flex;
     gap: 12px;
     margin-bottom: 16px;

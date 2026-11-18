@@ -220,13 +220,13 @@
     &.lpBlackout {
         animation: none;
         background:
-            linear-gradient(135deg, rgba(19, 57, 37, 0.88), rgba(45, 122, 79, 0.72)),
+            linear-gradient(135deg, rgba($brand-forest, 0.88), rgba($brand-green, 0.72)),
             url("/images/lp_bg2.jpg") 50% 30% / cover no-repeat;
         opacity: 1;
     }
 
     &.lpTransparent {
-        background: rgba(0, 0, 0, 0.01);
+        background: rgba(var(--color-shadow-rgb), 0.01);
     }
 }
 

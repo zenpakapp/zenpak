@@ -120,8 +120,8 @@
         color: $color-text-muted;
 
         &:hover {
-            background: rgba(220, 53, 69, 0.08);
-            color: #dc3545;
+            background: rgba(var(--color-danger-rgb), 0.08);
+            color: $color-danger;
         }
     }
 }

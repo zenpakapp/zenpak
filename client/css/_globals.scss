@@ -176,3 +176,32 @@ $color-on-solid: #fff;
 
 // The ring around a focused field.
 $shadow-focus-ring: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+
+// Status colours and the badge follow the theme (--color-*-bg, -border, -text in _theme-vars.scss).
+$color-success-bg: var(--color-success-bg);
+$color-success-border: var(--color-success-border);
+$color-success-text: var(--color-success-text);
+$color-warning-bg: var(--color-warning-bg);
+$color-warning-border: var(--color-warning-border);
+$color-warning-text: var(--color-warning-text);
+$color-badge-bg: var(--color-badge-bg);
+$color-badge-text: var(--color-badge-text);
+
+// Static colours, the same in light and dark: paper and ink for what is printed or always light,
+// a grey ramp for the surfaces that are always dark (the batch bar, the tooltip), the brand greens
+// of the hero bands, and the ink lines on a coloured alert bar.
+$paper: #fff;
+$ink-950: #111;
+$ink-900: #1a1a1a;
+$ink-800: #2a2a2a;
+$ink-700: #3a3a3a;
+$ink-600: #444;
+$ink-500: #555;
+$ink-300: #aaa;
+$ink-100: #eee;
+$ink-danger-text: #ff7070;
+$ink-danger-border: #822;
+$ink-line: rgba(0, 0, 0, 0.15);
+$ink-tint: rgba(0, 0, 0, 0.12);
+$brand-forest: #133925;
+$brand-green: #2d7a4f;

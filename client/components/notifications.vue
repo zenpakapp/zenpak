@@ -42,7 +42,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 24px rgba(var(--color-shadow-rgb), 0.12);
     max-height: 360px;
     overflow-y: auto;
     position: absolute;

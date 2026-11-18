@@ -8,7 +8,7 @@ $sidebarPadding: 20px;
 #sidebar {
     background: $color-surface;
     border-right: 1px solid $color-border;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 2px 0 8px rgba(var(--color-shadow-rgb), 0.06);
     color: $color-text;
     height: 100%;
     margin-left: -$sidebarOverflow;
@@ -80,7 +80,7 @@ $sidebarPadding: 20px;
 
 @media (max-width: 768px) {
     #sidebar {
-        box-shadow: 4px 0 16px rgba(0, 0, 0, 0.18);
+        box-shadow: 4px 0 16px rgba(var(--color-shadow-rgb), 0.18);
         margin-left: 0;
         opacity: 0;
         padding-left: $sidebarPadding;
@@ -96,7 +96,7 @@ $sidebarPadding: 20px;
     }
 
     .lpSidebarOverlay {
-        background: rgba(0, 0, 0, 0.4);
+        background: $color-overlay;
         bottom: 0;
         display: none;
         left: 0;

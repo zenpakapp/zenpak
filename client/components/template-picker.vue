@@ -2,7 +2,7 @@
 @import "../css/_globals";
 
 .lpTemplatePicker {
-    background: rgba(12, 35, 27, 0.62);
+    background: $color-overlay;
     bottom: 0;
     left: 0;
     position: fixed;
@@ -14,7 +14,7 @@
 .lpTemplatePickerModal {
     background: $color-surface;
     border-radius: $radius-lg;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 8px 40px rgba(var(--color-shadow-rgb), 0.18);
     left: 50%;
     max-height: calc(90vh - #{$spacingLarge} * 2);
     max-width: calc(100vw - #{$spacingLarge} * 2);

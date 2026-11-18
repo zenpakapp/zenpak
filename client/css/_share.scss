@@ -180,7 +180,7 @@
 .lpDialog {
     animation: fadein 0.25s linear 0s 1 forwards;
     background: $color-surface;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 30px rgba(var(--color-shadow-rgb), 0.4);
     color: $color-text;
     left: 50%;
     opacity: 0;
@@ -199,7 +199,7 @@
 
 .lpModalOverlay {
     animation: fadein 0.25s linear 0s 1 forwards;
-    background: rgba(0, 0, 0, 0.5);
+    background: $color-overlay;
     height: 100%;
     left: 0;
     opacity: 0;
