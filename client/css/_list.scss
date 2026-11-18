@@ -486,6 +486,15 @@ input.lpCategoryName { /* specificity */
     animation: lpSlideDown $transitionDuration ease-in reverse;
 }
 
+// Reduced motion: rows and categories fade in and out, they do not travel.
+@media (prefers-reduced-motion: reduce) {
+    .lpCategory,
+    .lp-list-enter-active,
+    .lp-list-leave-active {
+        animation-name: fadein;
+    }
+}
+
 @keyframes lpSlideDown {
     from {
         opacity: 0;

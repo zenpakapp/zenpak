@@ -859,3 +859,15 @@
 #lpListBody:focus {
     outline: none;
 }
+
+// Reduced motion: the drawer and the menu icon change in place, they do not slide or turn.
+@media (prefers-reduced-motion: reduce) {
+    #hamburger,
+    #hamburger .lpHamburgerLine {
+        transition: opacity $transitionDurationFast;
+    }
+
+    :root #sidebar {
+        transition: opacity $transitionDuration ease;
+    }
+}
