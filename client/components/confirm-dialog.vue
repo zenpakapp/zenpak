@@ -8,7 +8,7 @@
         color: $color-text-muted;
         font-size: $fontSize-sm;
         line-height: 1.5;
-        margin: 0 0 20px;
+        margin: 0 0 $space-20;
         text-wrap: pretty;
     }
 }

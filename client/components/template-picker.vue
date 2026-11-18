@@ -16,10 +16,10 @@
     border-radius: $radius-lg;
     box-shadow: 0 8px 40px rgba(var(--color-shadow-rgb), 0.18);
     left: 50%;
-    max-height: calc(90vh - #{$spacingLarge} * 2);
-    max-width: calc(100vw - #{$spacingLarge} * 2);
+    max-height: calc(90vh - #{$space-32} * 2);
+    max-width: calc(100vw - #{$space-32} * 2);
     overflow-y: auto;
-    padding: 28px;
+    padding: $space-28;
     position: fixed;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
@@ -51,14 +51,14 @@
 .lpTemplatePickerTitle {
     font-size: 28px;
     font-weight: $fontWeight-bold;
-    margin: 0 0 $spacingSmaller;
+    margin: 0 0 $space-6;
 }
 
 .lpTemplatePickerSubtitle {
     color: $color-text-muted;
     font-size: $fontSize-base;
     font-style: italic;
-    margin: 0 0 $spacingLarge;
+    margin: 0 0 $space-32;
 }
 
 .lpTemplatePickerSectionTitle {
@@ -66,21 +66,21 @@
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin: 0 0 $spacingSmall;
+    margin: 0 0 $space-10;
     text-transform: uppercase;
 }
 
 .lpTemplatePickerCards {
     display: grid;
-    gap: $spacingSmall;
+    gap: $space-10;
     grid-template-columns: 1fr 1fr;
-    margin-bottom: $spacingLarge;
+    margin-bottom: $space-32;
 }
 
 .lpTemplatePickerField {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: $space-8;
 
     label {
         color: $color-text-muted;
@@ -96,7 +96,7 @@
         color: $color-text;
         font: inherit;
         min-height: 42px;
-        padding: 8px 10px;
+        padding: $space-8 $space-10;
         width: 100%;
     }
 }
@@ -110,33 +110,33 @@
 .lpTemplatePickerHint {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin: -2px 0 0;
+    margin: (-$space-2) 0 0;
 }
 
 .lpTemplatePickerSetup {
     display: flex;
     flex-direction: column;
-    gap: $spacingSmall;
-    margin-bottom: $spacingLarge;
+    gap: $space-10;
+    margin-bottom: $space-32;
 }
 
 .lpTemplatePickerSetupCard {
     background: $color-bg;
     border: 1px solid $color-border;
     border-radius: $radius-md;
-    padding: $spacingMedium;
+    padding: $space-16;
 }
 
 .lpTemplatePickerSetupTitle {
     color: $color-text;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin: 0 0 $spacingSmall;
+    margin: 0 0 $space-10;
 }
 
 .lpTemplatePickerSettingsGrid {
     display: grid;
-    gap: $spacingMedium;
+    gap: $space-16;
     grid-template-columns: 1fr 1fr;
 }
 
@@ -145,9 +145,9 @@
     border: 1px solid $color-border;
     border-radius: $radius-md;
     display: grid;
-    gap: 4px;
+    gap: $space-4;
     grid-template-columns: repeat(2, 1fr);
-    padding: 4px;
+    padding: $space-4;
 }
 
 .lpTemplatePickerSegment {
@@ -159,7 +159,7 @@
     font: inherit;
     font-weight: $fontWeight-bold;
     min-height: 34px;
-    padding: 6px 10px;
+    padding: $space-6 $space-10;
 }
 
 .lpTemplatePickerSegmentActive {
@@ -175,7 +175,7 @@
     cursor: pointer;
     display: block;
     font: inherit;
-    padding: $spacingMedium;
+    padding: $space-16;
     text-align: left;
     transition: border-color $transitionDurationFast, background-color $transitionDurationFast;
     width: 100%;
@@ -200,7 +200,7 @@
     display: block;
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
-    margin: 0 0 4px;
+    margin: 0 0 $space-4;
 }
 
 .lpTemplatePickerCardDesc {

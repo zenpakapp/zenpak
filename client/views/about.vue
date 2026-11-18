@@ -8,8 +8,8 @@
         color: $color-text-muted;
         display: block;
         font-size: $fontSize-ui;
-        margin-top: 60px;
-        padding: 20px 0 0;
+        margin-top: 60px; // space-exempt: a layout size, not a step of the scale
+        padding: $space-20 0 0;
         position: static;
         text-align: center;
         z-index: auto;
@@ -17,18 +17,18 @@
 
     margin: 0 auto;
     max-width: $width-reading;
-    padding: 40px 20px 80px;
+    padding: $space-40 $space-20 80px; // space-exempt: a layout size, not a step of the scale
 
     h1 {
         font-size: 28px;
         font-weight: $fontWeight-bold;
-        margin-bottom: 8px;
+        margin-bottom: $space-8;
     }
 
     h2 {
         font-size: $fontSize-lg;
         font-weight: $fontWeight-bold;
-        margin: 32px 0 8px;
+        margin: $space-32 0 $space-8;
     }
 
     p,
@@ -41,11 +41,11 @@
     }
 
     ul {
-        padding-left: 18px;
+        padding-left: $space-18;
     }
 
     .lpAboutNav {
-        margin-bottom: 20px;
+        margin-bottom: $space-20;
 
         a {
             color: $color-text-muted;
@@ -59,21 +59,21 @@
     .lpAboutBuiltBy {
         color: $color-text-muted;
         font-size: 15px;
-        margin-top: 24px;
+        margin-top: $space-24;
     }
 
     .lpAboutActions {
         align-items: center;
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        margin-top: 32px;
+        gap: $space-16;
+        margin-top: $space-32;
     }
 
     .lpAboutCtaRow {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: $space-12;
         justify-content: center;
     }
 

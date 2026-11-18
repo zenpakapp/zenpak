@@ -8,7 +8,7 @@
     color: $color-text;
     font-family: monospace;
     font-size: $fontSize-ui;
-    padding: 8px 10px;
+    padding: $space-8 $space-10;
     resize: vertical;
     width: 100%;
 
@@ -25,7 +25,7 @@
     box-sizing: border-box;
     color: $color-text;
     font-size: $fontSize-base;
-    padding: 8px 10px;
+    padding: $space-8 $space-10;
     width: 100%;
 
     &:focus {
@@ -46,22 +46,22 @@
     .lpModalActions {
         background: $color-bg;
         bottom: -24px;
-        margin-bottom: -24px;
+        margin-bottom: (-$space-24);
         margin-top: 0;
-        padding: 12px 0 24px;
+        padding: $space-12 0 $space-24;
         position: sticky;
     }
 
     .importSummary {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 16px;
+        gap: $space-10;
+        margin-bottom: $space-16;
     }
 
     .importErrors {
         color: $color-danger;
-        margin-bottom: 20px;
+        margin-bottom: $space-20;
     }
 
     .importBadge {
@@ -72,7 +72,7 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
         letter-spacing: 0.04em;
-        padding: 4px 10px;
+        padding: $space-4 $space-10;
         text-transform: uppercase;
 
         &.isRejected {
@@ -92,7 +92,7 @@
         background: $color-surface-elevated;
         border: 1px solid $color-border;
         border-radius: $radius-md;
-        margin-bottom: 20px;
+        margin-bottom: $space-20;
         overflow-x: auto;
         overflow-y: hidden;
     }
@@ -104,7 +104,7 @@
     }
 
     .lpCell {
-        padding: 8px 10px;
+        padding: $space-8 $space-10;
     }
 
     .lpHeader {
@@ -138,12 +138,12 @@
 }
 
 .importReview {
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 
     h3 {
         font-size: $fontSize-base;
         font-weight: $fontWeight-bold;
-        margin: 0 0 10px;
+        margin: 0 0 $space-10;
     }
 }
 
@@ -153,9 +153,9 @@
     border-radius: $radius-md;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 12px;
-    margin-bottom: 8px;
-    padding: 10px;
+    gap: $space-8 $space-12;
+    margin-bottom: $space-8;
+    padding: $space-10;
 }
 
 .importReviewCol {
@@ -167,7 +167,7 @@
     .lpButton {
         align-self: flex-start;
         margin-bottom: 0;
-        margin-top: 10px;
+        margin-top: $space-10;
     }
 }
 
@@ -175,14 +175,14 @@
     color: $color-text-muted;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    margin: 0 0 2px;
+    margin: 0 0 $space-2;
     text-transform: uppercase;
 }
 
 .importReviewName {
     font-size: $fontSize-ui;
     font-weight: $fontWeight-bold;
-    margin: 0 0 2px;
+    margin: 0 0 $space-2;
 }
 
 .importReviewMeta {
@@ -196,15 +196,15 @@
     display: flex;
     flex: 1 1 100%;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: $space-6;
     justify-content: center;
-    margin-top: 6px;
-    padding-top: 10px;
+    margin-top: $space-6;
+    padding-top: $space-10;
 }
 
 .lpButtonSm {
     font-size: $fontSize-sm;
-    padding: 4px 10px;
+    padding: $space-4 $space-10;
 }
 
 @media (max-width: 640px) {

@@ -123,7 +123,7 @@ export default {
     margin: 0;
     max-height: 200px;
     overflow-y: auto;
-    padding: 4px 0;
+    padding: $space-4 0;
     position: absolute;
     right: 0;
     top: calc(100% + 4px);
@@ -133,7 +133,7 @@ export default {
 .brandSuggestion {
     cursor: pointer;
     font-size: $fontSize-sm;
-    padding: 7px 12px;
+    padding: $space-8 $space-12;
 
     &:hover,
     &.active {

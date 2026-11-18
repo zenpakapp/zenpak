@@ -276,7 +276,7 @@ export default {
     .lpChartReadout {
         display: block;
         font-size: $fontSize-sm;
-        margin: 4px 0 0;
+        margin: $space-4 0 0;
         min-height: 1.4em;
         text-align: center;
     }
@@ -289,8 +289,8 @@ export default {
         display: block;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
-        margin: 0 auto 8px;
-        padding: 8px 12px;
+        margin: 0 auto $space-8;
+        padding: $space-8 $space-12;
 
         &::after {
             content: " ▾";

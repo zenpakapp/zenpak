@@ -5,7 +5,7 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: $spacingSmall $spacingMedium;
+    gap: $space-10 $space-16;
     min-height: 38px;
 }
 
@@ -26,7 +26,7 @@
     cursor: pointer;
     font-size: $fontSize-sm;
     min-height: 32px;
-    padding: 4px 12px;
+    padding: $space-4 $space-12;
 
     &:disabled {
         cursor: default;

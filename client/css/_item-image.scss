@@ -7,19 +7,19 @@
 .itemImageTitle {
     font-size: 20px;
     font-weight: $fontWeight-bold;
-    margin: 0 0 20px;
+    margin: 0 0 $space-20;
 }
 
 .itemImageSections {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: $space-20;
 }
 
 .itemImageSection {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: $space-8;
 }
 
 .itemImageSectionLabel {
@@ -32,7 +32,7 @@
 
 .itemImageUrlRow {
     display: flex;
-    gap: 8px;
+    gap: $space-8;
 }
 
 .itemImageUrlInput {
@@ -46,7 +46,7 @@
     font-family: $font-family-base;
     font-size: $fontSize-base;
     min-height: 40px;
-    padding: 0 12px;
+    padding: 0 $space-12;
 
     &:focus {
         border-color: $color-accent;
@@ -61,7 +61,7 @@
     display: flex;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    gap: 10px;
+    gap: $space-10;
     letter-spacing: $letterSpacing-caps;
     text-transform: uppercase;
 
@@ -82,8 +82,8 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 24px 16px;
+    gap: $space-8;
+    padding: $space-24 $space-16;
     text-align: center;
     transition: background $transitionDurationFast ease, border-color $transitionDurationFast ease;
 
@@ -123,8 +123,8 @@
     border: 1px solid $color-border;
     border-radius: $radius-md;
     display: flex;
-    gap: 12px;
-    padding: 10px 12px;
+    gap: $space-12;
+    padding: $space-10 $space-12;
 }
 
 .itemImageCurrentThumb {
@@ -150,9 +150,9 @@
 .itemImageFooter {
     align-items: center;
     display: flex;
-    gap: 10px;
+    gap: $space-10;
     justify-content: flex-end;
-    margin-top: 4px;
+    margin-top: $space-4;
 }
 
 .itemImageCancel {

@@ -8,8 +8,8 @@
     .lpTarget {
         cursor: default;
         display: inline-block;
-        margin-bottom: -12px;
-        padding-bottom: 12px;
+        margin-bottom: (-$space-12);
+        padding-bottom: $space-12;
         position: relative;
     }
 
@@ -21,10 +21,10 @@
         box-shadow: $shadow-popover;
         color: $color-text;
         left: 50%;
-        margin-top: 18px;
+        margin-top: $space-18;
         min-width: 100%;
         opacity: 0;
-        padding: 16px;
+        padding: $space-16;
         pointer-events: none;
         position: absolute;
         top: 100%;
@@ -48,7 +48,7 @@
             display: block;
             height: 18px;
             left: 50%;
-            margin-left: -9px;
+            margin-left: (-$space-10);
             position: absolute;
             top: -9px;
             transform: rotate(45deg);
@@ -88,7 +88,7 @@
 
         hr {
             border-color: $border1;
-            margin: 14px 0;
+            margin: $space-14 0;
             padding: 0;
         }
     }
@@ -99,7 +99,7 @@
         }
 
         .lpContent {
-            margin-top: 12px;
+            margin-top: $space-12;
             opacity: 1;
             pointer-events: all;
             transform: translateX(-50%) translateY(0);

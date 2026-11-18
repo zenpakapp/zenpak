@@ -7,7 +7,7 @@
     cursor: pointer;
     display: inline-flex;
     font-size: $fontSize-md;
-    gap: 6px;
+    gap: $space-6;
     justify-content: center;
     line-height: 0;
     padding: 0;

@@ -3,27 +3,27 @@
 
 .profileSettings {
     border-top: 1px solid $color-border;
-    padding-top: 28px;
+    padding-top: $space-28;
 }
 
 .profileSettingsSectionTitle {
     font-size: $fontSize-lg;
     font-weight: $fontWeight-bold;
-    margin: 0 0 16px;
+    margin: 0 0 $space-16;
 }
 
 .profileSettingsGrid {
     display: grid;
-    gap: 12px;
+    gap: $space-12;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-bottom: 28px;
+    margin-bottom: $space-28;
 }
 
 .profileSettingsField {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 12px;
+    gap: $space-4;
+    margin-bottom: $space-12;
 }
 
 .profileSettingsLabel {
@@ -45,7 +45,7 @@
     font-family: $font-family-base;
     font-size: $fontSize-base;
     min-height: 40px;
-    padding: 0 12px;
+    padding: 0 $space-12;
     width: 100%;
 
     &:focus {
@@ -62,21 +62,21 @@
 
 .profileSettingsTextarea {
     min-height: 80px;
-    padding: 10px 12px;
+    padding: $space-10 $space-12;
     resize: vertical;
 }
 
 .profileSettingsHint {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin: 4px 0 0;
+    margin: $space-4 0 0;
 }
 
 .profileSettingsAvatar {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: $space-14;
 }
 
 .profileSettingsAvatarPreview {
@@ -120,7 +120,7 @@
 .profileSettingsAvatarActions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: $space-8;
 }
 
 .profileSettingsAvatarBtn {
@@ -130,18 +130,18 @@
 .profileSettings .profileSettingsAvatarError {
     color: $color-danger;
     font-size: $fontSize-xs;
-    margin: 4px 0 0;
+    margin: $space-4 0 0;
     width: 100%;
 }
 
 .profileSettingsActions {
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 }
 
 .profileSettings .profileSettingsActionError {
     color: $color-danger;
     font-size: $fontSize-sm;
-    margin: 8px 0 0;
+    margin: $space-8 0 0;
 }
 
 .profileSettingsCheckbox {
@@ -150,8 +150,8 @@
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 8px;
-    margin-bottom: 28px;
+    gap: $space-8;
+    margin-bottom: $space-28;
 
     input[type="checkbox"] {
         accent-color: $color-accent;

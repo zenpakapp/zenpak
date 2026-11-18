@@ -7,7 +7,7 @@
 
     .itemDetailStat {
         border-right: 1px solid $color-border;
-        padding: 12px 8px;
+        padding: $space-12 $space-8;
         text-align: center;
 
         &:last-child {
@@ -19,7 +19,7 @@
             font-size: $fontSize-sm;
             font-weight: $fontWeight-medium;
             letter-spacing: $letterSpacing-caps;
-            margin-bottom: 4px;
+            margin-bottom: $space-4;
             text-transform: uppercase;
         }
 
@@ -32,7 +32,7 @@
 
 .itemDetailStarRow {
     display: flex;
-    gap: 4px;
+    gap: $space-4;
     justify-content: center;
 }
 
@@ -56,8 +56,8 @@
 .itemDetailBody {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 20px;
+    gap: $space-16;
+    padding: $space-20;
 }
 
 .itemDetailSection {
@@ -66,7 +66,7 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-medium;
         letter-spacing: $letterSpacing-caps;
-        margin-bottom: 6px;
+        margin-bottom: $space-6;
         text-transform: uppercase;
     }
 
@@ -85,7 +85,7 @@
         color: $color-accent-text;
         display: inline-flex;
         font-size: $fontSize-base;
-        gap: 6px;
+        gap: $space-6;
         text-decoration: none;
 
         &:hover {
@@ -96,14 +96,14 @@
     .itemDetailTags {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: $space-6;
 
         .itemDetailTag {
             background: $color-surface;
             border: 1px solid $color-border;
             border-radius: $radius-pill;
             font-size: $fontSize-sm;
-            padding: 2px 10px;
+            padding: $space-2 $space-10;
         }
     }
 }
@@ -111,7 +111,7 @@
 .itemDetailUsedInLists {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: $space-6;
 }
 
 .itemDetailUsedInBadge {
@@ -122,7 +122,7 @@
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
-    padding: 2px 10px;
+    padding: $space-2 $space-10;
 
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.16);
@@ -140,9 +140,9 @@
 .itemDetailFooter {
     border-top: 1px solid $color-border;
     display: grid;
-    gap: 8px;
+    gap: $space-8;
     grid-template-columns: repeat(4, 1fr);
-    padding: 14px 20px;
+    padding: $space-14 $space-20;
 
     > * {
         align-items: center;

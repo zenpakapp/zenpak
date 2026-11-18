@@ -38,13 +38,13 @@
 
 .addCategory {
     display: inline-block;
-    margin-top: $spacingMedium;
-    padding: $spacingSmaller 0;
+    margin-top: $space-16;
+    padding: $space-6 0;
 }
 
 .lpAddItem {
-    margin-left: 20px;
-    margin-top: 6px;
+    margin-left: $space-20;
+    margin-top: $space-6;
 }
 
 #csv,
@@ -53,7 +53,7 @@
 }
 
 .lpHref.close {
-    margin-left: 10px;
+    margin-left: $space-10;
 }
 
 .gu-mirror {

@@ -325,7 +325,7 @@ export default {
     list-style: none;
     margin: 0;
     overflow-y: auto;
-    padding: 4px 0;
+    padding: $space-4 0;
     z-index: $popover;
 }
 
@@ -334,13 +334,13 @@ export default {
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.06em;
-    padding: 10px 14px 4px;
+    padding: $space-10 $space-14 $space-4;
     text-transform: uppercase;
 
     &:not(:first-child) {
         border-top: 1px solid $color-border;
-        margin-top: 4px;
-        padding-top: 12px;
+        margin-top: $space-4;
+        padding-top: $space-12;
     }
 }
 
@@ -358,7 +358,7 @@ export default {
 
 .itemDetailAddOptionalRow {
     border-bottom: 1px solid $color-border;
-    padding: 6px 14px;
+    padding: $space-6 $space-14;
 }
 
 .itemDetailAddOptionalLabel {
@@ -367,7 +367,7 @@ export default {
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 6px;
+    gap: $space-6;
 }
 
 .lpOptionalToggle {
@@ -381,10 +381,10 @@ export default {
     cursor: pointer;
     display: flex;
     font-size: $fontSize-sm;
-    gap: 12px;
+    gap: $space-12;
     justify-content: space-between;
     list-style: none;
-    padding: 10px 14px;
+    padding: $space-10 $space-14;
 
     &:hover {
         background: rgba(var(--color-accent-rgb), 0.06);
@@ -408,7 +408,7 @@ export default {
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    padding: 2px 0;
+    padding: $space-2 0;
 
     &:hover { opacity: 0.8; }
 }
@@ -416,15 +416,15 @@ export default {
 .itemDetailAddCreate {
     align-items: stretch;
     display: grid;
-    gap: 6px;
+    gap: $space-6;
     grid-template-columns: minmax(0, 1fr);
     margin-top: 0;
-    padding: 6px 10px 10px;
+    padding: $space-6 $space-10 $space-10;
 }
 
 .itemDetailAddCreateRow {
     display: grid;
-    gap: 6px;
+    gap: $space-6;
     grid-template-columns: minmax(0, 1fr) auto;
 }
 
@@ -437,7 +437,7 @@ export default {
     font-size: $fontSize-sm;
     min-height: $control-height-sm;
     min-width: 0;
-    padding: 0 10px;
+    padding: 0 $space-10;
 
     &:focus {
         border-color: $color-accent;

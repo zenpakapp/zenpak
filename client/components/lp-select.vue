@@ -19,7 +19,7 @@
     font-size: $fontSize-base;
     justify-content: space-between;
     min-height: 40px;
-    padding: 0 12px;
+    padding: 0 $space-12;
     user-select: none;
     width: 100%;
 
@@ -36,7 +36,7 @@
 
     i {
         flex: 0 0 auto;
-        margin-left: 8px;
+        margin-left: $space-8;
         opacity: 0.5;
     }
 }
@@ -58,7 +58,7 @@
     color: $color-text;
     cursor: pointer;
     font-size: $fontSize-sm;
-    padding: 10px 12px;
+    padding: $space-10 $space-12;
 
     &:hover,
     &.lpSelectOptionActive {

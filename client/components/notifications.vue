@@ -31,7 +31,7 @@
     font-weight: $fontWeight-bold;
     line-height: 1;
     min-width: 16px;
-    padding: 2px 4px;
+    padding: $space-2 $space-4;
     position: absolute;
     right: -10px;
     text-align: center;
@@ -56,9 +56,9 @@
     align-items: center;
     border-bottom: 1px solid $color-border;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
     justify-content: space-between;
-    padding: 14px 14px 10px;
+    padding: $space-14 $space-14 $space-10;
 
     span {
         color: $color-text;
@@ -82,12 +82,12 @@
 .lpNotifHeaderActions {
     align-items: center;
     display: flex;
-    gap: 12px;
+    gap: $space-12;
 }
 
 .lpNotifItem {
     border-bottom: 1px solid $color-border;
-    padding: 10px 14px;
+    padding: $space-10 $space-14;
 
     &.unread {
         background: rgba(var(--color-accent-rgb), 0.06);
@@ -115,19 +115,19 @@
     color: $color-text-muted;
     font-size: $fontSize-xs;
     line-height: 1.3;
-    margin-top: 4px;
+    margin-top: $space-4;
 }
 
 .lpNotifEmpty {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    padding: 20px;
+    padding: $space-20;
     text-align: center;
 }
 
 .lpNotifPrefs {
     border-top: 1px solid $color-border;
-    padding: 10px 14px;
+    padding: $space-10 $space-14;
 }
 
 .lpNotifPrefRow {
@@ -137,7 +137,7 @@
     display: flex;
     font-size: $fontSize-sm;
     justify-content: space-between;
-    padding: 4px 0;
+    padding: $space-4 0;
 }
 </style>
 

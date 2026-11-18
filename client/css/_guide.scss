@@ -3,14 +3,14 @@
 .lpGuide {
     margin: 0 auto;
     max-width: $width-content;
-    padding: 32px 20px;
+    padding: $space-32 $space-20;
 }
 
 .lpGuideNav {
     align-items: center;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: $space-20;
 }
 
 .lpGuideBack,
@@ -25,29 +25,29 @@
 .lpGuideTitle {
     font-size: 20px;
     font-weight: $fontWeight-bold;
-    margin-bottom: 32px;
+    margin-bottom: $space-32;
 }
 
 .lpGuideSection {
     background: $color-bg;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    margin-bottom: 32px;
-    padding: 24px;
+    margin-bottom: $space-32;
+    padding: $space-24;
 }
 
 .lpGuideSectionTitle {
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpGuideField {
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 .lpGuideFieldTop {
-    margin-top: 16px;
+    margin-top: $space-16;
 }
 
 .lpGuideLabel {
@@ -56,7 +56,7 @@
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: $letterSpacing-caps;
-    margin-bottom: 6px;
+    margin-bottom: $space-6;
     text-transform: uppercase;
 }
 
@@ -68,7 +68,7 @@
     color: $color-text;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
-    padding: 8px 10px;
+    padding: $space-8 $space-10;
     resize: vertical;
     width: 100%;
 
@@ -92,7 +92,7 @@
     flex: 1;
     font-size: $fontSize-sm;
     min-width: 0;
-    padding: 6px 10px;
+    padding: $space-6 $space-10;
 
     &:focus-visible {
         border-color: $color-accent;
@@ -112,7 +112,7 @@
     color: $color-text;
     flex: 0 0 100px;
     font-size: $fontSize-sm;
-    padding: 6px 10px;
+    padding: $space-6 $space-10;
 
     &:focus-visible {
         border-color: $color-accent;
@@ -127,8 +127,8 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: $space-8;
+    margin-bottom: $space-8;
 }
 
 .lpGuideItemName {
@@ -142,8 +142,8 @@
 .lpGuideItemTools {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: $space-8;
+    margin-bottom: $space-8;
 }
 
 .lpGuideItemSearch {
@@ -153,7 +153,7 @@
 .lpGuideItemCount {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin-bottom: 12px;
+    margin-bottom: $space-12;
 }
 
 // Name, the lists using the item and the rule covering it, in one column so the URL keeps its room.
@@ -161,7 +161,7 @@
     display: flex;
     flex: 0 0 170px;
     flex-direction: column;
-    gap: 2px;
+    gap: $space-2;
     min-width: 0;
 
     .lpGuideItemName { flex: none; }
@@ -186,7 +186,7 @@
     border-radius: $radius-sm;
     color: $color-accent-text;
     font-size: $fontSize-xs;
-    padding: 2px 6px;
+    padding: $space-2 $space-6;
     white-space: nowrap;
 }
 
@@ -196,8 +196,8 @@
     color: $color-accent-text;
     cursor: pointer;
     font-size: $fontSize-sm;
-    margin-top: 4px;
-    padding: 4px 0;
+    margin-top: $space-4;
+    padding: $space-4 0;
 
     &:hover { text-decoration: underline; }
 
@@ -213,7 +213,7 @@
     color: $color-danger;
     cursor: pointer;
     font-size: $fontSize-xs;
-    padding: 4px 0;
+    padding: $space-4 0;
     white-space: nowrap;
 
     &:hover { text-decoration: underline; }
@@ -227,8 +227,8 @@
 .lpGuideSaveRow {
     align-items: center;
     display: flex;
-    gap: 16px;
-    margin-top: 20px;
+    gap: $space-16;
+    margin-top: $space-20;
 }
 
 .lpGuideSavedFeedback {
@@ -239,18 +239,18 @@
 .lpGuideHint {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin-bottom: 16px;
+    margin-bottom: $space-16;
 }
 
 // An affiliate rule: labelled fields on one row, then what it applies to, then a warning if its
 // value is not what the type needs.
 .lpGuideRule {
     border-bottom: 1px solid $color-border;
-    padding: 12px 0;
+    padding: $space-12 0;
 
     .lpGuideRuleRow {
         align-items: flex-end;
-        margin-bottom: 6px;
+        margin-bottom: $space-6;
     }
 }
 
@@ -258,7 +258,7 @@
     display: flex;
     flex: 0 0 150px;
     flex-direction: column;
-    gap: 4px;
+    gap: $space-4;
 
     // The shared select and input sizes are widths in a row: here the field is a column.
     .lpGuideSelect,
@@ -297,19 +297,19 @@
     background: rgba(var(--color-warning-rgb), 0.1);
     border-radius: $radius-md;
     color: $color-text;
-    margin-top: 6px;
-    padding: 6px 10px;
+    margin-top: $space-6;
+    padding: $space-6 $space-10;
 }
 
 .lpGuideLoading,
 .lpGuideEmpty {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    padding: 16px 0;
+    padding: $space-16 0;
 }
 
 .lpGuideError {
     color: $color-danger;
     font-size: $fontSize-sm;
-    margin-top: 16px;
+    margin-top: $space-16;
 }

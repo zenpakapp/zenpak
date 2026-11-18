@@ -19,9 +19,9 @@
     border-bottom: 1px solid $color-border;
     display: flex;
     flex-shrink: 0;
-    gap: 12px;
+    gap: $space-12;
     min-height: 60px;
-    padding: 0 20px;
+    padding: 0 $space-20;
 }
 
 .lpGearRoomTitle {
@@ -42,9 +42,9 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    gap: 16px;
+    gap: $space-16;
     overflow-y: auto;
-    padding: 20px 16px;
+    padding: $space-20 $space-16;
     width: 220px;
 }
 
@@ -53,7 +53,7 @@
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: $space-6;
     text-transform: uppercase;
 }
 
@@ -66,7 +66,7 @@
     color: $color-text;
     font-size: $fontSize-md;
     min-height: $control-height-md;
-    padding: 0 10px;
+    padding: 0 $space-10;
     width: 100%;
 
     &:focus {
@@ -82,7 +82,7 @@
 .lpGearRoomCategoryChips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: $space-6;
 }
 
 .lpGearRoomChip {
@@ -93,7 +93,7 @@
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
-    padding: 3px 10px;
+    padding: $space-4 $space-10;
 
     &:hover {
         border-color: $color-accent;
@@ -110,7 +110,7 @@
 .lpGearRoomWeightRange {
     align-items: center;
     display: flex;
-    gap: 6px;
+    gap: $space-6;
 }
 
 .lpGearRoomWeightInput {
@@ -121,7 +121,7 @@
     color: $color-text;
     font-size: $fontSize-sm;
     min-height: 32px;
-    padding: 0 6px;
+    padding: 0 $space-6;
     text-align: center;
     width: 70px;
 
@@ -145,8 +145,8 @@
     display: flex;
     flex-shrink: 0;
     font-size: $fontSize-sm;
-    gap: 24px;
-    padding: 10px 20px;
+    gap: $space-24;
+    padding: $space-10 $space-20;
 }
 
 .lpGearRoomStat strong {
@@ -169,7 +169,7 @@
         color: $color-text-muted;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
-        padding: 8px 12px;
+        padding: $space-8 $space-12;
         position: sticky;
         text-align: left;
         top: 0;
@@ -202,7 +202,7 @@
 
     td {
         border-bottom: 1px solid $color-border;
-        padding: 8px 12px;
+        padding: $space-8 $space-12;
         vertical-align: middle;
 
         &.lpGRCheckCol {
@@ -257,13 +257,13 @@
 .lpGearRoomStarBadge {
     color: $color-accent;
     font-size: $fontSize-base;
-    margin-right: 4px;
+    margin-right: $space-4;
 }
 
 .lpGearRoomItemDesc {
     color: $color-text-muted;
     font-size: $fontSize-sm;
-    margin-top: 2px;
+    margin-top: $space-2;
 }
 
 .lpGearRoomCategoryBadge {
@@ -271,7 +271,7 @@
     border-radius: $radius-pill;
     color: $color-accent-text;
     font-size: $fontSize-sm;
-    padding: 2px 8px;
+    padding: $space-2 $space-8;
     white-space: nowrap;
 }
 
@@ -284,8 +284,8 @@
     display: none;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
-    margin: 8px 16px 0;
-    padding: 6px 12px;
+    margin: $space-8 $space-16 0;
+    padding: $space-6 $space-12;
 }
 
 @media (max-width: 768px) {
@@ -293,7 +293,7 @@
         border-bottom: 1px solid $color-border;
         border-right: none;
         display: none;
-        padding: 12px 16px;
+        padding: $space-12 $space-16;
         width: 100%;
 
         &.open {

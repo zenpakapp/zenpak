@@ -46,11 +46,11 @@
     align-items: center;
     border-bottom: 1px solid $ink-tint;
     display: flex;
-    gap: $spacingSmall;
+    gap: $space-10;
     justify-content: space-between;
     list-style-type: none;
     margin: 0;
-    padding: $spacingMedium;
+    padding: $space-16;
 
     &:last-child {
         border-bottom: none;
@@ -89,8 +89,8 @@
     color: inherit;
     cursor: pointer;
     font-size: $fontSize-ui;
-    margin-left: 12px;
-    padding: 4px 10px;
+    margin-left: $space-12;
+    padding: $space-4 $space-10;
 
     &:hover { opacity: 0.75; }
 }
