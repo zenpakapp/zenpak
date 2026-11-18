@@ -195,6 +195,7 @@
 </template>
 
 <script>
+import { BANNER_MS, DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
 import { computed, defineAsyncComponent, markRaw } from 'vue';
 import breakpoints from '../utils/breakpoints';
 import { fetchJson } from '../utils/utils';
@@ -248,10 +249,10 @@ const legacySourceListInfoDismissedField = 'creatorLinksActionDismissed';
 
 function scheduleIdle(callback) {
     if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-        window.requestIdleCallback(callback, { timeout: 4000 });
+        window.requestIdleCallback(callback, { timeout: DASHBOARD_IDLE_MS });
         return;
     }
-    setTimeout(callback, 1500);
+    setTimeout(callback, DASHBOARD_IDLE_FALLBACK_MS);
 }
 
 export default {
@@ -444,12 +445,12 @@ export default {
                 .catch(() => {});
             this.billingSuccess = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { this.billingSuccess = false; }, 6000);
+            setTimeout(() => { this.billingSuccess = false; }, BANNER_MS);
         }
         if (this.$route && this.$route.query.billing === 'cancel') {
             this.billingCancelled = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { this.billingCancelled = false; }, 6000);
+            setTimeout(() => { this.billingCancelled = false; }, BANNER_MS);
         }
         if (this.$route && this.$route.query.billing === 'managed') {
             fetch('/api/billing/me', { credentials: 'include' })
@@ -458,7 +459,7 @@ export default {
                 .catch(() => {});
             this.billingManaged = true;
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            setTimeout(() => { this.billingManaged = false; }, 6000);
+            setTimeout(() => { this.billingManaged = false; }, BANNER_MS);
         }
     },
     beforeUnmount() {

@@ -196,6 +196,7 @@
 </template>
 
 <script>
+import { NOTIFICATIONS_POLL_MS } from '../services/timings';
 import { fetchJson } from '../utils/utils';
 
 export default {
@@ -211,7 +212,7 @@ export default {
     },
     mounted() {
         this.load();
-        this.pollInterval = setInterval(() => this.load(), 60000);
+        this.pollInterval = setInterval(() => this.load(), NOTIFICATIONS_POLL_MS);
         document.addEventListener('click', this.onOutsideClick);
         document.addEventListener('visibilitychange', this.onVisibilityChange);
         window.addEventListener('focus', this.load);

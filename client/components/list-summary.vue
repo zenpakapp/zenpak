@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import { SUMMARY_IDLE_MS } from '../services/timings';
 import { markRaw } from 'vue';
 import colorPicker from './colorpicker.vue';
 import renderListChart from '../services/list-chart';
@@ -109,7 +110,7 @@ const { displayWeight, displayPrice } = useUtils();
 
 function scheduleIdle(callback) {
     if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-        window.requestIdleCallback(callback, { timeout: 1500 });
+        window.requestIdleCallback(callback, { timeout: SUMMARY_IDLE_MS });
         return;
     }
     setTimeout(callback, 0);

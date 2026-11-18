@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import { IDLE_TIMEOUT_MS } from '../services/timings';
 import Icon from './icon.vue';
 import { useUtils } from '../composables/useUtils';
 import { openDialog } from '../services/dialogs';
@@ -297,7 +298,7 @@ export default {
                     this.handleItemDrag();
                 };
                 if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
-                    this.dragIdle = window.requestIdleCallback(run, { timeout: 1000 });
+                    this.dragIdle = window.requestIdleCallback(run, { timeout: IDLE_TIMEOUT_MS });
                 } else {
                     this.dragIdle = setTimeout(run, 0);
                 }

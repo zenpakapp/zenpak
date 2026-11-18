@@ -305,6 +305,7 @@
 </template>
 
 <script>
+import { DEBOUNCE_MS } from '../services/timings';
 import { defineAsyncComponent } from 'vue';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
@@ -451,7 +452,7 @@ export default {
         },
         onFilterInput() {
             clearTimeout(this.filterTimeout);
-            this.filterTimeout = setTimeout(this.applyDiscoverFilters, 300);
+            this.filterTimeout = setTimeout(this.applyDiscoverFilters, DEBOUNCE_MS);
         },
         applyDiscoverFilters() {
             this.setDiscoverFilters({

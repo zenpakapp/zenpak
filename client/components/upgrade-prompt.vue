@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import { FEEDBACK_MS } from '../services/timings';
 import modal from './modal.vue';
 import { fetchJson } from '../utils/utils.js';
 import { trackEvent } from '../utils/analytics';
@@ -250,7 +251,7 @@ export default {
                     body: JSON.stringify({ email: this.email, tier: this.selectedTier, message: this.message }),
                 });
                 this.submitted = true;
-                setTimeout(() => this.closeModal(), 2000);
+                setTimeout(() => this.closeModal(), FEEDBACK_MS);
             } catch {
                 this.formError = 'Something went wrong, please try again.';
             } finally {

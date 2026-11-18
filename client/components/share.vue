@@ -105,6 +105,7 @@
 </template>
 
 <script>
+import { STATUS_REFRESH_MS } from '../services/timings';
 import PopoverHover from './popover-hover.vue';
 import Icon from './icon.vue';
 import listInsightsLine from './list-insights-line.vue';
@@ -360,7 +361,7 @@ export default {
         },
         scheduleStatusRefresh() {
             clearTimeout(this.statusTimer);
-            this.statusTimer = setTimeout(() => this.refreshPublishStatus(), 800);
+            this.statusTimer = setTimeout(() => this.refreshPublishStatus(), STATUS_REFRESH_MS);
         },
         // Button handler: save the latest edits first, then publish.
         publish() {
