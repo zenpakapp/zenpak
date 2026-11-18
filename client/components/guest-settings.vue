@@ -22,7 +22,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
+    box-shadow: $shadow-raised;
     min-width: 180px;
     padding: $space-12 $space-14;
     position: absolute;

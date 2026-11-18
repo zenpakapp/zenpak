@@ -37,7 +37,7 @@ $welcome-chrome-bottom: #18181b;
         background:
             linear-gradient(135deg, rgba($brand-forest, 0.96), rgba($brand-green, 0.82)),
             url("/images/lp_bg2.jpg") center 30% / cover no-repeat;
-        box-shadow: 0 28px 60px rgba(var(--color-shadow-rgb), 0.14);
+        box-shadow: $shadow-modal;
         content: "";
         inset: 0;
         position: absolute;
@@ -389,7 +389,7 @@ details[open] .lpWelcomeFaqQ::after {
 
 #lpWelcomeScreenshot {
     border-radius: $radius-lg;
-    box-shadow: 0 14px 36px rgba(var(--color-shadow-rgb), 0.16);
+    box-shadow: $shadow-popover;
     display: block;
     width: 100%;
 }
@@ -404,7 +404,7 @@ details[open] .lpWelcomeFaqQ::after {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-xl;
-    box-shadow: 0 22px 50px rgba(var(--color-shadow-rgb), 0.12);
+    box-shadow: $shadow-modal;
     color: $color-text;
     overflow: hidden;
     padding: $space-24;
@@ -540,7 +540,7 @@ details[open] .lpWelcomeFaqQ::after {
 .lpOAuthSetupCard {
     background: $color-surface;
     border-radius: $radius-lg;
-    box-shadow: 0 8px 32px rgba(var(--color-shadow-rgb), 0.18);
+    box-shadow: $shadow-popover;
     max-width: 420px;
     padding: $space-40;
     width: 90%;

@@ -4,7 +4,7 @@
     background: $ink-900;
     border-radius: $radius-lg;
     bottom: 24px;
-    box-shadow: 0 8px 32px rgba(var(--color-shadow-rgb), 0.3);
+    box-shadow: $shadow-popover;
     color: $color-on-solid;
     display: flex;
     flex-direction: column;

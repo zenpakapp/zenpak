@@ -14,7 +14,7 @@
 .lpTemplatePickerModal {
     background: $color-surface;
     border-radius: $radius-lg;
-    box-shadow: 0 8px 40px rgba(var(--color-shadow-rgb), 0.18);
+    box-shadow: $shadow-popover;
     left: 50%;
     max-height: calc(90vh - #{$space-32} * 2);
     max-width: calc(100vw - #{$space-32} * 2);

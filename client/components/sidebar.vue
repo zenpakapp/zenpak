@@ -8,7 +8,7 @@ $sidebarPadding: 20px;
 #sidebar {
     background: $color-surface;
     border-right: 1px solid $color-border;
-    box-shadow: 2px 0 8px rgba(var(--color-shadow-rgb), 0.06);
+    box-shadow: $shadow-soft;
     color: $color-text;
     height: 100%;
     margin-left: -$sidebarOverflow;
@@ -80,7 +80,7 @@ $sidebarPadding: 20px;
 
 @media (max-width: $bp-tablet) {
     #sidebar {
-        box-shadow: 4px 0 16px rgba(var(--color-shadow-rgb), 0.18);
+        box-shadow: $shadow-drawer;
         margin-left: 0;
         opacity: 0;
         padding-left: $sidebarPadding;

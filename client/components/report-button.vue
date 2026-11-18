@@ -19,7 +19,7 @@
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: 0 8px 24px rgba(var(--color-shadow-rgb), 0.12);
+    box-shadow: $shadow-popover;
     left: 0;
     padding: $space-16;
     position: absolute;

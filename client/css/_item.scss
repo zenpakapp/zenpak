@@ -37,7 +37,7 @@
     &::before {
         background: currentColor;
         border-radius: $radius-round;
-        box-shadow: -5px 0 currentColor, 5px 0 currentColor;
+        box-shadow: -5px 0 currentColor, 5px 0 currentColor; // shadow-exempt: the two side dots of the ellipsis glyph
         content: "";
         height: 3px;
         left: 50%;
