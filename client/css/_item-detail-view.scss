@@ -24,7 +24,7 @@
         }
 
         .itemDetailStatValue {
-            font-size: 18px;
+            font-size: $fontSize-lg;
             font-weight: $fontWeight-bold;
         }
     }
@@ -39,7 +39,7 @@
 .itemDetailStarBtn {
     color: $color-border;
     cursor: pointer;
-    font-size: 16px;
+    font-size: $fontSize-md;
     transition: color $transitionDurationFast ease;
 
     &:hover,

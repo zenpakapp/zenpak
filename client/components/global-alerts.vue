@@ -24,7 +24,7 @@
     border-radius: $radius-md;
     bottom: 16px;
     box-shadow: $shadow-popover;
-    color: #fff;
+    color: $color-on-solid;
     top: auto;
 
     .lpGlobalAlert {
@@ -32,7 +32,7 @@
     }
 
     .lpGlobalAlertDismiss {
-        color: #fff;
+        color: $color-on-solid;
         opacity: 1;
 
         &:hover,
@@ -67,7 +67,7 @@
     border-radius: $radius-md;
     color: #1a1a1a;
     cursor: pointer;
-    font-size: 16px;
+    font-size: $fontSize-md;
     line-height: 1;
     opacity: 0.85;
     padding: 0;
@@ -88,7 +88,7 @@
     border-radius: $radius-md;
     color: inherit;
     cursor: pointer;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     margin-left: 12px;
     padding: 4px 10px;
 
@@ -109,7 +109,7 @@
     }
 
     .lpGlobalAlertDismiss {
-        font-size: 22px;
+        font-size: $fontSize-xl;
         min-height: 44px;
         min-width: 44px;
     }

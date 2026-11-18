@@ -225,7 +225,7 @@
     color: $color-text;
     display: flex;
     flex-wrap: wrap;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     gap: 12px;
     margin-bottom: 16px;
     padding: 10px 14px;
@@ -237,10 +237,10 @@
     border-radius: $radius-md;
     color: $color-accent-text;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
     padding: 3px 10px;
-    transition: opacity 0.15s;
+    transition: opacity $transitionDurationFast;
     white-space: nowrap;
 
     @media (pointer: coarse) {
@@ -260,7 +260,7 @@
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 14px;
+    font-size: $fontSize-base;
     margin-left: auto;
     min-height: 32px;
     min-width: 32px;
@@ -279,8 +279,8 @@
     background: color-mix(in sRGB, $color-accent 15%, transparent);
     border-radius: $radius-sm;
     color: $color-accent-text;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
     margin-left: 6px;
     padding: 1px 6px;
     white-space: nowrap;
@@ -442,7 +442,7 @@
     // iOS Safari zooms the page when a field under 16px gets focus.
     #header #lpListName,
     #main .lpList input.lpSilent {
-        font-size: 16px;
+        font-size: $fontSize-md;
     }
 
     // Same treatment as the header popovers: the 300px dropdown is anchored to the bell,
@@ -544,7 +544,7 @@
 
 .lpForkSourceDismiss {
     border-radius: $radius-md;
-    font-size: 14px;
+    font-size: $fontSize-base;
     line-height: 1;
     min-height: 24px;
     min-width: 24px;
@@ -598,7 +598,7 @@
     .lpThemeIcon {
         align-items: center;
         display: inline-flex;
-        font-size: 16px;
+        font-size: $fontSize-md;
         height: 60px;
     }
 }
@@ -627,7 +627,7 @@
         border-radius: $radius-pill;
         color: $color-text;
         display: inline-flex;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         gap: 8px;
         line-height: 1;
         min-height: 40px;
@@ -829,7 +829,7 @@
 
     .lpSupportLink {
         color: $color-accent-text;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         text-decoration: none;
 
         &:hover {

@@ -881,7 +881,7 @@
     border-radius: $radius-md;
     color: $color-text;
     font-family: monospace;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     height: 12em;
     padding: 8px;
     width: 100%;
@@ -895,7 +895,7 @@
     }
 
     .lpCommunitySearchInput {
-        font-size: 16px;
+        font-size: $fontSize-md;
         min-height: 44px;
     }
 }

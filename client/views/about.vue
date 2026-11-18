@@ -7,7 +7,7 @@
         border-top: 1px solid $color-border;
         color: $color-text-muted;
         display: block;
-        font-size: 13px;
+        font-size: $fontSize-ui;
         margin-top: 60px;
         padding: 20px 0 0;
         position: static;
@@ -26,8 +26,8 @@
     }
 
     h2 {
-        font-size: 18px;
-        font-weight: 700;
+        font-size: $fontSize-lg;
+        font-weight: $fontWeight-bold;
         margin: 32px 0 8px;
     }
 
@@ -49,7 +49,7 @@
 
         a {
             color: $color-text-muted;
-            font-size: 13px;
+            font-size: $fontSize-ui;
             text-decoration: none;
 
             &:hover { color: $color-text; }
@@ -86,7 +86,7 @@
 
     .lpAboutKofi {
         color: $color-accent-text;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         text-decoration: none;
 
         &:hover {

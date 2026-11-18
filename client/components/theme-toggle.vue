@@ -6,7 +6,7 @@
     color: $color-text-muted;
     cursor: pointer;
     display: inline-flex;
-    font-size: 16px;
+    font-size: $fontSize-md;
     gap: 6px;
     justify-content: center;
     line-height: 0;
@@ -20,7 +20,7 @@
 
 // Words next to the icon, for the pages where it stands beside text links (public pages).
 .lpThemeLabel {
-    font-size: 13px;
+    font-size: $fontSize-ui;
     line-height: 1;
     white-space: nowrap;
 

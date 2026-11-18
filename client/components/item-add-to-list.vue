@@ -441,7 +441,7 @@ export default {
 
     &:focus {
         border-color: $color-accent;
-        box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.12);
+        box-shadow: $shadow-focus-ring;
         outline: none;
     }
 }

@@ -5,7 +5,7 @@
     border-radius: $radius-lg;
     bottom: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    color: #fff;
+    color: $color-on-solid;
     display: flex;
     flex-direction: column;
     font-size: $fontSize-sm;
@@ -30,7 +30,7 @@
 .lpGearRoomBatchCount {
     background: $color-accent-solid;
     border-radius: $radius-pill;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
     padding: 2px 8px;
 }
@@ -131,7 +131,7 @@
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 14px;
+    font-size: $fontSize-base;
     line-height: 1;
     padding: 0 2px;
 
@@ -186,7 +186,7 @@
     background: $color-accent-solid;
     border: none;
     border-radius: $radius-md;
-    color: #fff;
+    color: $color-on-solid;
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;

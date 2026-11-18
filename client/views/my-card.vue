@@ -14,7 +14,7 @@
         a {
             color: $color-text-muted;
             display: inline-block;
-            font-size: 14px;
+            font-size: $fontSize-base;
             line-height: 44px;
             text-decoration: none;
 
@@ -49,14 +49,14 @@
 
     .lpMyCardHandle {
         color: #555;
-        font-size: 16px;
+        font-size: $fontSize-md;
         margin: 4px 0 0;
         overflow-wrap: anywhere;
     }
 
     .lpMyCardAddress {
         color: #111;
-        font-size: 16px;
+        font-size: $fontSize-md;
         margin: 12px 0 0;
         overflow-wrap: anywhere;
         user-select: all;

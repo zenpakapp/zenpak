@@ -25,13 +25,13 @@
 
     &:focus {
         border-color: $color-accent;
-        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        box-shadow: $shadow-focus-ring;
         outline: none;
     }
 
     &.lpSelectOpen {
         border-color: $color-accent;
-        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        box-shadow: $shadow-focus-ring;
     }
 
     i {

@@ -296,7 +296,7 @@ input.lpCategoryName { /* specificity */
         color: $color-accent-text;
         display: inline-flex;
         font-size: 10px;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         line-height: 1.4;
         max-width: 90px;
         overflow: hidden;
@@ -556,7 +556,7 @@ input.lpCategoryName { /* specificity */
             flex: none;
             height: 6px;
             transform: rotate(-45deg);
-            transition: transform 0.15s ease;
+            transition: transform $transitionDurationFast ease;
             width: 6px;
         }
 
@@ -596,7 +596,7 @@ input.lpCategoryName { /* specificity */
 
         &:focus {
             border-color: $color-accent;
-            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+            box-shadow: $shadow-focus-ring;
             outline: none;
         }
     }
@@ -617,7 +617,7 @@ input.lpCategoryName { /* specificity */
         align-items: center;
         color: $color-text;
         display: flex;
-        font-size: 22px;
+        font-size: $fontSize-xl;
         font-weight: $fontWeight-bold;
         gap: 10px;
         letter-spacing: -0.01em;
@@ -681,7 +681,7 @@ input.lpCategoryName { /* specificity */
     background: $color-accent-solid;
     border-radius: $radius-pill;
     height: 100%;
-    transition: width 0.2s ease;
+    transition: width $transitionDuration ease;
 }
 
 // Under the totals table; the slot only renders when the summary is given an action.
@@ -737,7 +737,7 @@ input.lpCategoryName { /* specificity */
     background: $color-accent-solid;
     border: none;
     border-radius: $radius-md;
-    color: #fff;
+    color: $color-on-solid;
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
@@ -763,7 +763,7 @@ input.lpCategoryName { /* specificity */
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 200;
+    z-index: $dialog;
 }
 
 .lpPackModalInner {
@@ -812,7 +812,7 @@ input.lpCategoryName { /* specificity */
 
 .lpPackModalBtnClose {
     background: $color-accent-solid;
-    color: #fff;
+    color: $color-on-solid;
 
     &:hover { background: $color-accent-hover; }
 }
@@ -847,7 +847,7 @@ input.lpCategoryName { /* specificity */
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     line-height: 1;
     padding: 0 2px;
 

@@ -33,7 +33,7 @@
     }
 
     h2 {
-        font-size: 22px;
+        font-size: $fontSize-xl;
         font-weight: $fontWeight-bold;
         letter-spacing: 0;
         line-height: 1.2;
@@ -43,7 +43,7 @@
 
     h3 {
         font-size: $fontSize-md;
-        font-weight: 700;
+        font-weight: $fontWeight-bold;
         letter-spacing: -0.02em;
         margin: 0 0 10px;
     }
@@ -61,7 +61,7 @@
         color: $color-text-muted;
         display: block;
         font-size: $fontSize-sm;
-        font-weight: 700;
+        font-weight: $fontWeight-bold;
         letter-spacing: 0.04em;
         margin-bottom: 8px;
         text-transform: uppercase;
@@ -87,7 +87,7 @@
         &:focus {
             background: $color-surface;
             border-color: $color-accent;
-            box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.18);
+            box-shadow: $shadow-focus-ring;
             outline: none;
         }
     }
@@ -150,7 +150,7 @@
 
     .lpHref.close {
         color: $color-text-muted;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         margin-left: 0;
         padding: 10px 4px;
 
@@ -182,7 +182,7 @@
         color: $color-text-muted;
         cursor: pointer;
         display: inline-flex;
-        font-size: 22px;
+        font-size: $fontSize-xl;
         height: 32px;
         justify-content: center;
         line-height: 1;

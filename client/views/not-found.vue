@@ -14,7 +14,7 @@
 .lpNotFoundCode {
     color: $color-accent-text;
     font-size: 96px;
-    font-weight: 800;
+    font-weight: $fontWeight-bold;
     letter-spacing: -4px;
     line-height: 1;
     margin-bottom: 12px;
@@ -23,7 +23,7 @@
 .lpNotFoundTitle {
     color: $color-text;
     font-size: 24px;
-    font-weight: 600;
+    font-weight: $fontWeight-bold;
     margin: 0 0 10px;
 }
 
@@ -45,17 +45,17 @@
 .lpNotFoundBtn {
     border-radius: $radius-sm;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-medium;
     padding: 10px 22px;
     text-decoration: none;
-    transition: opacity 0.15s;
+    transition: opacity $transitionDurationFast;
 
     &:hover { opacity: 0.8; }
 
     &--primary {
         background: $color-accent-solid;
-        color: #fff;
+        color: $color-on-solid;
     }
 
     &--ghost {

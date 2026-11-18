@@ -91,26 +91,26 @@ export default {
 
     strong {
         display: block;
-        font-size: 22px;
-        font-weight: 700;
+        font-size: $fontSize-xl;
+        font-weight: $fontWeight-bold;
     }
 
     span {
         color: $color-text-muted;
-        font-size: 11px;
+        font-size: $fontSize-xs;
     }
 }
 
 .lpInsightsTable {
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     width: 100%;
 
     th {
         border-bottom: 1px solid $color-border;
         color: $color-text-muted;
-        font-size: 11px;
-        font-weight: 600;
+        font-size: $fontSize-xs;
+        font-weight: $fontWeight-bold;
         padding: 4px 8px;
         text-align: right;
         text-transform: uppercase;

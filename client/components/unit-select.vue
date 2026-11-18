@@ -63,7 +63,7 @@
 
             &:hover {
                 background: $color-accent-solid;
-                color: #fff;
+                color: $color-on-solid;
             }
         }
     }

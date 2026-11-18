@@ -26,9 +26,9 @@
 .lpNotifBadge {
     background: $color-accent-solid;
     border-radius: $radius-pill;
-    color: #fff;
+    color: $color-on-solid;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: $fontWeight-bold;
     line-height: 1;
     min-width: 16px;
     padding: 2px 4px;
@@ -113,7 +113,7 @@
 
 .lpNotifTime {
     color: $color-text-muted;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     line-height: 1.3;
     margin-top: 4px;
 }

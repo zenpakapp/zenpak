@@ -18,7 +18,7 @@
 
         .lpUpgradeLockCta {
             background: $color-accent-solid;
-            color: #fff;
+            color: $color-on-solid;
         }
     }
 }
@@ -44,7 +44,7 @@
     .lpUpgradeTier {
         color: $color-text-muted;
         font-size: $fontSize-sm;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
         letter-spacing: 0.06em;
         margin-bottom: 4px;
         text-transform: uppercase;
@@ -73,7 +73,7 @@
                 color: $color-accent-text;
                 content: "✓";
                 flex-shrink: 0;
-                font-weight: 700;
+                font-weight: $fontWeight-bold;
             }
         }
     }
@@ -135,12 +135,12 @@
 
         &.active {
             background: $color-accent-solid;
-            color: #fff;
+            color: $color-on-solid;
 
             .lpUpgradeIntervalSave {
                 background: rgba(255, 255, 255, 0.22);
                 border-color: transparent;
-                color: #fff;
+                color: $color-on-solid;
             }
         }
     }
@@ -149,7 +149,7 @@
         border: 1px solid rgba(var(--color-accent-rgb), 0.4);
         border-radius: $radius-pill;
         color: $color-accent-text;
-        font-size: 11px;
+        font-size: $fontSize-xs;
         font-weight: $fontWeight-bold;
         letter-spacing: 0.02em;
         padding: 1px 6px;

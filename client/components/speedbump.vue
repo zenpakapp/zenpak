@@ -11,7 +11,7 @@
     cursor: pointer;
     display: flex;
     font-size: inherit;
-    font-weight: normal;
+    font-weight: $fontWeight-normal;
     gap: 8px;
     letter-spacing: normal;
     margin: 0 0 16px;

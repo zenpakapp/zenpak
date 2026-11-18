@@ -127,7 +127,7 @@ export default {
     position: absolute;
     right: 0;
     top: calc(100% + 4px);
-    z-index: 20;
+    z-index: $dropdown;
 }
 
 .brandSuggestion {
