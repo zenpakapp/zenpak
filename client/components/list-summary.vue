@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { SUMMARY_IDLE_MS } from '../services/timings';
+import { SUMMARY_IDLE_MS, TOTALS_GROWTH_MS } from '../services/timings';
 import { markRaw } from 'vue';
 import colorPicker from './colorpicker.vue';
 import renderListChart from '../services/list-chart';
@@ -201,7 +201,7 @@ export default {
             el.style.overflow = 'hidden';
             el.style.height = `${from}px`;
             el.getBoundingClientRect();
-            el.style.transition = 'height 0.2s ease';
+            el.style.transition = `height ${TOTALS_GROWTH_MS}ms ease`;
             el.style.height = `${to}px`;
             const done = () => {
                 el.removeEventListener('transitionend', done);

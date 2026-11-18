@@ -20,7 +20,7 @@ const files = [];
     });
 }(root));
 
-const call = /(?:setTimeout|setInterval)\(.*,\s*(\d+)\s*\)|\btimeout:\s*(\d+)/;
+const call = /(?:setTimeout|setInterval)\(.*,\s*(\d+)\s*\)|\btimeout:\s*(\d+)|style\.(?:transition|animation)\w*\s*=.*?(\d*\.?\d+)m?s\b/;
 const offenders = [];
 let scanned = 0;
 files.forEach((file) => {
@@ -30,7 +30,7 @@ files.forEach((file) => {
         const m = call.exec(line);
         if (!m) return;
         scanned += 1;
-        if (Number(m[1] || m[2]) === 0 || line.includes('timing-exempt')) return;
+        if (Number(m[1] || m[2] || m[3]) === 0 || line.includes('timing-exempt')) return;
         offenders.push(`${rel}:${i + 1}  ${line.trim().slice(0, 100)}`);
     });
 });
@@ -38,4 +38,4 @@ files.forEach((file) => {
 assert.strictEqual(offenders.length, 0, `delays written out, use client/services/timings.js:\n${offenders.join('\n')}`);
 const timings = fs.readFileSync(path.join(root, 'services/timings.js'), 'utf8');
 assert.ok(/export const \w+_MS = \d+;/.test(timings), 'timings.js exports _MS constants');
-console.log(`unit-timings: ok (${scanned} timers, none with a written delay)`);
+console.log(`unit-timings: ok (${scanned} timers, none with a written delay or duration)`);
