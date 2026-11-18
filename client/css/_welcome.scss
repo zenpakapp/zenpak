@@ -68,7 +68,7 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
 .lpWelcomeEyebrow {
     color: rgba(255, 255, 255, 0.74);
     display: block;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.18em;
     margin-bottom: 16px;
@@ -82,10 +82,10 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
 }
 
 .lpWelcomeHeadline {
-    color: #fff;
+    color: $color-on-solid;
     font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
     font-size: clamp(36px, 6vw, 66px);
-    font-weight: 700;
+    font-weight: $fontWeight-bold;
     letter-spacing: -0.04em;
     line-height: 0.96;
     margin: 0;
@@ -119,15 +119,15 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
 }
 
 .lpWelcomeStatNum {
-    color: #fff;
-    font-size: 22px;
+    color: $color-on-solid;
+    font-size: $fontSize-xl;
     font-weight: $fontWeight-bold;
     line-height: 1.2;
 }
 
 .lpWelcomeStatLabel {
     color: rgba(255, 255, 255, 0.62);
-    font-size: 13px;
+    font-size: $fontSize-ui;
 }
 
 .lpWelcomeFeatures {
@@ -205,7 +205,7 @@ $welcome-page-screenshot-end: rgba(243, 238, 229, 0.92);
         content: "+";
         float: right;
         font-size: 20px;
-        font-weight: 300;
+        font-weight: $fontWeight-light;
         line-height: 1;
     }
 }
@@ -266,7 +266,7 @@ details[open] .lpWelcomeFaqQ::after {
 .lpWelcomeProofEyebrow {
     color: $color-accent-text;
     display: block;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.14em;
     margin-bottom: 8px;
@@ -301,7 +301,7 @@ details[open] .lpWelcomeFaqQ::after {
     border-radius: $radius-lg;
     color: $color-text;
     display: flex;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     font-weight: $fontWeight-medium;
     gap: 10px;
     padding: 10px 12px;
@@ -310,7 +310,7 @@ details[open] .lpWelcomeFaqQ::after {
 .lpWelcomeMiniList li::before {
     color: $color-accent-text;
     content: "•";
-    font-size: 18px;
+    font-size: $fontSize-lg;
     line-height: 1;
 }
 
@@ -329,7 +329,7 @@ details[open] .lpWelcomeFaqQ::after {
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
     padding: 6px 14px;
-    transition: all 0.15s;
+    transition: all $transitionDurationFast;
 
     &:hover {
         border-color: $color-accent;
@@ -340,10 +340,10 @@ details[open] .lpWelcomeFaqQ::after {
 .lpWelcomeProofTabActive {
     background: $color-accent-solid;
     border-color: $color-accent;
-    color: #fff;
+    color: $color-on-solid;
 
     &:hover {
-        color: #fff;
+        color: $color-on-solid;
     }
 }
 
@@ -373,7 +373,7 @@ details[open] .lpWelcomeFaqQ::after {
 
 .lpWelcomeScreenshotLabel {
     color: $color-text-muted;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
     letter-spacing: 0.08em;
     margin-left: 8px;
@@ -459,7 +459,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpWelcomeCardSecondary .signin-forgot-password {
-    font-size: 13px;
+    font-size: $fontSize-ui;
 }
 
 #lpWelcomeContainer #lpWelcomeFooter {
@@ -478,7 +478,7 @@ details[open] .lpWelcomeFaqQ::after {
 
 #lpWelcomeContainer #lpWelcomeFooter .lpSiteBy,
 #lpWelcomeContainer #lpWelcomeFooter .lpContact {
-    font-size: 13px;
+    font-size: $fontSize-ui;
 }
 
 .lpButtonGoogle {
@@ -495,7 +495,7 @@ details[open] .lpWelcomeFaqQ::after {
     margin-top: 16px;
     min-height: 44px;
     text-decoration: none;
-    transition: border-color 0.15s;
+    transition: border-color $transitionDurationFast;
     width: 100%;
 
     &:hover {
@@ -531,7 +531,7 @@ details[open] .lpWelcomeFaqQ::after {
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 100;
+    z-index: $dialog;
 }
 
 .lpOAuthSetupCard {
@@ -562,7 +562,7 @@ details[open] .lpWelcomeFaqQ::after {
     box-sizing: border-box;
     font-size: $fontSize-base;
     padding: 10px 14px;
-    transition: border-color 0.15s;
+    transition: border-color $transitionDurationFast;
     width: 100%;
 
     &:focus {

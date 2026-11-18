@@ -66,11 +66,11 @@ textarea::placeholder {
         background: #444;
         border: 1px solid #fff;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-        color: #fff;
+        color: $color-on-solid;
         display: none;
         padding: 3px;
         position: absolute;
-        z-index: 105;
+        z-index: $aboveDialog;
     }
 
     *,
@@ -100,7 +100,7 @@ textarea::placeholder {
 
 .lpNotSupported {
     background: $red1;
-    color: #fff;
+    color: $color-on-solid;
     font-size: 24px;
     padding: 100px;
     text-align: center;
@@ -198,7 +198,7 @@ textarea::placeholder {
     // Only where there is a real hover: on a touch screen it stays "hovered" after a tap.
     @media (hover: hover) {
         &:hover {
-            color: #fff;
+            color: $color-on-solid;
             opacity: 1;
 
             &::before {
@@ -247,7 +247,7 @@ textarea::placeholder {
 
         &:focus {
             border-color: $color-accent;
-            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+            box-shadow: $shadow-focus-ring;
             outline: none;
         }
     }
@@ -274,7 +274,7 @@ textarea::placeholder {
     border: 1px solid transparent;
     border-radius: $radius-md;
     box-shadow: $shadow-soft;
-    color: #fff;
+    color: $color-on-solid;
     cursor: pointer;
     display: inline-flex;
     font-family: $font-family-base;
@@ -333,7 +333,7 @@ textarea::placeholder {
 
 .lpButton.lpButtonDanger {
     background: $color-danger-solid;
-    color: #fff;
+    color: $color-on-solid;
 }
 
 .lpButton.lpButtonSecondary:hover:not(:disabled):not(.lpButtonDisabled),
@@ -522,7 +522,7 @@ textarea::placeholder {
 #lpFooter {
     color: $color-text-muted;
     display: flex;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     justify-content: space-between;
     padding: 150px 0 20px;
 
@@ -546,7 +546,7 @@ textarea::placeholder {
     padding: $spacingSmall;
     position: fixed;
     right: 0;
-    z-index: 999999999;
+    z-index: $aboveAll;
 
     .lpHasBlackout & {
         display: block;
@@ -608,12 +608,12 @@ textarea::placeholder {
 
 .lpPublicStats {
     display: flex;
-    font-size: 14px;
+    font-size: $fontSize-base;
     gap: 16px;
     margin-top: 8px;
 
     strong {
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
     }
 }
 
@@ -621,9 +621,9 @@ textarea::placeholder {
     background: $color-accent-solid;
     border: none;
     border-radius: $radius-md;
-    color: #fff;
+    color: $color-on-solid;
     cursor: pointer;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     margin-top: 12px;
     padding: 6px 16px;
     transition: opacity $transitionDurationFast;
@@ -650,7 +650,7 @@ textarea::placeholder {
     input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="submit"], [type="button"], [type="file"], [type="color"]),
     select,
     textarea {
-        font-size: 16px;
+        font-size: $fontSize-md;
     }
 }
 

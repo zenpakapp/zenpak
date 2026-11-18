@@ -148,7 +148,7 @@ export default {
 .gearPickerHeader {
     background: $color-accent-solid;
     border-radius: $radius-lg $radius-lg 0 0;
-    color: #fff;
+    color: $color-on-solid;
     padding: 16px 20px;
 }
 

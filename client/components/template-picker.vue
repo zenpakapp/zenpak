@@ -35,7 +35,7 @@
     color: $color-text-muted;
     cursor: pointer;
     display: inline-flex;
-    font-size: 22px;
+    font-size: $fontSize-xl;
     height: 32px;
     justify-content: center;
     line-height: 1;
@@ -164,7 +164,7 @@
 
 .lpTemplatePickerSegmentActive {
     background: $color-accent-solid;
-    color: #fff;
+    color: $color-on-solid;
 }
 
 .lpTemplatePickerCard {

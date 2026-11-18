@@ -11,7 +11,7 @@
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     letter-spacing: 0.02em;
     padding: 4px 6px;
 
@@ -28,7 +28,7 @@
     position: absolute;
     right: 0;
     top: calc(100% + 6px);
-    z-index: 200;
+    z-index: $dialog;
 }
 
 .guestSettingsRow {
@@ -43,7 +43,7 @@
 
 .guestSettingsLabel {
     color: $color-text-muted;
-    font-size: 12px;
+    font-size: $fontSize-sm;
 }
 
 .guestSettingsSelect {
@@ -52,7 +52,7 @@
     border-radius: $radius-md;
     color: $color-text;
     cursor: pointer;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     padding: 3px 6px;
 
     &:focus {
@@ -70,7 +70,7 @@
 .guestSettingsListItem {
     color: $color-text;
     cursor: pointer;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     overflow: hidden;
     padding: 3px 0;
     text-overflow: ellipsis;
@@ -79,7 +79,7 @@
     &:hover { color: $color-accent-text; }
 
     &.lpActive {
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
     }
 }
 </style>

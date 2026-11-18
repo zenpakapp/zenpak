@@ -68,9 +68,13 @@ $width-app: 1200px; /* écrans de travail : éditeur, modération */
 $font-family-base: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
 $fontSize-xs: 11px;
 $fontSize-sm: 12px;
+$fontSize-ui: 13px;
 $fontSize-base: 14px;
 $fontSize-md: 16px;
+$fontSize-lg: 18px;
+$fontSize-xl: 22px;
 $fontWeight-normal: 400;
+$fontWeight-light: 300;
 $fontWeight-medium: 500;
 $fontWeight-bold: 600;
 $lineHeight-base: 1.5;
@@ -106,6 +110,12 @@ $dialog: 100;
 $aboveDialog: 110;
 
 $popover: 150;
+
+// A suggestions list, above the page content and below any dialog.
+$dropdown: 40;
+
+// Above everything: the drag mirror, the fixed footer, the sign-out cover.
+$aboveAll: 1000;
 
 $transitionDurationFast: 0.1s;
 $transitionDuration: 0.2s;
@@ -160,3 +170,9 @@ $transitionDurationSlow: 0.4s;
         color: #fff;
     }
 }
+
+// Text on a solid coloured surface (a red or green button, a badge): white in both themes.
+$color-on-solid: #fff;
+
+// The ring around a focused field.
+$shadow-focus-ring: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);

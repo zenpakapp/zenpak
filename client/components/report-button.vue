@@ -6,7 +6,7 @@
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     padding: 2px 6px;
 
     &:hover {
@@ -25,7 +25,7 @@
     position: absolute;
     top: calc(100% + 4px);
     width: 220px;
-    z-index: 100;
+    z-index: $dialog;
 }
 
 .lpReportTitle {
@@ -63,7 +63,7 @@
     background: $color-danger-solid;
     border: none;
     border-radius: $radius-md;
-    color: #fff;
+    color: $color-on-solid;
     cursor: pointer;
     font-size: $fontSize-sm;
     padding: 5px 12px;

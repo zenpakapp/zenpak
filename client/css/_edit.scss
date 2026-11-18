@@ -62,7 +62,7 @@
     margin: 0 !important;
     opacity: 0.8;
     position: fixed !important;
-    z-index: 9999 !important;
+    z-index: $aboveAll;
 }
 
 .gu-hide {

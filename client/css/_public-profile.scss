@@ -10,7 +10,7 @@
 
 .lpPublicErrorSub {
     color: $color-text-muted;
-    font-size: 14px;
+    font-size: $fontSize-base;
     margin: -8px 0 16px;
 }
 
@@ -23,7 +23,7 @@
 
     a {
         color: $color-text-muted;
-        font-size: 13px;
+        font-size: $fontSize-ui;
         text-decoration: none;
 
         &:hover {
@@ -62,11 +62,11 @@
     align-items: center;
     background: linear-gradient(135deg, $color-accent, rgba(var(--color-accent-rgb), 0.5));
     border-radius: $radius-round;
-    color: #fff;
+    color: $color-on-solid;
     display: flex;
     flex-shrink: 0;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: $fontSize-xl;
+    font-weight: $fontWeight-bold;
     height: 56px;
     justify-content: center;
     overflow: hidden;
@@ -125,17 +125,17 @@
 }
 
 .lpPublicName {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: $fontSize-lg;
+    font-weight: $fontWeight-bold;
     margin: 0;
 }
 
 .lpPublicBadge {
     background: $color-accent-solid;
     border-radius: $radius-pill;
-    color: #fff;
+    color: $color-on-solid;
     font-size: 10px;
-    font-weight: 700;
+    font-weight: $fontWeight-bold;
     letter-spacing: 0.04em;
     padding: 2px 8px;
     text-transform: uppercase;
@@ -143,7 +143,7 @@
 
 .lpPublicBio {
     color: $color-text-muted;
-    font-size: 13px;
+    font-size: $fontSize-ui;
     line-height: 1.5;
     margin: 0 0 10px;
 }
@@ -151,12 +151,12 @@
 .lpPublicStats {
     color: $color-text-muted;
     display: flex;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     gap: 16px;
 
     strong {
         color: $color-text;
-        font-weight: 600;
+        font-weight: $fontWeight-bold;
     }
 }
 
@@ -170,7 +170,7 @@
 
     a {
         color: $color-accent-text;
-        font-size: 12px;
+        font-size: $fontSize-sm;
         text-decoration: none;
 
         &:hover {
@@ -191,14 +191,14 @@
     border: 1px solid $color-border;
     border-radius: $radius-sm;
     color: $color-text-muted;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     padding: 3px 8px;
 }
 
 .lpPublicListsHeader {
     color: $color-text-muted;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: $fontSize-xs;
+    font-weight: $fontWeight-bold;
     letter-spacing: 0.08em;
     margin-bottom: 10px;
     text-transform: uppercase;
@@ -241,8 +241,8 @@
 
 .lpPublicListName {
     color: $color-accent-text;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: $fontSize-base;
+    font-weight: $fontWeight-bold;
     line-height: 1.25;
     min-width: 0;
 }
@@ -251,7 +251,7 @@
     -webkit-box-orient: vertical;
     color: $color-text-muted;
     display: -webkit-box;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     -webkit-line-clamp: 2;
     line-height: 1.5;
     // About 630px: a readable line on the 1040px page, not the whole card.
@@ -265,7 +265,7 @@
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     gap: 10px;
     line-height: 1.25;
     padding-top: 2px;
@@ -292,7 +292,7 @@
     border: 1px solid $color-border;
     border-radius: $radius-md;
     color: $color-text-muted;
-    font-size: 12px;
+    font-size: $fontSize-sm;
     margin-top: 16px;
     padding: 10px 14px;
 }

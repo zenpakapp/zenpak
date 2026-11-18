@@ -139,7 +139,7 @@ $sidebarPadding: 20px;
     border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 16px;
+    font-size: $fontSize-md;
     line-height: 1;
     padding: 2px 4px;
     transition: color $transitionDurationFast;

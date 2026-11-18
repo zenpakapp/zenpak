@@ -330,7 +330,7 @@ export default {
     position: absolute;
     top: calc(100% + 6px);
     width: 260px;
-    z-index: 50;
+    z-index: $dropdown;
 }
 
 .lpSuggestion {

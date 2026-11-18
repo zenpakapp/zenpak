@@ -6,7 +6,7 @@
 .lpPersonAvatar {
     align-items: center;
     border-radius: $radius-round;
-    color: #fff;
+    color: $color-on-solid;
     display: inline-flex;
     flex: 0 0 auto;
     font-size: 10px;

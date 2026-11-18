@@ -103,7 +103,7 @@
     &.active {
         background: $color-accent-solid;
         border-color: $color-accent;
-        color: #fff;
+        color: $color-on-solid;
     }
 }
 
@@ -244,7 +244,7 @@
     border-radius: $radius-sm;
     color: $color-text-muted;
     display: flex;
-    font-size: 18px;
+    font-size: $fontSize-lg;
     height: 40px;
     justify-content: center;
     width: 40px;
@@ -256,7 +256,7 @@
 
 .lpGearRoomStarBadge {
     color: $color-accent;
-    font-size: 14px;
+    font-size: $fontSize-base;
     margin-right: 4px;
 }
 

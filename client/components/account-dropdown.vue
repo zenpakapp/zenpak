@@ -17,7 +17,7 @@
 .accountDropdownAvatar {
     align-items: center;
     border-radius: $radius-round;
-    color: #fff;
+    color: $color-on-solid;
     display: inline-flex;
     flex: 0 0 auto;
     font-size: $fontSize-sm;
@@ -129,7 +129,7 @@
 .accountThemeToggle {
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 16px;
+    font-size: $fontSize-md;
     padding: 0 8px 0 0;
 
     &:hover {
@@ -151,7 +151,7 @@ html.lpSigningOut body::before {
     position: fixed;
     right: 0;
     top: 0;
-    z-index: 2147483647;
+    z-index: $aboveAll;
 }
 </style>
 

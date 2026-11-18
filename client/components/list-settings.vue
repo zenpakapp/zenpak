@@ -23,7 +23,7 @@
         display: flex;
         gap: 12px;
         padding: 9px 10px;
-        transition: background-color 0.1s ease, color 0.1s ease;
+        transition: background-color $transitionDurationFast ease, color $transitionDurationFast ease;
     }
 
     &:hover label {
@@ -66,7 +66,7 @@
 
         &:focus {
             border-color: $color-accent;
-            box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.12);
+            box-shadow: $shadow-focus-ring;
             outline: none;
         }
     }

@@ -14,7 +14,7 @@
     position: fixed;
     right: 0;
     transform: translateY(100%);
-    transition: transform 0.25s ease;
+    transition: transform $transitionDuration ease;
     z-index: $belowDialog;
 
     &.lpGearRoomComparePanel--open {
@@ -115,7 +115,7 @@
     border: none;
     color: $color-text-muted;
     cursor: pointer;
-    font-size: 11px;
+    font-size: $fontSize-xs;
     padding: 2px 4px;
 
     &:hover {

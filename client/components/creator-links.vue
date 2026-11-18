@@ -7,7 +7,7 @@
 }
 
 .creatorLinksSectionTitle {
-    font-size: 18px;
+    font-size: $fontSize-lg;
     font-weight: $fontWeight-bold;
     margin: 0 0 16px;
 }
@@ -43,7 +43,7 @@
 
     &:focus {
         border-color: $color-accent;
-        box-shadow: 0 0 0 4px rgba(var(--color-accent-rgb), 0.1);
+        box-shadow: $shadow-focus-ring;
         outline: none;
     }
 }
