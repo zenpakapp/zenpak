@@ -161,9 +161,13 @@ textarea::placeholder {
     }
 }
 
+// The delete cross. The element is the hit area (its padding, 44px on a touch screen); what is
+// drawn on hover is a 28px rounded square behind the cross, the same shape as the other icon
+// buttons (the dialog close, the row icons' focus ring), whatever the size of the hit area. It was
+// the element itself with a 16px radius, which gave an oval in a tall row and a tile cut by the
+// screen edge on a phone.
 .lpRemove {
     align-items: center;
-    border-radius: 16px;
     color: $color-text;
     cursor: pointer;
     display: inline-flex;
@@ -171,14 +175,37 @@ textarea::placeholder {
     line-height: 0;
     opacity: 0.4;
     padding: 6px;
+    position: relative;
     vertical-align: middle;
     visibility: hidden;
 
-    &:hover {
-        background: $red1;
-        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25) inset;
-        color: #fff;
-        opacity: 1;
+    &::before {
+        border-radius: $radius-md;
+        content: "";
+        height: 28px;
+        left: 50%;
+        margin: -14px 0 0 -14px;
+        position: absolute;
+        top: 50%;
+        transition: background-color $transitionDurationFast ease;
+        width: 28px;
+    }
+
+    svg {
+        position: relative;
+    }
+
+    // Only where there is a real hover: on a touch screen it stays "hovered" after a tap.
+    @media (hover: hover) {
+        &:hover {
+            color: #fff;
+            opacity: 1;
+
+            &::before {
+                background: $red1;
+                box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25) inset;
+            }
+        }
     }
 }
 
