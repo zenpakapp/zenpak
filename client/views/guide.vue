@@ -24,8 +24,8 @@
             <div class="lpGuideField">
                 <label class="lpGuideLabel">{{ $t('guide.links') }}</label>
                 <div v-for="(link, i) in profile.links" :key="i" class="lpGuideRow">
-                    <input v-model="link.label" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.linksLabel')" :aria-label="$t('guide.linksLabel')" maxlength="100">
-                    <input v-model="link.url" class="lpGuideInput" :placeholder="$t('guide.linksPlaceholder')" :aria-label="$t('guide.links')" maxlength="500">
+                    <input v-model="link.label" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.linksLabel')" :aria-label="$t('guide.linksLabel')" :maxlength="limits.text">
+                    <input v-model="link.url" class="lpGuideInput" :placeholder="$t('guide.linksPlaceholder')" :aria-label="$t('guide.links')" :maxlength="limits.url">
                     <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${link.label || link.url}`" @click="profile.links.splice(i, 1)">
                         {{ $t('guide.removeButton') }}
                     </button>
@@ -37,7 +37,7 @@
             <div class="lpGuideField">
                 <label class="lpGuideLabel">{{ $t('guide.gearPhilosophy') }}</label>
                 <div v-for="(item, i) in profile.gearPhilosophy" :key="i" class="lpGuideRow">
-                    <input v-model="profile.gearPhilosophy[i]" class="lpGuideInput" :placeholder="$t('guide.gearPhilosophyPlaceholder')" :aria-label="$t('guide.gearPhilosophy')" maxlength="100">
+                    <input v-model="profile.gearPhilosophy[i]" class="lpGuideInput" :placeholder="$t('guide.gearPhilosophyPlaceholder')" :aria-label="$t('guide.gearPhilosophy')" :maxlength="limits.text">
                     <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${item}`" @click="profile.gearPhilosophy.splice(i, 1)">
                         {{ $t('guide.removeButton') }}
                     </button>
@@ -80,15 +80,15 @@
                     </label>
                     <label class="lpGuideRuleField lpGuideRuleFieldWide">
                         <span class="lpGuideRuleFieldLabel">{{ $t(`guide.ruleFieldMatch.${rule.type}`) }}</span>
-                        <input v-model="rule.match" class="lpGuideInput" :placeholder="$t(`guide.ruleMatchPlaceholder.${rule.type}`)" maxlength="200">
+                        <input v-model="rule.match" class="lpGuideInput" :placeholder="$t(`guide.ruleMatchPlaceholder.${rule.type}`)" :maxlength="limits.rule">
                     </label>
                     <label class="lpGuideRuleField">
                         <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldCode') }}</span>
-                        <input v-model="rule.promoCode" class="lpGuideInput" :placeholder="$t('guide.rulePromoCodePlaceholder')" maxlength="100">
+                        <input v-model="rule.promoCode" class="lpGuideInput" :placeholder="$t('guide.rulePromoCodePlaceholder')" :maxlength="limits.text">
                     </label>
                     <label class="lpGuideRuleField lpGuideRuleFieldWide">
                         <span class="lpGuideRuleFieldLabel">{{ $t('guide.ruleFieldLabel') }}</span>
-                        <input v-model="rule.promoLabel" class="lpGuideInput" :placeholder="$t('guide.rulePromoLabelPlaceholder')" maxlength="100">
+                        <input v-model="rule.promoLabel" class="lpGuideInput" :placeholder="$t('guide.rulePromoLabelPlaceholder')" :maxlength="limits.text">
                     </label>
                     <button class="lpGuideRemove" :aria-label="`${$t('guide.removeButton')} ${rule.match}`" @click="removeRule(i)">
                         {{ $t('guide.removeButton') }}
@@ -106,7 +106,7 @@
             </button>
             <div class="lpGuideField lpGuideFieldTop">
                 <label class="lpGuideLabel" for="guideDisclosure">{{ $t('guide.affiliateDisclosure') }}</label>
-                <textarea id="guideDisclosure" v-model="disclosure" class="lpGuideTextarea" maxlength="500" rows="2" :placeholder="$t('guide.affiliateDisclosurePlaceholder')" />
+                <textarea id="guideDisclosure" v-model="disclosure" class="lpGuideTextarea" :maxlength="limits.disclosure" rows="2" :placeholder="$t('guide.affiliateDisclosurePlaceholder')" />
             </div>
             <div class="lpGuideSaveRow">
                 <button class="lpButton" :disabled="savingRules" @click="saveAffiliateRules">
@@ -168,9 +168,9 @@
                         <span class="lpGuideItemLists" :title="row.lists.map((list) => list.listName).join(', ')">{{ listsLabel(row) }}</span>
                         <span v-if="row.appliedRule" class="lpGuideRuleBadge">{{ $t('guide.itemRuleBadge', { rule: row.appliedRule }) }}</span>
                     </div>
-                    <input v-model="row.affiliateUrl" class="lpGuideInput lpGuideInputGrow" :placeholder="$t('guide.itemAffiliateUrlPlaceholder')" maxlength="500">
-                    <input v-model="row.promoCode" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoCode')" maxlength="100">
-                    <input v-model="row.promoLabel" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoLabel')" maxlength="100">
+                    <input v-model="row.affiliateUrl" class="lpGuideInput lpGuideInputGrow" :placeholder="$t('guide.itemAffiliateUrlPlaceholder')" :maxlength="limits.url">
+                    <input v-model="row.promoCode" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoCode')" :maxlength="limits.text">
+                    <input v-model="row.promoLabel" class="lpGuideInput lpGuideInputShort" :placeholder="$t('guide.rulePromoLabel')" :maxlength="limits.text">
                 </div>
                 <button v-if="hiddenCount > 0" class="lpGuideAdd" @click="itemLimit += ITEM_PAGE">
                     {{ $t('guide.itemShowMore', { count: hiddenCount }) }}
@@ -192,6 +192,7 @@
 
 <script>
 import { useGuide } from '../composables/useGuide';
+import { GUIDE_LIMITS } from '../services/guide-limits';
 import { useBackNav } from '../composables/useBackNav';
 import { hasFeature, FEATURES } from '../services/entitlements';
 import { push } from '../services/navigation';
@@ -212,7 +213,7 @@ export default {
     },
     data() {
         return {
-            itemQuery: '', itemListId: '', itemMode: 'all', itemLimit: ITEM_PAGE, ITEM_PAGE,
+            itemQuery: '', itemListId: '', itemMode: 'all', itemLimit: ITEM_PAGE, ITEM_PAGE, limits: GUIDE_LIMITS,
         };
     },
     computed: {
