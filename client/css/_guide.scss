@@ -31,7 +31,7 @@
 .lpGuideSection {
     background: $color-bg;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     margin-bottom: 32px;
     padding: 24px;
 }
@@ -63,7 +63,7 @@
 .lpGuideTextarea {
     background: $color-bg;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     box-sizing: border-box;
     color: $color-text;
     font-family: $font-family-base;
@@ -87,7 +87,7 @@
 .lpGuideInput {
     background: $color-bg;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     flex: 1;
     font-size: $fontSize-sm;
@@ -108,7 +108,7 @@
 .lpGuideSelect {
     background: $color-bg;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     flex: 0 0 100px;
     font-size: $fontSize-sm;
@@ -295,7 +295,7 @@
 
 .lpGuideRuleWarning {
     background: rgba(217, 119, 6, 0.1);
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     margin-top: 6px;
     padding: 6px 10px;

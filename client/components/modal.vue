@@ -196,11 +196,7 @@
         width: 32px;
         z-index: 1;
 
-        &:hover,
-        &:focus-visible {
-            background: rgba(var(--color-accent-rgb), 0.08);
-            color: $color-accent-text;
-        }
+        @include icon-hover-neutral;
     }
 }
 

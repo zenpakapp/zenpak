@@ -202,7 +202,7 @@ textarea::placeholder {
             opacity: 1;
 
             &::before {
-                background: $red1;
+                background: $color-danger;
                 box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25) inset;
             }
         }
@@ -239,7 +239,7 @@ textarea::placeholder {
     textarea {
         background: $color-surface;
         border: 1px solid $color-border;
-        border-radius: $radius-sm;
+        border-radius: $radius-md;
         display: block;
         margin: 0 0 $spacingMedium;
         padding: 10px $spacingSmall;
@@ -620,7 +620,7 @@ textarea::placeholder {
 .lpFollowBtn {
     background: $color-accent-solid;
     border: none;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: #fff;
     cursor: pointer;
     font-size: 13px;

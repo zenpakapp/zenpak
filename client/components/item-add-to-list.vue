@@ -320,7 +320,7 @@ export default {
 .itemDetailAddDropdown {
     background: $color-surface;
     border: 1px solid rgba(var(--color-accent-rgb), 0.12);
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     box-shadow: $shadow-popover;
     list-style: none;
     margin: 0;

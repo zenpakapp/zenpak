@@ -18,7 +18,7 @@
 .lpReportModal {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     left: 0;
     padding: 16px;
@@ -62,7 +62,7 @@
 .lpReportSubmit {
     background: $color-danger-solid;
     border: none;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: #fff;
     cursor: pointer;
     font-size: $fontSize-sm;
@@ -74,7 +74,7 @@
 .lpReportCancel {
     background: none;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;

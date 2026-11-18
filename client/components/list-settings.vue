@@ -18,7 +18,7 @@
 
     label {
         align-items: center;
-        border-radius: 12px;
+        border-radius: $radius-lg;
         cursor: pointer;
         display: flex;
         gap: 12px;
@@ -56,7 +56,7 @@
 
     input {
         border: 1px solid rgba(var(--color-accent-rgb), 0.16);
-        border-radius: 10px;
+        border-radius: $radius-md;
         display: inline-block;
         font-size: $fontSize-md;
         font-weight: $fontWeight-medium;

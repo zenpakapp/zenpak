@@ -25,7 +25,7 @@
 
 .lpVersionDiffAffiliate {
     border: 1px solid currentColor;
-    border-radius: 4px;
+    border-radius: $radius-sm;
     font-size: 0.75em;
     margin-left: 6px;
     padding: 0 4px;

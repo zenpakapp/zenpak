@@ -206,7 +206,7 @@
     appearance: none;
     background: transparent;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: 13px;
@@ -222,7 +222,7 @@
 .lpPublicCsvLink {
     background: transparent;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: 13px;
@@ -314,7 +314,7 @@
 }
 
 .lpPublicChartSwatch {
-    border-radius: 2px;
+    border-radius: $radius-xs;
     display: inline-block;
     height: 10px;
     margin-right: 6px;
@@ -347,7 +347,7 @@
 }
 
 .lpPublicListCategorySwatch {
-    border-radius: 2px;
+    border-radius: $radius-xs;
     display: inline-block;
     flex-shrink: 0;
     height: 12px;
@@ -483,7 +483,7 @@
 
 .lpPublicListItemPromoCode {
     background: var(--color-badge-bg, #e8f4e8);
-    border-radius: 3px;
+    border-radius: $radius-sm;
     color: var(--color-badge-text, #2d6a2d);
     font-size: 11px;
     font-weight: 600;
@@ -493,7 +493,7 @@
 .lpCopyListBtn {
     background: transparent;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: 13px;
@@ -528,7 +528,7 @@
 .lpPublicDisclosure {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     font-size: 13px;
     margin: 24px 0;

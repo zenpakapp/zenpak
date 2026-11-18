@@ -7,7 +7,7 @@
         linear-gradient(180deg, rgba(var(--color-accent-rgb), 0.12), rgba(var(--color-accent-rgb), 0.02)),
         $color-surface;
     border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.14);
-    border-radius: $radius-md $radius-md 0 0;
+    border-radius: $radius-lg $radius-lg 0 0;
     color: $color-text;
     display: flex;
     gap: 18px;
@@ -19,7 +19,7 @@
     .itemDetailThumb {
         background: rgba(var(--color-accent-rgb), 0.08);
         border: 1px solid rgba(var(--color-accent-rgb), 0.16);
-        border-radius: 16px;
+        border-radius: $radius-lg;
         cursor: pointer;
         flex-shrink: 0;
         height: 84px;
@@ -31,7 +31,7 @@
         align-items: center;
         background: rgba(var(--color-accent-rgb), 0.14);
         border: 1px solid rgba(var(--color-accent-rgb), 0.18);
-        border-radius: 16px;
+        border-radius: $radius-lg;
         color: $color-accent-text;
         display: flex;
         flex-shrink: 0;
@@ -69,7 +69,7 @@
 
     .itemDetailCategoryBadge {
         background: rgba(var(--color-accent-rgb), 0.14);
-        border-radius: 99px;
+        border-radius: $radius-pill;
         color: $color-accent-text;
         display: inline-block;
         font-size: $fontSize-base;

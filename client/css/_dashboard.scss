@@ -4,7 +4,7 @@
 // than the header's spare room, and a dot beside the icon ran into the next button.
 @mixin headerBadgeDot {
     .sharePublishState {
-        border-radius: 50%;
+        border-radius: $radius-round;
         box-shadow: 0 0 0 2px $color-surface;
         font-size: 0;
         height: 8px;
@@ -137,7 +137,7 @@
 }
 
 .lpEditorLoadingChart {
-    border-radius: 50%;
+    border-radius: $radius-round;
     height: 220px;
     width: 220px;
 }
@@ -221,7 +221,7 @@
     align-items: center;
     background: color-mix(in sRGB, $color-accent 10%, transparent);
     border: 1px solid color-mix(in sRGB, $color-accent 30%, transparent);
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     display: flex;
     flex-wrap: wrap;
@@ -234,7 +234,7 @@
 .lpVerifyBannerBtn {
     background: transparent;
     border: 1px solid $color-accent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-accent-text;
     cursor: pointer;
     font-size: 12px;
@@ -289,7 +289,7 @@
 .lpBillingSuccessBanner {
     background: #d1fae5;
     border: 1px solid #34d399;
-    border-radius: 6px;
+    border-radius: $radius-md;
     color: #065f46;
     margin-bottom: 16px;
     padding: 12px 16px;
@@ -298,7 +298,7 @@
 .lpBillingCancelBanner {
     background: #fef3c7;
     border: 1px solid #fbbf24;
-    border-radius: 6px;
+    border-radius: $radius-md;
     color: #92400e;
     margin-bottom: 16px;
     padding: 12px 16px;
@@ -308,7 +308,7 @@
     align-items: center;
     background: #fff3cd;
     border: 1px solid #ffc107;
-    border-radius: 6px;
+    border-radius: $radius-md;
     color: #856404;
     display: flex;
     gap: 12px;
@@ -337,7 +337,7 @@
 
     .lpHamburgerLine {
         background: $color-text;
-        border-radius: 2px;
+        border-radius: $radius-xs;
         display: block;
         height: 2px;
         transition: transform $transitionDurationFast, opacity $transitionDurationFast;
@@ -464,7 +464,7 @@
 
 #lpListName {
     background: transparent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-md;
     font-weight: $fontWeight-bold;
@@ -531,7 +531,7 @@
 .lpForkSourceHelp {
     align-items: center;
     border: 1px solid $color-border;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: $color-text-muted;
     cursor: help;
     display: inline-flex;
@@ -543,14 +543,19 @@
 }
 
 .lpForkSourceDismiss {
+    border-radius: $radius-md;
     font-size: 14px;
     line-height: 1;
+    min-height: 24px;
+    min-width: 24px;
     opacity: 0.7;
 
-    &:hover {
-        color: $color-text;
+    &:hover,
+    &:focus-visible {
         opacity: 1;
     }
+
+    @include icon-hover-neutral;
 }
 
 .lpForkSourceLink {
@@ -568,7 +573,7 @@
     align-items: center;
     background: transparent;
     border: 1px solid $color-border;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: $color-text-muted;
     cursor: help;
     display: inline-flex;
@@ -619,7 +624,7 @@
     .lpTarget {
         align-items: center;
         border: 1px solid transparent;
-        border-radius: 999px;
+        border-radius: $radius-pill;
         color: $color-text;
         display: inline-flex;
         font-weight: 600;
@@ -837,7 +842,7 @@
 .lpSkipLink {
     background: $color-bg;
     border: 2px solid $color-accent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
     left: 8px;

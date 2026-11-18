@@ -1,4 +1,5 @@
 <style lang="scss">
+@import "../css/_globals";
 .lpNativeColorInput {
     appearance: none;
     background: transparent;
@@ -14,12 +15,12 @@
 
     &::-webkit-color-swatch {
         border: 0;
-        border-radius: 4px;
+        border-radius: $radius-sm;
     }
 
     &::-moz-color-swatch {
         border: 0;
-        border-radius: 4px;
+        border-radius: $radius-sm;
     }
 }
 </style>

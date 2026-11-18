@@ -72,7 +72,7 @@
         .itemDetailNameSuggestions {
             background: $color-surface;
             border: 1px solid $color-border;
-            border-radius: $radius-md;
+            border-radius: $radius-lg;
             box-shadow: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
             left: 0;
             list-style: none;
@@ -119,7 +119,7 @@
         select,
         textarea {
             border: 1px solid $color-border;
-            border-radius: $radius-sm;
+            border-radius: $radius-md;
             font-size: $fontSize-base;
             padding: 7px 10px;
             width: 100%;
@@ -210,7 +210,7 @@
             align-items: center;
             background: $color-surface;
             border: 1px solid $color-border;
-            border-radius: $radius-sm;
+            border-radius: $radius-md;
             color: $color-text;
             cursor: pointer;
             display: inline-flex;
@@ -239,7 +239,7 @@
             align-items: center;
             background: $color-surface;
             border: 1px solid $color-border;
-            border-radius: 99px;
+            border-radius: $radius-pill;
             display: flex;
             font-size: $fontSize-sm;
             gap: 4px;
@@ -364,7 +364,7 @@
     .itemDetailDropZoneRemove {
         background: $color-bg;
         border: 1px solid $color-border;
-        border-radius: 999px;
+        border-radius: $radius-md;
         color: $color-text;
         cursor: pointer;
         font-size: 16px;
@@ -376,11 +376,12 @@
         top: 8px;
         width: 28px;
 
-        &:hover {
-            background: $color-danger;
-            border-color: $color-danger;
-            color: #fff;
-        }
+        @include icon-hover-danger;
+    }
+
+    // Taking a tag off an item is a removal too: the same red as the other delete buttons.
+    .itemDetailTagChip .itemDetailTagRemove {
+        @include icon-hover-danger;
     }
 }
 

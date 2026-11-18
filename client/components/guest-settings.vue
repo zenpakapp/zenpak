@@ -21,7 +21,7 @@
 .guestSettingsPopover {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-lg;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     min-width: 180px;
     padding: 12px 14px;
@@ -49,7 +49,7 @@
 .guestSettingsSelect {
     background: transparent;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     cursor: pointer;
     font-size: 13px;

@@ -21,7 +21,7 @@
 .accountEmailResend {
     background: transparent;
     border: 1px solid $color-accent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-accent-text;
     cursor: pointer;
     font-size: $fontSize-sm;

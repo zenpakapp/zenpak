@@ -30,7 +30,7 @@
 
 .lpUpgradeLockCta {
     background: rgba(var(--color-accent-rgb), 0.1);
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-accent-text;
     flex-shrink: 0;
     font-size: $fontSize-sm;
@@ -113,7 +113,7 @@
     .lpUpgradeIntervalToggle {
         align-self: flex-start;
         background: rgba(var(--color-accent-rgb), 0.08);
-        border-radius: 999px;
+        border-radius: $radius-pill;
         display: inline-flex;
         margin-bottom: 20px;
         padding: 3px;
@@ -123,7 +123,7 @@
         align-items: center;
         background: none;
         border: none;
-        border-radius: 999px;
+        border-radius: $radius-pill;
         color: $color-text-muted;
         cursor: pointer;
         display: flex;
@@ -147,7 +147,7 @@
 
     .lpUpgradeIntervalSave {
         border: 1px solid rgba(var(--color-accent-rgb), 0.4);
-        border-radius: 999px;
+        border-radius: $radius-pill;
         color: $color-accent-text;
         font-size: 11px;
         font-weight: $fontWeight-bold;

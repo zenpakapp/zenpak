@@ -116,7 +116,7 @@ export default {
 .brandSuggestions {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: 6px;
+    border-radius: $radius-lg;
     box-shadow: 0 4px 16px rgba(var(--color-shadow-rgb), 0.12);
     left: 0;
     list-style: none;

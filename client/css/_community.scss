@@ -59,7 +59,7 @@
 .lpCommunitySortBtn {
     background: $color-control-muted;
     border: 1px solid transparent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;
@@ -85,7 +85,7 @@
 .lpCommunityCard {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     display: block;
     margin-bottom: 6px;
     padding: 14px 16px;
@@ -138,7 +138,7 @@
 
 .lpCommunityBadge {
     background: rgba(var(--color-accent-rgb), 0.14);
-    border-radius: 4px;
+    border-radius: $radius-sm;
     color: $color-accent-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
@@ -177,7 +177,7 @@
     align-items: center;
     background: $color-control-muted;
     border: 1px solid $color-border;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;
@@ -191,7 +191,7 @@
 
     img {
         background: #fff;
-        border-radius: 50%;
+        border-radius: $radius-round;
         height: 100%;
         object-fit: cover;
         width: 100%;
@@ -240,7 +240,7 @@
 
 .lpCommunityEventList {
     background: $color-control-muted;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
@@ -312,7 +312,7 @@
 .lpCommunityLoadMore {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     display: block;
@@ -346,7 +346,7 @@
     align-items: center;
     background: $color-control-muted;
     border: 1px solid $color-border;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;
@@ -359,7 +359,7 @@
 
     img {
         background: #fff;
-        border-radius: 50%;
+        border-radius: $radius-round;
         height: 100%;
         object-fit: cover;
         width: 100%;
@@ -396,7 +396,7 @@
 .lpCommunitySearchInput {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
     padding: 8px 12px;
@@ -422,7 +422,7 @@
 .lpCommunityFilterInput {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
     min-height: 36px;
@@ -438,7 +438,7 @@
 .lpCommunityFilterReset {
     background: $color-control-muted;
     border: 1px solid transparent;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-size: $fontSize-sm;
@@ -715,7 +715,7 @@
 .lpModerationStatsCard {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     padding: 12px 14px;
 }
 
@@ -776,7 +776,7 @@
     button {
         background: $color-control-muted;
         border: 1px solid $color-border;
-        border-radius: $radius-sm;
+        border-radius: $radius-md;
         color: $color-text;
         cursor: pointer;
         font-size: $fontSize-sm;
@@ -805,7 +805,7 @@
     align-items: flex-end;
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-sm;
@@ -832,7 +832,7 @@
     input {
         background: $color-bg;
         border: 1px solid $color-border;
-        border-radius: $radius-sm;
+        border-radius: $radius-md;
         color: $color-text;
         font-size: $fontSize-sm;
         height: 34px;
@@ -878,7 +878,7 @@
 .lpModerationLibrary {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-family: monospace;
     font-size: 12px;

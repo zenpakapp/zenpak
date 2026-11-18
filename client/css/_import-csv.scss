@@ -3,7 +3,7 @@
 .lpImportTextarea {
     background: $color-surface-elevated;
     border: 1px solid $color-border;
-    border-radius: 4px;
+    border-radius: $radius-md;
     box-sizing: border-box;
     color: $color-text;
     font-family: monospace;
@@ -21,7 +21,7 @@
 .lpImportUrlInput {
     background: $color-surface-elevated;
     border: 1px solid $color-border;
-    border-radius: 4px;
+    border-radius: $radius-md;
     box-sizing: border-box;
     color: $color-text;
     font-size: 14px;
@@ -67,7 +67,7 @@
     .importBadge {
         background: $color-control-muted;
         border: 1px solid $color-border;
-        border-radius: 999px;
+        border-radius: $radius-pill;
         display: inline-block;
         font-size: 12px;
         font-weight: 700;
@@ -91,7 +91,7 @@
     #importData {
         background: $color-surface-elevated;
         border: 1px solid $color-border;
-        border-radius: 6px;
+        border-radius: $radius-md;
         margin-bottom: 20px;
         overflow-x: auto;
         overflow-y: hidden;
@@ -150,7 +150,7 @@
 .importReviewRow {
     align-items: flex-start;
     border: 1px solid $color-border;
-    border-radius: 6px;
+    border-radius: $radius-md;
     display: flex;
     flex-wrap: wrap;
     gap: 8px 12px;
