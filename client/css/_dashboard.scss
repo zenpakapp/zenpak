@@ -103,7 +103,7 @@
 }
 
 .lpEditorLoadingBone {
-    animation: lpEditorLoadingSweep 1.4s ease-in-out infinite;
+    animation: lpEditorLoadingSweep $loopDurationSweep ease-in-out infinite;
     background: linear-gradient(90deg, color-mix(in sRGB, $color-text 8%, transparent) 20%, color-mix(in sRGB, $color-text 15%, transparent) 45%, color-mix(in sRGB, $color-text 8%, transparent) 70%);
     background-size: 240% 100%;
     border-radius: $radius-sm;

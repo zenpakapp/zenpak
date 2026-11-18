@@ -61,7 +61,7 @@
 }
 
 .lpCategory {
-    animation: lpFadeUp 0.18s ease-out both;
+    animation: lpFadeUp $transitionDuration ease-out both;
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
@@ -479,11 +479,11 @@ input.lpCategoryName { /* specificity */
 
 /* list transition animations */
 .lp-list-enter-active {
-    animation: lpSlideDown 0.2s ease-out;
+    animation: lpSlideDown $transitionDuration ease-out;
 }
 
 .lp-list-leave-active {
-    animation: lpSlideDown 0.15s ease-in reverse;
+    animation: lpSlideDown $transitionDuration ease-in reverse;
 }
 
 @keyframes lpSlideDown {

@@ -178,7 +178,7 @@
 }
 
 .lpDialog {
-    animation: fadein 0.25s linear 0s 1 forwards;
+    animation: fadein $transitionDurationDialog linear 0s 1 forwards;
     background: $color-surface;
     box-shadow: $shadow-modal;
     color: $color-text;
@@ -194,11 +194,11 @@
 }
 
 .lpDialog.fadeout {
-    animation: fadeout 0.25s linear 0s 1 forwards;
+    animation: fadeout $transitionDurationDialog linear 0s 1 forwards;
 }
 
 .lpModalOverlay {
-    animation: fadein 0.25s linear 0s 1 forwards;
+    animation: fadein $transitionDurationDialog linear 0s 1 forwards;
     background: $color-overlay;
     height: 100%;
     left: 0;
@@ -210,7 +210,7 @@
 }
 
 .lpModalOverlay.fadeout {
-    animation: fadeout 0.25s linear 0s 1 forwards;
+    animation: fadeout $transitionDurationDialog linear 0s 1 forwards;
 }
 
 @keyframes fadein {
