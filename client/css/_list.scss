@@ -258,6 +258,8 @@ input.lpCategoryName { /* specificity */
         flex-wrap: wrap;
         gap: 0 4px;
         min-width: 0;
+        // The icons' hit areas reach 6px past their glyphs: keep the fields clear of them.
+        padding-right: 8px;
     }
 
     .lpName {
@@ -1031,6 +1033,7 @@ input.lpCategoryName { /* specificity */
 
         .lpNameCell {
             grid-area: name;
+            padding-right: 0;
         }
 
         .lpActionsCell {
