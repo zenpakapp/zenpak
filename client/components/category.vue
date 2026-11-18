@@ -269,7 +269,7 @@ export default {
     background: transparent;
     border: none;
     border-bottom: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-base;
     max-width: 260px;
@@ -321,7 +321,7 @@ export default {
 .lpSuggestions {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-lg;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     left: 0;
     list-style: none;

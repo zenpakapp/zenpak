@@ -4,7 +4,7 @@
 .lpGlobalAlerts {
     background: $color-warning;
     border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 $radius-md $radius-md;
     border-top: none;
     color: #1a1a1a;
     left: 50%;
@@ -21,7 +21,7 @@
 .lpGlobalAlertsInfo {
     background: $color-accent-solid;
     border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
+    border-radius: $radius-md;
     bottom: 16px;
     box-shadow: $shadow-popover;
     color: #fff;
@@ -34,6 +34,11 @@
     .lpGlobalAlertDismiss {
         color: #fff;
         opacity: 1;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, 0.25);
+        }
     }
 }
 
@@ -59,6 +64,7 @@
 .lpGlobalAlertDismiss {
     background: transparent;
     border: 0;
+    border-radius: $radius-md;
     color: #1a1a1a;
     cursor: pointer;
     font-size: 16px;
@@ -69,13 +75,17 @@
     min-height: 32px;
     min-width: 32px;
 
-    &:hover { opacity: 1; }
+    &:hover,
+    &:focus-visible {
+        background: rgba(0, 0, 0, 0.12);
+        opacity: 1;
+    }
 }
 
 .lpGlobalAlertAction {
     background: transparent;
     border: 1px solid currentColor;
-    border-radius: 4px;
+    border-radius: $radius-md;
     color: inherit;
     cursor: pointer;
     font-size: 13px;
@@ -90,7 +100,7 @@
 @media (max-width: 768px) {
     .lpGlobalAlerts {
         border: 1px solid rgba(0, 0, 0, 0.15);
-        border-radius: 10px;
+        border-radius: $radius-md;
         bottom: calc(8px + env(safe-area-inset-bottom));
         left: 8px;
         top: auto;

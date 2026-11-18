@@ -133,7 +133,7 @@ export default {
 @import "../css/_globals";
 
 #gearPickerDialog.lpModal {
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     max-height: 80vh;
     overflow-y: auto;
     padding: 0;
@@ -147,7 +147,7 @@ export default {
 
 .gearPickerHeader {
     background: $color-accent-solid;
-    border-radius: $radius-md $radius-md 0 0;
+    border-radius: $radius-lg $radius-lg 0 0;
     color: #fff;
     padding: 16px 20px;
 }
@@ -167,7 +167,7 @@ export default {
 .gearPickerSearch {
     background: $color-bg;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     font-size: $fontSize-sm;
     margin: 14px 16px 0;

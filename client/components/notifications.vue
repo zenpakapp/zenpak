@@ -25,7 +25,7 @@
 
 .lpNotifBadge {
     background: $color-accent-solid;
-    border-radius: 999px;
+    border-radius: $radius-pill;
     color: #fff;
     font-size: 10px;
     font-weight: 700;
@@ -41,7 +41,7 @@
 .lpNotifDropdown {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     max-height: 360px;
     overflow-y: auto;

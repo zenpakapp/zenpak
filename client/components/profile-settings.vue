@@ -83,7 +83,7 @@
     align-items: center;
     background: $color-control-muted;
     border: 1px solid $color-border;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;

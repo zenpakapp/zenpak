@@ -88,7 +88,7 @@
 .lpGearRoomChip {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: 999px;
+    border-radius: $radius-pill;
     color: $color-text;
     cursor: pointer;
     font-family: $font-family-base;
@@ -268,7 +268,7 @@
 
 .lpGearRoomCategoryBadge {
     background: rgba(var(--color-accent-rgb), 0.1);
-    border-radius: 999px;
+    border-radius: $radius-pill;
     color: $color-accent-text;
     font-size: $fontSize-sm;
     padding: 2px 8px;
@@ -278,7 +278,7 @@
 .lpGearRoomFiltersToggle {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     cursor: pointer;
     display: none;

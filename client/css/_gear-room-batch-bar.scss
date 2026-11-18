@@ -2,7 +2,7 @@
 
 .lpGearRoomBatchBar {
     background: #1a1a1a;
-    border-radius: 12px;
+    border-radius: $radius-lg;
     bottom: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     color: #fff;
@@ -29,7 +29,7 @@
 
 .lpGearRoomBatchCount {
     background: $color-accent-solid;
-    border-radius: 999px;
+    border-radius: $radius-pill;
     font-size: 12px;
     font-weight: $fontWeight-bold;
     padding: 2px 8px;
@@ -42,7 +42,7 @@
 .lpGearRoomBatchAction {
     background: #2a2a2a;
     border: 1px solid #444;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: #eee;
     cursor: pointer;
     font-family: $font-family-base;
@@ -87,7 +87,7 @@
 .lpBrandSuggestions {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     list-style: none;
     margin: 4px 0 0;
     max-height: 160px;
@@ -156,7 +156,7 @@
     appearance: none;
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     flex: 1;
     font-family: $font-family-base;
@@ -185,7 +185,7 @@
 .lpGearRoomBatchApply {
     background: $color-accent-solid;
     border: none;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: #fff;
     cursor: pointer;
     font-family: $font-family-base;

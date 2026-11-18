@@ -77,9 +77,13 @@ $lineHeight-base: 1.5;
 $letterSpacing-caps: 0.06em;
 
 /* design system — border radius */
+$radius-xs: 2px;
 $radius-sm: 4px;
 $radius-md: 8px;
 $radius-lg: 12px;
+$radius-xl: 24px;
+$radius-pill: 999px;
+$radius-round: 50%;
 
 /* design system — controls */
 $control-height-sm: 32px;
@@ -134,5 +138,25 @@ $transitionDurationSlow: 0.4s;
         top: 0;
         width: 999px;
         z-index: $belowSidebar;
+    }
+}
+
+// Hover of an icon-only button. Closing, clearing or dismissing something: a neutral tile.
+// Deleting something the user made: the danger colour. The accent green is never a hover, it marks
+// what is selected or primary. Keyboard focus looks like the hover.
+@mixin icon-hover-neutral {
+    &:hover,
+    &:focus-visible {
+        background: $color-control-muted;
+        color: $color-text;
+    }
+}
+
+@mixin icon-hover-danger {
+    &:hover,
+    &:focus-visible {
+        background: $color-danger;
+        border-color: $color-danger;
+        color: #fff;
     }
 }

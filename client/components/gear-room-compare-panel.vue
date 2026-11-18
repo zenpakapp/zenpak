@@ -41,17 +41,14 @@
 .lpGearRoomCompareClose {
     background: none;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
     padding: 4px 10px;
 
-    &:hover {
-        border-color: $color-accent;
-        color: $color-accent-text;
-    }
+    @include icon-hover-neutral;
 }
 
 .lpGearRoomCompareScroll {

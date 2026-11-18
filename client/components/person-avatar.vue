@@ -5,7 +5,7 @@
 // their username when there is no photo or it does not load.
 .lpPersonAvatar {
     align-items: center;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: #fff;
     display: inline-flex;
     flex: 0 0 auto;

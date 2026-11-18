@@ -17,7 +17,7 @@
         backdrop-filter: blur(14px);
         background: $color-surface-elevated;
         border: 1px solid $color-border;
-        border-radius: $radius-md;
+        border-radius: $radius-lg;
         box-shadow: $shadow-popover;
         color: $color-text;
         left: 50%;
@@ -42,7 +42,7 @@
         &::before {
             background-color: $color-surface-elevated;
             border-left: 1px solid $color-border;
-            border-radius: 4px 0 0 0;
+            border-radius: $radius-sm 0 0 0;
             border-top: 1px solid $color-border;
             content: "";
             display: block;
@@ -58,7 +58,7 @@
 
         &::after {
             background: $color-surface-elevated;
-            border-radius: $radius-md $radius-md 0 0;
+            border-radius: $radius-lg $radius-lg 0 0;
             content: "";
             display: block;
             height: 18px;

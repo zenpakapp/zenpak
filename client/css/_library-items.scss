@@ -68,7 +68,7 @@
     align-items: center;
     background: transparent;
     border: none;
-    border-radius: 999px;
+    border-radius: $radius-md;
     color: $color-text-muted;
     cursor: pointer;
     display: inline-flex;
@@ -83,10 +83,7 @@
     transition: background-color $transitionDurationFast ease, color $transitionDurationFast ease;
     width: 22px;
 
-    &:hover {
-        background: rgba(var(--color-accent-rgb), 0.08);
-        color: $color-accent-text;
-    }
+    @include icon-hover-neutral;
 }
 
 .lpLibraryItem {
@@ -326,7 +323,7 @@
 .lpTagChip {
     align-items: center;
     background: rgba(var(--color-accent-rgb), 0.12);
-    border-radius: 999px;
+    border-radius: $radius-pill;
     color: $color-text;
     display: flex;
     font-size: $fontSize-sm;
@@ -335,15 +332,21 @@
 }
 
 .lpTagChipRemove {
+    align-items: center;
     background: none;
     border: none;
+    border-radius: $radius-sm;
     color: $color-text-muted;
     cursor: pointer;
+    display: inline-flex;
     font-size: 14px;
+    height: 18px;
+    justify-content: center;
     line-height: 1;
     padding: 0;
+    width: 18px;
 
-    &:hover { color: $color-text; }
+    @include icon-hover-neutral;
 }
 
 .lpTagInput {

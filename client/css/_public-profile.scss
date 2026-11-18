@@ -47,7 +47,7 @@
 .lpPublicHero {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     margin-bottom: 12px;
     padding: 20px;
 }
@@ -61,7 +61,7 @@
 .lpPublicAvatar {
     align-items: center;
     background: linear-gradient(135deg, $color-accent, rgba(var(--color-accent-rgb), 0.5));
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: #fff;
     display: flex;
     flex-shrink: 0;
@@ -132,7 +132,7 @@
 
 .lpPublicBadge {
     background: $color-accent-solid;
-    border-radius: 10px;
+    border-radius: $radius-pill;
     color: #fff;
     font-size: 10px;
     font-weight: 700;
@@ -207,7 +207,7 @@
 .lpPublicListCard {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     cursor: pointer;
     display: block;
     margin-bottom: 8px;
@@ -290,7 +290,7 @@
 .lpPublicDisclosure {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text-muted;
     font-size: 12px;
     margin-top: 16px;

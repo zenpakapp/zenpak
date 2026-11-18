@@ -16,7 +16,7 @@
 
 .accountDropdownAvatar {
     align-items: center;
-    border-radius: 50%;
+    border-radius: $radius-round;
     color: #fff;
     display: inline-flex;
     flex: 0 0 auto;
@@ -100,7 +100,7 @@
 
 .accountDropdownItem {
     align-items: center;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: $color-text;
     cursor: pointer;
     display: flex;

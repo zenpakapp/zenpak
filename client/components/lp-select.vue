@@ -44,7 +44,7 @@
 .lpSelectDropdown {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     left: 0;
     overflow: hidden;

@@ -64,7 +64,7 @@
     animation: lpFadeUp 0.18s ease-out both;
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     box-shadow: $shadow-soft;
     contain-intrinsic-size: auto 180px;
     content-visibility: auto;
@@ -587,7 +587,7 @@ input.lpCategoryName { /* specificity */
 
     textarea {
         border: 1px solid $color-border;
-        border-radius: $radius-sm;
+        border-radius: $radius-md;
         box-sizing: border-box;
         height: 100px;
         padding: 10px $spacingSmall;
@@ -671,7 +671,7 @@ input.lpCategoryName { /* specificity */
 
 .lpPackingProgressTrack {
     background: $color-control-muted;
-    border-radius: 99px;
+    border-radius: $radius-pill;
     flex: 1;
     height: 6px;
     overflow: hidden;
@@ -679,7 +679,7 @@ input.lpCategoryName { /* specificity */
 
 .lpPackingProgressFill {
     background: $color-accent-solid;
-    border-radius: 99px;
+    border-radius: $radius-pill;
     height: 100%;
     transition: width 0.2s ease;
 }
@@ -736,7 +736,7 @@ input.lpCategoryName { /* specificity */
 .lpPackBtn {
     background: $color-accent-solid;
     border: none;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     color: #fff;
     cursor: pointer;
     font-size: $fontSize-sm;
@@ -797,7 +797,7 @@ input.lpCategoryName { /* specificity */
 
 .lpPackModalBtn {
     border: none;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     cursor: pointer;
     font-size: $fontSize-base;
     padding: 10px 20px;
@@ -821,7 +821,7 @@ input.lpCategoryName { /* specificity */
     align-items: center;
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     display: flex;
     font-size: $fontSize-sm;
     gap: 10px;

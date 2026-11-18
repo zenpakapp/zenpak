@@ -45,11 +45,7 @@
     top: 14px;
     width: 32px;
 
-    &:hover,
-    &:focus-visible {
-        background: $color-bg;
-        color: $color-text;
-    }
+    @include icon-hover-neutral;
 }
 
 .lpTemplatePickerTitle {
@@ -96,7 +92,7 @@
     select {
         background: $color-surface;
         border: 1px solid $color-border;
-        border-radius: $radius-sm;
+        border-radius: $radius-md;
         color: $color-text;
         font: inherit;
         min-height: 42px;
@@ -147,7 +143,7 @@
 .lpTemplatePickerSegments {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-sm;
+    border-radius: $radius-md;
     display: grid;
     gap: 4px;
     grid-template-columns: repeat(2, 1fr);

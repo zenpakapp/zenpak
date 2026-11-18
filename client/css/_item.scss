@@ -36,7 +36,7 @@
 
     &::before {
         background: currentColor;
-        border-radius: 50%;
+        border-radius: $radius-round;
         box-shadow: -5px 0 currentColor, 5px 0 currentColor;
         content: "";
         height: 3px;

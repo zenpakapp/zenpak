@@ -137,7 +137,7 @@ export default {
 
 // The content scrolls, the dialog does not: the close button stays in view whatever the scroll.
 #itemDetailDialog.lpModal {
-    border-radius: $radius-md;
+    border-radius: $radius-lg;
     display: flex;
     flex-direction: column;
     max-height: 90dvh;
@@ -153,6 +153,9 @@ export default {
         background: $color-surface-elevated;
         top: 20px;
         z-index: 1;
+
+        // This button has its own background, which hid the hover of the dialog's close button.
+        @include icon-hover-neutral;
     }
 }
 
