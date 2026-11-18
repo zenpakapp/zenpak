@@ -18,7 +18,7 @@
     width: 20px;
 
     img {
-        background: #fff;
+        background: $paper;
         height: 100%;
         object-fit: cover;
         width: 100%;

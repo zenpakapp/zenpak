@@ -3,10 +3,10 @@
 
 .lpGlobalAlerts {
     background: $color-warning;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid $ink-line;
     border-radius: 0 0 $radius-md $radius-md;
     border-top: none;
-    color: #1a1a1a;
+    color: $ink-900;
     left: 50%;
     margin: 0;
     padding: 0;
@@ -20,7 +20,7 @@
 
 .lpGlobalAlertsInfo {
     background: $color-accent-solid;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid $ink-line;
     border-radius: $radius-md;
     bottom: 16px;
     box-shadow: $shadow-popover;
@@ -28,7 +28,7 @@
     top: auto;
 
     .lpGlobalAlert {
-        border-bottom-color: rgba(255, 255, 255, 0.25);
+        border-bottom-color: rgba($paper, 0.25);
     }
 
     .lpGlobalAlertDismiss {
@@ -37,14 +37,14 @@
 
         &:hover,
         &:focus-visible {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba($paper, 0.25);
         }
     }
 }
 
 .lpGlobalAlert {
     align-items: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid $ink-tint;
     display: flex;
     gap: $spacingSmall;
     justify-content: space-between;
@@ -65,7 +65,7 @@
     background: transparent;
     border: 0;
     border-radius: $radius-md;
-    color: #1a1a1a;
+    color: $ink-900;
     cursor: pointer;
     font-size: $fontSize-md;
     line-height: 1;
@@ -77,7 +77,7 @@
 
     &:hover,
     &:focus-visible {
-        background: rgba(0, 0, 0, 0.12);
+        background: $ink-tint;
         opacity: 1;
     }
 }
@@ -99,7 +99,7 @@
 // spans the screen so the message is readable, and the controls are big enough to tap.
 @media (max-width: 768px) {
     .lpGlobalAlerts {
-        border: 1px solid rgba(0, 0, 0, 0.15);
+        border: 1px solid $ink-line;
         border-radius: $radius-md;
         bottom: calc(8px + env(safe-area-inset-bottom));
         left: 8px;

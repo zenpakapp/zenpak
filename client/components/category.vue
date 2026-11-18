@@ -322,7 +322,7 @@ export default {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(var(--color-shadow-rgb), 0.1);
     left: 0;
     list-style: none;
     margin: 0;

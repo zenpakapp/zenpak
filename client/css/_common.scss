@@ -63,9 +63,9 @@ textarea::placeholder {
     }
 
     .tooltip {
-        background: #444;
-        border: 1px solid #fff;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+        background: $ink-600;
+        border: 1px solid $paper;
+        box-shadow: 0 0 5px rgba(var(--color-shadow-rgb), 0.25);
         color: $color-on-solid;
         display: none;
         padding: 3px;
@@ -203,7 +203,7 @@ textarea::placeholder {
 
             &::before {
                 background: $color-danger;
-                box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25) inset;
+                box-shadow: 0 3px 3px rgba(var(--color-shadow-rgb), 0.25) inset;
             }
         }
     }
@@ -344,7 +344,7 @@ textarea::placeholder {
 }
 
 .lpButton.lpButtonDanger:hover:not(:disabled):not(.lpButtonDisabled) {
-    background: #a9132b;
+    background: $color-danger-hover;
 }
 
 .lpIconButton {

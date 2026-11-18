@@ -24,10 +24,10 @@
 
     // White and black whatever the theme: a QR code reads best this way, also in full sun.
     .lpMyCardPanel {
-        background: #fff;
+        background: $paper;
         border: 1px solid $color-border;
         border-radius: $radius-md;
-        color: #111;
+        color: $ink-950;
         padding: 24px 16px;
     }
 
@@ -48,14 +48,14 @@
     }
 
     .lpMyCardHandle {
-        color: #555;
+        color: $ink-500;
         font-size: $fontSize-md;
         margin: 4px 0 0;
         overflow-wrap: anywhere;
     }
 
     .lpMyCardAddress {
-        color: #111;
+        color: $ink-950;
         font-size: $fontSize-md;
         margin: 12px 0 0;
         overflow-wrap: anywhere;

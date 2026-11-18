@@ -12,7 +12,7 @@
     &:focus {
         background-color: $color-surface;
         border: 1px solid $color-accent;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) inset;
+        box-shadow: 0 1px 3px rgba(var(--color-shadow-rgb), 0.15) inset;
         outline: none;
     }
 

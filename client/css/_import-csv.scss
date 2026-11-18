@@ -82,9 +82,9 @@
         }
 
         &.isAmbiguous {
-            background: #fff3cd;
-            border-color: #e6c84a;
-            color: #7a5c00;
+            background: $color-warning-bg;
+            border-color: $color-warning-border;
+            color: $color-warning-text;
         }
     }
 

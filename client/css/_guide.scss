@@ -294,7 +294,7 @@
 }
 
 .lpGuideRuleWarning {
-    background: rgba(217, 119, 6, 0.1);
+    background: rgba(var(--color-warning-rgb), 0.1);
     border-radius: $radius-md;
     color: $color-text;
     margin-top: 6px;

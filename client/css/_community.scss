@@ -190,7 +190,7 @@
     width: 36px;
 
     img {
-        background: #fff;
+        background: $paper;
         border-radius: $radius-round;
         height: 100%;
         object-fit: cover;
@@ -358,7 +358,7 @@
     width: 40px;
 
     img {
-        background: #fff;
+        background: $paper;
         border-radius: $radius-round;
         height: 100%;
         object-fit: cover;
@@ -862,7 +862,7 @@
 
     .lp-moderation-offer-result { color: $color-accent-text; }
 
-    .lp-moderation-offer-error { color: #dc3545; }
+    .lp-moderation-offer-error { color: $color-danger; }
 }
 
 .lpModerationLibraryBox {

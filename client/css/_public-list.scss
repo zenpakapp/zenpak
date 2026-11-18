@@ -10,7 +10,7 @@
 .lpPublicUnavailable {
     align-items: center;
     background:
-        linear-gradient(135deg, rgba(19, 57, 37, 0.9), rgba(45, 122, 79, 0.72)),
+        linear-gradient(135deg, rgba($brand-forest, 0.9), rgba($brand-green, 0.72)),
         url("/images/lp_bg2.jpg") 50% 30% / cover no-repeat;
     display: flex;
     flex-direction: column;
@@ -90,12 +90,12 @@
 }
 
 .lpPublicUnavailableBrand {
-    color: rgba(255, 255, 255, 0.82);
+    color: rgba($paper, 0.82);
     font-size: $fontSize-ui;
     margin-top: 20px;
     text-decoration: none;
 
-    &:hover { color: #fff; }
+    &:hover { color: $color-on-solid; }
 }
 
 .lpPublicNav {
@@ -482,9 +482,9 @@
 }
 
 .lpPublicListItemPromoCode {
-    background: var(--color-badge-bg, #e8f4e8);
+    background: $color-badge-bg;
     border-radius: $radius-sm;
-    color: var(--color-badge-text, #2d6a2d);
+    color: $color-badge-text;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
     padding: 2px 6px;

@@ -5,7 +5,7 @@
     background: $color-surface;
     border-top: 1px solid $color-border;
     bottom: 0;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 -4px 24px rgba(var(--color-shadow-rgb), 0.14);
     display: flex;
     flex-direction: column;
     height: 50vh;
@@ -159,8 +159,8 @@
 }
 
 .lpGearRoomCompareLowest {
-    background: rgba(34, 197, 94, 0.12);
-    color: #16a34a;
+    background: $color-success-bg;
+    color: $color-success-text;
     font-weight: $fontWeight-bold;
 }
 </style>
