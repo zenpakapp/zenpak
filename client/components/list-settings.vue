@@ -49,7 +49,7 @@
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
         gap: $space-10;
-        letter-spacing: 0.04em;
+        letter-spacing: $letterSpacing-loose;
         text-transform: uppercase;
     }
 

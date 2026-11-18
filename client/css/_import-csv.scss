@@ -71,7 +71,7 @@
         display: inline-block;
         font-size: $fontSize-sm;
         font-weight: $fontWeight-bold;
-        letter-spacing: 0.04em;
+        letter-spacing: $letterSpacing-loose;
         padding: $space-4 $space-10;
         text-transform: uppercase;
 

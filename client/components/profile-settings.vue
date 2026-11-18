@@ -87,7 +87,7 @@
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;
-    font-size: 20px;
+    font-size: $fontSize-xl;
     font-weight: $fontWeight-bold;
     height: 56px;
     justify-content: center;

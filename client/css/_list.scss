@@ -295,7 +295,7 @@ input.lpCategoryName { /* specificity */
         border-radius: $radius-sm;
         color: $color-accent-text;
         display: inline-flex;
-        font-size: 10px;
+        font-size: $fontSize-2xs;
         font-weight: $fontWeight-bold;
         line-height: 1.4;
         max-width: 90px;
@@ -620,7 +620,7 @@ input.lpCategoryName { /* specificity */
         font-size: $fontSize-xl;
         font-weight: $fontWeight-bold;
         gap: $space-10;
-        letter-spacing: -0.01em;
+        letter-spacing: $letterSpacing-tight;
         line-height: 1.2;
         margin: 0 0 $space-16;
     }
@@ -777,7 +777,7 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpPackModalPhrase {
-    font-size: 20px;
+    font-size: $fontSize-xl;
     font-weight: $fontWeight-bold;
     line-height: 1.4;
     margin: 0 0 $space-16;

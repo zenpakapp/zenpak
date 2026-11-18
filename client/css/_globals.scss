@@ -88,6 +88,7 @@ $width-app: 1200px; /* écrans de travail : éditeur, modération */
 
 /* design system — typographie */
 $font-family-base: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+$fontSize-2xs: 10px;
 $fontSize-xs: 11px;
 $fontSize-sm: 12px;
 $fontSize-ui: 13px;
@@ -95,12 +96,19 @@ $fontSize-base: 14px;
 $fontSize-md: 16px;
 $fontSize-lg: 18px;
 $fontSize-xl: 22px;
+$fontSize-2xl: 24px;
+$fontSize-3xl: 28px;
+$fontSize-4xl: 32px;
 $fontWeight-normal: 400;
 $fontWeight-light: 300;
 $fontWeight-medium: 500;
 $fontWeight-bold: 600;
 $lineHeight-base: 1.5;
+$letterSpacing-tight: -0.02em;
+$letterSpacing-display: -0.04em;
+$letterSpacing-loose: 0.04em;
 $letterSpacing-caps: 0.06em;
+$letterSpacing-wide: 0.14em;
 
 /* design system — border radius */
 $radius-xs: 2px;

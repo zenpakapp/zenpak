@@ -40,7 +40,7 @@
     }
 
     .lpMyCardName {
-        font-size: 30px;
+        font-size: $fontSize-4xl;
         font-weight: $fontWeight-bold;
         line-height: 1.2;
         margin: 0;
@@ -77,7 +77,7 @@
     .lpMyCardPrivate {
         p {
             color: $color-text-muted;
-            font-size: 15px;
+            font-size: $fontSize-md;
             line-height: 1.5;
             margin: 0 0 $space-16;
         }

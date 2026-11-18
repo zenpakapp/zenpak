@@ -52,7 +52,7 @@
     }
 
     .itemDetailName {
-        font-size: 26px;
+        font-size: $fontSize-3xl;
         font-weight: $fontWeight-bold;
         line-height: 1.08;
         margin: 0 0 $space-10;
@@ -105,7 +105,7 @@
         border: none;
         color: $color-text-muted;
         cursor: pointer;
-        font-size: 20px;
+        font-size: $fontSize-xl;
         line-height: 1;
         padding: $space-4 $space-6;
         transition: color $transitionDurationFast ease, transform $transitionDurationFast ease;

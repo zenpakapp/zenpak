@@ -27,7 +27,7 @@
     background: $color-accent-solid;
     border-radius: $radius-pill;
     color: $color-on-solid;
-    font-size: 10px;
+    font-size: $fontSize-2xs;
     font-weight: $fontWeight-bold;
     line-height: 1;
     min-width: 16px;

@@ -15,7 +15,7 @@
 
 .lpPublicErrorIcon {
     color: $color-text-muted;
-    font-size: 48px;
+    font-size: 48px; // font-size-exempt: a decorative glyph or hero size
     font-weight: $fontWeight-light;
     line-height: 1;
     margin-bottom: $space-16;

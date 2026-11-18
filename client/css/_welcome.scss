@@ -73,7 +73,7 @@ $welcome-chrome-bottom: #18181b;
     display: block;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.18em;
+    letter-spacing: $letterSpacing-wide;
     margin-bottom: $space-16;
     text-transform: uppercase;
 }
@@ -89,7 +89,7 @@ $welcome-chrome-bottom: #18181b;
     font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
     font-size: clamp(36px, 6vw, 66px);
     font-weight: $fontWeight-bold;
-    letter-spacing: -0.04em;
+    letter-spacing: $letterSpacing-display;
     line-height: 0.96;
     margin: 0;
     max-width: 620px;
@@ -102,7 +102,7 @@ $welcome-chrome-bottom: #18181b;
 
 .lpWelcomeDeck {
     color: rgba($paper, 0.82);
-    font-size: 19px;
+    font-size: $fontSize-lg;
     line-height: 1.65;
     margin: $space-24 0 0;
     max-width: 620px;
@@ -171,7 +171,7 @@ $welcome-chrome-bottom: #18181b;
 }
 
 .lpWelcomeFaqTitle {
-    font-size: 28px;
+    font-size: $fontSize-3xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-28;
 }
@@ -207,7 +207,7 @@ $welcome-chrome-bottom: #18181b;
         color: $color-text-muted;
         content: "+";
         float: right;
-        font-size: 20px;
+        font-size: $fontSize-xl;
         font-weight: $fontWeight-light;
         line-height: 1;
     }
@@ -271,13 +271,13 @@ details[open] .lpWelcomeFaqQ::after {
     display: block;
     font-size: $fontSize-xs;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.14em;
+    letter-spacing: $letterSpacing-wide;
     margin-bottom: $space-8;
     text-transform: uppercase;
 }
 
 .lpWelcomeProofTitle {
-    font-size: 31px;
+    font-size: $fontSize-4xl;
     line-height: 1.06;
     margin: 0;
 }
@@ -378,7 +378,7 @@ details[open] .lpWelcomeFaqQ::after {
     color: $color-text-muted;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-bold;
-    letter-spacing: 0.08em;
+    letter-spacing: $letterSpacing-caps;
     margin-left: $space-8;
     text-transform: uppercase;
 }
@@ -415,7 +415,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpWelcomeCardTitle {
-    font-size: 32px;
+    font-size: $fontSize-4xl;
     line-height: 1.04;
     margin: 0;
 }
@@ -547,7 +547,7 @@ details[open] .lpWelcomeFaqQ::after {
 }
 
 .lpOAuthSetupTitle {
-    font-size: 24px;
+    font-size: $fontSize-2xl;
     font-weight: $fontWeight-bold;
     margin: 0 0 $space-8;
 }
@@ -695,11 +695,11 @@ details[open] .lpWelcomeFaqQ::after {
     }
 
     .lpWelcomeHeadline {
-        font-size: 40px;
+        font-size: 40px; // font-size-exempt: a decorative glyph or hero size
     }
 
     .lpWelcomeDeck {
-        font-size: 17px;
+        font-size: $fontSize-lg;
     }
 
     .lpWelcomeStats {
@@ -714,7 +714,7 @@ details[open] .lpWelcomeFaqQ::after {
 
     .lpWelcomeProofTitle,
     .lpWelcomeCardTitle {
-        font-size: 26px;
+        font-size: $fontSize-3xl;
     }
 
     .lpWelcomeGrid {
