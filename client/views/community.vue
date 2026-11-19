@@ -145,7 +145,10 @@
                                 :key="'f-' + list.externalId"
                                 class="lpCommunityCard lpCommunityCardFeatured"
                                 style="cursor: pointer;"
+                                role="link"
+                                tabindex="0"
                                 @click="$router.push(communityListTo(list))"
+                                @keydown.enter="$router.push(communityListTo(list))"
                             >
                                 <div class="lpCommunityCardName">
                                     {{ list.name }}
@@ -178,7 +181,10 @@
                             :key="list.externalId"
                             class="lpCommunityCard"
                             style="cursor: pointer;"
+                            role="link"
+                            tabindex="0"
                             @click="$router.push(communityListTo(list))"
+                            @keydown.enter="$router.push(communityListTo(list))"
                         >
                             <div class="lpCommunityCardName">
                                 {{ list.name }}
@@ -224,7 +230,10 @@
                             v-for="list in popularLists"
                             :key="'popular-' + list.externalId"
                             class="lpCommunityPopularItem"
+                            role="link"
+                            tabindex="0"
                             @click="$router.push(communityListTo(list))"
+                            @keydown.enter="$router.push(communityListTo(list))"
                         >
                             <span class="lpCommunityPopularName">{{ list.name }}</span>
                             <router-link class="lpCommunityPopularAuthor" :to="communityProfileTo(list.author)" @click.stop>

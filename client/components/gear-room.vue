@@ -142,7 +142,7 @@
                                     <div v-else class="lpGearRoomThumbPlaceholder" />
                                 </td>
                                 <td @click="openItemDetail(item)">
-                                    <div class="lpGearRoomItemName">
+                                    <div class="lpGearRoomItemName" role="button" tabindex="0" @keydown.enter="openItemDetail(item)" @keydown.space.prevent="openItemDetail(item)">
                                         {{ itemDisplayName(item) }}
                                     </div>
                                     <div v-if="item.description" class="lpGearRoomItemDesc">

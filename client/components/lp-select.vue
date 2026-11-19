@@ -78,7 +78,10 @@
         <div
             class="lpSelectTrigger"
             :class="{ lpSelectOpen: isOpen }"
+            role="combobox"
             tabindex="0"
+            aria-haspopup="listbox"
+            :aria-expanded="isOpen ? 'true' : 'false'"
             @click="toggle"
             @keydown="onKeydown"
         >

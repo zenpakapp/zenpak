@@ -101,7 +101,7 @@
                 </select>
             </div>
             <hr class="guestSettingsDivider">
-            <div v-for="list in library.lists" :key="list.id" class="guestSettingsListItem" :class="{ lpActive: library.defaultListId === list.id }" @click="switchList(list)">
+            <div v-for="list in library.lists" :key="list.id" class="guestSettingsListItem" :class="{ lpActive: library.defaultListId === list.id }" role="button" tabindex="0" @click="switchList(list)" @keydown.enter="switchList(list)" @keydown.space.prevent="switchList(list)">
                 {{ list.name || $t('library.newListDefault') }}
             </div>
         </div>

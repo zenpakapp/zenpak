@@ -55,7 +55,11 @@
                     <div
                         class="itemImageDropZone"
                         :class="{ dragover: isDragOver }"
+                        role="button"
+                        tabindex="0"
                         @click="triggerImageUpload"
+                        @keydown.enter="triggerImageUpload"
+                        @keydown.space.prevent="triggerImageUpload"
                         @dragover.prevent="isDragOver = true"
                         @dragleave="isDragOver = false"
                         @drop.prevent="onDrop"
