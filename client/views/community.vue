@@ -266,7 +266,7 @@
             <template v-else>
                 <article v-for="event in feedEvents" :key="String(event._id)" class="lpCommunityEvent">
                     <router-link :to="communityProfileTo(event.author)" class="lpCommunityEventAvatar" :aria-label="event.author">
-                        <img v-if="event.avatarUrl" :src="event.avatarUrl" alt="">
+                        <img loading="lazy" v-if="event.avatarUrl" :src="event.avatarUrl" alt="">
                         <span v-else>{{ event.author.charAt(0).toUpperCase() }}</span>
                     </router-link>
                     <div class="lpCommunityEventBody">

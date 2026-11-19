@@ -17,7 +17,7 @@
             <div v-else-if="!isPackingMode" class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
-            <img v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" :alt="itemLabel" @click="viewItemImage()">
+            <img loading="lazy" v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" :alt="itemLabel" @click="viewItemImage()">
         </span>
         <span class="lpNameCell">
             <template v-if="isPackingMode">

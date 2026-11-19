@@ -138,7 +138,7 @@
                                     <input v-model="selected" type="checkbox" :value="item.id">
                                 </td>
                                 <td class="lpGRImgCol" @click="openItemDetail(item)">
-                                    <img v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomThumb" :alt="item.name">
+                                    <img loading="lazy" v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomThumb" :alt="item.name">
                                     <div v-else class="lpGearRoomThumbPlaceholder" />
                                 </td>
                                 <td @click="openItemDetail(item)">
