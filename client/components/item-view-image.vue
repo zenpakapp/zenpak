@@ -13,7 +13,7 @@
 
 <template>
     <modal id="lpImageDialog" :shown="shown" @hide="shown = false">
-        <img :src="imageUrl">
+        <img :src="imageUrl" :alt="$t('item.imageDialogTitle')">
     </modal>
 </template>
 

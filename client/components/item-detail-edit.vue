@@ -176,14 +176,18 @@
                     @dragover.prevent="imageDragOver = true"
                     @dragleave="imageDragOver = false"
                     @drop.prevent="onImageDrop"
+                    role="button"
+                    tabindex="0"
                     @click="$refs.imageFileInput.click()"
+                    @keydown.enter="$refs.imageFileInput.click()"
+                    @keydown.space.prevent="$refs.imageFileInput.click()"
                 >
                     <input ref="imageFileInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp" style="display: none;" @change="onImageFileChange">
                     <template v-if="editImageUploading">
                         <span class="itemDetailDropZoneUploading">{{ $t('item.editImageUploading') }}</span>
                     </template>
                     <template v-else-if="editImageUrl">
-                        <img :src="editImageUrl" class="itemDetailDropZonePreview">
+                        <img :src="editImageUrl" class="itemDetailDropZonePreview" :alt="$t('item.currentImage')">
                         <button type="button" class="itemDetailDropZoneRemove" @click.stop="editImageUrl = ''">
                             ×
                         </button>

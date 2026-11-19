@@ -22,7 +22,11 @@
                     v-for="gearItem in filteredItems"
                     :key="gearItem.id"
                     :class="['gearPickerItem', { alreadyAdded: isAlreadyInCategory(gearItem) }]"
+                    role="button"
+                    tabindex="0"
                     @click="pickItem(gearItem)"
+                    @keydown.enter="pickItem(gearItem)"
+                    @keydown.space.prevent="pickItem(gearItem)"
                 >
                     <span class="gearPickerItemName">{{ gearItem.name || $t('library.gearPickerUnnamedItem') }}</span>
                     <span v-if="gearItem.brand" class="gearPickerItemBrand">{{ gearItem.brand }}</span>

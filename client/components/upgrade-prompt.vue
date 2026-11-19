@@ -4,7 +4,7 @@
 
 <template>
     <div>
-        <div v-if="mode === 'inline'" class="lpUpgradeLock" @click="showModal = true">
+        <div v-if="mode === 'inline'" class="lpUpgradeLock" role="button" tabindex="0" @click="showModal = true" @keydown.enter="showModal = true" @keydown.space.prevent="showModal = true">
             <span class="lpUpgradeLockText">{{ inlineText }}</span>
             <span class="lpUpgradeLockCta">{{ $t('guide.upgrade.inlineTextDefault', { tier: tierLabel }) }} →</span>
         </div>
