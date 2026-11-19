@@ -338,11 +338,13 @@ input.lpCategoryName { /* specificity */
         }
     }
 
+    // 24px: the hit area of the delete cross (a 12px icon and 6px of padding). A row cell that were
+    // narrower grows to it, and the totals under it would end 4px past the numbers above.
     .lpRemoveCell {
         align-items: center;
         align-self: stretch;
         display: flex;
-        flex: 0 0 20px;
+        flex: 0 0 $space-24;
         justify-content: center;
     }
 
