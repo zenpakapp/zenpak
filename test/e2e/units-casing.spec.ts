@@ -26,10 +26,10 @@ test("the weight column header keeps the unit lower-case; exit packing is senten
 
   const unit = page.locator(".lpHeaderUnit").first();
   await expect(unit).toBeVisible({ timeout: 15000 });
-  expect(await unit.evaluate((el) => getComputedStyle(el).textTransform)).toBe(
-    "none",
-  );
-  expect(await unit.textContent()).toMatch(/^\((g|kg|oz|lb)\)$/);
+  // The header re-renders after the import. A one-shot read of a detached node gives an empty style
+  // ("" instead of "none"), so these assertions look the element up again until it settles.
+  await expect(unit).toHaveCSS("text-transform", "none");
+  await expect(unit).toHaveText(/^\((g|kg|oz|lb)\)$/);
 
   await page
     .getByRole("button", { name: /pack this list/i })
