@@ -1,11 +1,12 @@
 import path from "path";
 
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page, type Locator } from "@playwright/test";
 
 import { registerUser } from "./auth-utils";
 
-// Dragging an item by its handle must work with a finger, not only with a mouse: real touch events
-// (touchstart, touchmove, touchend) sent through the browser, on a phone-sized screen.
+// Dragging a row by its handle must work with a finger, not only with a mouse: real touch events
+// (touchstart, touchmove, touchend) sent through the browser, on a phone-sized screen. Before the
+// handles had touch-action: none, a finger on one scrolled the page and nothing was reordered.
 test.use({
   locale: "en-US",
   viewport: { width: 375, height: 812 },
@@ -13,20 +14,23 @@ test.use({
   isMobile: true,
 });
 
-test("an item is reordered by dragging its handle with a finger", async ({
-  page,
-}) => {
-  test.setTimeout(90000);
+async function signUp(page: Page, prefix: string) {
   const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
-  await registerUser(page, `tr${now}`, "testtest", `tr+${now}@lighterpack.com`);
+  await registerUser(
+    page,
+    `${prefix}${now}`,
+    "testtest",
+    `${prefix}+${now}@lighterpack.com`,
+  );
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
-
   for (let i = 0; i < 5; i += 1) {
     const dismiss = page.locator(".lpGlobalAlertDismiss").first();
     if (!(await dismiss.isVisible().catch(() => false))) break;
     await dismiss.click();
   }
+}
 
+async function importCsv(page: Page, file: string) {
   // On a phone the import menu is in the sidebar, and a touch screen has no hover: tap to open both.
   await page.locator("#hamburger").tap();
   const chooser = page.waitForEvent("filechooser");
@@ -34,34 +38,28 @@ test("an item is reordered by dragging its handle with a finger", async ({
   await page.getByRole("button", { name: "Import a CSV file" }).click();
   await (
     await chooser
-  ).setFiles(path.join(process.cwd(), "test/fixtures/csv/reorder.csv"));
+  ).setFiles(path.join(process.cwd(), "test/fixtures/csv", file));
   await page.locator("#importConfirm").click();
   // The open drawer covers the hamburger: tap the dimmed strip beside it to close it.
   await page.locator(".lpSidebarOverlay").tap({ position: { x: 366, y: 300 } });
   await expect(page.locator(".lpSidebarOverlay")).toBeHidden();
   await expect(page.locator("#sidebar")).not.toBeInViewport();
-  const rows = page.locator(".lpItem[data-item-id]");
-  await expect(rows).toHaveCount(3, { timeout: 15000 });
-  const names = () =>
-    rows.evaluateAll((els) =>
-      els.map(
-        (el) => (el.querySelector("input.lpName") as HTMLInputElement).value,
-      ),
-    );
-  await expect.poll(names).toEqual(["Alpha", "Bravo", "Charlie"]);
+}
 
-  // The three rows must be on the screen: a touch outside it grabs nothing.
-  await rows.nth(0).scrollIntoViewIfNeeded();
-  await page.evaluate(() => window.scrollBy(0, document.querySelector(".lpItem[data-item-id]")!.getBoundingClientRect().top - 120));
+// Put the first row `top` px from the top of the screen, so every row of a short list is visible.
+async function scrollFirstTo(page: Page, first: Locator, top: number) {
+  await first.scrollIntoViewIfNeeded();
+  await first.evaluate((el, t) => {
+    window.scrollBy(0, el.getBoundingClientRect().top - t);
+  }, top);
+}
 
-  const handle = (i: number) => rows.nth(i).locator(".lpItemHandle");
-  await expect(handle(2)).toBeVisible();
-  const from = (await handle(2).boundingBox())!;
-  const to = (await rows.nth(0).boundingBox())!;
-  const x = from.x + from.width / 2;
-  const y = from.y + from.height / 2;
-  const targetY = to.y + 4;
-
+// A finger goes down on `handle`, slides to `targetY` in small steps and lifts.
+async function fingerDrag(page: Page, handle: Locator, targetY: number) {
+  await expect(handle).toBeVisible();
+  const box = (await handle.boundingBox())!;
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
   const cdp = await page.context().newCDPSession(page);
   const touch = (type: string, ty?: number) =>
     cdp.send("Input.dispatchTouchEvent", {
@@ -75,8 +73,86 @@ test("an item is reordered by dragging its handle with a finger", async ({
     await page.waitForTimeout(30);
   }
   await touch("touchEnd");
+}
+
+test("an item is reordered by dragging its handle with a finger", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await signUp(page, "tr");
+  await importCsv(page, "reorder.csv");
+
+  const rows = page.locator(".lpItem[data-item-id]");
+  await expect(rows).toHaveCount(3, { timeout: 15000 });
+  const names = () =>
+    rows.evaluateAll((els) =>
+      els.map(
+        (el) => (el.querySelector("input.lpName") as HTMLInputElement).value,
+      ),
+    );
+  await expect.poll(names).toEqual(["Alpha", "Bravo", "Charlie"]);
+
+  await scrollFirstTo(page, rows.nth(0), 120);
+  const target = (await rows.nth(0).boundingBox())!.y + 4;
+  await fingerDrag(page, rows.nth(2).locator(".lpItemHandle"), target);
 
   await expect
     .poll(names, { timeout: 5000 })
     .toEqual(["Charlie", "Alpha", "Bravo"]);
+});
+
+test("a category is reordered by dragging its handle with a finger", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await signUp(page, "tc");
+  await importCsv(page, "reorder-categories.csv");
+
+  const categories = page.locator(".lpCategory");
+  await expect(categories).toHaveCount(3, { timeout: 15000 });
+  const names = () =>
+    categories.evaluateAll((els) =>
+      els.map((el) => el.querySelector("h3")!.textContent!.trim()),
+    );
+  await expect.poll(names).toEqual(["Shelter", "Cooking", "Clothing"]);
+
+  await scrollFirstTo(page, categories.nth(0), 100);
+  const target = (await categories.nth(0).boundingBox())!.y + 4;
+  await fingerDrag(
+    page,
+    categories.nth(2).locator(".lpCategoryHandle"),
+    target,
+  );
+
+  await expect
+    .poll(names, { timeout: 5000 })
+    .toEqual(["Clothing", "Shelter", "Cooking"]);
+});
+
+test("a list in the sidebar is reordered by dragging its handle with a finger", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await signUp(page, "tl");
+
+  await page.locator("#hamburger").tap();
+  for (let i = 0; i < 2; i += 1) {
+    await page.locator(".listContainerHeader .lpTarget .lpAdd").tap();
+    await page.getByText("New blank list", { exact: false }).first().tap();
+    await expect(page.locator("#lists .lpLibraryList")).toHaveCount(i + 2, {
+      timeout: 10000,
+    });
+  }
+  // The names are alike, so the order is read from where the active list ends up.
+  const lists = page.locator("#lists .lpLibraryList");
+  const activeIndex = () =>
+    lists.evaluateAll((els) =>
+      els.findIndex((el) => el.classList.contains("lpActive")),
+    );
+  const before = await activeIndex();
+
+  const first = (await lists.nth(0).boundingBox())!;
+  await fingerDrag(page, lists.nth(2).locator(".lpHandle"), first.y + 4);
+
+  await expect.poll(activeIndex, { timeout: 5000 }).not.toBe(before);
 });
