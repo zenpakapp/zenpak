@@ -99,6 +99,7 @@ import { getElementIndex } from '../utils/utils';
 import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag-drop';
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
 import { GEAR_CATEGORY_OPTIONS } from '../data/gear-categories';
+import breakpoints from '../utils/breakpoints';
 
 const { displayWeight } = useUtils();
 
@@ -130,6 +131,8 @@ export default {
             tagInputFocused: false,
             itemDragId: false,
             drake: null,
+            itemDropped: false,
+            sidebarClosedByDrag: false,
             scrollTop: 0,
             viewportHeight: 600,
             resizeObserver: null,
@@ -334,6 +337,20 @@ export default {
             }
             drake.on('drag', ($el) => {
                 this.itemDragId = getDatasetInt($el, 'itemId');
+                this.itemDropped = false;
+                // On a phone the drawer covers the editor, so there is nothing to drop on: close it for the drag.
+                const { library } = this.$store.state;
+                if (library.showSidebar && window.matchMedia(`(max-width: ${breakpoints.tablet}px)`).matches) {
+                    this.$store.commit('toggleSidebar');
+                    this.sidebarClosedByDrag = true;
+                }
+            });
+            drake.on('dragend', () => {
+                // A drop that missed every category opens the drawer again, so the item is not lost from view.
+                if (this.sidebarClosedByDrag && !this.itemDropped && !this.$store.state.library.showSidebar) {
+                    this.$store.commit('toggleSidebar');
+                }
+                this.sidebarClosedByDrag = false;
             });
             drake.on('drop', ($el, $target) => {
                 if (!$target || $target.classList.contains('library')) {
@@ -344,6 +361,7 @@ export default {
                     drake.cancel(true);
                     return;
                 }
+                this.itemDropped = true;
                 this.$store.commit('addItemToCategory', { itemId: this.itemDragId, categoryId, dropIndex: getElementIndex($el) - 1 });
                 drake.cancel(true);
             });
