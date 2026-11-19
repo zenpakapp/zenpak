@@ -14,7 +14,7 @@
 .lpNotFoundCode {
     color: $color-accent-text;
     font-size: 96px; // font-size-exempt: a decorative glyph or hero size
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-black;
     letter-spacing: $letterSpacing-display;
     line-height: 1;
     margin-bottom: $space-12;

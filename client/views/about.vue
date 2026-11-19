@@ -27,7 +27,7 @@
 
     h2 {
         font-size: $fontSize-lg;
-        font-weight: $fontWeight-bold;
+        font-weight: $fontWeight-heavy;
         margin: $space-32 0 $space-8;
     }
 

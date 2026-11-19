@@ -66,7 +66,7 @@
     display: flex;
     flex-shrink: 0;
     font-size: $fontSize-xl;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     height: 56px;
     justify-content: center;
     overflow: hidden;
@@ -126,7 +126,7 @@
 
 .lpPublicName {
     font-size: $fontSize-lg;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     margin: 0;
 }
 
@@ -135,7 +135,7 @@
     border-radius: $radius-pill;
     color: $color-on-solid;
     font-size: $fontSize-2xs;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     letter-spacing: $letterSpacing-loose;
     padding: $space-2 $space-8;
     text-transform: uppercase;

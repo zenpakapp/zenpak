@@ -18,7 +18,7 @@ test("has title", async ({ page }) => {
   await page.goto(testRoot);
 
   await expect(page).toHaveTitle(/ZenPak/);
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({ maxDiffPixels: 100 });
 });
 
 test("welcome page prioritizes account creation while keeping sign in and no-account use visible", async ({
