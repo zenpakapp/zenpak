@@ -221,8 +221,13 @@
         opacity: 1;
     }
 
-    // No hover on a touch screen: keep the handle and the details button shown.
+    // No hover on a touch screen: keep the handle and the details button shown. A long press is a
+    // drag or a tap here, not a text selection, so the row is not selectable (there is no field in it).
     @media (hover: none), (pointer: coarse) {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+
         .lpHandle {
             visibility: visible;
         }
