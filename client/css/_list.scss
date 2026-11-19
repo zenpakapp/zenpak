@@ -103,6 +103,8 @@
 
 input.lpCategoryName { /* specificity */
     border: 1px solid transparent;
+    // The field is 20px tall: the 8px radius of the other fields made it nearly a pill.
+    border-radius: $radius-sm;
     flex: 1 0 300px;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
