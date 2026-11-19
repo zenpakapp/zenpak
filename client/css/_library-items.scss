@@ -92,7 +92,9 @@
     color: $color-text;
     height: 52px;
     list-style: none;
-    margin: 0 $space-10;
+    // The row spans the whole column, like the filters above it: its separator and its hover
+    // background reach the same edges.
+    margin: 0;
     overflow: hidden;
     padding: $space-8 $space-8 $space-4 $space-16;
     position: relative;
@@ -126,7 +128,9 @@
         font-variant-numeric: tabular-nums;
         position: absolute;
         right: 58px;
-        top: 7px;
+        // Centred in the row like the details button and the delete cross beside it.
+        top: 50%;
+        transform: translateY(-50%);
         white-space: nowrap;
         width: auto;
     }

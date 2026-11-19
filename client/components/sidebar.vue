@@ -68,10 +68,16 @@ $sidebarPadding: 20px;
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: hidden;
+    // Clip, not hidden: a hidden box can still be scrolled by script, and opening the new-list menu
+    // scrolled this one 20px to the left on a phone, cutting off the edge of every row.
+    overflow: clip;
     padding-bottom: $space-20;
     position: relative;
     top: 0;
+
+    @supports not (overflow: clip) {
+        overflow: hidden;
+    }
 
     > h1 {
         flex: 0 0 auto;
