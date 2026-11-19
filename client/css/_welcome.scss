@@ -332,7 +332,7 @@ details[open] .lpWelcomeFaqQ::after {
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
     padding: $space-6 $space-14;
-    transition: all $transitionDurationFast;
+    transition: background-color $transitionDurationFast, border-color $transitionDurationFast, color $transitionDurationFast;
 
     &:hover {
         border-color: $color-accent;
