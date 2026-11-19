@@ -28,7 +28,7 @@
     border-radius: $radius-pill;
     color: $color-on-solid;
     font-size: $fontSize-2xs;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     line-height: 1;
     min-width: 16px;
     padding: $space-2 $space-4;

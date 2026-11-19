@@ -70,7 +70,7 @@
         border-radius: $radius-pill;
         display: inline-block;
         font-size: $fontSize-sm;
-        font-weight: $fontWeight-bold;
+        font-weight: $fontWeight-heavy;
         letter-spacing: $letterSpacing-loose;
         padding: $space-4 $space-10;
         text-transform: uppercase;
@@ -117,7 +117,7 @@
             border-top: none;
             box-shadow: inset 0 -1px 0 $color-border;
             font-size: $fontSize-sm;
-            font-weight: $fontWeight-bold;
+            font-weight: $fontWeight-heavy;
         }
     }
 
@@ -142,7 +142,7 @@
 
     h3 {
         font-size: $fontSize-base;
-        font-weight: $fontWeight-bold;
+        font-weight: $fontWeight-heavy;
         margin: 0 0 $space-10;
     }
 }
@@ -174,7 +174,7 @@
 .importReviewLabel {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     margin: 0 0 $space-2;
     text-transform: uppercase;
 }

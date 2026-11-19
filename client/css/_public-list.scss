@@ -143,7 +143,7 @@
 
 .lpPublicListTitle {
     font-size: $fontSize-3xl;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     margin: 0 0 $space-4;
 }
 
@@ -283,7 +283,7 @@
     }
 
     tfoot tr:last-child td {
-        font-weight: $fontWeight-bold;
+        font-weight: $fontWeight-heavy;
     }
 
     tr:hover td,
@@ -341,7 +341,7 @@
     align-items: center;
     display: flex;
     font-size: $fontSize-ui;
-    font-weight: $fontWeight-bold;
+    font-weight: $fontWeight-heavy;
     gap: $space-8;
     margin: 0;
 }

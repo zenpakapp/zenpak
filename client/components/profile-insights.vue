@@ -92,7 +92,7 @@ export default {
     strong {
         display: block;
         font-size: $fontSize-xl;
-        font-weight: $fontWeight-bold;
+        font-weight: $fontWeight-heavy;
     }
 
     span {
