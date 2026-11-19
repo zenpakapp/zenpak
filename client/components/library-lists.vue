@@ -61,6 +61,13 @@
         background: rgba(var(--color-accent-rgb), 0.04);
     }
 
+    // On a touch screen a long press is a drag or a tap, not a text selection (no field in a row).
+    @media (hover: none), (pointer: coarse) {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
     // A long name takes two lines instead of one cut-off line; the full name is the tooltip.
     .lpListName {
         -webkit-box-orient: vertical;
