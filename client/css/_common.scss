@@ -159,7 +159,7 @@ textarea::placeholder {
     min-height: 100%;
     position: relative;
     text-align: left;
-    transition: all $transitionDurationSlow;
+    transition: margin $transitionDurationSlow, max-width $transitionDurationSlow;
 
     &.lpHasSidebar {
         margin: 0;

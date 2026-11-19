@@ -213,7 +213,7 @@
     left: 0;
     position: fixed;
     top: 0;
-    transition: all $transitionDuration;
+    transition: opacity $transitionDuration, background-color $transitionDuration;
     width: 100%;
     z-index: $belowDialog;
 
