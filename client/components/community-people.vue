@@ -27,7 +27,7 @@
                 class="lpCommunityCard lpCommunityCardUser"
             >
                 <div class="lpCommunityCardUserAvatar">
-                    <img v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName || user.username">
+                    <img loading="lazy" v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.displayName || user.username">
                     <span v-else :style="{ background: avatarBgColor(user), color: '#fff' }">{{ avatarLetter(user) }}</span>
                 </div>
                 <div class="lpCommunityCardUserBody">

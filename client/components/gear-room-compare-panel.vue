@@ -203,7 +203,7 @@
                             {{ $t('gearroom.compareImage') }}
                         </td>
                         <td v-for="item in items" :key="item.id" class="lpGearRoomCompareValueCell">
-                            <img v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomCompareThumb" :alt="item.name">
+                            <img loading="lazy" v-if="itemThumb(item)" :src="itemThumb(item)" class="lpGearRoomCompareThumb" :alt="item.name">
                             <div v-else class="lpGearRoomCompareThumbPlaceholder" />
                         </td>
                     </tr>

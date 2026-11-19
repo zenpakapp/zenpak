@@ -203,7 +203,7 @@
                         class="lpPublicListItem"
                         :class="{ 'lpPublicListItemWithPrice': publicFields.price, 'lpPublicListItemOptional': isOptionalItem(item) }"
                     >
-                        <img v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name">
+                        <img loading="lazy" v-if="publicFields.images && item.imageUrl" class="lpPublicListItemImage" :src="item.imageUrl" :alt="item.name">
                         <div v-else class="lpPublicListItemImagePlaceholder" />
                         <div class="lpPublicListItemBody">
                             <div><a v-if="publicFields.links && item.publicUrl" :href="item.publicUrl" target="_blank" :rel="item.hasAffiliateLink ? sponsoredRel : ugcRel" class="lpPublicListItemName lpPublicListItemNameLink" @click="trackItemClick(item)">{{ item.name }}<svg class="lpPublicListItemLinkIcon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg></a><span v-else class="lpPublicListItemName">{{ item.name }}</span><span v-if="isOptionalItem(item)" class="lpPublicListItemBadge">{{ $t('public.option') }}</span><span v-if="item.brand || item.description" class="lpPublicListItemMeta"> · <span v-if="item.brand">{{ item.brand }}</span><span v-if="item.brand && item.description"> · </span><span v-if="item.description">{{ item.description }}</span></span></div>
