@@ -137,9 +137,13 @@ test.describe("User Authentication Tests", () => {
   });
 
   test("should successfully change password", async ({ page }) => {
+    // Register, sign in and change the password each hash with bcryptjs on the server's one thread.
+    // Under the suite's parallel workers that can pass the default 30 s.
+    test.setTimeout(60000);
     await page.goto(testRoot);
 
-    const now = Date.now();
+    // Workers that start in the same millisecond must not share a name, or the register call fails.
+    const now = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
     const username = `pw${now}`;
     const email = `pw+${now}@lighterpack.com`;
     const password = "testtest";
@@ -161,9 +165,11 @@ test.describe("User Authentication Tests", () => {
     await account.locator('input[name="currentPassword"]').fill(password);
 
     await account.getByRole("button", { name: "Save changes" }).click();
+    // The save checks the old password and hashes the new one with bcryptjs, on the server's one
+    // thread. With the suite's parallel workers that took 5.3 s, past the default 5 s wait.
     await expect(
       page.getByRole("heading").filter({ hasText: "Account Settings" }),
-    ).toBeHidden();
+    ).toBeHidden({ timeout: 15000 });
 
     await logoutUser(page);
 
