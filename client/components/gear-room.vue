@@ -33,15 +33,16 @@
                             :class="['lpGearRoomChip', { active: filterList === '' }]"
                             @click="filterList = ''; filterOrphan = false; filterStarred = false"
                         >
-                            {{ $t('gearroom.filterAll') }}
+                            {{ $t('gearroom.filterAllLists') }}
                         </button>
                         <button
                             v-for="list in library.lists"
                             :key="list.id"
                             :class="['lpGearRoomChip', { active: filterList === list.id }]"
+                            :title="list.name || $t('gearroom.unnamedList')"
                             @click="filterList = list.id; filterCategory = ''; filterOrphan = false; filterStarred = false"
                         >
-                            {{ list.name }}
+                            {{ list.name || $t('gearroom.unnamedList') }}
                         </button>
                     </div>
                 </div>

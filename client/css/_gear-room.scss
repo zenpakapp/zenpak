@@ -88,12 +88,18 @@
 .lpGearRoomChip {
     background: $color-surface;
     border: 1px solid $color-border;
-    border-radius: $radius-pill;
+    border-radius: $radius-md;
     color: $color-text;
     cursor: pointer;
     font-family: $font-family-base;
     font-size: $fontSize-sm;
+    // One line: a long list name is cut with an ellipsis (the full name is the tooltip), so many
+    // lists do not stack into a tall block.
+    max-width: 100%;
+    overflow: hidden;
     padding: $space-4 $space-10;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:hover {
         border-color: $color-accent;
@@ -293,6 +299,8 @@
         border-bottom: 1px solid $color-border;
         border-right: none;
         display: none;
+        // A share of the screen, scrolling inside: the items under it must stay in sight.
+        max-height: 40vh;
         padding: $space-12 $space-16;
         width: 100%;
 

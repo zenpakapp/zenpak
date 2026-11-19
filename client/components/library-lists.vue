@@ -16,7 +16,8 @@
     color: $color-text;
     display: flex;
     list-style: none;
-    margin: 0 $space-10;
+    // The row spans the whole column, like the filters of the items list below.
+    margin: 0;
     overflow-y: auto;
     padding: $space-8 $space-10;
     position: relative;
