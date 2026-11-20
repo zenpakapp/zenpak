@@ -55,7 +55,12 @@ async function scrollFirstTo(page: Page, first: Locator, top: number) {
 }
 
 // A finger goes down on `handle`, slides to `targetY` in small steps and lifts.
-async function fingerDrag(page: Page, handle: Locator, targetY: number) {
+async function fingerDrag(
+  page: Page,
+  handle: Locator,
+  targetY: number,
+  holdMs = 0,
+) {
   await expect(handle).toBeVisible();
   const box = (await handle.boundingBox())!;
   const x = box.x + box.width / 2;
@@ -71,6 +76,11 @@ async function fingerDrag(page: Page, handle: Locator, targetY: number) {
   for (let i = 1; i <= steps; i += 1) {
     await touch("touchMove", y + ((targetY - y) * i) / steps);
     await page.waitForTimeout(30);
+  }
+  if (holdMs) {
+    // The finger rests on the target, as a person's does; one more move refreshes what is under it.
+    await page.waitForTimeout(holdMs);
+    await touch("touchMove", targetY + 1);
   }
   await touch("touchEnd");
 }
@@ -155,4 +165,69 @@ test("a list in the sidebar is reordered by dragging its handle with a finger", 
   await fingerDrag(page, lists.nth(2).locator(".lpHandle"), first.y + 4);
 
   await expect.poll(activeIndex, { timeout: 5000 }).not.toBe(before);
+});
+
+// On a phone the open drawer covers the editor: with nothing to drop on, a library item could not be
+// dragged into a category. The drawer now closes while an item is dragged out of it. Every item of
+// the file is already in the list, so a drop moves it (an item is never added twice to a category).
+async function libraryDrag(page: Page, name: string, targetY: number) {
+  const rows = page.locator(".lpItem[data-item-id]");
+  await scrollFirstTo(page, rows.nth(0), 120);
+  await page.locator("#hamburger").tap();
+  // Fully open: the drawer slides in, and a handle measured on the way is off the screen.
+  await expect
+    .poll(async () => (await page.locator("#sidebar").boundingBox())!.x)
+    .toBe(0);
+  await fingerDrag(
+    page,
+    page
+      .locator(".library li.lpLibraryItem", { hasText: name })
+      .locator(".lpLibraryItemHandle"),
+    targetY,
+    700,
+  );
+}
+
+async function openListWithThreeItems(page: Page, prefix: string) {
+  await signUp(page, prefix);
+  await importCsv(page, "reorder.csv");
+  const rows = page.locator(".lpItem[data-item-id]");
+  await expect(rows).toHaveCount(3, { timeout: 15000 });
+  const names = () =>
+    rows.evaluateAll((els) =>
+      els.map(
+        (el) => (el.querySelector("input.lpName") as HTMLInputElement).value,
+      ),
+    );
+  await expect.poll(names).toEqual(["Alpha", "Bravo", "Charlie"]);
+  await scrollFirstTo(page, rows.nth(0), 120);
+  const top = (await rows.nth(0).boundingBox())!.y + 4;
+  return { names, top };
+}
+
+test("a library item is dragged from the drawer into the list with a finger", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  const { names, top } = await openListWithThreeItems(page, "tg");
+
+  await libraryDrag(page, "Charlie", top);
+
+  await expect
+    .poll(names, { timeout: 5000 })
+    .toEqual(["Charlie", "Alpha", "Bravo"]);
+  await expect(page.locator("#sidebar")).not.toBeInViewport();
+});
+
+test("a library item dropped outside the list opens the drawer again", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  const { names } = await openListWithThreeItems(page, "tm");
+
+  // Below the last row, where there is no category to land on.
+  await libraryDrag(page, "Charlie", 800);
+
+  await expect(page.locator("#sidebar")).toBeInViewport({ timeout: 5000 });
+  await expect.poll(names).toEqual(["Alpha", "Bravo", "Charlie"]);
 });
