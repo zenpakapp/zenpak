@@ -29,6 +29,7 @@ import { defineAsyncComponent } from 'vue';
 import modal from './modal.vue';
 import ItemDetailView from './item-detail-view.vue';
 import { registerDialogOpener, unregisterDialogOpener } from '../services/dialogs';
+import { duplicateItem } from '../services/library-creation';
 
 const ItemDetailEdit = defineAsyncComponent(() => import(/* webpackChunkName: "dialog-item-detail-edit" */ './item-detail-edit.vue'));
 
@@ -120,9 +121,7 @@ export default {
             this.editing = false;
         },
         duplicateItem() {
-            this.$store.commit('duplicateItem', this.item);
-            const library = this.$store.state.library;
-            const copy = library.items[library.items.length - 1];
+            const copy = duplicateItem(this.$store, this.item);
             this.item = { ...copy };
             this.categoryItem = null;
             this.category = null;

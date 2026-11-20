@@ -205,6 +205,7 @@ import { newItemNameFromSearch } from '../services/gear-room-filters';
 import { openSpeedbump } from '../services/speedbump';
 import GearRoomComparePanel from './gear-room-compare-panel.vue';
 import GearRoomBatchBar from './gear-room-batch-bar.vue';
+import { createItem, createNamedList } from '../services/library-creation';
 
 const { displayWeight } = useUtils();
 
@@ -283,8 +284,7 @@ export default {
             openDialog('itemDetail', { item, categoryItem: null, category: null });
         },
         createItem(name = '') {
-            this.$store.commit('newItem', { _isNew: true, name });
-            const newItem = this.library.items[this.library.items.length - 1];
+            const newItem = createItem(this.$store, { name });
             openDialog('itemDetail', {
                 item: newItem, categoryItem: null, category: null, startEditing: true,
             });
@@ -351,8 +351,7 @@ export default {
             this.selected.splice(0, this.selected.length);
         },
         applyBatchCreateList({ name, itemIds }) {
-            this.$store.commit('newListNamed', name);
-            const newList = this.library.lists[this.library.lists.length - 1];
+            const newList = createNamedList(this.$store, name);
             const categoryId = newList.categoryIds[0];
             this.applyBatchAddToList({ categoryId, itemIds });
         },

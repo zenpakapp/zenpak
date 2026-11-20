@@ -41,10 +41,14 @@ module.exports = {
         state.library.getListById(state.library.defaultListId).calculateTotals();
     },
     updateCurrencySymbol(state, currencySymbol) { state.library.currencySymbol = currencySymbol; },
-    newItem(state, { category, _isNew, name }) {
+    // A mutation returns nothing, so the object it creates is left on its payload as `created`
+    // (services/library-creation.js reads it back): nobody looks for the new Item by its position.
+    newItem(state, payload) {
+        const { category, _isNew, name } = payload;
         const item = state.library.newItem({ category, _isNew });
         if (name) item.name = name;
         recalculateListForCategory(state.library, category);
+        payload.created = state.library.getItemById(item.id);
     },
     newCategory(state, list) {
         state.library.newCategory({ list, _isNew: true });
@@ -56,19 +60,22 @@ module.exports = {
         list.calculateTotals();
         state.library.defaultListId = list.id;
     },
-    newListNamed(state, name) {
+    newListNamed(state, payload) {
         const list = state.library.newList();
-        list.name = name || 'New list';
+        list.name = payload.name || 'New list';
         state.library.newCategory({ list });
         list.calculateTotals();
+        payload.created = state.library.getListById(list.id);
     },
-    duplicateItem(state, item) {
+    duplicateItem(state, payload) {
+        const { item } = payload;
         const copy = state.library.newItem({});
         const fields = ['name', 'description', 'weight', 'authorUnit', 'price', 'image', 'imageUrl', 'url', 'shop', 'affiliateUrl', 'promoCode', 'promoLabel', 'brand', 'category', 'tags', 'starred'];
         fields.forEach((f) => {
             if (item[f] !== undefined) copy[f] = Array.isArray(item[f]) ? [...item[f]] : item[f];
         });
         state.library.updateItem(copy);
+        payload.created = state.library.getItemById(copy.id);
     },
     removeItem(state, item) {
         if (state.library.removeItem(item.id)) {

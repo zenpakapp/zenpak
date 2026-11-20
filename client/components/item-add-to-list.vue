@@ -103,6 +103,7 @@
 
 <script>
 import { KEYUP_SWALLOW_MS } from '../services/timings';
+import { createNamedList } from '../services/library-creation';
 export default {
     name: 'ItemAddToList',
     props: {
@@ -281,9 +282,7 @@ export default {
         createListAndNavigate() {
             const name = (this.newListName || '').trim();
             if (!name) return;
-            this.$store.commit('newListNamed', name);
-            const library = this.$store.state.library;
-            const newList = library.lists[library.lists.length - 1];
+            const newList = createNamedList(this.$store, name);
             this.newListName = '';
             this.creatingList = false;
             this.selectedListId = newList.id;

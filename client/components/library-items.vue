@@ -100,6 +100,7 @@ import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
 import { GEAR_CATEGORY_OPTIONS } from '../data/gear-categories';
 import breakpoints from '../utils/breakpoints';
+import { createItem } from '../services/library-creation';
 
 const { displayWeight } = useUtils();
 
@@ -284,12 +285,7 @@ export default {
             return !!(item.brand || item.category || this.itemTags(item).length);
         },
         createLibraryItem() {
-            this.$store.commit('newItem', {
-                _isNew: true,
-                name: this.searchText.trim(),
-            });
-
-            const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
+            const newItem = createItem(this.$store, { name: this.searchText.trim() });
             openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, discardOnCancel: true });
         },
         scheduleItemDrag() {
