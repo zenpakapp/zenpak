@@ -81,9 +81,7 @@ module.exports = {
                     if (decision === 'update') updateItemFromRow(state.library, item, row);
                     if (row.category && !item.category) item.category = resolveGearCategory(row.category);
                     if (row.brand && !item.brand) item.brand = row.brand;
-                    if (!category.getCategoryItemById(item.id)) {
-                        category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
-                    }
+                    category.addItem({ itemId: item.id, _isNew: false, qty: normalizeQuantity(row.qty) });
                     mergedCount++;
                 } else {
                     item = createImportedItem(state.library, category, row);
@@ -153,6 +151,11 @@ module.exports = {
                     ? state.library.items.find((i) => copiedItemSignature(i) === signature)
                     : null;
 
+                // The signature merge can fold two lines of the source into one local Item inside one
+                // Category: the Item then keeps its single Placement and the quantities add up (as in mergeItems).
+                const previousPlacement = existing ? category.getCategoryItemById(existing.id) : null;
+                const previousQty = previousPlacement ? Number(previousPlacement.qty) || 0 : 0;
+
                 let item;
                 if (existing) {
                     item = existing;
@@ -178,7 +181,7 @@ module.exports = {
 
                 const categoryItem = category.getCategoryItemById(item.id);
                 if (categoryItem) {
-                    categoryItem.qty = normalizeQuantity(ci.qty);
+                    categoryItem.qty = previousPlacement ? previousQty + normalizeQuantity(ci.qty) : normalizeQuantity(ci.qty);
                     categoryItem.worn = ci.worn || 0;
                     categoryItem.consumable = ci.consumable === true;
                     categoryItem.star = ci.star || 0;

@@ -114,8 +114,8 @@ module.exports = {
         const item = state.library.getItemById(args.itemId);
         const dropCategory = state.library.getCategoryById(args.categoryId);
         if (item && dropCategory) {
-            if (!dropCategory.getCategoryItemById(item.id)) dropCategory.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
-            const categoryItem = dropCategory.getCategoryItemById(item.id);
+            // An Item already in the Category keeps its Placement; the drop only moves it to dropIndex.
+            const categoryItem = dropCategory.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
             const categoryItemIndex = dropCategory.categoryItems.indexOf(categoryItem);
             if (categoryItem && categoryItemIndex !== -1) {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
@@ -135,7 +135,7 @@ module.exports = {
             .find((category) => category && String(category.name || '').trim().toLowerCase() === name.toLowerCase());
         const category = existingCategory || state.library.newCategory({ list });
         category.name = existingCategory ? existingCategory.name : name;
-        if (!category.getCategoryItemById(item.id)) category.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
+        category.addItem({ itemId: item.id, qty: args.optional ? 0 : 1 });
         list.calculateTotals();
     },
     updateListName(state, updatedList) {
