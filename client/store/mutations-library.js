@@ -73,8 +73,6 @@ module.exports = {
     removeItem(state, item) {
         if (state.library.removeItem(item.id)) {
             state.library.lists.forEach((list) => list.calculateTotals());
-            state.itemVersion += 1;
-            state.categoryItemVersion += 1;
         }
     },
     removeCategory(state, category) {
@@ -121,7 +119,6 @@ module.exports = {
                 dropCategory.categoryItems = arrayMove(dropCategory.categoryItems, categoryItemIndex, args.dropIndex);
             }
             recalculateListForCategory(state.library, dropCategory);
-            state.categoryItemVersion += 1;
         }
     },
     createCategoryAndAddItem(state, args) {
@@ -212,7 +209,6 @@ module.exports = {
             });
         });
 
-        state.itemVersion += 1;
         return count;
     },
     dismissSourceListInfoAction(state, args) {
@@ -264,18 +260,15 @@ module.exports = {
     updateItem(state, item) {
         state.library.updateItem(item);
         recalculateListsForItem(state.library, item.id);
-        state.itemVersion += 1;
     },
     updateItemMetadata(state, item) {
         state.library.updateItem(item);
-        state.itemVersion += 1;
     },
     updateItemsMetadata(state, items) {
         if (!Array.isArray(items) || items.length === 0) return;
         items.forEach((item) => {
             state.library.updateItem(item);
         });
-        state.itemVersion += 1;
     },
     mergeItems(state, { keepId, removeId }) {
         state.library.lists.forEach((list) => {
@@ -302,7 +295,6 @@ module.exports = {
             delete state.library.idMap[removeId];
         }
         state.library.lists.forEach((list) => list.calculateTotals());
-        state.itemVersion += 1;
     },
     updateItemLink(state, args) {
         const item = state.library.getItemById(args.item.id);
@@ -326,18 +318,15 @@ module.exports = {
     updateCategoryItem(state, args) {
         args.category.updateCategoryItem(args.categoryItem);
         recalculateListForCategory(state.library, args.category);
-        state.categoryItemVersion += 1;
     },
     toggleOptionalItem(state, args) {
         args.category.toggleOptionalItem(args.itemId);
         recalculateListForCategory(state.library, args.category);
-        state.categoryItemVersion += 1;
     },
     removeItemFromCategory(state, args) {
         args.category.removeItem(args.itemId);
         state.library.purgeBlankItems([args.itemId]);
         recalculateListForCategory(state.library, args.category);
-        state.categoryItemVersion += 1;
     },
     // Undo of removeItemFromCategory: puts the same row (quantity, worn, rating) back where it was.
     restoreItemInCategory(state, args) {
@@ -347,7 +336,6 @@ module.exports = {
             category.categoryItems.splice(at, 0, { ...categoryItem });
         }
         recalculateListForCategory(state.library, category);
-        state.categoryItemVersion += 1;
     },
     copyList(state, listId) {
         const copiedList = state.library.copyList(listId);

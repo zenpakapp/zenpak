@@ -47,7 +47,7 @@ console.log('\n--- addItemToCategory: optional flag ---');
 
 {
     const library = new Library();
-    const state = { library, categoryItemVersion: 0 };
+    const state = { library };
     const item = library.newItem({});
     const category = library.getCategoryById(library.getListById(library.defaultListId).categoryIds[0]);
 
@@ -62,7 +62,7 @@ console.log('\n--- addItemToCategory: no optional flag keeps default qty ---');
 
 {
     const library = new Library();
-    const state = { library, categoryItemVersion: 0 };
+    const state = { library };
     const item = library.newItem({});
     const category = library.getCategoryById(library.getListById(library.defaultListId).categoryIds[0]);
 
@@ -76,7 +76,7 @@ console.log('\n--- addItemToCategory: recalculates target list only ---');
 
 {
     const library = new Library();
-    const state = { library, categoryItemVersion: 0 };
+    const state = { library };
     const item = library.newItem({});
     const activeList = library.getListById(library.defaultListId);
     const targetList = library.newList();
@@ -94,7 +94,7 @@ console.log('\n--- newItem: library-only item skips list recalculation ---');
 
 {
     const library = new Library();
-    const state = { library, categoryItemVersion: 0 };
+    const state = { library };
     const activeList = library.getListById(library.defaultListId);
     const getActiveRecalculateCount = countCalculateTotals(activeList);
 

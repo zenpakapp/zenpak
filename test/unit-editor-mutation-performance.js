@@ -43,17 +43,15 @@ library.newCategory({ list: listWithoutItem });
 
 const getWithItemRecalculateCount = countCalculateTotals(listWithItem);
 const getWithoutItemRecalculateCount = countCalculateTotals(listWithoutItem);
-const state = { library, itemVersion: 0 };
+const state = { library };
 
 mutations.updateItemMetadata(state, { ...item, name: 'Updated name', tags: ['winter'] });
 
-assert('metadata update increments item version', state.itemVersion === 1);
 assert('metadata update does not recalculate containing list', getWithItemRecalculateCount() === 0);
 assert('metadata update does not recalculate unrelated list', getWithoutItemRecalculateCount() === 0);
 
 mutations.updateItem(state, { ...item, weight: 500000 });
 
-assert('weight update increments item version', state.itemVersion === 2);
 assert('weight update recalculates containing list', getWithItemRecalculateCount() === 1);
 assert('weight update skips unrelated list', getWithoutItemRecalculateCount() === 0);
 
@@ -73,7 +71,7 @@ sharedLibrary.newCategory({ list: unrelatedList });
 const getFirstRecalculateCount = countCalculateTotals(firstList);
 const getSecondRecalculateCount = countCalculateTotals(secondList);
 const getUnrelatedRecalculateCount = countCalculateTotals(unrelatedList);
-const sharedState = { library: sharedLibrary, itemVersion: 0 };
+const sharedState = { library: sharedLibrary };
 
 mutations.updateItem(sharedState, { ...sharedItem, weight: 250000 });
 
@@ -86,14 +84,13 @@ console.log('\n--- Bulk metadata update ---');
 const bulkLibrary = new Library();
 const bulkFirst = bulkLibrary.newItem({});
 const bulkSecond = bulkLibrary.newItem({});
-const bulkState = { library: bulkLibrary, itemVersion: 0 };
+const bulkState = { library: bulkLibrary };
 
 mutations.updateItemsMetadata(bulkState, [
     { ...bulkFirst, brand: 'Brand A' },
     { ...bulkSecond, brand: 'Brand B' },
 ]);
 
-assert('bulk metadata update bumps item version once', bulkState.itemVersion === 1);
 assert('bulk metadata update applies first item', bulkLibrary.getItemById(bulkFirst.id).brand === 'Brand A');
 assert('bulk metadata update applies second item', bulkLibrary.getItemById(bulkSecond.id).brand === 'Brand B');
 
