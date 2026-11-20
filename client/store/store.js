@@ -222,6 +222,27 @@ const store = createStore({
             }
             return waitUntilNotSaving(context).then(() => postSave(context, saveData, { keepalive: true }));
         },
+        // Hides the source-list info of a forked list. Signed in, the server holds the flag in its own
+        // route (the whole library is not posted), so the sync token and the saved state are updated here,
+        // where the save protocol lives. Otherwise it is a plain save.
+        hideSourceListInfo(context, { listId }) {
+            context.commit('hideSourceListInfo', { listId });
+            const { state } = context;
+            if (state.saveType !== 'remote' || !state.loggedIn) return context.dispatch('saveNow');
+            return fetchJson(`/api/lists/${listId}/hide-source-list-info`, { method: 'POST', credentials: 'same-origin' })
+                .then((response) => {
+                    if (response && typeof response.syncToken !== 'undefined') {
+                        context.commit('setSyncToken', response.syncToken);
+                        context.commit('setLastSaveData', getSaveData(state));
+                    }
+                });
+        },
+        refreshBilling(context) {
+            return fetch('/api/billing/me', { credentials: 'include' })
+                .then((res) => (res.ok ? res.json() : null))
+                .then((data) => { if (data) context.commit('setBilling', data); })
+                .catch(() => {});
+        },
         async loadRemote(context) {
             try {
                 const response = await fetchJson('/signin', {
@@ -235,10 +256,7 @@ const store = createStore({
                 context.commit('setLoggedIn', response.username);
                 context.commit('setEmailVerified', response.emailVerified ?? null);
                 syncAccountLanguage(response.language);
-                fetch('/api/billing/me', { credentials: 'include' })
-                    .then((res) => (res.ok ? res.json() : null))
-                    .then((data) => { if (data) context.commit('setBilling', data); })
-                    .catch(() => {});
+                context.dispatch('refreshBilling');
             } catch (error) {
                 if (error && error.statusCode === 401) notifyUnauthorized(error.message);
                 return Promise.reject(error);
