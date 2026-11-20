@@ -87,10 +87,8 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
             });
             if (latestPayload.publicFields && latestPayload.publicFields.links && !payloadItem.hasAffiliateLink) item.url = payloadItem.publicUrl || '';
             if (latestPayload.publicFields && latestPayload.publicFields.images) item.imageUrl = payloadItem.imageUrl || '';
-        } else if (!target.getCategoryItemById(item.id)) {
-            target.addItem({ itemId: item.id, _isNew: false });
         }
-        Object.assign(target.getCategoryItemById(item.id), placementValues(payloadItem));
+        Object.assign(target.addItem({ itemId: item.id, _isNew: false }), placementValues(payloadItem));
         itemLinks.push({ categoryId: target.id, itemId: item.id, sourceItemId: summary.id });
     });
 
@@ -102,8 +100,7 @@ function applyUpdate(library, list, basePayload, latestPayload, toVersion) {
         const payloadItem = findPayloadItem(latestPayload, entry.toCategory.id, entry.item.id);
         if (!from || !to || !link || !payloadItem) return;
         from.removeItem(link.itemId);
-        if (!to.getCategoryItemById(link.itemId)) to.addItem({ itemId: link.itemId, _isNew: false });
-        Object.assign(to.getCategoryItemById(link.itemId), placementValues(payloadItem));
+        Object.assign(to.addItem({ itemId: link.itemId, _isNew: false }), placementValues(payloadItem));
         link.categoryId = to.id;
     });
 

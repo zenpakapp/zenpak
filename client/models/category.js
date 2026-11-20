@@ -17,7 +17,13 @@ const Category = function ({ library, id, _isNew }) {
     return this;
 };
 
+// Places an Item in this Category and returns its Placement. A Category holds at most one Placement per
+// Item, so an Item that is already placed gets its existing Placement back, untouched: callers do not check
+// first, and decide for themselves what to do with the quantity or the position.
 Category.prototype.addItem = function (partialCategoryItem) {
+    const existing = this.getCategoryItemById(partialCategoryItem.itemId);
+    if (existing) return existing;
+
     const tempCategoryItem = {
         qty: 1,
         worn: 0,
@@ -28,6 +34,7 @@ Category.prototype.addItem = function (partialCategoryItem) {
     };
     assignIn(tempCategoryItem, partialCategoryItem);
     this.categoryItems.push(tempCategoryItem);
+    return tempCategoryItem;
 };
 
 Category.prototype.updateCategoryItem = function (categoryItem) {
