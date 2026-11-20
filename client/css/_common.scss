@@ -224,7 +224,10 @@ textarea::placeholder {
     height: 24px;
     margin-top: $space-2;
     // A finger on the handle drags the row; without this the browser scrolls the page instead.
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     touch-action: none;
+    user-select: none;
     visibility: hidden;
     width: 12px;
 }

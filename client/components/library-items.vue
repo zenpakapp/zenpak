@@ -82,7 +82,7 @@
                 <button class="lpLibraryItemEdit" :title="$t('library.viewItemDetailsTitle')" @click.stop="openDetail(libraryItem)">
                     ⋯
                 </button>
-                <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" />
+                <div class="lpHandle lpLibraryItemHandle" :title="$t('library.dragToAddTitle')" @touchmove.prevent />
             </li>
             <li v-if="virtualWindow.bottom" class="lpLibrarySpacer" :style="{ height: `${virtualWindow.bottom}px` }" aria-hidden="true" />
         </ul>

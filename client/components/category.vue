@@ -3,7 +3,7 @@
         <ul class="lpItems lpDataTable" :data-category-id="category.id">
             <li class="lpHeader lpItemsHeader" :class="{ lpHeaderPacking: isPackingMode }">
                 <span class="lpHandleCell">
-                    <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" />
+                    <div v-if="!isPackingMode" class="lpHandle lpCategoryHandle" :title="$t('misc.reorderCategory')" @touchmove.prevent />
                 </span>
                 <div v-if="isPackingMode" class="lpCategoryName lpPackCategoryName" role="heading" aria-level="3">{{ category.name || $t('misc.categoryName') }}</div>
                 <h3 v-else class="lpSrOnly">{{ category.name || $t('misc.categoryName') }}</h3>
