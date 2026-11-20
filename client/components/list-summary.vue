@@ -150,6 +150,15 @@ export default {
                 .map((id) => this.library.getCategoryById(id))
                 .filter(Boolean);
         },
+        // Everything the donut draws, read from the model: its slices (one per category, with their weights
+        // and colours). When any of it changes, the donut is drawn again. The list totals alone cannot say:
+        // moving an item to another category changes the slices and leaves every total as it was.
+        chartShape() {
+            return JSON.stringify(this.categories.map((category) => [
+                category.id, category.name, category.color,
+                category.subtotalWeight, category.subtotalWornWeight, category.subtotalConsumableWeight, category.subtotalBaseWeight,
+            ]));
+        },
         displayUnit() {
             return this.library.totalUnit;
         },
@@ -165,13 +174,12 @@ export default {
         '$store.state.library.defaultListId': 'scheduleChartUpdate',
         'list.totalWeight': 'scheduleChartUpdate',
         'list.categoryIds': 'scheduleChartUpdate',
-        // The tooltip percentages are shares of the base weight. Marking an item worn or consumable,
-        // or moving one to another category, changes them without changing the total weight.
+        chartShape: 'scheduleChartUpdate',
+        // The tooltip percentages are shares of the base weight. Marking an item worn or consumable
+        // changes them without changing the total weight.
         'list.totalBaseWeight': 'scheduleChartUpdate',
         'list.totalWornWeight': 'scheduleChartUpdate',
         'list.totalConsumableWeight': 'scheduleChartUpdate',
-        '$store.state.itemVersion': 'scheduleChartUpdate',
-        '$store.state.categoryItemVersion': 'scheduleChartUpdate',
         displayUnit: 'scheduleChartUpdate',
     },
     mounted() {

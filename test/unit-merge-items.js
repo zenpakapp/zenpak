@@ -34,7 +34,7 @@ function itemIds(category) {
 function run() {
     const library = new Library();
     library.itemUnit = 'g';
-    const state = { library, itemVersion: 0 };
+    const state = { library };
 
     const keep = library.newItem({});
     keep.name = 'Merged headlamp';
@@ -66,7 +66,7 @@ function run() {
     assert('merge recalculates non-default list totals', secondList.totalWeight === keep.weight * 2);
 
     const duplicateLibrary = new Library();
-    const duplicateState = { library: duplicateLibrary, itemVersion: 0 };
+    const duplicateState = { library: duplicateLibrary };
     const duplicateKeep = duplicateLibrary.newItem({});
     duplicateKeep.name = 'Keep jacket';
     duplicateKeep.weight = 1000;
@@ -86,7 +86,7 @@ function run() {
     assert('merge preserves strongest row metadata when collapsing duplicate rows', mergedCategoryItem.worn === true && mergedCategoryItem.consumable === true && mergedCategoryItem.star === 3);
 
     const crossCategoryLibrary = new Library();
-    const crossCategoryState = { library: crossCategoryLibrary, itemVersion: 0 };
+    const crossCategoryState = { library: crossCategoryLibrary };
     const crossKeep = crossCategoryLibrary.newItem({});
     crossKeep.name = 'Merged fleece';
     const crossRemove = crossCategoryLibrary.newItem({});
@@ -106,7 +106,7 @@ function run() {
     assert('merge removes the old item when keep item was in a different category', !crossCategoryLibrary.getItemById(crossRemove.id));
 
     const unlistedKeepLibrary = new Library();
-    const unlistedKeepState = { library: unlistedKeepLibrary, itemVersion: 0 };
+    const unlistedKeepState = { library: unlistedKeepLibrary };
     const unlistedKeep = unlistedKeepLibrary.newItem({});
     unlistedKeep.name = 'Library-only tent';
     const unlistedRemove = unlistedKeepLibrary.newItem({});
@@ -121,7 +121,7 @@ function run() {
     assert('merge removes the old item when keep item was library-only', !unlistedKeepLibrary.getItemById(unlistedRemove.id));
 
     const removeLibrary = new Library();
-    const removeState = { library: removeLibrary, itemVersion: 0, categoryItemVersion: 0 };
+    const removeState = { library: removeLibrary };
     const removeItem = removeLibrary.newItem({});
     removeItem.name = 'Shared stove';
     removeItem.weight = 100;
@@ -137,7 +137,6 @@ function run() {
 
     assert('removeItem deletes every row for the item in the same list', !itemIds(removeFirstCategory).includes(removeItem.id) && !itemIds(removeSecondCategory).includes(removeItem.id));
     assert('removeItem removes the item from the library', !removeLibrary.getItemById(removeItem.id));
-    assert('removeItem bumps category item version after removing rows', removeState.categoryItemVersion === 1);
 
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);

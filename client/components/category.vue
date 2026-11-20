@@ -110,11 +110,6 @@ export default {
             return this.category.name || this.$t('misc.categoryName');
         },
         itemContainers() {
-            const itemVersion = this.$store.state.itemVersion;
-            const categoryItemVersion = this.$store.state.categoryItemVersion;
-
-            if (itemVersion < 0 || categoryItemVersion < 0) return [];
-
             return this.category.categoryItems
                 .map((categoryItem) => ({ categoryItem, item: this.library.getItemById(categoryItem.itemId) }))
                 .filter((itemContainer) => itemContainer.item);

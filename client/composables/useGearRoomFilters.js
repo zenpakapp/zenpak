@@ -24,8 +24,6 @@ export default function useGearRoomFilters() {
     const library = computed(() => store.state.library);
 
     const allItems = computed(() => {
-        const itemVersion = store.state.itemVersion;
-        if (itemVersion < 0) return [];
         return library.value.items;
     });
 

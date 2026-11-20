@@ -64,8 +64,6 @@ const createInitialState = () => ({
     loggedIn: false,
     emailVerified: null,
     globalAlerts: [],
-    itemVersion: 0,
-    categoryItemVersion: 0,
     gearRoomOpen: false,
     billing: null,
     stripeConfigured: null,
