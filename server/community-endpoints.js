@@ -13,46 +13,24 @@ const { createNotification } = require('./notifications.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { getLatest } = require('./list-versions.js');
 const { recordCopy } = require('./list-copies.js');
+const { canCopy, buildCopyPayload } = require('./copy-list-rules.js');
+const { createRateLimiter } = require('./rate-limiter.js');
 const {
     incrementPublicListStat,
-    normalizeTagArray,
     projectionToDiscoverItem,
     publicDisplayName,
     syncUserPublicLists,
 } = require('./public-list-projections.js');
 const { parseQuery, prefixPatterns, scoreProjection } = require('./search-text.js');
 
-// In-memory rate limiter: max 5 copies/hour per userId or IP
+// Max 5 copies/hour per member
 const COPY_RATE_LIMIT = 5;
-const COPY_RATE_WINDOW_MS = 60 * 60 * 1000;
-const copyRateMap = new Map();
-
-function checkCopyRateLimit(key) {
-    const now = Date.now();
-    const windowStart = now - COPY_RATE_WINDOW_MS;
-    const timestamps = (copyRateMap.get(key) || []).filter((t) => t > windowStart);
-    if (timestamps.length >= COPY_RATE_LIMIT) {
-        copyRateMap.set(key, timestamps);
-        const retryAfterMs = COPY_RATE_WINDOW_MS - (now - timestamps[0]);
-        return {
-            limited: true,
-            retryAfterMinutes: Math.max(1, Math.ceil(retryAfterMs / 60000)),
-        };
-    }
-    timestamps.push(now);
-    copyRateMap.set(key, timestamps);
-    return { limited: false, remaining: COPY_RATE_LIMIT - timestamps.length };
-}
+const copyLimiter = createRateLimiter({ limit: COPY_RATE_LIMIT, windowMs: 60 * 60 * 1000 });
 
 function parseNumberParam(value) {
     if (typeof value === 'undefined' || value === null || value === '') return null;
     const number = Number(value);
     return Number.isFinite(number) && number >= 0 ? number : null;
-}
-
-function normalizeCopiedQuantity(value) {
-    const quantity = Number(value);
-    return Number.isFinite(quantity) ? quantity : 1;
 }
 
 const DISCOVER_PAGE_SIZE = 20;
@@ -333,28 +311,11 @@ router.post('/copy-list/:externalId', (req, res) => {
         try {
             const version = await getLatest(externalId);
             const owner = version ? await db.users.findOne({ _id: version.ownerId }) : null;
-            if (!owner || owner.banned) {
-                return res.status(404).json({ message: 'List not found' });
-            }
+            if (!owner) return res.status(404).json({ message: 'List not found' });
 
-            const sourceList = (owner.library.lists || []).find((l) => l.externalId === externalId);
-            const isAlwaysCopyable = sourceList?.visibility === 'discoverable' || sourceList?.visibility === 'indexable';
-            const isOptInCopyable = sourceList?.visibility === 'shareable' && sourceList?.copyable === true;
-            if (!sourceList || (!isAlwaysCopyable && !isOptInCopyable)) {
-                return res.status(404).json({ message: 'List not found' });
-            }
-
-            if (String(owner._id) === String(user._id)) {
-                return res.status(403).json({ message: 'Cannot copy your own list' });
-            }
-
-            if (user.banned) {
-                return res.status(403).json({ message: 'Account suspended' });
-            }
-
-            const published = version.library;
-            const publishedList = (published.lists || [])[0] || {};
-            const sharesPrice = Boolean(publishedList.publicFields && publishedList.publicFields.price);
+            const sourceList = ((owner.library && owner.library.lists) || []).find((l) => l.externalId === externalId);
+            const allowed = canCopy({ owner, sourceList, user });
+            if (!allowed.ok) return res.status(allowed.status).json({ message: allowed.message });
 
             // Increment copyCount once per user (dedup via copiedBy array)
             const userId = String(user._id);
@@ -362,7 +323,7 @@ router.post('/copy-list/:externalId', (req, res) => {
             const alreadyCopied = sourceList.copiedBy.includes(userId);
             if (!alreadyCopied) {
                 const rateLimitKey = user._id ? String(user._id) : (req.ip || 'anon');
-                const rateLimit = checkCopyRateLimit(rateLimitKey);
+                const rateLimit = copyLimiter.check(rateLimitKey);
                 if (rateLimit.limited) {
                     res.set('Retry-After', String(rateLimit.retryAfterMinutes * 60));
                     return res.status(429).json({
@@ -395,65 +356,13 @@ router.post('/copy-list/:externalId', (req, res) => {
                 });
             }
 
-            // Return the published list data (categories + items) for client-side dedup import
-            const categoryIds = (publishedList.categoryIds || []).map(String);
-            const categories = (published.categories || [])
-                .filter((c) => categoryIds.includes(String(c.id)))
-                .map((c) => ({
-                    sourceCategoryId: c.id,
-                    name: c.name,
-                    categoryItems: (c.categoryItems || []).map((ci) => {
-                        const item = (published.items || []).find((i) => String(i.id) === String(ci.itemId));
-                        if (!item) return null;
-                        return {
-                            sourceItemId: item.id,
-                            name: item.name || '',
-                            description: item.description || '',
-                            weight: Number(item.weight) || 0,
-                            authorUnit: item.authorUnit || 'g',
-                            price: sharesPrice ? Number(item.price) || 0 : 0,
-                            brand: item.brand || '',
-                            shop: item.shop || '',
-                            url: item.url || '',
-                            affiliateUrl: item.affiliateUrl || '',
-                            promoCode: item.promoCode || '',
-                            promoLabel: item.promoLabel || '',
-                            imageUrl: item.imageUrl || '',
-                            qty: normalizeCopiedQuantity(ci.qty),
-                            worn: ci.worn || 0,
-                            consumable: ci.consumable === true,
-                            star: ci.star || 0,
-                        };
-                    }).filter(Boolean),
-                }));
-
-            const ownerName = (owner.library && owner.library.publicProfile && owner.library.publicProfile.displayName) || owner.username;
-            const sourceCurrencySymbol = published.currencySymbol || '$';
-            const listName = publishedList.name || sourceList.name;
-            const forkedFrom = {
-                externalId: sourceList.externalId,
-                ownerId: String(owner._id),
-                ownerUsername: owner.username,
-                ownerName,
-                listName,
-                sourceCurrencySymbol,
-                copiedAt: new Date().toISOString(),
-                version: version.version,
-            };
+            // The published list data (categories + items) for client-side dedup import
+            const payload = buildCopyPayload({ version, owner, sourceList });
             // Registered on every copy (not just the first), so a later copy of a newer
             // version can be tracked too. The client cannot vouch for forkedFrom.version.
             await recordCopy(user._id, sourceList.externalId, version.version);
 
-            return res.json({
-                listName,
-                description: publishedList.description || '',
-                seasons: normalizeTagArray(publishedList.seasons),
-                listTypes: normalizeTagArray(publishedList.listTypes),
-                durations: normalizeTagArray(publishedList.durations),
-                sourceCurrencySymbol,
-                categories,
-                forkedFrom,
-            });
+            return res.json(payload);
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
         }

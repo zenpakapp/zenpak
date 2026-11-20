@@ -5,15 +5,7 @@ const { normalizeTier } = require('./tier-policy.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
 const { buildSearchTokens, SEARCH_TOKENS_VERSION } = require('./search-text.js');
-const { clipDescription } = require('./text-limits.js');
-
-function normalizeTagArray(value) {
-    if (!Array.isArray(value)) return [];
-    return value
-        .map((tag) => String(tag || '').trim().toLowerCase())
-        .filter(Boolean)
-        .slice(0, 12);
-}
+const { clipDescription, normalizeTagArray } = require('./text-limits.js');
 
 function publicDisplayName(user) {
     const profile = user && user.library && user.library.publicProfile;

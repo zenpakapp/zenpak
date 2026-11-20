@@ -22,8 +22,17 @@ function clipDescription(value) {
     return collapseLineBreaks(value).slice(0, PUBLIC_DESCRIPTION_MAX_LENGTH);
 }
 
+function normalizeTagArray(value) {
+    if (!Array.isArray(value)) return [];
+    return value
+        .map((tag) => String(tag || '').trim().toLowerCase())
+        .filter(Boolean)
+        .slice(0, 12);
+}
+
 module.exports = {
     PUBLIC_DESCRIPTION_MAX_LENGTH,
+    normalizeTagArray,
     collapseLineBreaks,
     clipDescription,
 };
