@@ -239,6 +239,7 @@ function buildPublicCategories(library, list, creator, options = {}) {
             subtotalWeight: Number(category.subtotalWeight) || 0,
             subtotalWornWeight: Number(category.subtotalWornWeight) || 0,
             subtotalConsumableWeight: Number(category.subtotalConsumableWeight) || 0,
+            subtotalBaseWeight: Number(category.subtotalBaseWeight) || 0,
             subtotalPrice: includePrice ? Number(category.subtotalPrice) || 0 : 0,
             subtotalConsumablePrice: includePrice ? Number(category.subtotalConsumablePrice) || 0 : 0,
             subtotalQty: Number(category.subtotalQty) || 0,

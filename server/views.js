@@ -44,6 +44,7 @@ async function runLegacyView(req, res, view) {
 
 const weightUtils = require('../client/utils/weight.js');
 const { formatDisplayPrice } = require('../client/utils/currency.js');
+const { renderLibraryTotals, renderUnitSelect } = require('./list-totals-view.js');
 
 function getDeployUrl(req) {
     return resolvePublicOrigin(req, {
@@ -514,67 +515,6 @@ var renderLibrary = function (library, args) {
     const renderArgs = { ...args, itemUnit: library.itemUnit, totalUnit: library.totalUnit };
     return renderList(library.getListById(library.defaultListId), renderArgs);
 };
-
-const renderListTotals = function (list, totalsTemplate, unitSelectTemplate, unit, t) {
-    let totalWeight = 0;
-    let totalWornWeight = 0;
-    let totalConsumableWeight = 0;
-    let totalBaseWeight = 0;
-    let totalQty = 0;
-    let totalPrice = 0;
-    let totalConsumablePrice = 0;
-    const out = { categories: [] };
-
-    for (const i in list.categoryIds) {
-        const category = list.library.getCategoryById(list.categoryIds[i]);
-
-        if (category) {
-            category.calculateSubtotal();
-            category.subtotalWeightDisplay = weightUtils.MgToWeight(category.subtotalWeight, unit);
-            category.subtotalUnit = unit;
-
-            totalWeight += category.subtotalWeight;
-            totalPrice += category.subtotalPrice;
-            totalWornWeight += category.subtotalWornWeight;
-            totalConsumableWeight += category.subtotalConsumableWeight;
-            totalConsumablePrice += category.subtotalConsumablePrice;
-            totalQty += category.subtotalQty;
-            out.categories.push(category);
-        }
-    }
-
-    totalBaseWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
-
-    out.totalWeight = totalWeight;
-    out.totalWeightDisplay = weightUtils.MgToWeight(totalWeight, unit);
-    out.totalUnit = renderUnitSelect(unit, unitSelectTemplate, totalWeight);
-    out.subtotalUnit = unit;
-    out.totalWornWeight = totalWornWeight;
-    out.totalWornWeightDisplay = weightUtils.MgToWeight(totalWornWeight, unit);
-    out.totalConsumableWeight = totalConsumableWeight;
-    out.totalConsumableWeightDisplay = weightUtils.MgToWeight(totalConsumableWeight, unit);
-    out.totalBaseWeight = totalBaseWeight;
-    out.totalBaseWeightDisplay = weightUtils.MgToWeight(totalBaseWeight, unit);
-    out.shouldDisplayBaseWeight = totalBaseWeight !== totalWeight;
-    out.totalQty = totalQty;
-    out.totalPrice = totalPrice;
-    out.totalPriceDisplay = formatDisplayPrice(totalPrice || 0, list.library.currencySymbol);
-    out.totalConsumablePrice = totalConsumablePrice;
-    out.totalConsumablePriceDisplay = formatDisplayPrice(totalConsumablePrice || 0, list.library.currencySymbol);
-    out.showPrices = Boolean(list.library.optionalFields.price && list.publicFields && list.publicFields.price);
-
-    if (t) out.t = t;
-    return Mustache.render(totalsTemplate, out);
-};
-
-var renderLibraryTotals = function (library, totalsTemplate, unitSelectTemplate, t) {
-    return renderListTotals(library.getListById(library.defaultListId), totalsTemplate, unitSelectTemplate, library.totalUnit, t);
-};
-
-function renderUnitSelect(unit, unitSelectTemplate, weight) {
-    const temp = { unit, units: [{ unit: 'oz', selected: (unit === 'oz') }, { unit: 'lb', selected: (unit === 'lb') }, { unit: 'g', selected: (unit === 'g') }, { unit: 'kg', selected: (unit === 'kg') }], weight };
-    return Mustache.render(unitSelectTemplate, temp);
-}
 
 init();
 

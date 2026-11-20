@@ -9,6 +9,8 @@ const Category = function ({ library, id, _isNew }) {
     this.subtotalWeight = 0;
     this.subtotalWornWeight = 0;
     this.subtotalConsumableWeight = 0;
+    this.subtotalBaseWeight = 0;
+    this.subtotalPackWeight = 0;
     this.subtotalPrice = 0;
     this.subtotalConsumablePrice = 0;
     this.subtotalQty = 0;
@@ -72,10 +74,14 @@ Category.prototype.removeItem = function (itemId) {
     if (index !== -1) this.categoryItems.splice(index, 1);
 };
 
+// The only place where Base Weight and Pack Weight are worked out for a Category; the List adds them up
+// and everything that shows them (chart, public page, embed) reads these fields.
 Category.prototype.calculateSubtotal = function () {
     this.subtotalWeight = 0;
     this.subtotalWornWeight = 0;
     this.subtotalConsumableWeight = 0;
+    this.subtotalBaseWeight = 0;
+    this.subtotalPackWeight = 0;
     this.subtotalPrice = 0;
     this.subtotalConsumablePrice = 0;
     this.subtotalQty = 0;
@@ -103,6 +109,9 @@ Category.prototype.calculateSubtotal = function () {
         }
         this.subtotalQty += qty;
     }
+
+    this.subtotalBaseWeight = this.subtotalWeight - (this.subtotalWornWeight + this.subtotalConsumableWeight);
+    this.subtotalPackWeight = this.subtotalWeight - this.subtotalWornWeight;
 };
 
 Category.prototype.getCategoryItemById = function (id) {

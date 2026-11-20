@@ -462,8 +462,7 @@ export default {
         basePercent(cat) {
             const baseTotal = this.list && this.list.totalBaseWeight;
             if (!baseTotal) return '';
-            const baseWeight = cat.subtotalWeight - (cat.subtotalWornWeight || 0) - (cat.subtotalConsumableWeight || 0);
-            return `${Math.round((baseWeight / baseTotal) * 100)}%`;
+            return `${Math.round((cat.subtotalBaseWeight / baseTotal) * 100)}%`;
         },
         async renderChart() {
             const canvas = this.$refs.chartCanvas;
