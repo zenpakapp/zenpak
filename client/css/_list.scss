@@ -43,6 +43,22 @@
             visibility: visible;
         }
     }
+
+    // A long press on a row is a drag (by its handle) or a tap, not a text selection. The fields keep
+    // their own selection: Safari makes a field under a non-selectable parent impossible to type in
+    // unless the field asks for it.
+    .lpItem,
+    .lpItemsHeader {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+
+        input,
+        textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+    }
 }
 
 #totals {

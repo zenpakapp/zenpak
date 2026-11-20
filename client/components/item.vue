@@ -14,7 +14,7 @@
                 @click.stop
                 @change="onPackCheckbox"
             >
-            <div v-else-if="!isPackingMode" class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" />
+            <div v-else-if="!isPackingMode" class="lpItemHandle lpHandle" :title="$t('item.reorderItemTitle')" @touchmove.prevent />
         </span>
         <span v-if="library.optionalFields['images']" class="lpImageCell">
             <img loading="lazy" v-if="thumbnailImage" class="lpItemImage" :src="thumbnailImage" :alt="itemLabel" @click="viewItemImage()">
