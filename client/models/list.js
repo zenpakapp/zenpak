@@ -54,7 +54,11 @@ List.prototype.removeCategory = function (categoryId) {
     return true;
 };
 
+// The weight each chart type slices a Category by: a field the Category already computed.
+const CHART_WEIGHT_FIELD = { consumable: 'subtotalConsumableWeight', worn: 'subtotalWornWeight', base: 'subtotalBaseWeight' };
+
 List.prototype.renderChart = function (type, linkParent) {
+    const weightField = CHART_WEIGHT_FIELD[type] || 'subtotalWeight'; // anything else: total weight
     const chartData = { points: {} };
     let total = 0;
     let totalBase = 0;
@@ -64,17 +68,8 @@ List.prototype.renderChart = function (type, linkParent) {
     for (const i in this.categoryIds) {
         const category = this.library.getCategoryById(this.categoryIds[i]);
         if (category) {
-            totalBase += category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
-
-            if (type === 'consumable') {
-                total += category.subtotalConsumableWeight;
-            } else if (type === 'worn') {
-                total += category.subtotalWornWeight;
-            } else if (type === 'base') {
-                total += (category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight));
-            } else { // total weight
-                total += category.subtotalWeight;
-            }
+            totalBase += category.subtotalBaseWeight;
+            total += category[weightField];
         }
     }
 
@@ -89,16 +84,7 @@ List.prototype.renderChart = function (type, linkParent) {
         if (category) {
             const points = {};
 
-            let categoryTotal;
-            if (type === 'consumable') {
-                categoryTotal = category.subtotalConsumableWeight;
-            } else if (type === 'worn') {
-                categoryTotal = category.subtotalWornWeight;
-            } else if (type === 'base') {
-                categoryTotal = (category.subtotalWeight - (category.subtotalConsumableWeight + category.subtotalWornWeight));
-            } else { // total weight
-                categoryTotal = category.subtotalWeight;
-            }
+            const categoryTotal = category[weightField];
 
             const tempColor = category.color || colorUtils.getColor(i);
             category.displayColor = colorUtils.rgbToString(tempColor);
@@ -119,8 +105,7 @@ List.prototype.renderChart = function (type, linkParent) {
                 points[j] = tempItem;
             }
             const percent = categoryTotal / total;
-            const categoryBase = category.subtotalWeight - category.subtotalConsumableWeight - category.subtotalWornWeight;
-            const basePercent = totalBase ? categoryBase / totalBase : 0;
+            const basePercent = totalBase ? category.subtotalBaseWeight / totalBase : 0;
             const tempCategoryData = {
                 points, color: category.color, id: category.id, name: category.name, total: categoryTotal, percent, basePercent, visiblePoints: false,
             };
@@ -154,6 +139,8 @@ List.prototype.calculateTotals = function () {
             totalWeight += category.subtotalWeight;
             totalWornWeight += category.subtotalWornWeight;
             totalConsumableWeight += category.subtotalConsumableWeight;
+            totalBaseWeight += category.subtotalBaseWeight;
+            totalPackWeight += category.subtotalPackWeight;
 
             totalPrice += category.subtotalPrice;
             totalConsumablePrice += category.subtotalConsumablePrice;
@@ -163,9 +150,6 @@ List.prototype.calculateTotals = function () {
             out.categories.push(category);
         }
     }
-
-    totalBaseWeight = totalWeight - (totalWornWeight + totalConsumableWeight);
-    totalPackWeight = totalWeight - totalWornWeight;
 
     this.totalWeight = totalWeight;
     this.totalWornWeight = totalWornWeight;

@@ -135,6 +135,27 @@ assert('hidden prices zero category subtotal', hiddenPricePayload.categories[0].
 assert('hidden prices zero item price', hiddenPricePayload.categories[0].items[0].price === 0);
 assert('public payload exposes fork source', hiddenPricePayload.forkedFrom && hiddenPricePayload.forkedFrom.externalId === 'source123');
 
+// The public page reads each Category's Base Weight from the payload instead of working it out. The payload
+// is hydrated through the client model, so the value is recomputed, never read from what was saved.
+function basePayload(category, placement) {
+    return buildPublicList({
+        username: 'alice',
+        library: {
+            itemUnit: 'g',
+            totalUnit: 'kg',
+            entitlements: {},
+            creator: {},
+            optionalFields: { worn: true, consumable: true },
+            items: [{ id: 1, name: 'Pack', price: 0, weight: 1000, authorUnit: 'g' }],
+            categories: [{ id: 2, name: 'Carry', categoryItems: [{ itemId: 1, qty: 1, ...placement }], ...category }],
+            lists: [{ id: 3, externalId: 'abc123', name: 'Trail', visibility: 'shareable', publicFields: {}, categoryIds: [2] }],
+        },
+    }, 'abc123').categories[0];
+}
+assert('public payload carries the Category Base Weight', basePayload({}, {}).subtotalBaseWeight === 1000);
+assert('a worn item is left out of it (1000 - 1000)', basePayload({}, { worn: 1 }).subtotalBaseWeight === 0);
+assert('the saved value is ignored: it is recomputed', basePayload({ subtotalBaseWeight: 700 }, {}).subtotalBaseWeight === 1000);
+
 const hiddenSourceListInfoPayload = buildPublicList({
     username: 'alice',
     library: {
