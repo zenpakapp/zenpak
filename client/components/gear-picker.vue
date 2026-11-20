@@ -50,6 +50,7 @@
 import modal from './modal.vue';
 import { registerDialogOpener, unregisterDialogOpener, openDialog } from '../services/dialogs';
 import { useUtils } from '../composables/useUtils';
+import { createItem } from '../services/library-creation';
 
 const { displayWeight } = useUtils();
 
@@ -114,12 +115,7 @@ export default {
             this.shown = false;
         },
         createNew() {
-            this.$store.commit('newItem', {
-                category: this.category,
-                _isNew: true,
-                name: this.search || '',
-            });
-            const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
+            const newItem = createItem(this.$store, { category: this.category, name: this.search || '' });
             const categoryItem = this.category ? this.category.getCategoryItemById(newItem.id) : null;
             this.shown = false;
             openDialog('itemDetail', { item: newItem, categoryItem, category: this.category });

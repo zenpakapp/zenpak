@@ -42,7 +42,9 @@ test.describe("desktop", () => {
         document.body.firstElementChild) as any;
       app.__vue_app__.config.globalProperties.$store.commit(
         "newListNamed",
-        "A long list name that wraps over two lines in the narrow sidebar column",
+        {
+          name: "A long list name that wraps over two lines in the narrow sidebar column",
+        },
       );
     });
     const other = page.locator("#lists .lpLibraryList").last();

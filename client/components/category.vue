@@ -79,6 +79,7 @@ import { openDialog } from '../services/dialogs';
 import { openSpeedbump } from '../services/speedbump';
 import { useUtils } from '../composables/useUtils';
 import { suggestItems } from '../composables/useGearMatcher';
+import { createItem } from '../services/library-creation';
 
 const { displayWeight, displayPrice } = useUtils();
 
@@ -145,13 +146,7 @@ export default {
                 return;
             }
 
-            this.$store.commit('newItem', {
-                category: this.category,
-                _isNew: true,
-                name,
-            });
-
-            const newItem = this.$store.state.library.items[this.$store.state.library.items.length - 1];
+            const newItem = createItem(this.$store, { category: this.category, name });
 
             this.newItemName = '';
             this.suggestions = [];
@@ -170,14 +165,7 @@ export default {
         createAndOpenEditor() {
             const name = this.newItemName.trim();
 
-            this.$store.commit('newItem', {
-                category: this.category,
-                _isNew: true,
-                name,
-            });
-
-            const items = this.$store.state.library.items;
-            const newItem = items[items.length - 1];
+            const newItem = createItem(this.$store, { category: this.category, name });
             const categoryItem = this.category.getCategoryItemById(newItem.id);
 
             this.newItemName = '';
