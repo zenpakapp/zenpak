@@ -8,33 +8,18 @@ const {
 const { getForkDiff, loadForkPayloads } = require('./fork-diff.js');
 const { recordCopy } = require('./list-copies.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
+const { createRateLimiter } = require('./rate-limiter.js');
 
 const router = express.Router();
 
-// In-memory soft limit: 30 publishes/hour per user (single-node MVP, mirrors the copy limiter)
-const PUBLISH_RATE_LIMIT = 30;
-const PUBLISH_RATE_WINDOW_MS = 60 * 60 * 1000;
-const publishRateMap = new Map();
-
-function checkPublishRateLimit(key) {
-    const now = Date.now();
-    const windowStart = now - PUBLISH_RATE_WINDOW_MS;
-    const timestamps = (publishRateMap.get(key) || []).filter((t) => t > windowStart);
-    if (timestamps.length >= PUBLISH_RATE_LIMIT) {
-        publishRateMap.set(key, timestamps);
-        const retryAfterMs = PUBLISH_RATE_WINDOW_MS - (now - timestamps[0]);
-        return { limited: true, retryAfterMinutes: Math.max(1, Math.ceil(retryAfterMs / 60000)) };
-    }
-    timestamps.push(now);
-    publishRateMap.set(key, timestamps);
-    return { limited: false };
-}
+// Soft limit: 30 publishes/hour per user (the "apply:" keys share it)
+const publishLimiter = createRateLimiter({ limit: 30, windowMs: 60 * 60 * 1000 });
 
 router.post('/api/lists/:externalId/publish', (req, res) => {
     auth.authenticateUser(req, res, async (req, res, user) => {
         const externalId = String(req.params.externalId || '').trim();
 
-        const rate = checkPublishRateLimit(String(user._id));
+        const rate = publishLimiter.check(String(user._id));
         if (rate.limited) {
             res.set('Retry-After', String(rate.retryAfterMinutes * 60));
             return res.status(429).json({ message: 'Publish limit reached', retryAfterMinutes: rate.retryAfterMinutes });
@@ -129,7 +114,7 @@ router.post('/api/lists/fork-apply/:listId/record', (req, res) => {
         const version = req.body && req.body.version;
         if (!Number.isInteger(version) || version < 1) return res.status(400).json({ message: 'Invalid version' });
 
-        const rate = checkPublishRateLimit(`apply:${String(user._id)}`);
+        const rate = publishLimiter.check(`apply:${String(user._id)}`);
         if (rate.limited) {
             res.set('Retry-After', String(rate.retryAfterMinutes * 60));
             return res.status(429).json({ message: 'Update limit reached', retryAfterMinutes: rate.retryAfterMinutes });
