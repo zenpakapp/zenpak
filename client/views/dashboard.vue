@@ -118,15 +118,7 @@
                 </button>
             </div>
 
-            <div v-if="billingSuccess" class="lpBillingSuccessBanner">
-                ✓ {{ $t('dash.thankYouZenPak') }} {{ $t('dash.planNowActive', { plan: planLabel }) }}
-            </div>
-            <div v-if="billingCancelled" class="lpBillingCancelBanner">
-                {{ $t('dash.billingCancelled') }}
-            </div>
-            <div v-if="billingManaged" class="lpBillingSuccessBanner">
-                ✓ {{ $t('dash.billingManaged') }}
-            </div>
+            <billing-banner />
             <div v-if="isPastDue" class="lpPastDueBanner">
                 <span>⚠ {{ $t('dash.paymentFailed') }} {{ planLabel }} {{ $t('dash.plan') }}.</span>
                 <button class="lpButton lpButtonDanger lpButtonSmall" @click="openPortal">
@@ -195,14 +187,14 @@
 </template>
 
 <script>
-import { BANNER_MS, DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
+import { DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
 import { computed, defineAsyncComponent, markRaw } from 'vue';
-import { scrollBehavior } from '../utils/motion';
 import breakpoints from '../utils/breakpoints';
 import { fetchJson } from '../utils/utils';
 import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
 import globalAlerts from '../components/global-alerts.vue';
 import forkApplyControls from '../components/fork-apply-controls.vue';
+import billingBanner from '../components/billing-banner.vue';
 import forkUndoBanner from '../components/fork-undo-banner.vue';
 import sidebar from '../components/sidebar.vue';
 import listSettings from '../components/list-settings.vue';
@@ -271,6 +263,7 @@ export default {
         list,
         globalAlerts,
         forkApplyControls,
+        billingBanner,
         forkUndoBanner,
         gearRoom,
         upgradePrompt,
@@ -289,9 +282,6 @@ export default {
             verifyResendSent: false,
             verifyResendError: null,
             verifyBannerDismissed: !!localStorage.getItem('verifyBannerDismissed'),
-            billingSuccess: false,
-            billingCancelled: false,
-            billingManaged: false,
             loadingPrivateLibrary: false,
             loadedDialogs: [],
             dialogLoaders: [],
@@ -439,29 +429,6 @@ export default {
         if (this.$route && this.$route.query.upgradeGuide) {
             this.showGuideUpgrade = true;
         }
-        if (this.$route && this.$route.query.billing === 'success') {
-            fetch('/api/billing/me', { credentials: 'include' })
-                .then((r) => (r.ok ? r.json() : null))
-                .then((data) => { if (data) this.$store.commit('setBilling', data); })
-                .catch(() => {});
-            this.billingSuccess = true;
-            window.scrollTo({ top: 0, behavior: scrollBehavior() });
-            setTimeout(() => { this.billingSuccess = false; }, BANNER_MS);
-        }
-        if (this.$route && this.$route.query.billing === 'cancel') {
-            this.billingCancelled = true;
-            window.scrollTo({ top: 0, behavior: scrollBehavior() });
-            setTimeout(() => { this.billingCancelled = false; }, BANNER_MS);
-        }
-        if (this.$route && this.$route.query.billing === 'managed') {
-            fetch('/api/billing/me', { credentials: 'include' })
-                .then((r) => (r.ok ? r.json() : null))
-                .then((data) => { if (data) this.$store.commit('setBilling', data); })
-                .catch(() => {});
-            this.billingManaged = true;
-            window.scrollTo({ top: 0, behavior: scrollBehavior() });
-            setTimeout(() => { this.billingManaged = false; }, BANNER_MS);
-        }
     },
     beforeUnmount() {
         document.removeEventListener('visibilitychange', this.refreshEmailVerification);
@@ -588,18 +555,7 @@ export default {
         },
         hideSourceListInfo() {
             if (!this.list) return;
-            this.$store.commit('hideSourceListInfo', { listId: this.list.id });
-            const persist = this.$store.state.saveType === 'remote' && this.$store.state.loggedIn
-                ? fetchJson(`/api/lists/${this.list.id}/hide-source-list-info`, { method: 'POST', credentials: 'same-origin' })
-                    .then((response) => {
-                        if (response && typeof response.syncToken !== 'undefined') {
-                            this.$store.commit('setSyncToken', response.syncToken);
-                            this.$store.commit('setLastSaveData', JSON.stringify(this.library.save()));
-                        }
-                    })
-                : this.$store.dispatch('saveNow');
-
-            persist
+            this.$store.dispatch('hideSourceListInfo', { listId: this.list.id })
                 .then(() => {
                     this.$store.commit('pushGlobalAlert', {
                         key: 'dash.sourceListInfoHidden',
