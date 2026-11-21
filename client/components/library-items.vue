@@ -1,11 +1,5 @@
 <template>
     <section class="libraryContainer">
-        <div v-if="showTitle" class="libraryHeader">
-            <h2>{{ $t('library.itemsTitle') }}</h2>
-            <button class="lpButton lpSmall lpButtonSecondary libraryCreateButton" @click="createLibraryItem">
-                {{ $t('library.newGearButton') }}
-            </button>
-        </div>
         <div class="lpLibraryFilters">
             <div class="lpLibraryFilterSelectWrap">
                 <select v-model="filterCategory" class="lpLibraryFilterSelect">
@@ -100,7 +94,6 @@ import { createDragDrop, getDatasetInt, queryContainers } from '../services/drag
 import { filterLibraryItems, calculateVirtualWindow } from '../services/library-items-view';
 import { GEAR_CATEGORY_OPTIONS } from '../data/gear-categories';
 import breakpoints from '../utils/breakpoints';
-import { createItem } from '../services/library-creation';
 
 const { displayWeight } = useUtils();
 
@@ -115,10 +108,6 @@ export default {
             type: Object,
             required: false,
             default: null,
-        },
-        showTitle: {
-            type: Boolean,
-            default: true,
         },
     },
     data() {
@@ -283,10 +272,6 @@ export default {
         },
         hasLibraryItemMeta(item) {
             return !!(item.brand || item.category || this.itemTags(item).length);
-        },
-        createLibraryItem() {
-            const newItem = createItem(this.$store, { name: this.searchText.trim() });
-            openDialog('itemDetail', { item: newItem, categoryItem: null, category: null, discardOnCancel: true });
         },
         scheduleItemDrag() {
             if (this.dragFrame || this.dragIdle) return;

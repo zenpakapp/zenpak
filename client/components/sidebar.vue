@@ -180,7 +180,7 @@ $sidebarPadding: 20px;
                             {{ $t('dash.itemLibrary') }}
                         </button>
                     </h2>
-                    <libraryItems :show-title="false" />
+                    <libraryItems />
                 </section>
             </div>
         </div>
