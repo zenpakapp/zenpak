@@ -165,9 +165,16 @@
     }
 }
 
+// On a phone four columns are about 70px each: a label such as "Retirer de la liste" runs into its
+// neighbour. Two columns, and a label that does not fit goes to a second line.
 @media only screen and (max-width: $bp-tablet-s) {
     .itemDetailFooter {
         align-items: stretch;
-        flex-wrap: wrap;
+        grid-template-columns: repeat(2, 1fr);
+
+        .lpButton {
+            text-align: center;
+            white-space: normal;
+        }
     }
 }
