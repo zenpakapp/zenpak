@@ -891,7 +891,6 @@
   },
   "library": {
     "itemsTitle": "Items",
-    "newGearButton": "New gear item",
     "allCategories": "All categories",
     "searchPlaceholder": "Search...",
     "clearSearchAria": "Clear gear search",

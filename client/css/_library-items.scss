@@ -7,22 +7,6 @@
     min-height: 0;
 }
 
-.libraryHeader {
-    align-items: center;
-    display: flex;
-    gap: $space-12;
-    justify-content: space-between;
-    margin-bottom: $space-10;
-}
-
-.libraryHeader h2 {
-    margin: 0;
-}
-
-.libraryCreateButton {
-    white-space: nowrap;
-}
-
 .library {
     flex: 1;
     min-height: 0;

@@ -1010,7 +1010,6 @@
   },
   "library": {
     "itemsTitle": "Articles",
-    "newGearButton": "Nouvel article",
     "allCategories": "Catégories",
     "searchPlaceholder": "Rechercher...",
     "clearSearchAria": "Effacer la recherche",
