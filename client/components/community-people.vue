@@ -5,8 +5,8 @@
                 v-model="peopleQuery"
                 type="text"
                 class="lpCommunitySearchInput"
+                :aria-label="$t('community.peopleSearchPlaceholder')"
                 :placeholder="$t('community.peopleSearchPlaceholder')"
-                autofocus
                 @input="onInput"
             >
         </div>

@@ -152,7 +152,7 @@
                 {{ $t('community.loading') }}
             </p>
             <p v-else-if="discoverError" class="lpCommunityEmpty">
-                {{ discoverError }}
+                {{ $t('community.discoverLoadError') }}
             </p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
                 {{ $t(activeFilterCount || searchQuery.trim() ? 'community.emptyDiscoverFiltered' : 'community.emptyDiscoverNone') }}
@@ -258,7 +258,7 @@
                 {{ $t('community.loading') }}
             </p>
             <p v-else-if="feedError" class="lpCommunityEmpty">
-                {{ feedError }}
+                {{ $t('community.feedLoadError') }}
             </p>
             <p v-else-if="feedEvents.length === 0" class="lpCommunityEmpty">
                 {{ $t('community.emptyFeedNone') }}

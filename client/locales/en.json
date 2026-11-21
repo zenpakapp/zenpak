@@ -531,6 +531,8 @@
     "filters": "Filters",
     "filterByDestination": "Filter by {destination}",
     "emptyDiscoverFiltered": "No lists match your search or filters.",
+    "discoverLoadError": "Unable to load lists.",
+    "feedLoadError": "Unable to load the feed.",
     "metaBase": "{weight} base",
     "metaItems": "{count} item | {count} items",
     "metaViews": "{count} view | {count} views",

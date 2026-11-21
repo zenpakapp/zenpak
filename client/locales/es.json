@@ -531,6 +531,8 @@
     "filters": "Filtros",
     "filterByDestination": "Filtrar por {destination}",
     "emptyDiscoverFiltered": "Ninguna lista coincide con tu búsqueda o tus filtros.",
+    "discoverLoadError": "No se pudieron cargar las listas.",
+    "feedLoadError": "No se pudo cargar el feed.",
     "metaBase": "{weight} de base",
     "metaItems": "{count} artículo | {count} artículos",
     "metaViews": "{count} vista | {count} vistas",

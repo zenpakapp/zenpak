@@ -45,7 +45,7 @@ export function useDiscover(options = {}) {
             nextCursor.value = data.nextCursor || null;
             hasMore.value = Boolean(data.nextCursor);
         } catch (err) {
-            error.value = 'Unable to load lists.';
+            error.value = true;
         } finally {
             loading.value = false;
         }
