@@ -210,6 +210,24 @@ $loopDurationSweep: 1.4s;
     }
 }
 
+// A control is never smaller to hit than 24px (WCAG 2.5.8), and 44px under a finger. The control keeps its
+// drawn size and its place in the layout: an invisible area around it takes the tap. Pass its drawn size,
+// which must be under 24px each way (a larger control needs no help). The element must be able to hold an
+// absolute child, and no other tap target may sit within the margin.
+@mixin hit-area($width, $height) {
+    position: relative;
+
+    &::after {
+        content: "";
+        inset: calc((#{$height} - 24px) / 2) calc((#{$width} - 24px) / 2);
+        position: absolute;
+
+        @media (pointer: coarse) {
+            inset: calc((#{$height} - 44px) / 2) calc((#{$width} - 44px) / 2);
+        }
+    }
+}
+
 // Text on a solid coloured surface (a red or green button, a badge): white in both themes.
 $color-on-solid: #fff;
 

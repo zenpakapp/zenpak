@@ -679,6 +679,11 @@
 .headerIconItem {
     justify-content: center;
     min-width: 40px;
+
+    // The bell's tap area is 44px wide under a finger: this item is as wide as that.
+    @media (pointer: coarse) {
+        min-width: 44px;
+    }
 }
 
 .headerTruncateItem {
@@ -809,6 +814,10 @@
 
     .headerIconItem {
         min-width: 32px;
+
+        @media (pointer: coarse) {
+            min-width: 44px;
+        }
     }
 
     .headerTruncateItem .headerMenuLabel {

@@ -206,6 +206,18 @@
         &.lpGRCategoryCol { width: 130px; }
     }
 
+    // The native box is 13px: 24px is the smallest a pointer can hit, 28px under a finger.
+    .lpGRCheckCol input[type="checkbox"] {
+        height: 24px;
+        margin: 0;
+        width: 24px;
+
+        @media (pointer: coarse) {
+            height: 28px;
+            width: 28px;
+        }
+    }
+
     td {
         border-bottom: 1px solid $color-border;
         padding: $space-8 $space-12;
