@@ -2,6 +2,8 @@
 @import "../css/_globals";
 
 .lpNotifBell {
+    @include hit-area(18px, 18px);
+
     align-items: center;
     color: $color-text-muted;
     cursor: pointer;

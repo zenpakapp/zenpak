@@ -872,6 +872,8 @@ input.lpCategoryName { /* specificity */
 }
 
 .lpCommunityHintDismiss {
+    @include hit-area(12px, 11px);
+
     background: none;
     border: none;
     color: $color-text-muted;
