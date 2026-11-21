@@ -8,6 +8,11 @@ const auth = require('./auth.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const { getPublishedOwner } = require('./list-versions.js');
 const { noticeListUnpublished, noticeAccountBanned, noticeAccountRestored } = require('./moderation-notices.js');
+const { createRateLimiter } = require('./rate-limiter.js');
+
+// A member reports a few things an hour, not thousands: a flood of reports hides the real ones.
+const REPORT_LIMIT = 20;
+const reportLimiter = createRateLimiter({ limit: REPORT_LIMIT, windowMs: 60 * 60 * 1000 });
 
 const VALID_REASONS = ['spam', 'inappropriate', 'fake', 'other'];
 const TARGET_TYPES = ['list', 'user'];
@@ -72,7 +77,21 @@ router.post('/', (req, res) => {
             return res.status(400).json({ message: 'Invalid reason' });
         }
 
+        const rate = reportLimiter.check(String(user._id));
+        if (rate.limited) {
+            res.set('Retry-After', String(rate.retryAfterMinutes * 60));
+            return res.status(429).json({ message: 'Too many reports', retryAfterMinutes: rate.retryAfterMinutes });
+        }
+
         try {
+            // A report is about a list or an account that exists.
+            const target = targetType === 'list'
+                ? await getPublishedOwner(String(targetId))
+                : await db.users.findOne({ username: String(targetId).toLowerCase().trim() });
+            if (!target) {
+                return res.status(404).json({ message: 'Target not found' });
+            }
+
             // Éviter les doublons — un user ne peut signaler le même target qu'une fois
             const existing = await db.reports.findOne({
                 reporterId: new ObjectId(user._id),

@@ -54,10 +54,12 @@ async function assertSafeOutboundUrl(rawUrl, lookup = dns.lookup) {
         throw unsafeError;
     }
 
+    // Only the usual web ports: another one would let the server probe the services of any host.
     if (!['http:', 'https:'].includes(parsed.protocol)
         || parsed.username
         || parsed.password
-        || !parsed.hostname) {
+        || !parsed.hostname
+        || (parsed.port && !['80', '443'].includes(parsed.port))) {
         const unsafeError = new Error('Unsafe outbound URL');
         unsafeError.code = 'UNSAFE_URL';
         throw unsafeError;

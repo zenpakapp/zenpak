@@ -50,13 +50,16 @@ function assert(desc, cond) {
     else { console.error(`  FAIL  ${desc}`); failed++; }
 }
 
-function makeReqRes(body) {
+let nextIp = 0;
+function makeReqRes(body, ip) {
     let status = 200;
     let responseData;
-    const req = { params: {}, query: {}, body };
+    // Each call comes from its own address unless the test sets one: the route is limited per address.
+    const req = { params: {}, query: {}, body, ip: ip || `10.0.0.${nextIp++}` };
     const res = {
         _status: 200,
         status(code) { status = code; this._status = code; return this; },
+        set() { return this; },
         json(data) { responseData = data; },
         getStatus() { return status; },
         getData() { return responseData; },
@@ -64,8 +67,8 @@ function makeReqRes(body) {
     return { req, res };
 }
 
-async function callRoute(route, body) {
-    const { req, res } = makeReqRes(body);
+async function callRoute(route, body, ip) {
+    const { req, res } = makeReqRes(body, ip);
     await new Promise(resolve => {
         res.json = (data) => { res._data = data; resolve(); };
         route.route.stack[0].handle(req, res);
@@ -131,6 +134,28 @@ async function run() {
         lastMailOptions = null;
         await callRoute(interestRoute, { email: 'a@b.com', tier: 'guide', message: 'Hello there' });
         assert('message is included in mail text', lastMailOptions && lastMailOptions.text.includes('Hello there'));
+    }
+
+    // Test 8: a long message or e-mail is refused, nothing is sent
+    {
+        lastMailOptions = null;
+        const long = await callRoute(interestRoute, { email: 'a@b.com', tier: 'trail', message: 'x'.repeat(2001) });
+        const longEmail = await callRoute(interestRoute, { email: `${'a'.repeat(250)}@b.com`, tier: 'trail' });
+        assert('refuses a message over 2000 characters', long.status === 400);
+        assert('refuses an e-mail over 254 characters', longEmail.status === 400);
+        assert('nothing is sent for a refused request', lastMailOptions === null);
+    }
+
+    // Test 9: five requests an hour per address, the sixth is refused
+    {
+        const statuses = [];
+        for (let i = 0; i < 6; i++) {
+            statuses.push((await callRoute(interestRoute, { email: 'a@b.com', tier: 'trail' }, '203.0.113.9')).status);
+        }
+        assert('the first five requests of an address pass', statuses.slice(0, 5).every((s) => s === 200));
+        assert('the sixth request of an address is refused with 429', statuses[5] === 429);
+        const other = await callRoute(interestRoute, { email: 'a@b.com', tier: 'trail' }, '203.0.113.10');
+        assert('another address is not affected', other.status === 200);
     }
 
     console.log(`\n${passed} passed, ${failed} failed`);

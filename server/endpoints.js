@@ -1,5 +1,7 @@
 const express = require('express');
 const { scrapeGear } = require('./gear-scraper.js');
+const auth = require('./auth.js');
+const { createRateLimiter } = require('./rate-limiter.js');
 
 const router = express.Router();
 
@@ -27,25 +29,36 @@ const listVersionRouter = require('./list-version-endpoints.js');
 
 router.use(listVersionRouter);
 
+// The server fetches a page for the member who typed its address: signed in only, and limited, or
+// anyone could use it to reach other sites from the server's address.
+const scrapeLimiter = createRateLimiter({ limit: 30, windowMs: 60 * 60 * 1000 });
+
 // scrapeGear kept here — single route, no logical grouping
-router.post('/scrapeGear', async (req, res) => {
-    const { url } = req.body;
-    if (!url || typeof url !== 'string') {
-        return res.status(400).json({ error: 'url required' });
-    }
-    try {
-        const parsed = new URL(url);
-        if (!['http:', 'https:'].includes(parsed.protocol)) {
-            return res.status(400).json({ error: 'invalid url' });
+router.post('/scrapeGear', (req, res) => {
+    auth.authenticateUser(req, res, async (authedReq, authedRes, user) => {
+        const { url } = authedReq.body || {};
+        if (!url || typeof url !== 'string') {
+            return authedRes.status(400).json({ error: 'url required' });
         }
-        const data = await scrapeGear(url);
-        return res.json(data);
-    } catch (err) {
-        if (err && err.code === 'UNSAFE_URL') {
-            return res.status(400).json({ error: 'url not allowed' });
+        const rate = scrapeLimiter.check(String(user._id));
+        if (rate.limited) {
+            authedRes.set('Retry-After', String(rate.retryAfterMinutes * 60));
+            return authedRes.status(429).json({ error: 'too many requests', retryAfterMinutes: rate.retryAfterMinutes });
         }
-        return res.status(502).json({ error: 'fetch failed' });
-    }
+        try {
+            const parsed = new URL(url);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+                return authedRes.status(400).json({ error: 'invalid url' });
+            }
+            const data = await scrapeGear(url);
+            return authedRes.json(data);
+        } catch (err) {
+            if (err && err.code === 'UNSAFE_URL') {
+                return authedRes.status(400).json({ error: 'url not allowed' });
+            }
+            return authedRes.status(502).json({ error: 'fetch failed' });
+        }
+    });
 });
 
 const communityRouter = require('./community-endpoints.js');

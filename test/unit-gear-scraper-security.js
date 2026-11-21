@@ -37,6 +37,16 @@ async function run() {
     assert('unrelated public IPv4 is allowed', !isPrivateAddress('203.1.1.1'));
 
     await rejects('rejects a literal loopback host', () => assertSafeOutboundUrl('http://127.0.0.1/admin'));
+    await rejects('rejects a port other than 80 and 443', () => assertSafeOutboundUrl('https://93.184.216.34:6379/'));
+    await rejects('rejects port 22', () => assertSafeOutboundUrl('http://93.184.216.34:22/'));
+    try {
+        await assertSafeOutboundUrl('https://93.184.216.34:443/');
+        await assertSafeOutboundUrl('http://93.184.216.34:80/');
+        await assertSafeOutboundUrl('https://93.184.216.34/');
+        assert('accepts the usual web ports', true);
+    } catch (err) {
+        assert('accepts the usual web ports', false);
+    }
     await rejects('rejects credentials embedded in a URL', () => assertSafeOutboundUrl('https://user:pass@example.com/'));
     await rejects('rejects a hostname resolving to a private address', () => assertSafeOutboundUrl(
         'https://internal.example/resource',
