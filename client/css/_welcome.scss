@@ -424,6 +424,7 @@ details[open] .lpWelcomeFaqQ::after {
     color: $color-text-muted;
     line-height: 1.55;
     margin: $space-10 0 0;
+    text-wrap: pretty;
 }
 
 .lpWelcomeCardTextStrong {
@@ -669,10 +670,16 @@ details[open] .lpWelcomeFaqQ::after {
     }
 }
 
+// Stacked, each title must sit nearer its own text than the block above it: wider gap between the
+// three items, title close to its text.
 @media (max-width: $bp-tablet) {
     .lpWelcomeFeaturesGrid {
-        gap: $space-24;
+        gap: $space-40;
         grid-template-columns: 1fr;
+    }
+
+    .lpWelcomeFeatureItem .lpWelcomeFeatureTitle {
+        margin-bottom: 0;
     }
 }
 
