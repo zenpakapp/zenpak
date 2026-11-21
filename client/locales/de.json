@@ -95,6 +95,7 @@
     "faq3A": "Ja. Exportiere deine CSV von lighterpack.com oder einem anderen tabellenbasierten Ausrüstungslistentool und importiere sie in ZenPak. Listen, Gegenstände, Gewichte und Notizen werden sauber übertragen, sodass du wechseln kannst, ohne alles von Hand neu aufzubauen."
   },
   "list": {
+    "destination": "Ort oder Route",
     "descriptionHelp": "Anklickbare Links (höchstens 3). Ein Link, der dich vergütet (Affiliate, Empfehlung)? Sag es dazu.",
     "addCategory": "Kategorie hinzufügen",
     "categoriesToggle": "Kategorien ({count})",
@@ -527,6 +528,13 @@
     "tabModeration": "Moderation",
     "sortRecent": "Kürzlich",
     "sortPopular": "Am meisten angesehen",
+    "filters": "Filter",
+    "filterByDestination": "Nach {destination} filtern",
+    "emptyDiscoverFiltered": "Keine Liste passt zu deiner Suche oder deinen Filtern.",
+    "metaBase": "{weight} Basisgewicht",
+    "metaItems": "{count} Gegenstand | {count} Gegenstände",
+    "metaViews": "{count} Aufruf | {count} Aufrufe",
+    "metaCopies": "{count} Kopie | {count} Kopien",
     "searchListsPlaceholder": "Listen durchsuchen…",
     "filterSeasonAny": "Jede Jahreszeit",
     "filterTypeAny": "Jede Aktivität",

@@ -36,9 +36,12 @@ assert.strictEqual(offenders.length, 0, `literal maxlength, use the limits modul
 
 const limits = {};
 read('client/services/field-limits.js').replace(/^\s+(\w+): (\d+),/gm, (_, key, value) => { limits[key] = Number(value); });
-assert.deepStrictEqual(Object.keys(limits).sort(), ['currencySymbol', 'oauthUsername', 'publishNote']);
+assert.deepStrictEqual(Object.keys(limits).sort(), ['currencySymbol', 'destination', 'oauthUsername', 'publishNote']);
 
 assert.strictEqual(Number(/NOTE_MAX_LENGTH = (\d+);/.exec(read('server/list-versions.js'))[1]), limits.publishNote, 'publishNote matches the server');
 assert.strictEqual(Number(/maxLength: (\d+)/.exec(read('server/oauth.js'))[1]), limits.oauthUsername, 'oauthUsername matches the server');
+
+const destinationBody = /function normalizeDestination[\s\S]*?\.slice\(0, (\d+)\)/.exec(read('server/text-limits.js'));
+assert.strictEqual(Number(destinationBody[1]), limits.destination, 'destination matches the server');
 
 console.log(`unit-field-limits: ok (${bound} bound maxlength, none written out)`);

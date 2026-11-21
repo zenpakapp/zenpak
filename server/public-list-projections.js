@@ -4,8 +4,8 @@ const db = require('./db.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 const { getLatestOwnedVersion } = require('./list-versions.js');
-const { buildSearchTokens, SEARCH_TOKENS_VERSION } = require('./search-text.js');
-const { clipDescription, normalizeTagArray } = require('./text-limits.js');
+const { buildSearchTokens, normalizeWord, SEARCH_TOKENS_VERSION } = require('./search-text.js');
+const { clipDescription, normalizeDestination, normalizeTagArray } = require('./text-limits.js');
 
 function publicDisplayName(user) {
     const profile = user && user.library && user.library.publicProfile;
@@ -45,10 +45,13 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
     const { itemNames, itemBrands, itemDescriptions } = listItemTexts(version && version.library ? version.library : library, published);
     const ownerDisplayName = profile.displayName || user.username || '';
 
+    const destination = normalizeDestination(published.destination);
+
     return {
         searchTokens: buildSearchTokens({
             name: published.name,
             description: clipDescription(published.description),
+            destination,
             ownerDisplayName,
             ownerUsername: user.username,
             itemNames,
@@ -65,6 +68,8 @@ function buildPublicListProjection(user, list, stats = {}, version = null) {
         ownerAvatarUrl: isPublicVisibility(profile.visibility) ? (profile.avatarUrl || '') : '',
         name: published.name || '',
         description: clipDescription(published.description),
+        destination,
+        destinationKey: normalizeWord(destination),
         visibility: list.visibility || 'private',
         totalBaseWeight: totals ? Number(totals.baseWeight) || 0 : Number(list.totalBaseWeight) || 0,
         totalQty: totals ? Number(totals.qty) || 0 : Number(list.totalQty) || 0,
@@ -99,6 +104,7 @@ function projectionToDiscoverItem(projection) {
         externalId: projection.externalId,
         name: projection.name || '',
         description: projection.description || '',
+        destination: projection.destination || '',
         totalBaseWeight: Number(projection.totalBaseWeight) || 0,
         totalQty: Number(projection.totalQty) || 0,
         author: projection.ownerUsername || '',

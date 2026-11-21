@@ -18,6 +18,8 @@ const dbStub = {
                 if (typeof query.seasons === 'string' && !(list.seasons || []).includes(query.seasons)) return false;
                 if (typeof query.listTypes === 'string' && !(list.listTypes || []).includes(query.listTypes)) return false;
                 if (typeof query.durations === 'string' && !(list.durations || []).includes(query.durations)) return false;
+                if (query.totalQty && query.totalQty.$ne !== undefined && list.totalQty === query.totalQty.$ne) return false;
+                if (query.destinationKey && query.destinationKey !== list.destinationKey) return false;
                 if (query.totalBaseWeight) {
                     const weight = Number(list.totalBaseWeight) || 0;
                     if (query.totalBaseWeight.$gte !== undefined && weight < query.totalBaseWeight.$gte) return false;
@@ -79,6 +81,8 @@ async function run() {
     projectedLists.push({
         externalId: 'projection1',
         name: 'Projection List',
+        destination: 'Vallée d’Aspe',
+        destinationKey: 'vallee d’aspe',
         visibility: 'discoverable',
         ownerUsername: 'projected-user',
         ownerDisplayName: 'Projected User',
@@ -105,6 +109,12 @@ async function run() {
 
     assert('uses public_lists projection when present', responseData && responseData.lists.length === 1 && responseData.lists[0].externalId === 'projection1');
     assert('projection includes author display name', responseData.lists[0].authorDisplayName === 'Projected User');
+    projectedLists.push({ ...projectedLists[0], externalId: 'another', destination: 'Autre', destinationKey: 'autre' });
+    await new Promise(resolve => {
+        res.json = (data) => { responseData = data; resolve(); };
+        discoverRoute.route.stack[0].handle({ query: { destination: '  VALLEE   D’ASPE ' } }, res);
+    });
+    assert('destination filter matches a normalized destination only', responseData.lists.length === 1 && responseData.lists[0].destination === 'Vallée d’Aspe');
     projectedLists.length = 0;
 
     // Test: returns empty list when no public lists
@@ -289,6 +299,19 @@ async function run() {
     });
 
     assert('filters by 3-season pack label', responseData && responseData.lists.length === 1 && responseData.lists[0].externalId === 'three-season');
+
+    // Test: a list without Items is not shown
+    projectedLists.length = 0;
+    projectedLists.push(
+        { externalId: 'full', name: 'Full', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 12, updatedAt: new Date('2026-06-02') },
+        { externalId: 'empty', name: 'New list', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 0, updatedAt: new Date('2026-06-03') },
+    );
+    responseData = null;
+    await new Promise(resolve => {
+        res.json = (data) => { responseData = data; resolve(); };
+        discoverRoute.route.stack[0].handle({ query: {} }, res);
+    });
+    assert('a list with no Item is left out of Discover', responseData && responseData.lists.length === 1 && responseData.lists[0].externalId === 'full');
 
     // Test: cursor exclusion on sort=recent (item with matching date is excluded)
     projectedLists.length = 0;

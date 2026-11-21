@@ -21,7 +21,10 @@ const {
     publicDisplayName,
     syncUserPublicLists,
 } = require('./public-list-projections.js');
-const { parseQuery, prefixPatterns, scoreProjection } = require('./search-text.js');
+const { normalizeDestination } = require('./text-limits.js');
+const {
+    normalizeWord, parseQuery, prefixPatterns, scoreProjection,
+} = require('./search-text.js');
 
 // Max 5 copies/hour per member
 const COPY_RATE_LIMIT = 5;
@@ -41,10 +44,15 @@ const SEARCH_CURSOR = /^o:(\d+)$/;
 // Everything but the date cursor runs in the database query, before any limit: filtering a
 // pre-cut list of the newest 200 would hide every older list from the search and the filters.
 function buildDiscoverQuery(filters, words) {
-    const query = { visibility: { $in: ['discoverable', 'indexable'] } };
+    // A list without any Item has nothing to learn from: it stays out of Discover. A projection that
+    // predates the count (no field) stays in.
+    // A list without any Item has nothing to learn from: it stays out of Discover. A projection that
+    // predates the count (no field) stays in.
+    const query = { visibility: { $in: ['discoverable', 'indexable'] }, totalQty: { $ne: 0 } };
     if (filters.season) query.seasons = filters.season;
     if (filters.type) query.listTypes = filters.type;
     if (filters.duration) query.durations = filters.duration;
+    if (filters.destination) query.destinationKey = filters.destination;
     if (filters.minWeight !== null || filters.maxWeight !== null) {
         query.totalBaseWeight = {};
         if (filters.minWeight !== null) query.totalBaseWeight.$gte = filters.minWeight;
@@ -266,6 +274,7 @@ router.get('/discover', async (req, res) => {
         maxWeight: parseNumberParam(req.query.maxWeight),
         season: String(req.query.season || '').trim().toLowerCase().slice(0, 40),
         type: String(req.query.type || '').trim().toLowerCase().slice(0, 40),
+        destination: normalizeWord(normalizeDestination(req.query.destination)),
         duration: String(req.query.duration || '').trim().toLowerCase().slice(0, 40),
     };
 

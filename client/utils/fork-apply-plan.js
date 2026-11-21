@@ -7,7 +7,7 @@ const ITEM_FIELDS = ['name', 'description', 'brand', 'shop', 'weight', 'price', 
 const PLACEMENT_FIELDS = ['qty', 'worn', 'consumable', 'star'];
 const ALWAYS_FIELDS = new Set(['name', 'description', 'brand', 'shop', 'weight', ...PLACEMENT_FIELDS]);
 const NUMERIC_FIELDS = new Set(['weight', 'price', 'qty', 'worn', 'star']);
-const META_FIELDS = ['description', 'seasons', 'listTypes', 'durations'];
+const META_FIELDS = ['description', 'destination', 'seasons', 'listTypes', 'durations'];
 
 function sameId(a, b) {
     return String(a) === String(b);
@@ -93,7 +93,10 @@ function isForkUntouched(list, library, basePayload) {
 
     const baseList = basePayload.list || {};
     // A list published before a tag field existed has none of it: that is the same as an empty one.
-    const metaValue = (source, field) => (source[field] === undefined ? (field === 'description' ? '' : []) : source[field]);
+    const metaValue = (source, field) => {
+        if (source[field] !== undefined) return source[field];
+        return ['description', 'destination'].includes(field) ? '' : [];
+    };
     const metaChanged = META_FIELDS.some((field) => JSON.stringify(metaValue(list, field))
         !== JSON.stringify(metaValue(baseList, field)));
     if (metaChanged) return false;

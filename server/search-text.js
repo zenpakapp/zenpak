@@ -28,14 +28,14 @@ function tokenize(text) {
 
 // Version of what `searchTokens` is built from; a projection with an older one is rebuilt at
 // startup (item descriptions joined the index in version 2).
-const SEARCH_TOKENS_VERSION = 2;
+const SEARCH_TOKENS_VERSION = 4;
 
 // Item descriptions come last, so the cap drops them before names and brands.
 function buildSearchTokens({
-    name, description, ownerDisplayName, ownerUsername, itemNames = [], itemBrands = [], itemDescriptions = [],
+    name, description, destination, ownerDisplayName, ownerUsername, itemNames = [], itemBrands = [], itemDescriptions = [],
 }) {
     const sources = [
-        name, ownerDisplayName, ownerUsername, description, ...itemNames, ...itemBrands, ...itemDescriptions,
+        name, ownerDisplayName, ownerUsername, description, destination, ...itemNames, ...itemBrands, ...itemDescriptions,
     ];
     return [...new Set(sources.flatMap(tokenize))].slice(0, MAX_TOKENS);
 }

@@ -28,7 +28,7 @@ function takeUndoSnapshot(library, list) {
         categoryLinks: clone(Array.isArray(forked.categoryLinks) ? forked.categoryLinks : []),
         dismissedVersion: forked.dismissedVersion,
         listMeta: clone({
-            description: list.description, seasons: list.seasons, listTypes: list.listTypes, durations: list.durations,
+            description: list.description, destination: list.destination, seasons: list.seasons, listTypes: list.listTypes, durations: list.durations,
         }),
         categoryIds: list.categoryIds.slice(),
         categories: list.categoryIds.map((id) => library.getCategoryById(id)).filter(Boolean).map((entry) => ({

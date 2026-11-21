@@ -74,6 +74,7 @@ function buildCopyPayload({ version, owner, sourceList, now = new Date() }) {
     return {
         listName,
         description: publishedList.description || '',
+        destination: publishedList.destination || '',
         seasons: normalizeTagArray(publishedList.seasons),
         listTypes: normalizeTagArray(publishedList.listTypes),
         durations: normalizeTagArray(publishedList.durations),

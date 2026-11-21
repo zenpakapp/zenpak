@@ -11,6 +11,7 @@ const List = function ({ id, library }) {
     this.categoryIds = [];
     this.chart = null;
     this.description = '';
+    this.destination = '';
     this.summary = '';
     this.seasons = [];
     this.listTypes = [];

@@ -5,7 +5,7 @@ const {
 const { normalizeTier } = require('./tier-policy.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
-const { clipDescription } = require('./text-limits.js');
+const { clipDescription, normalizeDestination } = require('./text-limits.js');
 const { itemMatchesShop, promoLinkUrl, ruleHostname } = require('../client/utils/promo-link.js');
 
 function getLibrary(user) {
@@ -76,6 +76,7 @@ function sanitizeListSummary(list, options = {}) {
         name: list.name || '',
         summary: clipDescription(list.summary),
         description: clipDescription(list.description),
+        destination: normalizeDestination(list.destination),
         visibility: list.visibility,
         allowSearchIndexing: allowsSearchIndexing(list.visibility),
         copyable: list.copyable || false,

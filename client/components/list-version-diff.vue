@@ -179,6 +179,7 @@ export default {
                 });
         },
         fieldLabel(field) {
+            if (field === 'destination') return this.$t('list.destination');
             return this.$t(`list.versioning.diffFields.${field}`);
         },
         value(field, raw) {
