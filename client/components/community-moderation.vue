@@ -21,7 +21,7 @@
             />
         </div>
         <p v-if="error" class="lpCommunityEmpty">
-            {{ error }}
+            {{ $t(error) }}
         </p>
         <p v-if="loading" class="lpCommunityEmpty">
             {{ $t('community.loading') }}
@@ -167,7 +167,7 @@ export default {
                 this.reports = [];
                 this.total = 0;
                 this.hasMore = false;
-                this.error = 'Unable to load reports.';
+                this.error = 'community.moderationLoadError';
             } finally {
                 this.loading = false;
             }
@@ -180,7 +180,7 @@ export default {
                 this.total = data.total || this.total;
                 this.hasMore = !!data.hasMore;
             } catch {
-                this.error = 'Unable to load reports.';
+                this.error = 'community.moderationLoadError';
             } finally {
                 this.loadingMore = false;
             }
@@ -196,7 +196,7 @@ export default {
                 this.reports = this.reports.filter((r) => r.targetType !== report.targetType || r.targetId !== report.targetId);
                 this.total = Math.max(this.total - 1, 0);
             } catch {
-                this.error = 'Unable to update report.';
+                this.error = 'community.moderationUpdateError';
             }
         },
         // The account a report is about: the reported user, or the author of the reported list.
@@ -218,7 +218,7 @@ export default {
                 await fetchJson(`/api/reports/ban/${username}`, { method: 'POST' });
                 await this.resolve(report, 'resolved');
             } catch {
-                this.error = 'Unable to ban user.';
+                this.error = 'community.moderationBanError';
             }
         },
         async unpublish(report) {
@@ -227,7 +227,7 @@ export default {
                 await fetchJson(`/api/reports/unpublish/${report.targetId}`, { method: 'POST' });
                 await this.resolve(report, 'resolved');
             } catch {
-                this.error = 'Unable to unpublish list.';
+                this.error = 'community.moderationUnpublishError';
             }
         },
         timeAgo(dateStr) {
