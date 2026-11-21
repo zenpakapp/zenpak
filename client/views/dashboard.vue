@@ -187,8 +187,8 @@
 </template>
 
 <script>
-import { DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
 import { computed, defineAsyncComponent, markRaw } from 'vue';
+import { DASHBOARD_IDLE_FALLBACK_MS, DASHBOARD_IDLE_MS } from '../services/timings';
 import breakpoints from '../utils/breakpoints';
 import { fetchJson } from '../utils/utils';
 import { findForkUpdate, withUndoneUpdate } from '../utils/fork-updates';
