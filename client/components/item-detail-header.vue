@@ -51,14 +51,17 @@
         min-width: 0;
     }
 
+    // Two lines before the name is cut: on a phone one line keeps about seven letters of "Down hoodie".
     .itemDetailName {
+        -webkit-box-orient: vertical;
+        display: -webkit-box;
         font-size: $fontSize-3xl;
         font-weight: $fontWeight-bold;
+        -webkit-line-clamp: 2;
         line-height: 1.08;
         margin: 0 0 $space-10;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        overflow-wrap: anywhere;
     }
 
     .itemDetailBrand {
@@ -129,7 +132,7 @@
             <zenpak-gear-icon />
         </div>
         <div class="itemDetailHeaderInfo">
-            <div class="itemDetailName">
+            <div class="itemDetailName" :title="name || null">
                 {{ name || $t('gearroom.unnamedItem') }}
             </div>
             <div v-if="brand" class="itemDetailBrand">
