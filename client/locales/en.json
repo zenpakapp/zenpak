@@ -95,6 +95,7 @@
     "faq3A": "Yes. Export your CSV from lighterpack.com or another spreadsheet-based gear list tool, then import it into ZenPak. Lists, items, weights, and notes come across cleanly, so you can move without rebuilding everything by hand."
   },
   "list": {
+    "destination": "Place or route",
     "descriptionHelp": "Clickable links (3 at most). A link that pays you (affiliate, referral)? Say so.",
     "addCategory": "Add new category",
     "categoriesToggle": "Categories ({count})",
@@ -527,6 +528,13 @@
     "tabModeration": "Moderation",
     "sortRecent": "Recent",
     "sortPopular": "Most viewed",
+    "filters": "Filters",
+    "filterByDestination": "Filter by {destination}",
+    "emptyDiscoverFiltered": "No lists match your search or filters.",
+    "metaBase": "{weight} base",
+    "metaItems": "{count} item | {count} items",
+    "metaViews": "{count} view | {count} views",
+    "metaCopies": "{count} copy | {count} copies",
     "searchListsPlaceholder": "Search lists…",
     "filterSeasonAny": "Any season",
     "filterTypeAny": "Any activity",

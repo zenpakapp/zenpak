@@ -110,6 +110,11 @@
                             <span v-if="list.totalQty">📦 {{ list.totalQty }}</span>
                         </div>
                     </div>
+                    <div v-if="list.destination" class="lpPublicListDesc lpPublicListDestination">
+                        <icon name="map-pin" :size="12" />
+                        <span class="lpInvisible">{{ $t('list.destination') }} :</span>
+                        {{ list.destination }}
+                    </div>
                     <div v-if="list.description" class="lpPublicListDesc">
                         {{ list.description }}
                     </div>
@@ -147,12 +152,15 @@ import { useBackNav } from '../composables/useBackNav';
 import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
 import HreflangLinks from '../components/hreflang-links.vue';
+import Icon from '../components/icon.vue';
 import ThemeToggle from '../components/theme-toggle.vue';
 import { SPONSORED_REL, USER_LINK_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
-    components: { HreflangLinks, ReportButton, ThemeToggle },
+    components: {
+        HreflangLinks, Icon, ReportButton, ThemeToggle,
+    },
     setup() {
         useTheme();
         const route = useRoute();

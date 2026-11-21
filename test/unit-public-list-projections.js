@@ -58,6 +58,7 @@ async function run() {
     owner.library.items.find((item) => item.id === 11).description = 'Abri monoparoi';
     owner.library.items.find((item) => item.id === 99).description = 'Secretword';
 
+    owner.library.lists[0].destination = '  Sierra   Nevada  ';
     await syncUserPublicLists(owner);
     assert('a discoverable list without a snapshot is not projected', projections.length === 0);
 
@@ -66,6 +67,7 @@ async function run() {
     assert('after publish the list is projected', projections.length === 1 && projections[0].externalId === 'abc123');
     assert('projection totals come from the snapshot', projections[0].totalQty === 3 && projections[0].totalBaseWeight === 1100000);
 
+    assert('published destination is normalized and searchable', projections[0].destination === 'Sierra Nevada' && projections[0].destinationKey === 'sierra nevada' && projections[0].searchTokens.includes('sierra'));
     const tokens = projections[0].searchTokens || [];
     assert('projection has search tokens for the list name and its author', tokens.includes('pct') && tokens.includes('alice'));
     assert('projection has search tokens for item names and brands', ['tent', 'zpacks', 'stove', 'brs'].every((t) => tokens.includes(t)));
@@ -75,9 +77,12 @@ async function run() {
     assert('projection records the search index version', projections[0].searchTokensVersion === SEARCH_TOKENS_VERSION);
 
     owner.library.lists[0].name = 'LIVE EDIT';
+    owner.library.lists[0].destination = 'Unpublished';
     owner.library.items[0].weight = 1;
     await syncUserPublicLists(owner);
     assert('projection ignores unpublished live edits', projections[0].name === 'PCT' && projections[0].totalBaseWeight === 1100000);
+
+    assert('Discover keeps the published destination until republish', projections[0].destination === 'Sierra Nevada' && !projections[0].searchTokens.includes('unpublished'));
 
     owner.library.lists[0].visibility = 'shareable';
     await syncUserPublicLists(owner);

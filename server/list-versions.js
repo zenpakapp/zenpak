@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { ObjectId } = require('mongodb');
 
+const { normalizeDestination } = require('./text-limits.js');
 const db = require('./db.js');
 const { getCopiedVersions, hasCopiedVersion } = require('./list-copies.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
@@ -66,6 +67,8 @@ function buildFrozenLibrary(rawLibrary, externalId) {
     const profile = rawLibrary.publicProfile || {};
     const entitlements = rawLibrary.entitlements || {};
     const publishedList = pickFields(list, PUBLISHED_LIST_FIELDS);
+    const destination = normalizeDestination(list.destination);
+    if (destination) publishedList.destination = destination;
     if (publishedList.forkedFrom && typeof publishedList.forkedFrom === 'object') {
         publishedList.forkedFrom = pickFields(publishedList.forkedFrom, PUBLISHED_FORKED_FROM_FIELDS);
     }

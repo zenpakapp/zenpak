@@ -6,7 +6,7 @@ const { authenticateUser } = require('./auth.js');
 const { detectVisibilityChanges } = require('./save-library-feed.js');
 const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
-const { clipDescription } = require('./text-limits.js');
+const { clipDescription, normalizeDestination } = require('./text-limits.js');
 const { pinServerOwnedFields } = require('./library-server-fields.js');
 const { isPublicVisibility } = require('../client/services/public-visibility.js');
 
@@ -77,6 +77,7 @@ function saveLibrary(req, res, user) {
             // Bounded where it is stored, so the CSV export, copies and version comparisons
             // are bounded too, not only what the public page shows.
             if (typeof list.description === 'string') list.description = clipDescription(list.description);
+            list.destination = normalizeDestination(list.destination);
             if (typeof list.summary === 'string') list.summary = clipDescription(list.summary);
         });
     }

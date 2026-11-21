@@ -113,7 +113,19 @@
     a {
         color: $color-text;
         font-weight: $fontWeight-medium;
+        position: relative;
         text-decoration: none;
+
+        // The link is 15px tall: an invisible area makes it 25px, 45px under a finger.
+        &::after {
+            content: "";
+            inset: -5px -2px;
+            position: absolute;
+
+            @media (pointer: coarse) {
+                inset: -15px -2px;
+            }
+        }
 
         &:hover { text-decoration: underline; }
     }
@@ -393,6 +405,52 @@
     margin-bottom: $space-16;
 }
 
+.lpCommunityDiscoverSearch {
+    display: grid;
+    gap: $space-8;
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    .lpCommunitySearchInput {
+        min-height: $control-height-md;
+        min-width: 0;
+    }
+}
+
+.lpCommunityFilterToggle {
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-medium;
+    gap: $space-6;
+    min-height: $control-height-md;
+    padding: 0 $space-12;
+
+    &:hover,
+    &[aria-expanded='true'] {
+        border-color: $color-accent;
+        color: $color-accent-text;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
+    }
+}
+
+.lpCommunityFilterCount {
+    background: var(--color-badge-bg);
+    border-radius: $radius-pill;
+    color: var(--color-badge-text);
+    font-size: $fontSize-xs;
+    min-width: 1.4em;
+    text-align: center;
+}
+
 .lpCommunitySearchInput {
     background: $color-surface;
     border: 1px solid $color-border;
@@ -413,19 +471,26 @@
 }
 
 .lpCommunityFilters {
+    background: var(--color-control-muted);
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
     display: grid;
     gap: $space-8;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) 96px 96px auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin-bottom: $space-18;
+    padding: $space-12;
 }
 
 .lpCommunityFilterInput {
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-md;
+    box-sizing: border-box;
     color: $color-text;
-    font-size: $fontSize-sm;
-    min-height: 36px;
+    font-family: $font-family-base;
+    font-size: $fontSize-base;
+    height: 40px; // as tall as the selects of lp-select
+    min-width: 0;
     padding: 0 $space-10;
     width: 100%;
 
@@ -443,6 +508,8 @@
     cursor: pointer;
     font-size: $fontSize-sm;
     font-weight: $fontWeight-medium;
+    grid-column: 1 / -1;
+    justify-self: end;
     min-height: 36px;
     padding: 0 $space-12;
 
@@ -479,6 +546,30 @@
     padding: $space-2 $space-8;
 }
 
+.lpCommunityDestinationTag {
+    align-items: center;
+    background: var(--color-badge-bg);
+    color: var(--color-badge-text);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: inherit;
+    gap: $space-4;
+    line-height: inherit;
+    max-width: 100%;
+    min-height: 24px;
+    overflow-wrap: anywhere;
+    text-align: left;
+
+    &:hover {
+        border-color: $color-accent;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
+    }
+}
+
 .lpCommunityPopular {
     border-left: 1px solid $color-border;
     padding-left: $space-18;
@@ -510,7 +601,19 @@
     display: inline-block;
     font-size: $fontSize-xs;
     margin-top: $space-4;
+    position: relative;
     text-decoration: none;
+
+    // The link is 17px tall: an invisible area makes it 27px, 47px under a finger.
+    &::after {
+        content: "";
+        inset: -5px -2px;
+        position: absolute;
+
+        @media (pointer: coarse) {
+            inset: -15px -2px;
+        }
+    }
 
     &:hover {
         color: $color-accent-text;
@@ -600,11 +703,7 @@
 
 @media only screen and (max-width: $bp-tablet-s) {
     .lpCommunityFilters {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .lpCommunityFilterReset {
-        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 

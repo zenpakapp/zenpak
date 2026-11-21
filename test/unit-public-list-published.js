@@ -40,6 +40,7 @@ async function run() {
     let result = await getList('abc123');
     assert('a shared list without a snapshot is 404', result.status === 404);
 
+    owner.library.lists[0].destination = 'Sierra Nevada';
     await publishVersion(owner, 'abc123', '');
     result = await getList('abc123');
     assert('after publish the list is served', result.status === 200 && result.body.list.name === 'PCT');
@@ -49,8 +50,11 @@ async function run() {
 
     owner.library.lists[0].name = 'LIVE EDIT';
     owner.library.items[0].name = 'Live tent';
+    owner.library.lists[0].destination = 'GR20';
     result = await getList('abc123');
     assert('unpublished list edits are invisible', result.body.list.name === 'PCT' && result.body.categories[0].items[0].name === 'Tent');
+
+    assert('the public list keeps its published destination', result.body.list.destination === 'Sierra Nevada');
 
     owner.library.lists[0].copyable = true;
     owner.library.lists[0].visibility = 'shareable';

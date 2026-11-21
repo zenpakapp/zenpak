@@ -200,6 +200,7 @@ Library.prototype.copyList = function (id) {
 
     const copiedList = this.newList();
 
+    copiedList.destination = oldList.destination;
     copiedList.name = `Copy of ${oldList.name}`;
     for (const i in oldList.categoryIds) {
         const oldCategory = this.getCategoryById(oldList.categoryIds[i]);

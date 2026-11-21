@@ -51,6 +51,8 @@
 
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.communityTags') }}</div>
+                        <label for="shareDestination" class="shareTagGroupLabel">{{ $t('list.destination') }}</label>
+                        <input id="shareDestination" type="text" class="shareInput" :value="list.destination" :maxlength="limits.destination" @input="updateListDestination">
                         <div v-for="group in tagGroups" :key="group.key" class="shareTagGroupBlock">
                             <div class="shareTagGroupLabel">{{ group.label }}</div>
                             <div class="shareTagGroup" :aria-label="group.label">
@@ -231,6 +233,9 @@ export default {
         clearTimeout(this.statusTimer);
     },
     methods: {
+        updateListDestination(event) {
+            this.$store.commit('updateListDestination', { id: this.list.id, destination: event.target.value });
+        },
         selectShareUrl() {
             this.$nextTick(() => {
                 if (this.$refs.shareUrlInput) {

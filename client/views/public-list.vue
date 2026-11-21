@@ -118,6 +118,11 @@
                     </option>
                 </select>
             </div>
+            <p v-if="list.destination" class="lpPublicListSummary lpPublicListDestination">
+                <icon name="map-pin" :size="14" />
+                <span class="lpInvisible">{{ $t('list.destination') }} :</span>
+                {{ list.destination }}
+            </p>
             <p v-if="list.summary || list.description" class="lpPublicListSummary">
                 <linkified-text :text="list.summary || list.description" />
             </p>
@@ -230,6 +235,7 @@
 import { FEEDBACK_MS } from '../services/timings';
 import { useRouter } from 'vue-router';
 import HreflangLinks from '../components/hreflang-links.vue';
+import Icon from '../components/icon.vue';
 import { fetchJson } from '../utils/utils';
 import { trackEvent } from '../utils/analytics';
 import { tierLabel } from '../services/tier-labels';
@@ -263,7 +269,7 @@ async function loadChart() {
 export default {
     name: 'PublicList',
     components: {
-        HreflangLinks, ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
+        HreflangLinks, Icon, ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
     },
     setup() {
         useTheme();

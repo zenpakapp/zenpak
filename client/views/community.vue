@@ -70,17 +70,39 @@
                 </button>
             </div>
 
-            <div class="lpCommunitySearch">
+            <div class="lpCommunitySearch lpCommunityDiscoverSearch">
                 <input
                     v-model="searchQuery"
-                    type="text"
+                    type="search"
                     class="lpCommunitySearchInput"
+                    :aria-label="$t('community.searchListsPlaceholder')"
                     :placeholder="$t('community.searchListsPlaceholder')"
                     @input="onSearchInput"
                 >
+                <button
+                    ref="discoverFiltersToggle"
+                    type="button"
+                    class="lpCommunityFilterToggle"
+                    :aria-expanded="showDiscoverFilters"
+                    aria-controls="discover-filters"
+                    @click="showDiscoverFilters = !showDiscoverFilters"
+                >
+                    {{ $t('community.filters') }}
+                    <span v-if="activeFilterCount" class="lpCommunityFilterCount">{{ activeFilterCount }}</span>
+                    <icon :name="showDiscoverFilters ? 'chevron-up' : 'chevron-down'" :size="14" />
+                </button>
             </div>
 
-            <div class="lpCommunityFilters">
+            <div v-show="showDiscoverFilters" id="discover-filters" class="lpCommunityFilters">
+                <input
+                    v-model="filterDestination"
+                    type="text"
+                    :maxlength="limits.destination"
+                    class="lpCommunityFilterInput"
+                    :aria-label="$t('list.destination')"
+                    :placeholder="$t('list.destination')"
+                    @input="onFilterInput"
+                >
                 <lp-select
                     :value="filterSeason"
                     :options="seasonOptions"
@@ -107,6 +129,7 @@
                     class="lpCommunityFilterInput"
                     :placeholder="$t('community.filterMinKgPlaceholder')"
                     :aria-label="$t('community.ariaMinWeight')"
+                    :title="$t('community.ariaMinWeight')"
                     @input="onFilterInput"
                 >
                 <input
@@ -117,9 +140,10 @@
                     class="lpCommunityFilterInput"
                     :placeholder="$t('community.filterMaxKgPlaceholder')"
                     :aria-label="$t('community.ariaMaxWeight')"
+                    :title="$t('community.ariaMaxWeight')"
                     @input="onFilterInput"
                 >
-                <button v-if="filtersActive" class="lpCommunityFilterReset" @click="resetDiscoverFilters">
+                <button v-if="activeFilterCount" type="button" class="lpCommunityFilterReset" @click="resetDiscoverFilters">
                     {{ $t('community.filterReset') }}
                 </button>
             </div>
@@ -131,24 +155,25 @@
                 {{ discoverError }}
             </p>
             <p v-else-if="discoverLists.length === 0" class="lpCommunityEmpty">
-                {{ $t('community.emptyDiscoverNone') }}
+                {{ $t(activeFilterCount || searchQuery.trim() ? 'community.emptyDiscoverFiltered' : 'community.emptyDiscoverNone') }}
             </p>
             <template v-else>
                 <div class="lpCommunityDiscoverLayout">
                     <section class="lpCommunityResults">
-                        <div v-if="featuredLists.length > 0" class="lpCommunityFeatured">
-                            <div class="lpCommunityFeaturedLabel">
+                        <div v-for="group in discoverGroups" :key="group.featured" :class="{ lpCommunityFeatured: group.featured }">
+                            <div v-if="group.featured" class="lpCommunityFeaturedLabel">
                                 {{ $t('community.featuredLabel') }}
                             </div>
                             <div
-                                v-for="list in featuredLists"
-                                :key="'f-' + list.externalId"
-                                class="lpCommunityCard lpCommunityCardFeatured"
+                                v-for="list in group.lists"
+                                :key="list.externalId"
+                                class="lpCommunityCard"
+                                :class="{ lpCommunityCardFeatured: group.featured }"
                                 style="cursor: pointer;"
                                 role="link"
                                 tabindex="0"
                                 @click="$router.push(communityListTo(list))"
-                                @keydown.enter="$router.push(communityListTo(list))"
+                                @keydown.enter.self="$router.push(communityListTo(list))"
                             >
                                 <div class="lpCommunityCardName">
                                     {{ list.name }}
@@ -166,53 +191,28 @@
                                     </router-link>
                                 </div>
                                 <div class="lpCommunityCardMeta">
-                                    <span class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
-                                    <span class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
-                                    <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ list.viewCount }} views</span>
-                                    <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
+                                    <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ $t('community.metaBase', { weight: formatWeight(list.totalBaseWeight) }) }}</span>
+                                    <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ $tc('community.metaItems', list.totalQty) }}</span>
+                                    <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaViews', list.viewCount) }}</span>
+                                    <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaCopies', list.copyCount) }}</span>
+                                    <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
                                 </div>
-                                <div v-if="listTags(list).length" class="lpCommunityTags">
-                                    <span v-for="tag in listTags(list)" :key="list.externalId + '-f-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
+                                <div v-if="list.destination || listTags(list).length" class="lpCommunityTags">
+                                    <button
+                                        v-if="list.destination"
+                                        type="button"
+                                        class="lpCommunityTag lpCommunityDestinationTag"
+                                        :aria-label="$t('community.filterByDestination', { destination: list.destination })"
+                                        @click.stop="filterByDestination(list.destination)"
+                                    >
+                                        <icon name="map-pin" :size="12" />
+                                        {{ list.destination }}
+                                    </button>
+                                    <span v-for="tag in listTags(list)" :key="list.externalId + '-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
                                 </div>
-                            </div>
-                        </div>
-                        <div
-                            v-for="list in nonFeaturedLists"
-                            :key="list.externalId"
-                            class="lpCommunityCard"
-                            style="cursor: pointer;"
-                            role="link"
-                            tabindex="0"
-                            @click="$router.push(communityListTo(list))"
-                            @keydown.enter="$router.push(communityListTo(list))"
-                        >
-                            <div class="lpCommunityCardName">
-                                {{ list.name }}
-                            </div>
-                            <div class="lpCommunityCardAuthor">
-                                <span class="lpInvisible">{{ $t('public.byAuthor') }}</span> <PersonAvatar :avatar-url="list.authorAvatarUrl" :display-name="list.authorDisplayName" :username="list.author" /> <router-link :to="communityProfileTo(list.author)" @click.stop>
-                                    {{ listAuthorName(list) }}
-                                </router-link>
-                                <span v-if="list.authorTier === 'guide'" class="lpCommunityBadge">{{ tierLabel('guide') }}</span>
-                                <span v-else-if="list.authorTier === 'trail'" class="lpCommunityBadge">{{ tierLabel('trail') }}</span>
-                            </div>
-                            <div v-if="listSourceName(list)" class="lpCommunityCardSource">
-                                {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>
-                                    {{ listSourceName(list) }}
-                                </router-link>
-                            </div>
-                            <div class="lpCommunityCardMeta">
-                                <span v-if="list.totalBaseWeight" class="lpCommunityCardMetaItem">{{ formatWeight(list.totalBaseWeight) }} base</span>
-                                <span v-if="list.totalQty" class="lpCommunityCardMetaItem">{{ list.totalQty }} items</span>
-                                <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ list.viewCount }} views</span>
-                                <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ list.copyCount }} copies</span>
-                                <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
-                            </div>
-                            <div v-if="listTags(list).length" class="lpCommunityTags">
-                                <span v-for="tag in listTags(list)" :key="list.externalId + '-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
-                            </div>
-                            <div v-if="$store.state.loggedIn" @click.stop>
-                                <report-button target-type="list" :target-id="list.externalId" />
+                                <div v-if="$store.state.loggedIn" @click.stop>
+                                    <report-button target-type="list" :target-id="list.externalId" />
+                                </div>
                             </div>
                         </div>
                         <button v-if="discoverHasMore" class="lpCommunityLoadMore" :disabled="discoverLoading" @click="discoverLoadMore">
@@ -242,7 +242,7 @@
                             <span v-if="listSourceName(list)" class="lpCommunityPopularSource">
                                 {{ $t('dash.source') }} <router-link :to="communityProfileTo(list.sourceOwnerUsername)" @click.stop>{{ listSourceName(list) }}</router-link>
                             </span>
-                            <span class="lpCommunityPopularMeta">{{ list.viewCount }} views · {{ formatWeight(list.totalBaseWeight) }} base</span>
+                            <span class="lpCommunityPopularMeta">{{ popularMeta(list) }}</span>
                         </div>
                     </aside>
                 </div>
@@ -314,14 +314,16 @@
 </template>
 
 <script>
-import { DEBOUNCE_MS } from '../services/timings';
 import { defineAsyncComponent } from 'vue';
+import { DEBOUNCE_MS } from '../services/timings';
 import { useDiscover } from '../composables/useDiscover';
 import { useFeed } from '../composables/useFeed';
 import { useTheme } from '../composables/useTheme';
+import { FIELD_LIMITS } from '../services/field-limits';
 import { fetchJson } from '../utils/utils';
 import { tierLabel } from '../services/tier-labels';
 import LpSelect from '../components/lp-select.vue';
+import Icon from '../components/icon.vue';
 import PersonAvatar from '../components/person-avatar.vue';
 import {
     LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions,
@@ -334,7 +336,7 @@ const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "com
 export default {
     name: 'CommunityView',
     components: {
-        CommunityModeration, CommunityPeople, reportButton, LpSelect, PersonAvatar,
+        CommunityModeration, CommunityPeople, reportButton, Icon, LpSelect, PersonAvatar,
     },
     setup() {
         useTheme();
@@ -395,9 +397,12 @@ export default {
             searchQuery: '',
             searchTimeout: null,
             filterTimeout: null,
+            limits: FIELD_LIMITS,
+            showDiscoverFilters: false,
             filterSeason: '',
             filterType: '',
             filterDuration: '',
+            filterDestination: '',
             filterMinWeight: '',
             filterMaxWeight: '',
             isModerator: false,
@@ -426,14 +431,15 @@ export default {
         canSeeFeed() {
             return Boolean(this.$store.state.loggedIn);
         },
-        featuredLists() {
-            return this.discoverLists.filter((l) => l.featured);
+        discoverGroups() {
+            return [true, false].map((featured) => ({
+                featured,
+                lists: this.discoverLists.filter((list) => Boolean(list.featured) === featured),
+            })).filter((group) => group.lists.length);
         },
-        nonFeaturedLists() {
-            return this.discoverLists.filter((l) => !l.featured);
-        },
-        filtersActive() {
-            return Boolean(this.filterSeason || this.filterType || this.filterDuration || this.filterMinWeight || this.filterMaxWeight);
+        activeFilterCount() {
+            return [this.filterSeason, this.filterType, this.filterDuration, this.filterDestination.trim(),
+                this.filterMinWeight !== '' || this.filterMaxWeight !== ''].filter(Boolean).length;
         },
     },
     created() {
@@ -468,14 +474,23 @@ export default {
                 season: this.filterSeason,
                 type: this.filterType,
                 duration: this.filterDuration,
+                destination: this.filterDestination,
                 minWeightKg: this.filterMinWeight,
                 maxWeightKg: this.filterMaxWeight,
             });
         },
+        filterByDestination(destination) {
+            clearTimeout(this.filterTimeout);
+            this.filterDestination = destination;
+            this.$refs.discoverFiltersToggle.focus();
+            this.applyDiscoverFilters();
+        },
         resetDiscoverFilters() {
+            clearTimeout(this.filterTimeout);
             this.filterSeason = '';
             this.filterType = '';
             this.filterDuration = '';
+            this.filterDestination = '';
             this.filterMinWeight = '';
             this.filterMaxWeight = '';
             this.applyDiscoverFilters();
@@ -503,6 +518,12 @@ export default {
             if (!list.sourceOwnerUsername || list.sourceOwnerUsername === list.author) return '';
             return list.sourceOwnerName || list.sourceOwnerUsername;
         },
+        popularMeta(list) {
+            return [
+                this.$tc('community.metaViews', list.viewCount || 0),
+                list.totalBaseWeight ? this.$t('community.metaBase', { weight: this.formatWeight(list.totalBaseWeight) }) : '',
+            ].filter(Boolean).join(' · ');
+        },
         formatWeight(mg) {
             if (!mg) return '';
             const kg = mg / 1000000;
@@ -522,12 +543,12 @@ export default {
         timeAgo(dateStr) {
             const diff = Date.now() - new Date(dateStr).getTime();
             const mins = Math.floor(diff / 60000);
-            if (mins < 1) return 'just now';
-            if (mins < 60) return `${mins}m ago`;
+            if (mins < 1) return this.$t('misc.timeJustNow');
+            if (mins < 60) return this.$t('misc.timeMinutesAgo', { count: mins });
             const hours = Math.floor(mins / 60);
-            if (hours < 24) return `${hours}h ago`;
+            if (hours < 24) return this.$t('misc.timeHoursAgo', { count: hours });
             const days = Math.floor(hours / 24);
-            if (days < 7) return `${days}d ago`;
+            if (days < 7) return this.$t('misc.timeDaysAgo', { count: days });
             return new Date(dateStr).toLocaleDateString();
         },
         async featureList(externalId) {

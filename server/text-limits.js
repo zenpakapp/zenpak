@@ -22,6 +22,10 @@ function clipDescription(value) {
     return collapseLineBreaks(value).slice(0, PUBLIC_DESCRIPTION_MAX_LENGTH);
 }
 
+function normalizeDestination(value) {
+    return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, 100).trimEnd() : '';
+}
+
 function normalizeTagArray(value) {
     if (!Array.isArray(value)) return [];
     return value
@@ -33,6 +37,7 @@ function normalizeTagArray(value) {
 module.exports = {
     PUBLIC_DESCRIPTION_MAX_LENGTH,
     normalizeTagArray,
+    normalizeDestination,
     collapseLineBreaks,
     clipDescription,
 };

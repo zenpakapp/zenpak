@@ -95,6 +95,7 @@
     "faq3A": "Sí. Exporta tu CSV desde lighterpack.com u otra herramienta de lista de equipo basada en hojas de cálculo, luego impórtala en ZenPak. Las listas, artículos, pesos y notas se transfieren limpiamente para que puedas migrar sin reconstruir todo a mano."
   },
   "list": {
+    "destination": "Lugar o ruta",
     "descriptionHelp": "Enlaces clicables (3 como máximo). ¿Un enlace que te remunera (afiliación, referido)? Indícalo.",
     "addCategory": "Añadir categoría",
     "categoriesToggle": "Categorías ({count})",
@@ -527,6 +528,13 @@
     "tabModeration": "Moderación",
     "sortRecent": "Recientes",
     "sortPopular": "Más visto",
+    "filters": "Filtros",
+    "filterByDestination": "Filtrar por {destination}",
+    "emptyDiscoverFiltered": "Ninguna lista coincide con tu búsqueda o tus filtros.",
+    "metaBase": "{weight} de base",
+    "metaItems": "{count} artículo | {count} artículos",
+    "metaViews": "{count} vista | {count} vistas",
+    "metaCopies": "{count} copia | {count} copias",
     "searchListsPlaceholder": "Buscar listas…",
     "filterSeasonAny": "Cualquier estación",
     "filterTypeAny": "Cualquier actividad",

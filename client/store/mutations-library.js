@@ -146,6 +146,10 @@ module.exports = {
         const list = state.library.getListById(updatedList.id);
         list.name = updatedList.name;
     },
+    updateListDestination(state, { id, destination }) {
+        const list = state.library.getListById(id);
+        if (list) list.destination = destination;
+    },
     updateListDescription(state, updatedList) {
         const list = state.library.getListById(updatedList.id);
         list.description = updatedList.description;
