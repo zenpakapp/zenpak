@@ -196,9 +196,6 @@
                                     <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaViews', list.viewCount) }}</span>
                                     <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaCopies', list.copyCount) }}</span>
                                     <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
-                                    <span v-if="$store.state.loggedIn" class="lpCommunityCardReport" @click.stop>
-                                        <report-button target-type="list" :target-id="list.externalId" />
-                                    </span>
                                 </div>
                                 <div v-if="list.destination || listTags(list).length" class="lpCommunityTags">
                                     <button
@@ -331,12 +328,11 @@ import {
 
 const CommunityModeration = defineAsyncComponent(() => import(/* webpackChunkName: "community-moderation" */ '../components/community-moderation.vue'));
 const CommunityPeople = defineAsyncComponent(() => import(/* webpackChunkName: "community-people" */ '../components/community-people.vue'));
-const reportButton = defineAsyncComponent(() => import(/* webpackChunkName: "community-report" */ '../components/report-button.vue'));
 
 export default {
     name: 'CommunityView',
     components: {
-        CommunityModeration, CommunityPeople, reportButton, Icon, LpSelect, PersonAvatar,
+        CommunityModeration, CommunityPeople, Icon, LpSelect, PersonAvatar,
     },
     setup() {
         useTheme();
