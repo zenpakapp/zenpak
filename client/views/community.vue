@@ -196,6 +196,9 @@
                                     <span v-if="list.viewCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaViews', list.viewCount) }}</span>
                                     <span v-if="list.copyCount" class="lpCommunityCardMetaItem">{{ $tc('community.metaCopies', list.copyCount) }}</span>
                                     <span v-if="list.updatedAt && new Date(list.updatedAt) > new Date('2020-01-01')" class="lpCommunityCardMetaItem">{{ timeAgo(list.updatedAt) }}</span>
+                                    <span v-if="$store.state.loggedIn" class="lpCommunityCardReport" @click.stop>
+                                        <report-button target-type="list" :target-id="list.externalId" />
+                                    </span>
                                 </div>
                                 <div v-if="list.destination || listTags(list).length" class="lpCommunityTags">
                                     <button
@@ -209,9 +212,6 @@
                                         {{ list.destination }}
                                     </button>
                                     <span v-for="tag in listTags(list)" :key="list.externalId + '-' + tag" class="lpCommunityTag">{{ formatTag(tag) }}</span>
-                                </div>
-                                <div v-if="$store.state.loggedIn" @click.stop>
-                                    <report-button target-type="list" :target-id="list.externalId" />
                                 </div>
                             </div>
                         </div>

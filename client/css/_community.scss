@@ -169,6 +169,18 @@
     gap: $space-12;
 }
 
+// "Report" sits at the end of the meta line, not on a line of its own. The padding of the button is
+// taken back so its text lines up with the right edge of the card, and its panel opens leftwards.
+.lpCommunityCardReport {
+    margin-left: auto;
+    margin-right: -$space-6;
+
+    .lpReportModal {
+        left: auto;
+        right: 0;
+    }
+}
+
 .lpCommunityCardMetaItem {
     align-items: center;
     display: flex;
