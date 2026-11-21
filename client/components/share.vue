@@ -90,7 +90,7 @@
 
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.embed') }}</div>
-                        <textarea v-select-on-focus class="shareTextarea" readonly>&lt;script src="{{ this.baseUrl }}/e/{{ this.externalId }}"&gt;&lt;/script&gt;&lt;div id="{{ this.externalId }}"&gt;&lt;/div&gt;</textarea>
+                        <textarea v-select-on-focus class="shareTextarea" readonly :value="embedCode" />
                     </div>
 
                     <hr class="shareDivider">
@@ -177,6 +177,10 @@ export default {
         },
         externalId() {
             return this.list.externalId || '';
+        },
+        embedCode() {
+            // The closing tag is split: written whole, it would end this script block.
+            return `<script src="${this.baseUrl}/e/${this.externalId}"></${'script'}><div id="${this.externalId}"></div>`;
         },
         baseUrl() {
             const location = window.location;
