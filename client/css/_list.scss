@@ -124,6 +124,7 @@ input.lpCategoryName { /* specificity */
     flex: 1 0 300px;
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
+    min-height: 24px;
     padding-bottom: 0;
 }
 
