@@ -531,6 +531,8 @@
     "filters": "Filter",
     "filterByDestination": "Nach {destination} filtern",
     "emptyDiscoverFiltered": "Keine Liste passt zu deiner Suche oder deinen Filtern.",
+    "discoverLoadError": "Die Listen konnten nicht geladen werden.",
+    "feedLoadError": "Der Feed konnte nicht geladen werden.",
     "metaBase": "{weight} Basisgewicht",
     "metaItems": "{count} Gegenstand | {count} Gegenstände",
     "metaViews": "{count} Aufruf | {count} Aufrufe",

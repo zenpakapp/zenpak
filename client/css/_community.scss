@@ -291,7 +291,19 @@
     a {
         color: $color-text-muted;
         font-size: $fontSize-sm;
+        position: relative;
         text-decoration: none;
+
+        // The link is 15px tall: an invisible area makes it 25px, 45px under a finger.
+        &::after {
+            content: "";
+            inset: -5px -2px;
+            position: absolute;
+
+            @media (pointer: coarse) {
+                inset: -15px -2px;
+            }
+        }
 
         &:hover { color: $color-text; }
     }
