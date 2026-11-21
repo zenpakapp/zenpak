@@ -1,5 +1,5 @@
-import { STORE_POLL_MS } from '../services/timings';
 import { createStore } from 'vuex';
+import { STORE_POLL_MS } from '../services/timings';
 import { notifyGlobalAlert, notifyUnauthorized } from '../services/app-events';
 import { getLocalLibrary, hasLocalLibrary, setLocalLibrary } from '../services/browser-storage';
 import { fetchJson } from '../utils/utils';
