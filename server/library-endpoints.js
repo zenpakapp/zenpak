@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const express = require('express');
+const config = require('config');
 
 const { logWithRequest } = require('./log.js');
 const { authenticateUser } = require('./auth.js');
@@ -8,7 +9,8 @@ const { syncUserPublicLists } = require('./public-list-projections.js');
 const db = require('./db.js');
 const { clipDescription, normalizeDestination } = require('./text-limits.js');
 const { pinServerOwnedFields } = require('./library-server-fields.js');
-const { isPublicVisibility } = require('../client/services/public-visibility.js');
+const { isPublicVisibility, allowsSearchIndexing } = require('../client/services/public-visibility.js');
+const { canListForSearch, indexingDelayDays } = require('./account-age.js');
 
 const router = express.Router();
 
@@ -67,6 +69,25 @@ function saveLibrary(req, res, user) {
         ));
         if (escalatesVisibility) {
             return res.status(403).json({ errors: [{ message: 'Please verify your email before making lists public.' }] });
+        }
+    }
+
+    // A new account cannot yet list a list for search engines: see server/account-age.js.
+    if (library && library.lists) {
+        const storedBeforeMap = {};
+        oldLists.forEach((l) => { storedBeforeMap[l.id] = l.visibility; });
+        const opensSearchListing = library.lists.some((l) => (
+            allowsSearchIndexing(l.visibility) && !allowsSearchIndexing(storedBeforeMap[l.id])
+        ));
+        const delayDays = indexingDelayDays(process.env.INDEXING_DELAY_DAYS
+            || (config.has('indexingDelayDays') ? config.get('indexingDelayDays') : undefined));
+        if (opensSearchListing && !canListForSearch(user, { delayDays })) {
+            return res.status(403).json({
+                errors: [{ message: `Search engine listing opens ${delayDays} days after sign-up.` }],
+                code: 'account-too-new',
+                days: delayDays,
+                limit: delayDays,
+            });
         }
     }
 

@@ -211,6 +211,7 @@
     "unlisted": "No listado",
     "public": "Público",
     "publicSearch": "Público + Motores de búsqueda",
+    "searchListingLater": "La indexación en buscadores se abre {days} días después del registro. Tu lista sigue siendo pública en la comunidad.",
     "communityTags": "Etiquetas de comunidad",
     "tagGroupSeason": "Estación",
     "tagGroupGearLevel": "Nivel de equipo",

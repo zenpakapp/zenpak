@@ -211,6 +211,7 @@
     "unlisted": "Nicht gelistet",
     "public": "Öffentlich",
     "publicSearch": "Öffentlich + Suchmaschinen",
+    "searchListingLater": "Die Aufnahme in Suchmaschinen ist {days} Tage nach der Anmeldung möglich. Deine Liste bleibt in der Community öffentlich.",
     "communityTags": "Community-Tags",
     "tagGroupSeason": "Jahreszeit",
     "tagGroupGearLevel": "Ausrüstungsstufe",

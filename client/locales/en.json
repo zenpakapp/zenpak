@@ -211,6 +211,7 @@
     "unlisted": "Unlisted",
     "public": "Public",
     "publicSearch": "Public + Search engines",
+    "searchListingLater": "Search engine listing opens {days} days after sign-up. Your list stays public in the community.",
     "communityTags": "Community tags",
     "tagGroupSeason": "Season",
     "tagGroupGearLevel": "Gear level",
