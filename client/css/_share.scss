@@ -375,6 +375,32 @@
     text-transform: uppercase;
 }
 
+// A folded block of the share dialog: the summary looks like a section label, with a marker.
+.shareDetails {
+    summary {
+        color: $color-text-muted;
+        cursor: pointer;
+        font-size: $fontSize-xs;
+        font-weight: $fontWeight-bold;
+        letter-spacing: $letterSpacing-caps;
+        padding: $space-4 0;
+        text-transform: uppercase;
+
+        &:focus-visible {
+            outline: 2px solid $color-accent;
+            outline-offset: 2px;
+        }
+    }
+
+    &[open] > summary {
+        margin-bottom: $space-6;
+    }
+}
+
+.shareDetailsCount {
+    color: $color-accent-text;
+}
+
 .shareInput {
     appearance: none;
     background: $color-bg;
