@@ -14,6 +14,8 @@ test("the community tags are grouped by season, gear level, duration and activit
   await registerUser(page, username, "testtest", `sg+${now}@lighterpack.com`);
   await verifyUserEmail(username);
   await page.getByText("Share", { exact: true }).click();
+  // The groups are folded under "Community tags": open them first.
+  await page.locator(".shareDetails summary", { hasText: "Community tags" }).click();
 
   const groups = page.locator(".shareTagGroupBlock");
   await expect(groups).toHaveCount(4, { timeout: 20000 });

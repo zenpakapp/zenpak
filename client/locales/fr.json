@@ -213,6 +213,7 @@
     "publicSearch": "Public + Moteurs de recherche",
     "searchListingLater": "Le référencement par les moteurs de recherche s’ouvre {days} jours après l’inscription. Votre liste reste publique dans la communauté.",
     "communityTags": "Tags communautaires",
+    "tagsHelp": "Les tags aident les autres à retrouver votre liste dans la communauté.",
     "tagGroupSeason": "Saison",
     "tagGroupGearLevel": "Niveau d'équipement",
     "tagGroupDuration": "Durée",

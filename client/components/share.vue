@@ -50,26 +50,29 @@
                     </div>
 
                     <div class="shareSection">
-                        <div class="shareLabel">{{ $t('share.communityTags') }}</div>
-                        <label for="shareDestination" class="shareTagGroupLabel">{{ $t('list.destination') }}</label>
+                        <label for="shareDestination" class="shareLabel">{{ $t('list.destination') }}</label>
                         <input id="shareDestination" type="text" class="shareInput" :value="list.destination" :maxlength="limits.destination" @input="updateListDestination">
-                        <div v-for="group in tagGroups" :key="group.key" class="shareTagGroupBlock">
-                            <div class="shareTagGroupLabel">{{ group.label }}</div>
-                            <div class="shareTagGroup" :aria-label="group.label">
-                                <label v-for="option in group.options" :key="option.value" class="shareTagCheckbox">
-                                    <input
-                                        type="checkbox"
-                                        :checked="group.selected.includes(option.value)"
-                                        @change="toggleDiscoveryTag(group.field, option.value, $event.target.checked)"
-                                    >
-                                    {{ option.label }}
-                                </label>
+                        <details class="shareDetails" :open="tagsOpen" @toggle="onTagsToggle">
+                            <summary>{{ $t('share.communityTags') }}<span v-if="selectedTagCount" class="shareDetailsCount"> ({{ selectedTagCount }})</span></summary>
+                            <p v-if="isListedPublicly && !selectedTagCount" class="shareVisibilityHint">{{ $t('share.tagsHelp') }}</p>
+                            <div v-for="group in tagGroups" :key="group.key" class="shareTagGroupBlock">
+                                <div class="shareTagGroupLabel">{{ group.label }}</div>
+                                <div class="shareTagGroup" :aria-label="group.label">
+                                    <label v-for="option in group.options" :key="option.value" class="shareTagCheckbox">
+                                        <input
+                                            type="checkbox"
+                                            :checked="group.selected.includes(option.value)"
+                                            @change="toggleDiscoveryTag(group.field, option.value, $event.target.checked)"
+                                        >
+                                        {{ option.label }}
+                                    </label>
+                                </div>
                             </div>
-                        </div>
+                        </details>
                     </div>
 
-                    <div class="shareSection">
-                        <div class="shareLabel">{{ $t('share.sharedView') }}</div>
+                    <details class="shareSection shareDetails">
+                        <summary>{{ $t('share.sharedView') }}</summary>
                         <label class="shareCheckbox">
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.price" @change="setPublicField('price', $event.target.checked)">
                             {{ $t('share.showPrices') }}
@@ -86,12 +89,12 @@
                             <input type="checkbox" :checked="list.publicFields && list.publicFields.downloadable" @change="setPublicField('downloadable', $event.target.checked)">
                             {{ $t('share.allowCsvDownload') }}
                         </label>
-                    </div>
+                    </details>
 
-                    <div class="shareSection">
-                        <div class="shareLabel">{{ $t('share.embed') }}</div>
+                    <details class="shareSection shareDetails">
+                        <summary>{{ $t('share.embed') }}</summary>
                         <textarea v-select-on-focus class="shareTextarea" readonly :value="embedCode" />
-                    </div>
+                    </details>
 
                     <hr class="shareDivider">
 
@@ -134,6 +137,7 @@ export default {
             publishNote: '',
             publishing: false,
             statusTimer: null,
+            tagsExpanded: null,
         };
     },
     computed: {
@@ -156,6 +160,18 @@ export default {
                     key: 'activity', field: 'listTypes', label: this.$t('share.tagGroupActivity'), options: toI18nOptions(LIST_TYPE_VALUES, (key) => this.$t(key)), selected: this.selectedListTypes,
                 },
             ];
+        },
+        // The tags only matter for a list that Discover can show: open for those, folded for the rest.
+        // Once the member opens or closes the block, that choice stands until the visibility changes.
+        isListedPublicly() {
+            return ['discoverable', 'indexable'].includes(this.list && this.list.visibility);
+        },
+        tagsOpen() {
+            return this.tagsExpanded === null ? this.isListedPublicly : this.tagsExpanded;
+        },
+        // Shown next to the folded tag groups, so a closed block still says what it holds.
+        selectedTagCount() {
+            return this.tagGroups.reduce((total, group) => total + group.selected.length, 0);
         },
         visibilityHint() {
             const hints = {
@@ -228,7 +244,7 @@ export default {
     watch: {
         '$store.state.syncToken': 'scheduleStatusRefresh',
         'list.externalId': 'scheduleStatusRefresh',
-        'list.visibility': 'scheduleStatusRefresh',
+        'list.visibility': ['scheduleStatusRefresh', 'resetTagsChoice'],
     },
     mounted() {
         this.refreshPublishStatus();
@@ -237,6 +253,14 @@ export default {
         clearTimeout(this.statusTimer);
     },
     methods: {
+        // A new visibility sets the block again by the rule (open when the list is public).
+        resetTagsChoice() {
+            this.tagsExpanded = null;
+        },
+        onTagsToggle(event) {
+            // Vue opening the block fires this too: only a change the member made is kept.
+            if (event.target.open !== this.tagsOpen) this.tagsExpanded = event.target.open;
+        },
         updateListDestination(event) {
             this.$store.commit('updateListDestination', { id: this.list.id, destination: event.target.value });
         },

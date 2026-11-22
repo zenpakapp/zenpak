@@ -213,6 +213,7 @@
     "publicSearch": "Öffentlich + Suchmaschinen",
     "searchListingLater": "Die Aufnahme in Suchmaschinen ist {days} Tage nach der Anmeldung möglich. Deine Liste bleibt in der Community öffentlich.",
     "communityTags": "Community-Tags",
+    "tagsHelp": "Tags helfen anderen, deine Liste in der Community zu finden.",
     "tagGroupSeason": "Jahreszeit",
     "tagGroupGearLevel": "Ausrüstungsstufe",
     "tagGroupDuration": "Dauer",
