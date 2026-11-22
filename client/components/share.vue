@@ -258,6 +258,7 @@ export default {
             });
         },
         setVisibility(visibility) {
+            const previous = { visibility: this.list.visibility, allowSearchIndexing: this.list.allowSearchIndexing };
             this.$store.commit('updateListVisibility', {
                 listId: this.list.id,
                 visibility,
@@ -266,6 +267,12 @@ export default {
             return this.saveShareState()
                 .then(() => this.ensurePublished())
                 .catch((err) => {
+                    if (err && err.code === 'account-too-new') {
+                        // The server refused the listing: the list goes back to what it was.
+                        this.$store.commit('updateListVisibility', { listId: this.list.id, ...previous });
+                        showGlobalAlert(this.$t('share.searchListingLater', { days: err.limit || 7 }));
+                        return;
+                    }
                     showGlobalAlert((err && err.message) || this.$t('share.errorSavingSettingsDetail'));
                 });
         },
