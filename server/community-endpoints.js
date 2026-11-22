@@ -31,6 +31,11 @@ const {
 const COPY_RATE_LIMIT = 5;
 const copyLimiter = createRateLimiter({ limit: COPY_RATE_LIMIT, windowMs: 60 * 60 * 1000 });
 
+// A member follows a few dozen accounts an hour, not thousands: following is also how one reaches
+// someone's notifications, so a script looping over accounts would alert them all.
+const FOLLOW_RATE_LIMIT = 60;
+const followLimiter = createRateLimiter({ limit: FOLLOW_RATE_LIMIT, windowMs: 60 * 60 * 1000 });
+
 function parseNumberParam(value) {
     if (typeof value === 'undefined' || value === null || value === '') return null;
     const number = Number(value);
@@ -95,6 +100,16 @@ router.post('/follow/:username', (req, res) => {
         }
 
         const mode = req.body && req.body.mode === 'new-only' ? 'new-only' : 'all';
+
+        const rate = followLimiter.check(String(user._id));
+        if (rate.limited) {
+            res.set('Retry-After', String(rate.retryAfterMinutes * 60));
+            return res.status(429).json({
+                message: 'Too many follows',
+                retryAfterMinutes: rate.retryAfterMinutes,
+                limit: FOLLOW_RATE_LIMIT,
+            });
+        }
 
         const target = await db.users.findOne({ username: targetUsername });
         // A banned account cannot be followed: it does not exist for the community.
