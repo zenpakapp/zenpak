@@ -80,4 +80,16 @@ const fallback = buildCopyPayload({ version: version({}, { name: '' }), owner: {
 assert.strictEqual(fallback.listName, 'My list', 'falls back to the owner\'s list name');
 assert.strictEqual(fallback.forkedFrom.ownerName, 'owner', 'falls back to the username');
 
+// Only pictures of this ZenPak's Cloudinary account are copied: another address could be a tracker.
+const ownPicture = 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg';
+const withPictures = version({});
+withPictures.library.items[0].imageUrl = ownPicture;
+withPictures.library.items[1].imageUrl = 'https://tracker.example/pixel.gif';
+const pictures = buildCopyPayload({ version: withPictures, owner, sourceList: list(), now, cloudName: 'testcloud' });
+const copiedPictures = pictures.categories[0].categoryItems.map((item) => item.imageUrl);
+assert.strictEqual(copiedPictures[0], ownPicture, 'a picture of this account is copied');
+assert.strictEqual(copiedPictures[1], '', 'a picture hosted elsewhere is not copied');
+const noAccount = buildCopyPayload({ version: withPictures, owner, sourceList: list(), now });
+assert.ok(noAccount.categories[0].categoryItems.every((item) => item.imageUrl === ''), 'with no account set up, no picture is copied');
+
 console.log('unit-copy-list-rules: ok');

@@ -6,6 +6,9 @@
 
 'use strict';
 
+// The public pages show only pictures of this account.
+process.env.NODE_CONFIG = JSON.stringify({ cloudinaryCloudName: 'testcloud' });
+
 const assert = require('assert');
 
 let fields = {};
@@ -35,7 +38,7 @@ function fixtureUser() {
                 weight: 900000,
                 price: 4321,
                 url: 'https://shop.example/tent',
-                imageUrl: 'https://img.example/tent.jpg',
+                imageUrl: 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg',
                 brand: 'Acme',
             }],
         },
@@ -124,14 +127,14 @@ function tentRow(body) {
     fields = { downloadable: true, images: true };
     publish();
     row = tentRow(await exportCsv({}));
-    assert.strictEqual(row.image, 'https://img.example/tent.jpg');
+    assert.strictEqual(row.image, 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg');
     assert.strictEqual(row.url, '');
 
     fields = { downloadable: true, price: true, links: true, images: true };
     publish();
     row = tentRow(await exportCsv({}));
     assert.deepStrictEqual(row, {
-        url: 'https://shop.example/tent', price: '4321', brand: 'Acme', image: 'https://img.example/tent.jpg',
+        url: 'https://shop.example/tent', price: '4321', brand: 'Acme', image: 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg',
     }, 'everything allowed: the full file');
 
     // The owner keeps a complete file, whatever the share settings say.
@@ -139,7 +142,7 @@ function tentRow(body) {
     publish();
     row = tentRow(await exportCsv({ lp: 'owner-token' }));
     assert.deepStrictEqual(row, {
-        url: 'https://shop.example/tent', price: '4321', brand: 'Acme', image: 'https://img.example/tent.jpg',
+        url: 'https://shop.example/tent', price: '4321', brand: 'Acme', image: 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg',
     }, 'the owner gets their complete list');
 
     console.log('unit-csv-public-fields OK');

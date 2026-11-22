@@ -1,6 +1,7 @@
 // server/community-endpoints.js
 const express = require('express');
 const { ObjectId } = require('mongodb');
+const config = require('config');
 
 const router = express.Router();
 const db = require('./db.js');
@@ -366,7 +367,9 @@ router.post('/copy-list/:externalId', (req, res) => {
             }
 
             // The published list data (categories + items) for client-side dedup import
-            const payload = buildCopyPayload({ version, owner, sourceList });
+            const payload = buildCopyPayload({
+                version, owner, sourceList, cloudName: config.has('cloudinaryCloudName') ? config.get('cloudinaryCloudName') : '',
+            });
             // Registered on every copy (not just the first), so a later copy of a newer
             // version can be tracked too. The client cannot vouch for forkedFrom.version.
             await recordCopy(user._id, sourceList.externalId, version.version);

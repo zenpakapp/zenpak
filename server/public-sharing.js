@@ -1,12 +1,19 @@
+const config = require('config');
 const {
     isPublicVisibility,
     allowsSearchIndexing,
 } = require('../client/services/public-visibility.js');
 const { normalizeTier } = require('./tier-policy.js');
+const { publicImageUrl } = require('./public-image-url.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 const { clipDescription, normalizeDestination } = require('./text-limits.js');
 const { itemMatchesShop, promoLinkUrl, ruleHostname } = require('../client/utils/promo-link.js');
+
+// The pictures of this ZenPak are kept in one Cloudinary account (empty when none is set up).
+function cloudinaryCloudName() {
+    return config.has('cloudinaryCloudName') ? String(config.get('cloudinaryCloudName') || '') : '';
+}
 
 function getLibrary(user) {
     if (!user || !user.library) {
@@ -202,7 +209,7 @@ function sanitizeCategoryItem(library, categoryItem, creator, options = {}) {
         authorUnit: item.authorUnit || library.itemUnit || '',
         price: includePrice ? Number(item.price) || 0 : 0,
         image: includeImages ? item.image || '' : '',
-        imageUrl: includeImages ? item.imageUrl || '' : '',
+        imageUrl: includeImages ? publicImageUrl(item.imageUrl, cloudinaryCloudName()) : '',
         shop: item.shop || '',
         brand: item.brand || '',
         tags: Array.isArray(item.tags) ? item.tags.slice() : [],

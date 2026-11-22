@@ -2,6 +2,7 @@
 // Pure functions: they read objects the route already loaded and write nothing.
 
 const { normalizeTagArray } = require('./text-limits.js');
+const { publicImageUrl } = require('./public-image-url.js');
 
 function normalizeCopiedQuantity(value) {
     const quantity = Number(value);
@@ -31,7 +32,11 @@ function canCopy({ owner, sourceList, user }) {
 
 // What the copier receives: the published List (categories and Items) and where it comes from.
 // The price is only given when the author shares it.
-function buildCopyPayload({ version, owner, sourceList, now = new Date() }) {
+// `cloudName` is the Cloudinary account of this ZenPak: a picture hosted anywhere else is not copied,
+// so a list cannot slip a tracking address into the library of whoever copies it.
+function buildCopyPayload({
+    version, owner, sourceList, now = new Date(), cloudName = '',
+}) {
     const published = version.library;
     const publishedList = (published.lists || [])[0] || {};
     const sharesPrice = Boolean(publishedList.publicFields && publishedList.publicFields.price);
@@ -58,7 +63,7 @@ function buildCopyPayload({ version, owner, sourceList, now = new Date() }) {
                     affiliateUrl: item.affiliateUrl || '',
                     promoCode: item.promoCode || '',
                     promoLabel: item.promoLabel || '',
-                    imageUrl: item.imageUrl || '',
+                    imageUrl: publicImageUrl(item.imageUrl, cloudName),
                     qty: normalizeCopiedQuantity(ci.qty),
                     worn: ci.worn || 0,
                     consumable: ci.consumable === true,

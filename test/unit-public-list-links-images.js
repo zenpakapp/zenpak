@@ -6,10 +6,13 @@
 
 'use strict';
 
+// The public pages show only pictures of this account.
+process.env.NODE_CONFIG = JSON.stringify({ cloudinaryCloudName: 'testcloud' });
+
 const assert = require('assert');
 const { buildPublicList } = require('../server/public-sharing.js');
 
-function served(publicFields) {
+function served(publicFields, imageUrl = 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg') {
     return {
         library: {
             itemUnit: 'g',
@@ -25,14 +28,14 @@ function served(publicFields) {
                 price: 300,
                 url: 'https://shop.example/tent',
                 image: 'abc',
-                imageUrl: 'https://img.example/tent.jpg',
+                imageUrl,
             }],
         },
     };
 }
 
-function firstItem(publicFields) {
-    const payload = buildPublicList(served(publicFields), 'abc123');
+function firstItem(publicFields, imageUrl) {
+    const payload = buildPublicList(served(publicFields, imageUrl), 'abc123');
     return payload.categories[0].items[0];
 }
 
@@ -48,14 +51,20 @@ assert.strictEqual(item.publicUrl, 'https://shop.example/tent');
 assert.strictEqual(item.imageUrl, '');
 
 item = firstItem({ images: true });
-assert.strictEqual(item.imageUrl, 'https://img.example/tent.jpg');
+assert.strictEqual(item.imageUrl, 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg');
 assert.strictEqual(item.image, 'abc');
 assert.strictEqual(item.publicUrl, '');
 
 item = firstItem({ price: true, links: true, images: true });
 assert.strictEqual(item.publicUrl, 'https://shop.example/tent');
-assert.strictEqual(item.imageUrl, 'https://img.example/tent.jpg');
+assert.strictEqual(item.imageUrl, 'https://res.cloudinary.com/testcloud/image/upload/tent.jpg');
 assert.strictEqual(item.price, 300);
+
+// An address on another host is not shown to the public, even with images on.
+item = firstItem({ images: true }, 'https://tracker.example/pixel.gif');
+assert.strictEqual(item.imageUrl, '', 'a picture hosted elsewhere is not served');
+item = firstItem({ images: true }, 'https://res.cloudinary.com/other/image/upload/tent.jpg');
+assert.strictEqual(item.imageUrl, '', 'a picture of another Cloudinary account is not served');
 
 console.log('unit-public-list-links-images OK');
 process.exit(0);
