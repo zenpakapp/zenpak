@@ -551,7 +551,7 @@ export default {
         applySuggestion(item) {
             this.editName = item.name || '';
             if (!this.editBrand && item.brand) this.editBrand = item.brand;
-            if (!this.editCategory && GEAR_CATEGORIES.includes(item.category)) this.editCategory = item.category;
+            if (!this.editCategory && GEAR_CATEGORY_IDS.includes(item.category)) this.editCategory = item.category;
             if (!this.editDescription && item.description) this.editDescription = item.description;
             if (!this.editUrl && item.url) this.editUrl = item.url;
             if (!this.editImageUrl && item.imageUrl) this.editImageUrl = item.imageUrl;
