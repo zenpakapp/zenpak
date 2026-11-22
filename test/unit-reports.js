@@ -58,7 +58,7 @@ const dbStub = {
             ) || null);
         },
         findMany(query) {
-            return Promise.resolve(reportsStore.filter(r => r.status === query.status));
+            return Promise.resolve(reportsStore.filter(r => Object.keys(query).every(key => r[key] === query[key])));
         },
         save(doc) {
             savedDoc = doc;
@@ -441,6 +441,60 @@ async function run() {
         assert('GET / has no author for a list that is no longer published', byTarget('ghost').targetOwnerUsername === null);
         assert('GET / leaves a user report as it is', !('targetOwnerUsername' in byTarget('owner3')));
         assert('GET / does not alter the stored report', !('targetOwnerUsername' in reportsStore[0]));
+    }
+
+    // --- A report keeps what was reported, what was done about it and by whom ---
+    {
+        usersStore.length = 0;
+        const owner = buildOwnerUser({ username: 'owner9', externalId: 'trace1' });
+        owner.library.lists.find(l => l.externalId === 'trace1').description = 'Buy pills at pills.example';
+        usersStore.push(owner);
+        await publishVersion(owner, 'trace1', '');
+
+        // The target as it was when reported (the text is edited afterwards).
+        reportsStore = [];
+        savedDoc = null;
+        await new Promise(resolve => {
+            postRoute.route.stack[0].handle({ body: { targetType: 'list', targetId: 'trace1', reason: 'spam' } }, makeRes(resolve), () => {});
+        });
+        const reported = reportsStore.find(r => r.targetId === 'trace1');
+        assert('a list report keeps the text that was reported', reported && reported.targetSnapshot.description === 'Buy pills at pills.example');
+        assert('a list report keeps the author', reported.targetSnapshot.ownerUsername === 'owner9');
+        owner.library.lists.find(l => l.externalId === 'trace1').description = 'Edited afterwards';
+        assert('the copy does not follow later edits', reported.targetSnapshot.description === 'Buy pills at pills.example');
+
+        // An account report keeps the public profile text.
+        reportsStore = [];
+        await new Promise(resolve => {
+            postRoute.route.stack[0].handle({ body: { targetType: 'user', targetId: 'owner9', reason: 'spam' } }, makeRes(resolve), () => {});
+        });
+        const userReport = reportsStore.find(r => r.targetId === 'owner9');
+        assert('an account report keeps the public profile', userReport.targetSnapshot.username === 'owner9' && userReport.targetSnapshot.displayName === 'Alice A');
+        assert('a snapshot has no private field', !('email' in userReport.targetSnapshot) && !('library' in userReport.targetSnapshot));
+
+        // Unpublishing records the action on the pending reports of that list, then closing keeps it.
+        reportsStore = [{ ...existingReport, _id: new ObjectId(), targetType: 'list', targetId: 'trace1', status: 'pending' }];
+        await new Promise(resolve => {
+            unpublishRoute.route.stack[0].handle({ params: { externalId: 'trace1' } }, makeRes(resolve), () => {});
+        });
+        assert('unpublishing records the action and the moderator', reportsStore[0].action === 'unpublished' && reportsStore[0].actionBy === 'mod');
+        await new Promise(resolve => {
+            patchRoute.route.stack[0].handle({ params: { id: reportsStore[0]._id.toString() }, body: { status: 'resolved', note: '  clear spam  ' } }, makeRes(resolve), () => {});
+        });
+        assert('closing keeps who closed it and what was done', reportsStore[0].resolvedBy === 'mod' && reportsStore[0].resolution === 'unpublished');
+        assert('closing keeps a short note', reportsStore[0].resolutionNote === 'clear spam');
+
+        // Closing with no action recorded says so, and a dismissal is its own outcome.
+        reportsStore = [{ ...existingReport, _id: new ObjectId(), status: 'pending' }];
+        await new Promise(resolve => {
+            patchRoute.route.stack[0].handle({ params: { id: reportsStore[0]._id.toString() }, body: { status: 'resolved' } }, makeRes(resolve), () => {});
+        });
+        assert('a close with no recorded action is "none"', reportsStore[0].resolution === 'none');
+        reportsStore = [{ ...existingReport, _id: new ObjectId(), status: 'pending' }];
+        await new Promise(resolve => {
+            patchRoute.route.stack[0].handle({ params: { id: reportsStore[0]._id.toString() }, body: { status: 'dismissed' } }, makeRes(resolve), () => {});
+        });
+        assert('a dismissal is "dismissed"', reportsStore[0].resolution === 'dismissed' && reportsStore[0].resolvedBy === 'mod');
     }
 
     // --- POST / : a member cannot flood the queue ---

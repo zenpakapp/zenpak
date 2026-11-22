@@ -31,6 +31,58 @@ async function saveOwnerLibrary(owner) {
     return Boolean(result && result.matchedCount);
 }
 
+// What the public could read of a target when it was reported, kept on the report. A list is edited
+// afterwards, so without this copy a later review (by a moderator or a model) would judge the new
+// text, not the one that was reported. Public fields only, each cut short.
+const SNAPSHOT_FIELD_MAX = 500;
+function clipField(value) {
+    return typeof value === 'string' ? value.slice(0, SNAPSHOT_FIELD_MAX) : '';
+}
+
+function buildTargetSnapshot(targetType, target, targetId) {
+    if (targetType === 'list') {
+        const list = ((target.library && target.library.lists) || []).find((l) => l.externalId === targetId) || {};
+        return {
+            ownerUsername: target.username,
+            name: clipField(list.name),
+            summary: clipField(list.summary),
+            description: clipField(list.description),
+            destination: clipField(list.destination),
+        };
+    }
+    const profile = (target.library && target.library.publicProfile) || {};
+    return {
+        username: target.username,
+        displayName: clipField(profile.displayName),
+        bio: clipField(profile.bio),
+    };
+}
+
+// The decision taken on the pending reports of a target, kept on each of them: what was done
+// ('unpublished', 'banned') and by whom. A later close adds 'dismissed' or 'none' when no action was
+// recorded. This is the labelled history a future triage could learn from.
+async function recordAction(targetType, targetId, action, moderator) {
+    try {
+        const pending = await db.reports.findMany({ status: 'pending', targetType, targetId });
+        const actionAt = new Date();
+        await Promise.all(pending.map((report) => db.reports.save({
+            ...report, action, actionBy: moderator && moderator.username, actionAt,
+        })));
+    } catch (err) {
+        // The decision itself is already made: keeping its trace must never undo it.
+    }
+}
+
+const NOTE_MAX_LENGTH = 200;
+function resolutionOf(report, status, moderator, note) {
+    return {
+        resolvedAt: new Date(),
+        resolvedBy: moderator && moderator.username,
+        resolution: report.action || (status === 'dismissed' ? 'dismissed' : 'none'),
+        ...(typeof note === 'string' && note.trim() ? { resolutionNote: note.trim().slice(0, NOTE_MAX_LENGTH) } : {}),
+    };
+}
+
 function refuseConflict(res) {
     return res.status(409).json({ message: 'The list changed while you were acting on it. Try again.', code: 'conflict' });
 }
@@ -116,6 +168,7 @@ router.post('/', (req, res) => {
                 targetType,
                 targetId: String(targetId),
                 reason,
+                targetSnapshot: buildTargetSnapshot(targetType, target, String(targetId)),
                 // A report counts fully when it comes from a verified e-mail and an account that is not
                 // new: a throw-away account can still report, but it does not move the queue.
                 reporterTrusted: Boolean(user.emailVerified) && canListForSearch(user, { delayDays: configuredDelayDays() }),
@@ -158,8 +211,10 @@ router.get('/', (req, res) => {
 // PATCH /api/reports/target — résoudre tous les signalements en attente d'une cible (modérateurs uniquement)
 // Declared before /:id so that "target" is not read as a report id.
 router.patch('/target', (req, res) => {
-    auth.authenticateModerator(req, res, async (req, res) => {
-        const { targetType, targetId, status } = req.body || {};
+    auth.authenticateModerator(req, res, async (req, res, moderator) => {
+        const {
+            targetType, targetId, status, note,
+        } = req.body || {};
         if (!['resolved', 'dismissed'].includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });
         }
@@ -171,8 +226,9 @@ router.patch('/target', (req, res) => {
         }
         try {
             const reports = await db.reports.findMany({ status: 'pending', targetType, targetId });
-            const resolvedAt = new Date();
-            await Promise.all(reports.map((report) => db.reports.save({ ...report, status, resolvedAt })));
+            await Promise.all(reports.map((report) => db.reports.save({
+                ...report, status, ...resolutionOf(report, status, moderator, note),
+            })));
             return res.json({ ok: true, updated: reports.length });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -182,17 +238,15 @@ router.patch('/target', (req, res) => {
 
 // PATCH /api/reports/:id — résoudre un signalement (modérateurs uniquement)
 router.patch('/:id', (req, res) => {
-    auth.authenticateModerator(req, res, async (req, res) => {
-        const { status } = req.body || {};
+    auth.authenticateModerator(req, res, async (req, res, moderator) => {
+        const { status, note } = req.body || {};
         if (!['resolved', 'dismissed'].includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });
         }
         try {
             const report = await db.reports.findOne({ _id: new ObjectId(req.params.id) });
             if (!report) return res.status(404).json({ message: 'Not found' });
-            report.status = status;
-            report.resolvedAt = new Date();
-            await db.reports.save(report);
+            await db.reports.save({ ...report, status, ...resolutionOf(report, status, moderator, note) });
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -204,7 +258,7 @@ router.patch('/:id', (req, res) => {
 // A ban ends the session, takes the account's lists out of Discover and search, and stops its
 // public pages and sign-in. Nothing is deleted: a ban can be lifted. A moderator cannot be banned.
 router.post('/ban/:username', (req, res) => {
-    auth.authenticateModerator(req, res, async (req, res) => {
+    auth.authenticateModerator(req, res, async (req, res, moderator) => {
         const username = String(req.params.username || '').toLowerCase().trim();
         try {
             const user = await db.users.findOne({ username });
@@ -219,6 +273,7 @@ router.post('/ban/:username', (req, res) => {
             await db.users.updateOne({ _id: user._id }, { $set: { banned: true }, $unset: { token: '' } });
             syncUserPublicLists(user).catch(() => {});
             if (!wasBanned) noticeAccountBanned(user).catch(() => {});
+            await recordAction('user', username, 'banned', moderator);
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
@@ -266,7 +321,7 @@ router.post('/feature/:externalId', (req, res) => {
 
 // POST /api/reports/unpublish/:externalId — dépublier une liste (modérateurs uniquement)
 router.post('/unpublish/:externalId', (req, res) => {
-    auth.authenticateModerator(req, res, async (req, res) => {
+    auth.authenticateModerator(req, res, async (req, res, moderator) => {
         const externalId = String(req.params.externalId || '').trim();
         try {
             const owner = await getPublishedOwner(externalId);
@@ -280,6 +335,7 @@ router.post('/unpublish/:externalId', (req, res) => {
             if (!await saveOwnerLibrary(owner)) return refuseConflict(res);
             syncUserPublicLists(owner).catch(() => {});
             if (!wasPrivate) noticeListUnpublished(owner, list).catch(() => {});
+            await recordAction('list', externalId, 'unpublished', moderator);
             return res.json({ ok: true });
         } catch (err) {
             return res.status(500).json({ message: 'An error occurred' });
