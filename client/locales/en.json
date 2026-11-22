@@ -498,6 +498,7 @@
       "connectionError": "Looks like we lost the connection. Try again in a moment.",
       "checkoutError": "Something went wrong — give it another try.",
       "formError": "Please enter a valid email address.",
+      "tooManyRequests": "Too many requests. Try again in a little while.",
       "priceSeparator": " / "
     },
     "creatorLinks": {
@@ -1101,6 +1102,10 @@
     "editButtonAddTag": "Add",
     "editMessageFilling": "Filled: {fields}",
     "editMessageNoDataFound": "No data found — fields unchanged",
+    "fetchFailed": "Could not read this page.",
+    "fetchTooMany": "Too many page lookups. Try again in a little while.",
+    "fetchSignIn": "Sign in to fetch details from a page.",
+    "fetchNotAllowed": "This address cannot be used.",
     "editMessageTypeExample": "ex: Shelter",
     "editDropZoneText": "Drop an image here, or click to browse",
     "editDropZoneHint": "PNG, JPG up to 5MB",

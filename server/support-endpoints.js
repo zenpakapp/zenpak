@@ -15,6 +15,11 @@ router.post('/interest', async (req, res) => {
     const tier = String(req.body && req.body.tier || '').trim();
     const message = String(req.body && req.body.message || '').trim();
 
+    // The hidden field of the form: only a bot fills it. It gets the usual answer and no mail.
+    if (req.body && typeof req.body.website === 'string' && req.body.website.trim()) {
+        return res.status(200).json({ ok: true });
+    }
+
     const rate = interestLimiter.check(req.ip || 'anon');
     if (rate.limited) {
         res.set('Retry-After', String(rate.retryAfterMinutes * 60));

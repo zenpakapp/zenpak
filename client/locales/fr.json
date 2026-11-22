@@ -498,6 +498,7 @@
       "connectionError": "Il semble que nous ayons perdu la connexion. Réessayez dans un moment.",
       "checkoutError": "Quelque chose s'est mal passé — réessayez.",
       "formError": "Veuillez saisir une adresse e-mail valide.",
+      "tooManyRequests": "Trop de demandes. Réessayez dans un moment.",
       "priceSeparator": " / "
     },
     "creatorLinks": {
@@ -958,6 +959,10 @@
     "editButtonAddTag": "Ajouter",
     "editMessageFilling": "Rempli : {fields}",
     "editMessageNoDataFound": "Aucune donnée trouvée — champs inchangés",
+    "fetchFailed": "Impossible de lire cette page.",
+    "fetchTooMany": "Trop de recherches de page. Réessayez dans un moment.",
+    "fetchSignIn": "Connectez-vous pour récupérer les détails depuis une page.",
+    "fetchNotAllowed": "Cette adresse ne peut pas être utilisée.",
     "editMessageTypeExample": "ex: Abri",
     "editDropZoneText": "Déposez une image ici, ou cliquez pour parcourir",
     "editDropZoneHint": "PNG, JPG jusqu'à 5MB",

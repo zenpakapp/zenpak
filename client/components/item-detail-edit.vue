@@ -470,7 +470,11 @@ export default {
                     body: JSON.stringify({ url: this.editUrl }),
                 });
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'fetch failed');
+                if (!res.ok) {
+                    const failure = new Error('fetch failed');
+                    failure.status = res.status;
+                    throw failure;
+                }
 
                 const filled = [];
                 if (data.name && !this.editName) { this.editName = data.name; filled.push('name'); }
@@ -492,7 +496,8 @@ export default {
                     ? this.$t('item.editMessageFilling', { fields: filled.join(', ') })
                     : this.$t('item.editMessageNoDataFound');
             } catch (err) {
-                this.fetchError = err.message;
+                const messages = { 401: 'item.fetchSignIn', 429: 'item.fetchTooMany', 400: 'item.fetchNotAllowed' };
+                this.fetchError = this.$t(messages[err.status] || 'item.fetchFailed');
             } finally {
                 this.fetchLoading = false;
             }

@@ -158,6 +158,14 @@ async function run() {
         assert('another address is not affected', other.status === 200);
     }
 
+    // Test 10: the hidden field of the form is filled only by a bot: usual answer, no mail
+    {
+        lastMailOptions = null;
+        const { status, data } = await callRoute(interestRoute, { email: 'a@b.com', tier: 'trail', website: 'http://spam.example' });
+        assert('a filled honeypot gets the usual answer', status === 200 && data && data.ok === true);
+        assert('a filled honeypot sends no mail', lastMailOptions === null);
+    }
+
     console.log(`\n${passed} passed, ${failed} failed`);
     process.exit(failed > 0 ? 1 : 0);
 }

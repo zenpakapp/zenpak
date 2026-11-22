@@ -105,6 +105,15 @@
         text-align: center;
     }
 
+    // The honeypot of the interest form: out of sight and out of the tab order, in the page for bots.
+    .lpUpgradeHoneypot {
+        height: 0;
+        left: -9999px;
+        opacity: 0;
+        position: absolute;
+        width: 0;
+    }
+
     .lpUpgradeError {
         color: var(--color-warning);
         font-size: $fontSize-sm;
