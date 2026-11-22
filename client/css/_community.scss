@@ -14,6 +14,16 @@
     margin-bottom: $space-20;
 }
 
+// Said under the tabs when a visitor presses "My Feed": the tab is not a dead end.
+.lpCommunityFeedHint {
+    background: var(--color-control-muted);
+    border-radius: $radius-md;
+    color: $color-text;
+    font-size: $fontSize-sm;
+    margin: 0 0 $space-16;
+    padding: $space-10 $space-12;
+}
+
 .lpCommunityTab {
     background: none;
     border: none;

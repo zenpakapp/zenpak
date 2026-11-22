@@ -4,7 +4,7 @@
         <community-accounts />
         <community-lists />
         <h2 class="lpModerationHeading">
-            {{ $t('community.moderationReports') }} ({{ total }} pending)
+            {{ $t('community.moderationReports') }} ({{ $t('community.moderationPendingCount', { count: total }) }})
         </h2>
         <div class="lpModerationReportFilters">
             <lp-select

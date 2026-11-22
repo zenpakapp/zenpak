@@ -26,9 +26,8 @@
                 class="lpCommunityTab"
                 :class="{ active: activeTab === 'feed' }"
                 :aria-disabled="!canSeeFeed || undefined"
-                :title="!canSeeFeed ? 'Follow someone to see their activity' : ''"
                 data-tab="feed"
-                @click="canSeeFeed && setTab('feed')"
+                @click="canSeeFeed ? setTab('feed') : (showFeedHint = !showFeedHint)"
             >
                 {{ $t('community.tabFeed') }}
             </button>
@@ -48,6 +47,12 @@
                 {{ $t('community.tabModeration') }}
             </button>
         </div>
+        <p v-if="showFeedHint && !canSeeFeed" class="lpCommunityFeedHint" role="status">
+            {{ $t('community.feedSignInHint') }}
+            <router-link to="/welcome">
+                {{ $t('community.feedSignInLink') }}
+            </router-link>
+        </p>
 
         <!-- Discover tab -->
         <div v-if="activeTab === 'discover'">
@@ -301,7 +306,7 @@
 
         <!-- Moderation tab -->
         <p v-if="moderationError" class="lpCommunityEmpty">
-            {{ moderationError }}
+            {{ $t(moderationError) }}
         </p>
         <community-moderation
             v-if="activeTab === 'moderation' && isModerator"
@@ -403,6 +408,7 @@ export default {
             filterMaxWeight: '',
             isModerator: false,
             moderationError: null,
+            showFeedHint: false,
         };
     },
     computed: {
@@ -554,7 +560,7 @@ export default {
                 const list = this.discoverLists.find((l) => l.externalId === externalId);
                 if (list) list.featured = data.featured;
             } catch {
-                this.moderationError = 'Unable to update featured list.';
+                this.moderationError = 'community.moderationFeatureError';
             }
         },
         async fetchModeratorFlag() {

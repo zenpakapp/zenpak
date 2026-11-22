@@ -62,6 +62,9 @@ test("a target reported by new accounts says how few of its reports count", asyn
     .filter({ hasText: "Moderation" })
     .click();
 
+  // The heading counts the pending reports with a translated label, not a raw key.
+  await expect(page.getByRole("heading", { name: /Reports/ })).toContainText("(2 pending)");
+
   const crowd = page.locator(".lpModerationReport", { hasText: "crowd" });
   await expect(crowd).toContainText("5 reports");
   await expect(crowd).toContainText("0 from verified, established accounts");
