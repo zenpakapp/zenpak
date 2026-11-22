@@ -99,6 +99,7 @@ function makeRes(resolve) {
     let statusCode = 200;
     return {
         status(code) { statusCode = code; return this; },
+        set() { return this; },
         json(data) { resolve({ statusCode, data }); },
     };
 }
@@ -125,6 +126,30 @@ async function run() {
         console.error('Skipping functional tests — routes missing');
         console.log(`\n${passed} passed, ${failed} failed`);
         process.exit(1);
+    }
+
+    // A report is about a list or an account that exists.
+    const reportedOwner = buildOwnerUser({ username: 'userxyz' });
+    usersStore.push(reportedOwner);
+    listVersionsStub.rows.push({ externalId: 'list-abc', version: 1, ownerId: reportedOwner._id });
+
+    // --- POST / : a target that does not exist is refused ---
+    {
+        reportsStore = [];
+        savedDoc = null;
+        const results = [];
+        for (const body of [
+            { targetType: 'list', targetId: 'no-such-list', reason: 'spam' },
+            { targetType: 'user', targetId: 'nobody', reason: 'spam' },
+        ]) {
+            results.push(await new Promise(resolve => {
+                const res = makeRes(resolve);
+                postRoute.route.stack[0].handle({ body }, res, () => {});
+            }));
+        }
+        assert('POST / unknown list returns 404', results[0].statusCode === 404);
+        assert('POST / unknown user returns 404', results[1].statusCode === 404);
+        assert('POST / unknown target saves nothing', savedDoc === null);
     }
 
     // --- POST / : valid report creation ---
@@ -207,7 +232,7 @@ async function run() {
     {
         reportsStore = [];
         savedDoc = null;
-        const req = { body: { targetType: 'user', targetId: 'bob', reason: 'fake' } };
+        const req = { body: { targetType: 'user', targetId: 'userxyz', reason: 'fake' } };
         const { statusCode, data } = await new Promise(resolve => {
             const res = makeRes(resolve);
             postRoute.route.stack[0].handle(req, res, () => {});
@@ -394,6 +419,20 @@ async function run() {
         assert('GET / has no author for a list that is no longer published', byTarget('ghost').targetOwnerUsername === null);
         assert('GET / leaves a user report as it is', !('targetOwnerUsername' in byTarget('owner3')));
         assert('GET / does not alter the stored report', !('targetOwnerUsername' in reportsStore[0]));
+    }
+
+    // --- POST / : a member cannot flood the queue ---
+    {
+        reportsStore = [];
+        let firstRefused = 0;
+        for (let i = 1; i <= 30; i++) {
+            const { statusCode } = await new Promise(resolve => {
+                const res = makeRes(resolve);
+                postRoute.route.stack[0].handle({ body: { targetType: 'list', targetId: 'list-abc', reason: 'spam' } }, res, () => {});
+            });
+            if (statusCode === 429 && !firstRefused) firstRefused = i;
+        }
+        assert('POST / refuses reports past the hourly limit', firstRefused > 0 && firstRefused <= 21);
     }
 
     // --- summary ---

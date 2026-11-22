@@ -498,6 +498,7 @@
       "connectionError": "Es sieht aus, als hätten wir die Verbindung verloren. Versuche es in einem Moment erneut.",
       "checkoutError": "Etwas ist schief gelaufen — versuche es erneut.",
       "formError": "Bitte gib eine gültige E-Mail-Adresse ein.",
+      "tooManyRequests": "Zu viele Anfragen. Versuch es gleich noch einmal.",
       "priceSeparator": " / "
     },
     "creatorLinks": {
@@ -958,6 +959,10 @@
     "editButtonAddTag": "Hinzufügen",
     "editMessageFilling": "Ausgefüllt: {fields}",
     "editMessageNoDataFound": "Keine Daten gefunden — Felder unverändert",
+    "fetchFailed": "Diese Seite konnte nicht gelesen werden.",
+    "fetchTooMany": "Zu viele Seitenabfragen. Versuch es gleich noch einmal.",
+    "fetchSignIn": "Melde dich an, um Details von einer Seite zu holen.",
+    "fetchNotAllowed": "Diese Adresse kann nicht verwendet werden.",
     "editMessageTypeExample": "z.B.: Zelt",
     "editDropZoneText": "Bild hier ablegen, oder klicken zum Durchsuchen",
     "editDropZoneHint": "PNG, JPG bis 5MB",

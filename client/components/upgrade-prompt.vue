@@ -80,6 +80,8 @@
                                     </option>
                                 </select>
                             </div>
+                            <!-- Honeypot: people do not see it, bots fill it; the server drops such a request. -->
+                            <input v-model="website" type="text" name="website" class="lpUpgradeHoneypot" tabindex="-1" autocomplete="off" aria-hidden="true">
                             <div>
                                 <label>{{ $t('guide.upgrade.message') }}</label>
                                 <textarea v-model="message" :placeholder="$t('guide.upgrade.messagePlaceholder')" rows="3" />
@@ -169,6 +171,7 @@ export default {
             email: '',
             selectedTier: this.tier,
             message: '',
+            website: '',
             submitting: false,
             submitted: false,
             formError: null,
@@ -248,12 +251,14 @@ export default {
             try {
                 await fetchJson('/api/support/interest', {
                     method: 'POST',
-                    body: JSON.stringify({ email: this.email, tier: this.selectedTier, message: this.message }),
+                    body: JSON.stringify({
+                        email: this.email, tier: this.selectedTier, message: this.message, website: this.website,
+                    }),
                 });
                 this.submitted = true;
                 setTimeout(() => this.closeModal(), FEEDBACK_MS);
-            } catch {
-                this.formError = 'Something went wrong, please try again.';
+            } catch (err) {
+                this.formError = this.$t(err && err.status === 429 ? 'guide.upgrade.tooManyRequests' : 'guide.upgrade.checkoutError');
             } finally {
                 this.submitting = false;
             }

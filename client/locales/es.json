@@ -498,6 +498,7 @@
       "connectionError": "Parece que perdimos la conexión. Intenta de nuevo en un momento.",
       "checkoutError": "Algo salió mal — intenta de nuevo.",
       "formError": "Por favor ingresa una dirección de correo electrónico válida.",
+      "tooManyRequests": "Demasiadas solicitudes. Inténtalo de nuevo en un rato.",
       "priceSeparator": " / "
     },
     "creatorLinks": {
@@ -958,6 +959,10 @@
     "editButtonAddTag": "Añadir",
     "editMessageFilling": "Rellenado: {fields}",
     "editMessageNoDataFound": "No se encontraron datos — campos sin cambios",
+    "fetchFailed": "No se pudo leer esta página.",
+    "fetchTooMany": "Demasiadas consultas de páginas. Inténtalo de nuevo en un rato.",
+    "fetchSignIn": "Inicia sesión para obtener los detalles de una página.",
+    "fetchNotAllowed": "Esta dirección no se puede usar.",
     "editMessageTypeExample": "p.ej: Tienda",
     "editDropZoneText": "Suelta una imagen aquí, o haz clic para buscar",
     "editDropZoneHint": "PNG, JPG hasta 5MB",

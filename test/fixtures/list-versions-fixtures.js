@@ -87,6 +87,7 @@ function createUsersStub(users) {
         findOne(query, cb) {
             const found = users.find((user) => {
                 if (query._id) return String(user._id) === String(query._id);
+                if (query.username) return user.username === query.username;
                 if (query['library.lists.externalId']) {
                     return ((user.library && user.library.lists) || []).some((list) => list.externalId === query['library.lists.externalId']);
                 }
