@@ -27,9 +27,12 @@ const plan = (name) => ({ library: { entitlements: { plan: name } } });
 const userDocs = [
     { _id: idFrom(daysAgo(1)), emailVerified: true, ...plan('free') },
     { _id: idFrom(daysAgo(3)), emailVerified: false },
-    { _id: idFrom(daysAgo(10)), emailVerified: true, ...plan('creator') },
-    { _id: idFrom(daysAgo(20)), emailVerified: true, ...plan('supporter'), banned: true },
+    { _id: idFrom(daysAgo(10)), emailVerified: true, ...plan('creator'), billing: { provider: 'stripe', interval: 'year', status: 'active' } },
+    {
+        _id: idFrom(daysAgo(20)), emailVerified: true, ...plan('supporter'), banned: true, billing: { provider: 'stripe', interval: 'month', status: 'past_due', cancelAtPeriodEnd: true },
+    },
     { _id: idFrom(daysAgo(90)), emailVerified: true, ...plan('creator'), billing: { provider: 'comp', status: 'active' } },
+    { _id: idFrom(daysAgo(2)), emailVerified: true, ...plan('supporter'), billing: { provider: 'stripe', interval: 'month', status: 'trialing' } },
 ];
 const listDocs = [
     { visibility: 'shareable' },
@@ -65,10 +68,22 @@ const { collectStats } = require('../server/moderation-stats.js');
     const stats = await collectStats(NOW);
     assert.deepStrictEqual(stats, {
         users: {
-            total: 5, last7Days: 2, last30Days: 4, verified: 4, banned: 1,
+            total: 6, last7Days: 3, last30Days: 5, verified: 5, banned: 1,
         },
         plans: {
-            free: 2, supporter: 1, creator: 2, offered: 1,
+            free: 2, supporter: 2, creator: 2, offered: 1,
+        },
+        conversion: { paying: 3, verified: 5 },
+        subscriptions: {
+            monthly: { supporter: 2, creator: 0 },
+            yearly: { supporter: 0, creator: 1 },
+        },
+        newByPlan: {
+            last7Days: { supporter: 1, creator: 0 },
+            last30Days: { supporter: 2, creator: 1 },
+        },
+        billing: {
+            active: 1, trialing: 1, pastDue: 1, canceled: 0, endingAtPeriodEnd: 1,
         },
         lists: {
             shareable: 1, discoverable: 2, indexable: 1, featured: 1,
@@ -91,6 +106,11 @@ const { collectStats } = require('../server/moderation-stats.js');
         views: 0, copies: 0, csvDownloads: 0, pendingReports: 0,
     });
     assert.strictEqual(empty.plans.free, 0);
+    assert.deepStrictEqual(empty.conversion, { paying: 0, verified: 0 });
+    assert.deepStrictEqual(empty.subscriptions, { monthly: { supporter: 0, creator: 0 }, yearly: { supporter: 0, creator: 0 } });
+    assert.deepStrictEqual(empty.billing, {
+        active: 0, trialing: 0, pastDue: 0, canceled: 0, endingAtPeriodEnd: 0,
+    });
 
     console.log('ok');
 })();
