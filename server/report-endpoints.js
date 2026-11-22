@@ -9,6 +9,7 @@ const { syncUserPublicLists } = require('./public-list-projections.js');
 const { getPublishedOwner } = require('./list-versions.js');
 const { noticeListUnpublished, noticeAccountBanned, noticeAccountRestored } = require('./moderation-notices.js');
 const { createRateLimiter } = require('./rate-limiter.js');
+const { canListForSearch, configuredDelayDays } = require('./account-age.js');
 
 // A member reports a few things an hour, not thousands: a flood of reports hides the real ones.
 const REPORT_LIMIT = 20;
@@ -45,6 +46,7 @@ function groupReports(reports) {
                 targetType: report.targetType,
                 targetId: report.targetId,
                 count: 0,
+                trustedCount: 0,
                 reasons: {},
                 reporters: [],
                 latestAt: report.createdAt,
@@ -52,6 +54,8 @@ function groupReports(reports) {
             groups.set(key, group);
         }
         group.count += 1;
+        // A report saved before the field existed counts as trusted: it is not demoted after the fact.
+        if (report.reporterTrusted !== false) group.trustedCount += 1;
         group.reasons[report.reason] = (group.reasons[report.reason] || 0) + 1;
         if (group.reporters.length < REPORTER_SAMPLE && !group.reporters.includes(report.reporterUsername)) {
             group.reporters.push(report.reporterUsername);
@@ -59,7 +63,11 @@ function groupReports(reports) {
         if (new Date(report.createdAt) > new Date(group.latestAt)) group.latestAt = report.createdAt;
     });
     // Most reported first, then the most recent
-    return [...groups.values()].sort((a, b) => b.count - a.count || new Date(b.latestAt) - new Date(a.latestAt));
+    // The queue is ordered by the reports that count (verified, established accounts) first, so a
+    // crowd of new accounts cannot push a target to the top; then by all reports, then the latest.
+    return [...groups.values()].sort((a, b) => b.trustedCount - a.trustedCount
+        || b.count - a.count
+        || new Date(b.latestAt) - new Date(a.latestAt));
 }
 
 // POST /api/reports — créer un signalement
@@ -108,6 +116,9 @@ router.post('/', (req, res) => {
                 targetType,
                 targetId: String(targetId),
                 reason,
+                // A report counts fully when it comes from a verified e-mail and an account that is not
+                // new: a throw-away account can still report, but it does not move the queue.
+                reporterTrusted: Boolean(user.emailVerified) && canListForSearch(user, { delayDays: configuredDelayDays() }),
                 status: 'pending',
                 createdAt: new Date(),
             });

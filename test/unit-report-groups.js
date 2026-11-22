@@ -158,6 +158,24 @@ function call(layer, req) {
     result = await call(resolveTarget, { body: { targetType: 'list', status: 'resolved' } });
     assert.strictEqual(result.statusCode, 400, 'the target id is required');
 
+    // A crowd of new or unverified accounts does not push a target above one reported by established
+    // accounts: the queue is ordered by the reports that count first.
+    const untrusted = (target, reporter, minutesAgo) => ({ ...report('list', target, 'spam', reporter, minutesAgo), reporterTrusted: false });
+    const trusted = (target, reporter, minutesAgo) => ({ ...report('list', target, 'spam', reporter, minutesAgo), reporterTrusted: true });
+    store = [
+        untrusted('crowd', 'n1', 9), untrusted('crowd', 'n2', 8), untrusted('crowd', 'n3', 7),
+        untrusted('crowd', 'n4', 6), untrusted('crowd', 'n5', 5),
+        trusted('solid', 'v1', 30), trusted('solid', 'v2', 20),
+        report('list', 'legacy', 'spam', 'old1', 100), // saved before the field existed
+    ];
+    ({ data } = await call(list, {}));
+    assert.deepStrictEqual(data.reports.map((g) => g.targetId), ['solid', 'legacy', 'crowd'], 'reports from established accounts weigh first, five new accounts come last');
+    const crowd = data.reports.find((g) => g.targetId === 'crowd');
+    assert.strictEqual(crowd.count, 5, 'the crowd is still counted');
+    assert.strictEqual(crowd.trustedCount, 0, 'but none of it comes from a verified, established account');
+    assert.strictEqual(data.reports.find((g) => g.targetId === 'solid').trustedCount, 2);
+    assert.strictEqual(data.reports.find((g) => g.targetId === 'legacy').trustedCount, 1, 'a report saved before the field counts as trusted');
+
     console.log('unit-report-groups OK');
     process.exit(0);
 })().catch((error) => { console.error(error); process.exit(1); });

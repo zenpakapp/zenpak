@@ -632,6 +632,7 @@
     "moderationTypeUser": "Usuario",
     "moderationReportCount": "{count} denuncias",
     "moderationReportedBy": "por {names}",
+    "moderationReportTrusted": "{trusted} de cuentas verificadas y consolidadas",
     "ariaFilterReportType": "Filtrar denuncias por tipo",
     "ariaFilterReportReason": "Filtrar denuncias por motivo"
   },

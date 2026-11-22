@@ -15,6 +15,14 @@ function indexingDelayDays(setting) {
     return Number.isFinite(days) && days >= 0 ? days : DEFAULT_INDEXING_DELAY_DAYS;
 }
 
+// The delay of this instance: the INDEXING_DELAY_DAYS variable, else the indexingDelayDays config key.
+function configuredDelayDays() {
+    // eslint-disable-next-line global-require
+    const config = require('config');
+    return indexingDelayDays(process.env.INDEXING_DELAY_DAYS
+        || (config.has('indexingDelayDays') ? config.get('indexingDelayDays') : undefined));
+}
+
 function accountCreatedAt(user) {
     const id = user && user._id;
     return id && typeof id.getTimestamp === 'function' ? id.getTimestamp() : null;
@@ -31,6 +39,7 @@ function canListForSearch(user, { now = new Date(), delayDays = DEFAULT_INDEXING
 module.exports = {
     DEFAULT_INDEXING_DELAY_DAYS,
     indexingDelayDays,
+    configuredDelayDays,
     accountCreatedAt,
     canListForSearch,
 };
