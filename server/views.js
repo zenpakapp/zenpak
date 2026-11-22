@@ -26,6 +26,7 @@ const { escapeCsvText, escapeCsvNumber, safeCommentLine } = require('./csv.js');
 const { resolvePublicOrigin } = require('./request-origin.js');
 const { incrementPublicListStat } = require('./public-list-projections.js');
 const { clipDescription } = require('./text-limits.js');
+const { publicImageUrl } = require('./public-image-url.js');
 const { analyticsConfig, analyticsTag } = require('./analytics.js');
 
 const db = require('./db.js');
@@ -337,7 +338,7 @@ router.get('/csv/:id', (req, res) => {
                         itemRow.push(item.brand || '');
                         const imageUrl = item.image
                             ? `https://i.imgur.com/${item.image}.jpg`
-                            : (item.imageUrl || '');
+                            : publicImageUrl(item.imageUrl, config.has('cloudinaryCloudName') ? config.get('cloudinaryCloudName') : '');
                         itemRow.push(showImages ? imageUrl : '');
 
                         // Text columns and numeric columns (qty, weight, price) are written differently
