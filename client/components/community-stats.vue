@@ -39,6 +39,14 @@ export default {
             const stats = this.stats;
             if (!stats) return [];
             const row = (key, label, value) => ({ key, label: this.$t(label), value: Number(value || 0).toLocaleString() });
+            // A row whose label names a plan ("Kin, monthly"): the plan name is the one of the plans card.
+            const planRow = (key, label, plan, value) => ({
+                key,
+                label: this.$t(label, { plan: this.$t(plan === 'supporter' ? 'community.statsKin' : 'community.statsWayfarer') }),
+                value: Number(value || 0).toLocaleString(),
+            });
+            const share = stats.conversion && stats.conversion.verified
+                ? Math.round((stats.conversion.paying / stats.conversion.verified) * 100) : 0;
             return [
                 {
                     key: 'accounts',
@@ -59,6 +67,38 @@ export default {
                         row('plans-supporter', 'community.statsKin', stats.plans.supporter),
                         row('plans-creator', 'community.statsWayfarer', stats.plans.creator),
                         row('plans-offered', 'community.statsOffered', stats.plans.offered),
+                        { key: 'plans-conversion', label: this.$t('community.statsConversion'), value: `${share} %` },
+                    ],
+                },
+                {
+                    key: 'subscriptions',
+                    title: this.$t('community.statsSubscriptions'),
+                    rows: [
+                        planRow('subs-supporter-month', 'community.statsPlanMonthly', 'supporter', stats.subscriptions.monthly.supporter),
+                        planRow('subs-supporter-year', 'community.statsPlanAnnual', 'supporter', stats.subscriptions.yearly.supporter),
+                        planRow('subs-creator-month', 'community.statsPlanMonthly', 'creator', stats.subscriptions.monthly.creator),
+                        planRow('subs-creator-year', 'community.statsPlanAnnual', 'creator', stats.subscriptions.yearly.creator),
+                    ],
+                },
+                {
+                    key: 'new-by-plan',
+                    title: this.$t('community.statsNewByPlan'),
+                    rows: [
+                        planRow('new-supporter-7', 'community.statsPlanNew7', 'supporter', stats.newByPlan.last7Days.supporter),
+                        planRow('new-supporter-30', 'community.statsPlanNew30', 'supporter', stats.newByPlan.last30Days.supporter),
+                        planRow('new-creator-7', 'community.statsPlanNew7', 'creator', stats.newByPlan.last7Days.creator),
+                        planRow('new-creator-30', 'community.statsPlanNew30', 'creator', stats.newByPlan.last30Days.creator),
+                    ],
+                },
+                {
+                    key: 'billing',
+                    title: this.$t('community.statsBilling'),
+                    rows: [
+                        row('billing-active', 'community.statsBillingActive', stats.billing.active),
+                        row('billing-trialing', 'community.statsBillingTrialing', stats.billing.trialing),
+                        row('billing-past-due', 'community.statsBillingPastDue', stats.billing.pastDue),
+                        row('billing-ending', 'community.statsBillingEnding', stats.billing.endingAtPeriodEnd),
+                        row('billing-canceled', 'community.statsBillingCanceled', stats.billing.canceled),
                     ],
                 },
                 {

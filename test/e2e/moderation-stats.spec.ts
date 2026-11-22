@@ -36,6 +36,22 @@ test("a moderator sees the numbers of the community", async ({ page }) => {
           banned: 2,
         },
         plans: { free: 1200, supporter: 20, creator: 14, offered: 3 },
+        conversion: { paying: 31, verified: 900 },
+        subscriptions: {
+          monthly: { supporter: 15, creator: 6 },
+          yearly: { supporter: 3, creator: 8 },
+        },
+        newByPlan: {
+          last7Days: { supporter: 2, creator: 1 },
+          last30Days: { supporter: 7, creator: 4 },
+        },
+        billing: {
+          active: 30,
+          trialing: 2,
+          pastDue: 1,
+          canceled: 5,
+          endingAtPeriodEnd: 3,
+        },
         lists: { shareable: 40, discoverable: 25, indexable: 10, featured: 0 },
         activity: { views: 98765, copies: 321, pendingReports: 4 },
       },
@@ -51,11 +67,21 @@ test("a moderator sees the numbers of the community", async ({ page }) => {
     .click();
 
   const stat = (key: string) => page.locator(`.lp-moderation-stat-${key}`);
-  await expect(page.locator(".lpModerationStatsCard")).toHaveCount(4);
+  await expect(page.locator(".lpModerationStatsCard")).toHaveCount(7);
   await expect(stat("users-total")).toHaveText("1,234");
   await expect(stat("users-7")).toHaveText("12");
   await expect(stat("users-banned")).toHaveText("2");
   await expect(stat("plans-free")).toHaveText("1,200");
+  await expect(stat("plans-conversion")).toHaveText("3 %");
+  await expect(stat("subs-supporter-month")).toHaveText("15");
+  await expect(stat("subs-creator-year")).toHaveText("8");
+  await expect(stat("new-supporter-7")).toHaveText("2");
+  await expect(stat("new-creator-30")).toHaveText("4");
+  await expect(stat("billing-active")).toHaveText("30");
+  await expect(stat("billing-past-due")).toHaveText("1");
+  await expect(stat("billing-ending")).toHaveText("3");
+  // A row that names a plan says which one and which rhythm.
+  await expect(page.locator(".lpModerationStatsCard").filter({ hasText: "Subscriptions" })).toContainText("Kin, monthly");
   await expect(stat("plans-creator")).toHaveText("14");
   await expect(stat("lists-discoverable")).toHaveText("25");
   await expect(stat("activity-views")).toHaveText("98,765");
