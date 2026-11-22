@@ -147,9 +147,13 @@ function call(layer, req) {
     assert.strictEqual(result.data.updated, 2, 'both reports on the target are closed');
     assert.ok(store.filter((r) => r.targetId === 'popular').every((r) => r.status === 'resolved' && r.resolvedAt instanceof Date));
     assert.strictEqual(store.find((r) => r.targetId === 'other').status, 'pending', 'other targets are untouched');
+    assert.ok(store.filter((r) => r.targetId === 'popular').every((r) => r.resolvedBy === 'mod' && r.resolution === 'none'),
+        'each closed report keeps who closed it and that no action was recorded');
 
-    result = await call(resolveTarget, { body: { targetType: 'list', targetId: 'other', status: 'dismissed' } });
+    result = await call(resolveTarget, { body: { targetType: 'list', targetId: 'other', status: 'dismissed', note: 'not spam' } });
     assert.strictEqual(store.find((r) => r.targetId === 'other').status, 'dismissed', 'dismissed is accepted');
+    assert.strictEqual(store.find((r) => r.targetId === 'other').resolution, 'dismissed', 'a dismissal is its own outcome');
+    assert.strictEqual(store.find((r) => r.targetId === 'other').resolutionNote, 'not spam', 'the note is kept');
 
     result = await call(resolveTarget, { body: { targetType: 'list', targetId: 'other', status: 'pending' } });
     assert.strictEqual(result.statusCode, 400, 'only resolved or dismissed are accepted');
