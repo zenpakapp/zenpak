@@ -34,6 +34,7 @@
                 <div class="lpModerationReportMeta">
                     <span class="lpCommunityBadge">{{ typeLabel(r.targetType) }}</span>
                     <span v-if="r.count > 1" class="lpModerationReportCount">{{ $t('community.moderationReportCount', { count: r.count }) }}</span>
+                    <span v-if="r.trustedCount < r.count" class="lpModerationReportTrusted">({{ $t('community.moderationReportTrusted', { trusted: r.trustedCount }) }})</span>
                     <span>{{ reasonsLabel(r.reasons) }}</span>
                     <span>{{ $t('community.moderationReportedBy', { names: r.reporters.join(', ') }) }}</span>
                     <span>{{ timeAgo(r.latestAt) }}</span>

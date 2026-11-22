@@ -152,6 +152,28 @@ async function run() {
         assert('POST / unknown target saves nothing', savedDoc === null);
     }
 
+    // --- POST / : a report from a new or unverified account is saved but does not count ---
+    {
+        const daysAgo = (days) => new ObjectId(Math.floor((Date.now() - days * 86400000) / 1000));
+        const original = { id: reporterUser._id, verified: reporterUser.emailVerified };
+        const reportAs = async (id, verified) => {
+            reportsStore = [];
+            savedDoc = null;
+            reporterUser._id = id;
+            reporterUser.emailVerified = verified;
+            await new Promise(resolve => {
+                const res = makeRes(resolve);
+                postRoute.route.stack[0].handle({ body: { targetType: 'list', targetId: 'list-abc', reason: 'spam' } }, res, () => {});
+            });
+            return savedDoc;
+        };
+        assert('a verified, established account counts', (await reportAs(daysAgo(30), true)).reporterTrusted === true);
+        assert('an unverified account does not count', (await reportAs(daysAgo(30), false)).reporterTrusted === false);
+        assert('a new account does not count', (await reportAs(daysAgo(1), true)).reporterTrusted === false);
+        reporterUser._id = original.id;
+        reporterUser.emailVerified = original.verified;
+    }
+
     // --- POST / : valid report creation ---
     {
         reportsStore = [];

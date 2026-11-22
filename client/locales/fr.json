@@ -632,6 +632,7 @@
     "moderationTypeUser": "Utilisateur",
     "moderationReportCount": "{count} signalements",
     "moderationReportedBy": "par {names}",
+    "moderationReportTrusted": "{trusted} de comptes vérifiés et établis",
     "ariaFilterReportType": "Filtrer les signalements par type",
     "ariaFilterReportReason": "Filtrer les signalements par motif"
   },

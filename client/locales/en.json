@@ -632,6 +632,7 @@
     "moderationTypeUser": "User",
     "moderationReportCount": "{count} reports",
     "moderationReportedBy": "by {names}",
+    "moderationReportTrusted": "{trusted} from verified, established accounts",
     "ariaFilterReportType": "Filter reports by type",
     "ariaFilterReportReason": "Filter reports by reason"
   },
