@@ -5,6 +5,7 @@ const {
 } = require('../client/services/public-visibility.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { publicImageUrl } = require('./public-image-url.js');
+const { canListForSearch, configuredDelayDays } = require('./account-age.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 const { clipDescription, normalizeDestination } = require('./text-limits.js');
@@ -13,6 +14,13 @@ const { itemMatchesShop, promoLinkUrl, ruleHostname } = require('../client/utils
 // The pictures of this ZenPak are kept in one Cloudinary account (empty when none is set up).
 function cloudinaryCloudName() {
     return config.has('cloudinaryCloudName') ? String(config.get('cloudinaryCloudName') || '') : '';
+}
+
+// Search engines see a page only once its account is old enough (see server/account-age.js). The
+// member's choice is kept as it is: a list set to "Public + Search engines" on day one is indexed
+// by itself on day seven, and nothing is said, since nobody is waiting on an index entry.
+function searchIndexingOpen(user) {
+    return canListForSearch(user, { delayDays: configuredDelayDays() });
 }
 
 function getLibrary(user) {
@@ -59,7 +67,7 @@ function sanitizeEntitlements(entitlements) {
     };
 }
 
-function sanitizeProfile(profile) {
+function sanitizeProfile(profile, { indexingOpen = true } = {}) {
     const source = profile || {};
 
     return {
@@ -71,7 +79,7 @@ function sanitizeProfile(profile) {
         links: Array.isArray(source.links) ? source.links.slice() : [],
         gearPhilosophy: Array.isArray(source.gearPhilosophy) ? source.gearPhilosophy.slice() : [],
         visibility: source.visibility,
-        allowSearchIndexing: allowsSearchIndexing(source.visibility),
+        allowSearchIndexing: indexingOpen && allowsSearchIndexing(source.visibility),
     };
 }
 
@@ -85,7 +93,7 @@ function sanitizeListSummary(list, options = {}) {
         description: clipDescription(list.description),
         destination: normalizeDestination(list.destination),
         visibility: list.visibility,
-        allowSearchIndexing: allowsSearchIndexing(list.visibility),
+        allowSearchIndexing: options.indexingOpen !== false && allowsSearchIndexing(list.visibility),
         copyable: list.copyable || false,
         totalWeight: Number(list.totalWeight) || 0,
         totalWornWeight: Number(list.totalWornWeight) || 0,
@@ -118,7 +126,7 @@ async function buildProfileListSummary(user, list) {
 
     const publishedLibrary = new Library();
     publishedLibrary.load(frozen);
-    return sanitizeListSummary(publishedLibrary.lists[0]);
+    return sanitizeListSummary(publishedLibrary.lists[0], { indexingOpen: searchIndexingOpen(user) });
 }
 
 async function publicListsForProfile(user, library) {
@@ -299,7 +307,7 @@ async function buildPublicProfile(user) {
 
     return {
         username: user.username || '',
-        profile: sanitizeProfile(profile),
+        profile: sanitizeProfile(profile, { indexingOpen: searchIndexingOpen(user) }),
         entitlements: sanitizeEntitlements(library.entitlements),
         lists: await publicListsForProfile(user, library),
         affiliateDisclosure: library.creator && library.creator.disclosure ? library.creator.disclosure : '',
@@ -349,7 +357,7 @@ function buildPublicList(user, externalId) {
         authorDisplayName: (library.publicProfile && library.publicProfile.displayName) || user.username || '',
         authorTier: normalizeTier(library.entitlements && library.entitlements.plan),
         authorAvatarUrl: isPublicVisibility(library.publicProfile && library.publicProfile.visibility) ? (library.publicProfile.avatarUrl || '') : '',
-        list: sanitizeListSummary(list, { includePrice }),
+        list: sanitizeListSummary(list, { includePrice, indexingOpen: searchIndexingOpen(user) }),
         forkedFrom: list.forkedFrom || null,
         totalUnit: library.totalUnit || '',
         itemUnit: library.itemUnit || '',
