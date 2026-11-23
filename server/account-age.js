@@ -36,10 +36,15 @@ function canListForSearch(user, { now = new Date(), delayDays = DEFAULT_INDEXING
     return now.getTime() - created.getTime() >= delayDays * DAY_MS;
 }
 
+function searchIndexingOpen(user) {
+    return canListForSearch(user, { delayDays: configuredDelayDays() });
+}
+
 module.exports = {
     DEFAULT_INDEXING_DELAY_DAYS,
     indexingDelayDays,
     configuredDelayDays,
     accountCreatedAt,
     canListForSearch,
+    searchIndexingOpen,
 };

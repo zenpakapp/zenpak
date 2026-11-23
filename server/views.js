@@ -27,10 +27,19 @@ const { resolvePublicOrigin } = require('./request-origin.js');
 const { incrementPublicListStat } = require('./public-list-projections.js');
 const { clipDescription } = require('./text-limits.js');
 const { publicImageUrl } = require('./public-image-url.js');
+const {
+    isSearchIndexable, listIsIndexable, profileIsIndexable, setRobotsHeader, robotsHeader,
+} = require('./search-robots.js');
 const { analyticsConfig, analyticsTag } = require('./analytics.js');
 
 const db = require('./db.js');
 const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
+
+async function loadPublishedListView(id, res) {
+    const published = await loadPublishedLibraryByExternalId(id);
+    setRobotsHeader(res, isSearchIndexable(published?.served, published?.list.visibility));
+    return published;
+}
 
 // Legacy handlers used a callback-style findOne; async work inside one becomes an unhandled
 // rejection if it throws. Run each view inside this guard so failures log and answer 500.
@@ -39,7 +48,10 @@ async function runLegacyView(req, res, view) {
         await view();
     } catch (error) {
         logWithRequest(req, { message: 'legacy list view failed', path: req.path, error: error.message });
-        if (!res.headersSent) res.status(500).send('An error occurred.');
+        if (!res.headersSent) {
+            setRobotsHeader(res, false);
+            res.status(500).send('An error occurred.');
+        }
     }
 }
 
@@ -131,6 +143,10 @@ index = index.replace('{{styles}}', appStylesHtml);
 index = index.replace('{{scripts}}', appScriptsHtml);
 index = index.replace('{{analytics}}', analyticsTag(analyticsConfig()));
 
+// Search engines receive the policy with the initial HTML, before the SPA fetches its data.
+router.get('/p/:externalId', robotsHeader((req) => listIsIndexable(req.params.externalId.trim())));
+router.get('/u/:username', robotsHeader((req) => profileIsIndexable(req.params.username.toLowerCase().trim())));
+
 for (let i = 0; i < vueRoutes.length; i++) {
     router.get(vueRoutes[i].path, (req, res) => {
         res.send(index);
@@ -161,7 +177,7 @@ router.get('/r/:id', (req, res) => {
         return;
     }
     runLegacyView(req, res, async () => {
-        const published = await loadPublishedLibraryByExternalId(id);
+        const published = await loadPublishedListView(id, res);
         if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
@@ -206,7 +222,7 @@ router.get('/e/:id', (req, res) => {
     }
 
     runLegacyView(req, res, async () => {
-        const published = await loadPublishedLibraryByExternalId(id);
+        const published = await loadPublishedListView(id, res);
         if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
@@ -255,7 +271,7 @@ router.get('/csv/:id', (req, res) => {
     }
 
     runLegacyView(req, res, async () => {
-        const published = await loadPublishedLibraryByExternalId(id);
+        const published = await loadPublishedListView(id, res);
         if (!published) {
             res.status(400).send('Invalid list specified.');
             return;
