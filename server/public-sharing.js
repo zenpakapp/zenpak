@@ -5,7 +5,7 @@ const {
 } = require('../client/services/public-visibility.js');
 const { normalizeTier } = require('./tier-policy.js');
 const { publicImageUrl } = require('./public-image-url.js');
-const { canListForSearch, configuredDelayDays } = require('./account-age.js');
+const { searchIndexingOpen } = require('./account-age.js');
 const { Library } = require('../client/models/library.js');
 const { getLatestOwnedVersion, SHARE_SETTING_FIELDS } = require('./list-versions.js');
 const { clipDescription, normalizeDestination } = require('./text-limits.js');
@@ -14,13 +14,6 @@ const { itemMatchesShop, promoLinkUrl, ruleHostname } = require('../client/utils
 // The pictures of this ZenPak are kept in one Cloudinary account (empty when none is set up).
 function cloudinaryCloudName() {
     return config.has('cloudinaryCloudName') ? String(config.get('cloudinaryCloudName') || '') : '';
-}
-
-// Search engines see a page only once its account is old enough (see server/account-age.js). The
-// member's choice is kept as it is: a list set to "Public + Search engines" on day one is indexed
-// by itself on day seven, and nothing is said, since nobody is waiting on an index entry.
-function searchIndexingOpen(user) {
-    return canListForSearch(user, { delayDays: configuredDelayDays() });
 }
 
 function getLibrary(user) {
