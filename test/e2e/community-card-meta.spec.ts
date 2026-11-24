@@ -8,6 +8,10 @@ const lists = [
     name: "Liste A",
     author: "alice",
     authorDisplayName: "Alice",
+    destination: "GR5",
+    seasons: ["3-season", "fall", "summer", "spring"],
+    durations: ["long"],
+    listTypes: ["hiking"],
     totalBaseWeight: 5200000,
     totalQty: 1,
     viewCount: 1,
@@ -19,8 +23,18 @@ const lists = [
     name: "Liste B",
     author: "bob",
     authorDisplayName: "Bob",
+    seasons: ["3-season", "summer"],
     totalQty: 12,
     viewCount: 3,
+    updatedAt: new Date(Date.now() - 8 * 24 * 3600 * 1000).toISOString(),
+  },
+  {
+    externalId: "c",
+    name: "Liste C : " + "LongueÉtapeSansEspace".repeat(6),
+    author: "bob",
+    totalBaseWeight: 800000,
+    totalQty: 1,
+    updatedAt: "1970-01-01T00:00:00.000Z",
   },
 ];
 
@@ -47,13 +61,68 @@ test.describe("in French", () => {
     await expect(results).toContainText("il y a 5 h");
     await expect(results).not.toContainText("ago");
     await expect(results).not.toContainText(/\bviews?\b|\bitems?\b/);
+    const tripInfo = results.locator(".lpCommunityTags");
+    await expect(tripInfo.first().locator(".lpListCardTag")).toHaveText([
+      "GR5", "3 saisons", "Plus de 10 jours", "Randonnée",
+    ]);
+    await expect(tripInfo.first().locator('svg[aria-hidden="true"] path')).not.toHaveCount(0);
+    await expect(tripInfo.first().locator('svg[aria-hidden="true"]')).toHaveCount(4);
+    await expect(tripInfo.nth(1)).toHaveText("3 saisons, Été");
+    await expect(tripInfo).toHaveCount(2);
     const popular = page.locator(".lpCommunityPopularMeta");
     await expect(popular.first()).toContainText("vue");
     await expect(popular.first()).not.toContainText(/views/);
-    // A list without weight does not end on a lone "de base".
-    await expect(popular.nth(1)).not.toContainText("de base");
+    await expect(popular.first().locator("svg path")).not.toHaveCount(0);
+    await expect(popular.first().getByText("5.2 kg", { exact: true })).toBeVisible();
+    await expect(popular.nth(1).locator("svg")).toHaveCount(0);
   });
 });
+
+for (const width of [390, 820, 1280]) {
+  test(`Discover cards prioritize base weight and avoid duplicate rankings at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await mockDiscover(page);
+    await page.goto("/community");
+    const results = page.locator(".lpCommunityResults");
+    const cards = results.locator(".lpCommunityCard");
+    const weight = cards.first().locator(".lpCommunityCardWeight");
+    const meta = cards.first().getByText("1 item", { exact: true });
+    const title = cards.first().getByText("Liste A", { exact: true });
+    await expect(weight).toBeVisible();
+    await expect(weight.locator("svg path")).not.toHaveCount(0);
+    await expect(weight.locator("svg")).toHaveCSS("width", "12px");
+    await expect(weight.locator("svg")).toHaveCSS("height", "12px");
+    await expect(weight.getByText("5.2 kg", { exact: true })).toBeVisible();
+    await expect(cards.first()).toHaveAccessibleName(/base weight.*5\.2 kg/i);
+    const fontSize = (locator) => locator.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+    const weightSize = await fontSize(weight);
+    expect(weightSize).toBeLessThan(await fontSize(title));
+    expect(weightSize).toBeGreaterThan(await fontSize(meta));
+    expect((await weight.boundingBox()).y).toBeLessThan((await meta.boundingBox()).y);
+    const titleBox = (await title.boundingBox())!;
+    const weightBox = (await weight.boundingBox())!;
+    if (width === 390) {
+      expect(weightBox.x).toBeCloseTo(titleBox.x, 0);
+      expect(weightBox.y).toBeGreaterThan(titleBox.y + titleBox.height);
+    } else {
+      expect(weightBox.x).toBeGreaterThanOrEqual(titleBox.x + titleBox.width);
+      expect(weightBox.y).toBeCloseTo(titleBox.y, 0);
+    }
+    expect(await cards.nth(2).evaluate((card) => card.scrollWidth <= card.clientWidth)).toBe(true);
+    await expect(cards.nth(1).locator("time")).toHaveText("1 wk. ago");
+    await expect(cards.nth(2).locator("time")).toHaveCount(0);
+
+    const sidebar = page.locator(".lpCommunityPopular");
+    await expect(sidebar).toBeVisible();
+    await page.locator('[data-sort="popular"]').click();
+    await expect(cards.first()).toBeVisible();
+    await expect(sidebar).toHaveCount(0);
+    const layout = page.locator(".lpCommunityDiscoverLayout");
+    expect((await results.boundingBox()).width).toBeCloseTo((await layout.boundingBox()).width, 0);
+    await page.locator('[data-sort="recent"]').click();
+    await expect(sidebar).toBeVisible();
+  });
+}
 
 test.describe("author links", () => {
   test.use({ locale: "en-US", viewport: { width: 1280, height: 900 } });

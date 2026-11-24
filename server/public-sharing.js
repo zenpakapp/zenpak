@@ -1,4 +1,5 @@
 const config = require('config');
+const db = require('./db.js');
 const {
     isPublicVisibility,
     allowsSearchIndexing,
@@ -119,7 +120,10 @@ async function buildProfileListSummary(user, list) {
 
     const publishedLibrary = new Library();
     publishedLibrary.load(frozen);
-    return sanitizeListSummary(publishedLibrary.lists[0], { indexingOpen: searchIndexingOpen(user) });
+    return {
+        ...sanitizeListSummary(publishedLibrary.lists[0], { indexingOpen: searchIndexingOpen(user) }),
+        updatedAt: version.publishedAt || null,
+    };
 }
 
 async function publicListsForProfile(user, library) {
@@ -136,8 +140,21 @@ async function publicListsForProfile(user, library) {
         .filter((list) => list.visibility === 'discoverable' || list.visibility === 'indexable')
         .filter((list) => !featuredOnly || featuredLookup[String(list.id)] || featuredLookup[String(list.externalId)]);
 
-    const summaries = await Promise.all(candidates.map((list) => buildProfileListSummary(user, list)));
-    return summaries.filter(Boolean);
+    const summaries = (await Promise.all(candidates.map((list) => buildProfileListSummary(user, list)))).filter(Boolean);
+    if (!summaries.length || !db.publicListStats?.findMany) return summaries;
+
+    const stats = await db.publicListStats.findMany({
+        externalId: { $in: summaries.map((list) => list.externalId) },
+    }, { projection: { externalId: 1, viewCount: 1, copyCount: 1 } });
+    const statsByList = new Map(stats.map((row) => [row.externalId, row]));
+    return summaries.map((list) => {
+        const counters = statsByList.get(list.externalId);
+        return {
+            ...list,
+            viewCount: Number(counters?.viewCount) || 0,
+            copyCount: Number(counters?.copyCount) || 0,
+        };
+    });
 }
 
 function findListByExternalId(library, externalId) {

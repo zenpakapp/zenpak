@@ -42,8 +42,15 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/globals";
+
 .lpIcon {
     display: block;
     flex: none;
+}
+
+.lpIconCompact {
+    height: $icon-size-xs;
+    width: $icon-size-xs;
 }
 </style>

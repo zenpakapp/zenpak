@@ -18,8 +18,8 @@ const LIST_TYPE_VALUES = [
 const DURATION_VALUES = [
     { value: 'day', i18nKey: 'list.durationDay' },
     { value: 'weekend', i18nKey: 'list.durationWeekend' },
-    { value: 'multi-day', i18nKey: 'list.durationMultiDay' },
-    { value: 'long', i18nKey: 'list.durationLong' },
+    { value: 'multi-day', i18nKey: 'list.durationMultiDay', shortI18nKey: 'list.durationMultiDayShort' },
+    { value: 'long', i18nKey: 'list.durationLong', shortI18nKey: 'list.durationLongShort' },
 ];
 
 // The list types before the activity and the duration were split. A list no longer offers

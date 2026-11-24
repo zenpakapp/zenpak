@@ -14,21 +14,29 @@
     margin: (-$space-8) 0 $space-16;
 }
 
-.lpPublicNav {
+.lpPublicProfile .lpPublicNav {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: $space-12;
     justify-content: space-between;
     margin-bottom: $space-16;
 
     a {
+        align-items: center;
         color: $color-text-muted;
+        display: inline-flex;
         font-size: $fontSize-ui;
+        min-height: $control-height-sm;
         text-decoration: none;
 
         &:hover {
             color: $color-text;
         }
+    }
+
+    .lpThemeItem {
+        min-width: $control-height-sm;
     }
 }
 
@@ -41,7 +49,9 @@
 }
 
 .lpPublicProfileNavRight {
+    flex-wrap: wrap;
     justify-content: flex-end;
+    margin-left: auto;
 }
 
 .lpPublicHero {
@@ -151,8 +161,13 @@
 .lpPublicStats {
     color: $color-text-muted;
     display: flex;
+    flex-wrap: wrap;
     font-size: $fontSize-sm;
-    gap: $space-16;
+    gap: $space-4 $space-16;
+
+    span {
+        white-space: nowrap;
+    }
 
     strong {
         color: $color-text;
@@ -198,10 +213,8 @@
 .lpPublicListsHeader {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    font-weight: $fontWeight-bold;
-    letter-spacing: $letterSpacing-caps;
-    margin-bottom: $space-10;
-    text-transform: uppercase;
+    font-weight: $fontWeight-medium;
+    margin: 0 0 $space-10;
 }
 
 .lpPublicListCard {
@@ -212,18 +225,19 @@
     display: block;
     margin-bottom: $space-8;
     padding: $space-16 $space-16;
-    text-decoration: none;
+    position: relative;
     transition: border-color $transitionDurationFast ease;
 
     &:hover,
-    &:focus-visible {
+    &:focus-within {
         border-color: $color-accent;
     }
 
     &:hover .lpPublicListDesc,
-    &:focus-visible .lpPublicListDesc {
+    &:focus-within .lpPublicListDesc,
+    &:hover .lpPublicListMeta,
+    &:focus-within .lpPublicListMeta {
         color: $color-text;
-        -webkit-line-clamp: 6;
     }
 
     &:last-child {
@@ -244,7 +258,20 @@
     font-size: $fontSize-base;
     font-weight: $fontWeight-bold;
     line-height: 1.25;
+    margin: 0;
     min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.lpPublicListLink {
+    color: inherit;
+    text-decoration: none;
+
+    &::after {
+        content: "";
+        inset: 0;
+        position: absolute;
+    }
 }
 
 .lpPublicListDesc {
@@ -265,11 +292,21 @@
     color: $color-text-muted;
     display: flex;
     flex-shrink: 0;
+    flex-wrap: wrap;
     font-size: $fontSize-xs;
-    gap: $space-10;
+    gap: $space-4 $space-10;
+    justify-content: flex-end;
     line-height: 1.25;
+    max-width: 50%;
     padding-top: $space-2;
+    transition: color $transitionDurationFast ease;
     white-space: nowrap;
+}
+
+.lpPublicListMetric {
+    align-items: center;
+    display: inline-flex;
+    gap: $space-4;
 }
 
 @media (max-width: $bp-phone) {
@@ -282,7 +319,8 @@
     }
 
     .lpPublicListMeta {
-        gap: $space-12;
+        justify-content: flex-start;
+        max-width: none;
         padding-top: 0;
     }
 }
@@ -297,7 +335,6 @@
     padding: $space-10 $space-14;
 }
 
-.lpPublicListDesc.lpPublicListDestination .lpIcon {
-    margin-right: $space-4;
-    vertical-align: -2px;
+.lpPublicListTags {
+    margin-top: $space-8;
 }

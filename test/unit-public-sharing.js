@@ -3,7 +3,16 @@
 const { ObjectId } = require('mongodb');
 const { createListVersionsStub, stubServerModule } = require('./fixtures/list-versions-fixtures.js');
 
-stubServerModule('db.js', { listVersions: createListVersionsStub() });
+const statsQueries = [];
+stubServerModule('db.js', {
+    listVersions: createListVersionsStub(),
+    publicListStats: {
+        async findMany(query) {
+            statsQueries.push(query);
+            return [{ externalId: 'published-list', viewCount: 12, copyCount: 2 }];
+        },
+    },
+});
 
 const { buildPublicList, buildPublicProfile, resolvePublicItemLink } = require('../server/public-sharing.js');
 const { publishVersion } = require('../server/list-versions.js');
@@ -314,13 +323,19 @@ async function runProfileTests() {
     let profilePayload = await buildPublicProfile(profileTestUser);
     assert('no list is served on the profile before anything is published', profilePayload.lists.length === 0);
 
-    await publishVersion(profileTestUser, 'published-list', '');
+    const published = await publishVersion(profileTestUser, 'published-list', '');
     profilePayload = await buildPublicProfile(profileTestUser);
     await publishVersion(profileTestUser, 'unlisted-list', '');
     profilePayload = await buildPublicProfile(profileTestUser);
     assert('a published link-only list is not listed on the profile', !profilePayload.lists.some((l) => l.externalId === 'unlisted-list'));
     assert('the published list appears on the profile', profilePayload.lists.length === 1 && profilePayload.lists[0].externalId === 'published-list');
     assert('a shared but never-published list is excluded from the profile', !profilePayload.lists.some((l) => l.externalId === 'unpublished-list'));
+    const publicList = profilePayload.lists[0];
+    assert('the profile shows the publication date of the visible version',
+        new Date(publicList.updatedAt).getTime() === published.publishedAt.getTime());
+    assert('the profile shows the public views and copies', publicList.viewCount === 12 && publicList.copyCount === 2);
+    assert('stats are fetched only for lists served on the profile', statsQueries.length === 2
+        && statsQueries.every((query) => query.externalId.$in.join(',') === 'published-list'));
 
     profileTestUser.library.lists[0].name = 'LIVE EDIT AFTER PUBLISH';
     const afterLiveEdit = await buildPublicProfile(profileTestUser);

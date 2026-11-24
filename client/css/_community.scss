@@ -93,11 +93,16 @@
 /* ── List cards ── */
 
 .lpCommunityCard {
+    align-items: start;
     background: $color-surface;
     border: 1px solid $color-border;
     border-radius: $radius-lg;
-    display: block;
+    cursor: pointer;
+    display: grid;
+    gap: $space-8 $space-20;
+    grid-template-columns: minmax(0, 1fr) fit-content(45%);
     margin-bottom: $space-6;
+    overflow-wrap: anywhere;
     padding: $space-14 $space-16;
     text-decoration: none;
     transition: border-color $transitionDurationFast ease, box-shadow $transitionDurationFast ease;
@@ -144,7 +149,7 @@
 .lpCommunityCardSource {
     color: $color-text-muted;
     font-size: $fontSize-xs;
-    margin: (-$space-4) 0 $space-8;
+    margin-top: $space-4;
 
     a {
         color: inherit;
@@ -156,6 +161,14 @@
             text-decoration: underline;
         }
     }
+}
+
+.lpCommunityCardIdentity .lpCommunityCardAuthor {
+    margin-bottom: 0;
+}
+
+.lpCommunityCardMetrics {
+    text-align: right;
 }
 
 .lpCommunityBadge {
@@ -171,12 +184,29 @@
     vertical-align: middle;
 }
 
+.lpCommunityWeight {
+    align-items: center;
+    display: inline-flex;
+    gap: $space-4;
+}
+
+.lpCommunityCardWeight {
+    color: $color-text;
+    display: flex;
+    font-size: $fontSize-sm;
+    font-variant-numeric: tabular-nums;
+    font-weight: $fontWeight-medium;
+    justify-content: flex-end;
+    margin-bottom: $space-4;
+}
+
 .lpCommunityCardMeta {
     color: $color-text-muted;
     display: flex;
     flex-wrap: wrap;
     font-size: $fontSize-xs;
     gap: $space-12;
+    justify-content: flex-end;
 }
 
 .lpCommunityCardMetaItem {
@@ -544,6 +574,10 @@
     align-items: start;
     display: grid;
     gap: $space-24;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.lpCommunityDiscoverWithPopular {
     grid-template-columns: minmax(0, 1fr) 260px;
 }
 
@@ -552,39 +586,19 @@
 }
 
 .lpCommunityTags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $space-6;
-    margin-top: $space-10;
+    grid-column: 1 / -1;
 }
 
-.lpCommunityTag {
-    background: rgba(var(--color-accent-rgb), 0.08);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.18);
-    border-radius: $radius-sm;
-    color: $color-text-muted;
-    font-size: $fontSize-xs;
-    font-weight: $fontWeight-medium;
-    padding: $space-2 $space-8;
-}
-
-.lpCommunityDestinationTag {
-    align-items: center;
-    background: var(--color-badge-bg);
-    color: var(--color-badge-text);
+.lpCommunityTags .lpCommunityDestinationTag {
+    background: transparent;
+    border: 0;
+    color: $color-link;
     cursor: pointer;
-    display: inline-flex;
     font-family: inherit;
-    gap: $space-4;
-    line-height: inherit;
-    max-width: 100%;
-    min-height: 24px;
-    overflow-wrap: anywhere;
+    min-width: 24px;
+    padding: 0;
     text-align: left;
-
-    &:hover {
-        border-color: $color-accent;
-    }
+    text-decoration: underline;
 
     &:focus-visible {
         outline: 2px solid $color-accent;
@@ -676,6 +690,13 @@
     margin-top: $space-4;
 }
 
+.lpCommunityPopularMeta {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-8;
+}
+
 /* ── Featured section ── */
 
 .lpCommunityFeatured {
@@ -693,15 +714,12 @@
 
 .lpCommunityCardFeatured {
     border-color: $color-accent;
-    position: relative;
 
-    &::before {
+    .lpCommunityCardName::before {
         color: $color-accent-text;
         content: '★';
         font-size: $fontSize-2xs;
-        position: absolute;
-        right: 12px;
-        top: 12px;
+        margin-right: $space-4;
     }
 }
 
@@ -710,8 +728,8 @@
         max-width: 680px;
     }
 
-    .lpCommunityDiscoverLayout {
-        grid-template-columns: 1fr;
+    .lpCommunityDiscoverWithPopular {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .lpCommunityPopular {
@@ -724,6 +742,19 @@
 }
 
 @media only screen and (max-width: $bp-tablet-s) {
+    .lpCommunityCard {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lpCommunityCardMetrics {
+        text-align: left;
+    }
+
+    .lpCommunityCardWeight,
+    .lpCommunityCardMeta {
+        justify-content: flex-start;
+    }
+
     .lpCommunityFilters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }

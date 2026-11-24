@@ -21,7 +21,8 @@ export const i18n = createI18n({
 });
 
 // A failed request with nothing to say shows this sentence, in the language of the page.
-function syncGenericError() {
+function syncDocumentLanguage() {
+    document.documentElement.lang = i18n.global.locale;
     setGenericErrorMessage(i18n.global.t('misc.genericError'));
 }
 
@@ -63,13 +64,13 @@ export async function setLocale(locale, loggedIn = false) {
     }
 
     i18n.global.locale = await loadLocale(target);
-    syncGenericError();
+    syncDocumentLanguage();
     if (loggedIn) syncAccountLanguage(null);
 }
 
 export function initLocale() {
     return loadLocale(i18n.global.locale).then((target) => {
-        syncGenericError();
+        syncDocumentLanguage();
         return target;
     });
 }

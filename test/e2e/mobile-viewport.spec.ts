@@ -301,6 +301,7 @@ test("public list fits a phone", async ({ page }) => {
           name: "Long list",
           summary: "",
           description: "",
+          destination: "GR5",
           visibility: "shareable",
           copyable: false,
           totalWeight: 1200,
@@ -311,8 +312,9 @@ test("public list fits a phone", async ({ page }) => {
           totalPrice: 0,
           totalConsumablePrice: 0,
           totalQty: 3,
-          seasons: [],
-          listTypes: [],
+          seasons: ["3-season", "fall", "summer", "spring"],
+          durations: ["long"],
+          listTypes: ["hiking"],
         },
         forkedFrom: null,
         totalUnit: "kg",
@@ -375,8 +377,16 @@ test("public list fits a phone", async ({ page }) => {
       },
     }),
   );
-  await page.goto(`${testRoot}p/abc123`);
+  await page.goto(`${testRoot}p/abc123?from=community`);
   await expect(page.locator(".lpPublicListItem").first()).toBeVisible();
+  const tripInfo = page.locator(".lpPublicListTripTags");
+  await expect(tripInfo.locator(".lpListCardTag")).toHaveText([
+    /GR5/,
+    "3 saisons, Automne, Été, Printemps",
+    "Plus de 10 jours",
+    "Randonnée",
+  ]);
+  await expect(tripInfo.locator('svg[aria-hidden="true"]')).toHaveCount(4);
 
   const m = await page.evaluate(() => {
     const box = (el) => el.getBoundingClientRect();
