@@ -13,6 +13,15 @@ const weightUtils = require('../client/utils/weight.js');
 const UNITS = ['g', 'kg', 'oz', 'lb'];
 const SAMPLES_MG = [500, 1000, 1500, 4000, 28349, 100000, 690000, 1234567, 5000000];
 
+// Totals use more digits when the usual rounding would hide a positive weight.
+assert.strictEqual(weightUtils.MgToWeight(4000, 'kg'), 0.004);
+assert.strictEqual(weightUtils.MgToWeight(500, 'g'), 1);
+assert.strictEqual(weightUtils.MgToWeight(400, 'g'), 0.4);
+assert.strictEqual(weightUtils.MgToWeight(100, 'oz'), 0.00353);
+assert.strictEqual(weightUtils.MgToWeight(1000, 'lb'), 0.0022);
+assert.strictEqual(weightUtils.MgToWeight(1234567, 'kg'), 1.23);
+assert.strictEqual(weightUtils.MgToWeight(0, 'kg'), 0);
+
 // Exact values keep the display they had before.
 assert.strictEqual(weightUtils.MgToItemWeight(690000, 'g'), 690);
 assert.strictEqual(weightUtils.MgToItemWeight(1500000, 'kg'), 1.5);
