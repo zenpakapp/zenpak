@@ -753,9 +753,13 @@ input.lpCategoryName { /* specificity */
 
     // A quiet action: the base weight above is the loudest thing here, not this button.
     .lpPackBtn {
+        align-items: center;
         background: transparent;
         border: 1px solid $color-accent;
         color: $color-accent-text;
+        display: inline-flex;
+        gap: $space-6;
+        justify-content: center;
 
         &:hover {
             background: rgba(var(--color-accent-rgb), 0.08);

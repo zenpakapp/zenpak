@@ -1,5 +1,5 @@
 // Icon shapes for client/components/icon.vue: 24x24 grid, drawn with a 2px round stroke.
-// The shapes are from Lucide (https://lucide.dev, ISC licence).
+// Most shapes are from Lucide (https://lucide.dev, ISC licence).
 // CommonJS, like the other client/data files, so a test can require() it without a bundler.
 
 module.exports = {
@@ -87,6 +87,17 @@ module.exports = {
             'm7.5 4.27 9 5.15',
         ],
         fillable: false,
+    },
+    backpack: {
+        // Traced from the reference. Rectangular cutouts use opposite winding.
+        paths: [
+            'M9.45 3.85C9.55 2.75 10.4 1.9 11.4 1.9H12.6C13.6 1.9 14.45 2.75 14.55 3.85H13.8C13.7 3.15 13.2 2.65 12.55 2.65H11.45C10.8 2.65 10.3 3.15 10.2 3.85Z',
+            'M6.1 22.05C5.25 22.05 4.6 21.3 4.6 20.4V8.95C4.6 6.05 6.75 4 9.5 3.75H14.5C17.25 4 19.4 6.05 19.4 8.95V20.4C19.4 21.3 18.75 22.05 17.9 22.05H17.35V16.7C17.35 15 16 13.65 14.25 13.65H9.75C8 13.65 6.65 15 6.65 16.7V22.05ZM9.15 7.1V8.35H14.85V7.1Z',
+            'M7.5 22.05V16.7C7.5 15.45 8.55 14.5 9.75 14.5H14.25C15.45 14.5 16.5 15.45 16.5 16.7V22.05ZM8.9 18.8V20.4H15.3V18.8Z',
+            'M4.1 14.45C3.1 14.9 2.35 15.8 2.35 16.85V19.4C2.35 20 2.75 20.45 3.4 20.45H4.1ZM19.9 14.45C20.9 14.9 21.65 15.8 21.65 16.85V19.4C21.65 20 21.25 20.45 20.6 20.45H19.9Z',
+        ],
+        fillable: true,
+        stroke: false,
     },
     'chevron-up': {
         paths: ['m18 15-6-6-6 6'],
