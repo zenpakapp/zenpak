@@ -17,6 +17,26 @@
                         <input id="shareUrl" ref="shareUrlInput" v-select-on-focus type="text" class="shareInput" :value="shareUrl" readonly>
                     </div>
 
+                    <div v-if="qrAvailable" class="shareSection shareQrSection">
+                        <button type="button" class="shareQrButton" :aria-expanded="qrOpen ? 'true' : 'false'" aria-controls="shareQrPanel" @click="toggleQr">
+                            {{ $t('share.qrButton') }}
+                        </button>
+                        <div v-if="qrOpen" id="shareQrPanel" class="shareQrPanel">
+                            <img v-if="qrSrc" class="shareQrImage" :src="qrSrc" :data-qr-url="qrUrl" :alt="$t('share.qrAlt', { name: list.name })" width="240" height="240">
+                            <p class="shareQrAddress">{{ qrAddress }}</p>
+                            <p v-if="qrNote" class="shareVisibilityHint">{{ qrNote }}</p>
+                            <div class="shareQrActions">
+                                <button v-if="canShareNative" type="button" class="sharePublishButton" @click="shareQrLink">
+                                    {{ $t('share.qrShare') }}
+                                </button>
+                                <button type="button" class="shareQrSecondary" @click="copyQrLink">
+                                    {{ qrCopied ? $t('share.qrCopied') : $t('share.qrCopy') }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p v-else class="shareVisibilityHint">{{ $t('share.qrNeedsSharing') }}</p>
+
                     <div class="shareSection">
                         <div class="shareLabel">{{ $t('share.visibility') }}</div>
                         <div class="shareSelectWrap">
@@ -110,7 +130,7 @@
 </template>
 
 <script>
-import { STATUS_REFRESH_MS } from '../services/timings';
+import { STATUS_REFRESH_MS, FEEDBACK_MS } from '../services/timings';
 import { FIELD_LIMITS } from '../services/field-limits';
 import PopoverHover from './popover-hover.vue';
 import Icon from './icon.vue';
@@ -118,6 +138,7 @@ import listInsightsLine from './list-insights-line.vue';
 import { showGlobalAlert } from '../services/user-feedback';
 import { trackEvent } from '../utils/analytics';
 import { fetchJson } from '../utils/utils';
+import { reachableOrigin } from '../utils/reachable-origin';
 import {
     LIST_TYPE_VALUES, DURATION_VALUES, SEASON_VALUES, toI18nOptions, valuesInGroup, toggleTag,
 } from '../data/list-type-options';
@@ -138,6 +159,10 @@ export default {
             publishing: false,
             statusTimer: null,
             tagsExpanded: null,
+            qrOpen: false,
+            qrSrc: '',
+            qrCopied: false,
+            qrOrigin: window.location.origin,
         };
     },
     computed: {
@@ -202,6 +227,27 @@ export default {
             const location = window.location;
             return location.origin ? location.origin : `${location.protocol}//${location.hostname}`;
         },
+        // The QR code stands for a link anyone can open: the list has to be shareable (a private one has
+        // no public page) and to have its address. On localhost it carries the configured address.
+        qrAvailable() {
+            return this.isShared && Boolean(this.externalId) && this.shareReady;
+        },
+        qrUrl() {
+            return this.qrAvailable ? `${this.qrOrigin}/p/${this.externalId}` : '';
+        },
+        qrAddress() {
+            return this.qrUrl.replace(/^https?:\/\//, '');
+        },
+        // What the page behind the QR code shows: only the published version, and nothing before
+        // the first publication.
+        qrNote() {
+            if (!this.publishStatus.latestVersion) return this.$t('share.qrNotPublished');
+            if (this.hasUnpublishedChanges) return this.$t('share.qrUnpublishedChanges');
+            return '';
+        },
+        canShareNative() {
+            return typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+        },
         shareUrl() {
             if (this.externalId && this.shareReady) {
                 return `${this.baseUrl}/p/${this.externalId}`;
@@ -245,14 +291,48 @@ export default {
         '$store.state.syncToken': 'scheduleStatusRefresh',
         'list.externalId': 'scheduleStatusRefresh',
         'list.visibility': ['scheduleStatusRefresh', 'resetTagsChoice'],
+        qrUrl() {
+            if (this.qrOpen) this.makeQr();
+        },
     },
     mounted() {
         this.refreshPublishStatus();
+        reachableOrigin(window.location.origin).then((origin) => { this.qrOrigin = origin; });
     },
     beforeUnmount() {
         clearTimeout(this.statusTimer);
     },
     methods: {
+        toggleQr() {
+            this.qrOpen = !this.qrOpen;
+            if (this.qrOpen) this.makeQr();
+        },
+        async makeQr() {
+            if (!this.qrUrl) { this.qrSrc = ''; return; }
+            const { toDataURL } = await import(/* webpackChunkName: "qrcode" */ 'qrcode');
+            this.qrSrc = await toDataURL(this.qrUrl, {
+                errorCorrectionLevel: 'M',
+                margin: 4,
+                width: 480,
+                color: { dark: '#000000', light: '#ffffff' },
+            });
+        },
+        async shareQrLink() {
+            try {
+                await navigator.share({ title: this.list.name, url: this.qrUrl });
+            } catch (err) {
+                // The person closed the share sheet: nothing to do.
+            }
+        },
+        async copyQrLink() {
+            try {
+                await navigator.clipboard.writeText(this.qrUrl);
+                this.qrCopied = true;
+                setTimeout(() => { this.qrCopied = false; }, FEEDBACK_MS);
+            } catch (err) {
+                // No clipboard access (insecure address): the address is shown and selectable.
+            }
+        },
         // A new visibility sets the block again by the rule (open when the list is public).
         resetTagsChoice() {
             this.tagsExpanded = null;

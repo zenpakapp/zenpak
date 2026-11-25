@@ -401,6 +401,67 @@
     color: $color-accent-text;
 }
 
+// The QR code of the list: a button that opens a panel with the code, its address and two actions.
+.shareQrButton {
+    appearance: none;
+    background: transparent;
+    border: 1px solid $color-accent;
+    border-radius: $radius-md;
+    color: $color-accent-text;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    font-weight: $fontWeight-bold;
+    padding: $space-8 $space-12;
+
+    &:hover {
+        background: rgba(var(--color-accent-rgb), 0.08);
+    }
+}
+
+.shareQrPanel {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: $space-8;
+    padding-top: $space-8;
+}
+
+// The white ground and the quiet zone of 4 modules are in the image itself, so the code reads on a
+// dark theme too.
+.shareQrImage {
+    border-radius: $radius-md;
+    height: auto;
+    max-width: 100%;
+    width: 240px;
+}
+
+.shareQrAddress {
+    color: $color-text-muted;
+    font-size: $fontSize-sm;
+    margin: 0;
+    overflow-wrap: anywhere;
+    text-align: center;
+    user-select: all;
+}
+
+.shareQrActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-8;
+    justify-content: center;
+}
+
+.shareQrSecondary {
+    appearance: none;
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    color: $color-text;
+    cursor: pointer;
+    font-size: $fontSize-sm;
+    padding: $space-8 $space-12;
+}
+
 .shareInput {
     appearance: none;
     background: $color-bg;
