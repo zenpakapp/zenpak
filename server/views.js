@@ -33,7 +33,9 @@ const {
 const { analyticsConfig, analyticsTag } = require('./analytics.js');
 
 const db = require('./db.js');
-const { loadPublishedLibraryByExternalId } = require('./list-versions.js');
+const { loadPublishedLibraryByExternalId, getPublishedOwner, findLiveList } = require('./list-versions.js');
+const { registerOfficialLinks } = require('./official-links.js');
+const { isPublicVisibility } = require('../client/services/public-visibility.js');
 
 async function loadPublishedListView(id, res) {
     const published = await loadPublishedLibraryByExternalId(id);
@@ -377,6 +379,25 @@ router.get('/csv/:id', (req, res) => {
         // A download the owner allowed for everyone. Counted for the ZenPak figures only.
         if (downloadable) incrementPublicListStat(id, 'csvDownloadCount').catch(() => {});
     });
+});
+
+// Official short links for printed material (see server/official-links.js). Registered after every
+// page of the site and before the 404, so an alias can never hide a real page.
+const siteTopLevelPaths = new Set([
+    ...vueRoutes.map((route) => route.path.split('/')[1]).filter(Boolean),
+    'api', 'dist', 'brand', 'images', 'css', 'js', 'r', 'e', 'csv', 'p', 'u', 'privacy', 'terms', 'legal', 'pricing',
+]);
+async function officialListIsServable(externalId) {
+    const owner = await getPublishedOwner(externalId);
+    if (!owner || owner.banned) return false;
+    const live = findLiveList(owner, externalId);
+    return Boolean(live) && !live.takenDown && isPublicVisibility(live.visibility);
+}
+registerOfficialLinks(router, {
+    links: config.has('officialLinks') ? config.get('officialLinks') : {},
+    reserved: siteTopLevelPaths,
+    listIsServable: officialListIsServable,
+    warn: (message) => logger.info(message),
 });
 
 router.get('*', (req, res) => {
