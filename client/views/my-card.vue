@@ -134,6 +134,7 @@
 import { FEEDBACK_MS } from '../services/timings';
 import { openDialog } from '../services/dialogs';
 import { isPublicVisibility } from '../services/public-visibility';
+import { reachableOrigin } from '../utils/reachable-origin';
 
 export default {
     name: 'MyCardView',
@@ -187,15 +188,7 @@ export default {
         // On localhost the QR code would point to an address a phone cannot open: take the
         // address the server is configured with, when that one is reachable.
         async useReachableOrigin() {
-            const isLocal = (host) => ['localhost', '127.0.0.1', '[::1]'].includes(host);
-            if (!isLocal(window.location.hostname)) return;
-            try {
-                const res = await fetch('/api/public/origin');
-                const { origin } = await res.json();
-                if (origin && !isLocal(new URL(origin).hostname)) this.origin = origin.replace(/\/$/, '');
-            } catch (err) {
-                // Keep the current address.
-            }
+            this.origin = await reachableOrigin(this.origin);
         },
         async makeQr() {
             const { toDataURL } = await import(/* webpackChunkName: "qrcode" */ 'qrcode');
