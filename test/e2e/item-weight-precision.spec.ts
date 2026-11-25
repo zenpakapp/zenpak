@@ -9,10 +9,10 @@ import { testRoot } from "./utils";
 // Weights are stored in mg and shown in the library's item unit. In kg, a 4 g item used to
 // show as 0 and a 28.349 g item as 0.03, and saving either (even just renaming it) wrote
 // the rounded value back over the real weight.
-async function openEditor(page) {
+async function openEditor(page, { activeItemCount = 4, itemUnit = "kg" } = {}) {
   await page.setViewportSize({ width: 1024, height: 812 });
-  const library = createEditorLibrary(12, 4);
-  library.itemUnit = "kg";
+  const library = createEditorLibrary(12, activeItemCount);
+  library.itemUnit = itemUnit;
   library.totalUnit = "kg";
   library.items[0].name = "Spork";
   library.items[0].weight = 4000;
@@ -41,6 +41,26 @@ test("a light item shows its real weight instead of 0", async ({ page }) => {
   await openEditor(page);
   await expect(row(page, "Spork").locator(".lpWeight")).toHaveValue("0.004");
   await expect(row(page, "Bag").locator(".lpWeight")).toHaveValue("0.028");
+});
+
+test("a 4 g category shows a nonzero subtotal in kg", async ({ page }) => {
+  await openEditor(page, { activeItemCount: 1, itemUnit: "g" });
+  await expect(row(page, "Spork").locator(".lpWeight")).toHaveValue("4");
+
+  const footer = page.locator(".lpItemsFooter");
+  await expect(footer.locator(".lpSubtotalUnit")).toHaveText("kg");
+  await expect(footer.locator(".lpDisplaySubtotal")).toHaveText("0.004");
+
+  const summary = page.locator(".lpTotals");
+  const columns = await summary.locator(".lpHeader .lpNumber, .lpTotalCategory .lpDisplaySubtotal, .lpTotalValue").evaluateAll((elements) =>
+    elements.map((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getBoundingClientRect().right;
+    }),
+  );
+  expect(columns).toHaveLength(3);
+  expect(Math.max(...columns) - Math.min(...columns)).toBeLessThanOrEqual(1);
 });
 
 test("retyping the shown weight does not overwrite the stored one", async ({

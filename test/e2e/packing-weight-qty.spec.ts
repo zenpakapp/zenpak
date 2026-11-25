@@ -27,7 +27,13 @@ test("packing rows put the weight above the quantity", async ({ page }) => {
     timeout: 15000,
   });
 
-  await page.locator(".lpTotalsContainer .lpPackBtn").tap();
+  const packButton = page.getByRole("button", { name: "Pack this list" });
+  const packIcon = packButton.locator('svg[aria-hidden="true"]');
+  await expect(packIcon).toHaveCSS("width", "16px");
+  await expect(packIcon).toHaveAttribute("fill", "currentColor");
+  await expect(packIcon).toHaveAttribute("stroke", "none");
+  await expect(packButton.locator("svg path").first()).toBeAttached();
+  await packButton.tap();
   await expect(page.locator(".lpPackingBar")).toBeVisible();
 
   const row = page.locator(".lpItem[data-item-id]").first();

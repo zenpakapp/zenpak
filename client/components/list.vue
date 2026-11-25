@@ -49,8 +49,9 @@
             </p>
         </div>
         <list-summary v-if="!isListNew && !isPackingMode" class="lpEditorSummary" :list="list">
-            <button v-if="!isPackingMode" class="lpPackBtn" @click="enterPackingMode">
-                🎒 {{ $t('list.packThis') }}
+            <button v-if="!isPackingMode" type="button" class="lpPackBtn" @click="enterPackingMode">
+                <icon name="backpack" filled />
+                {{ $t('list.packThis') }}
             </button>
             <button v-if="!library.optionalFields['listDescription']" type="button" class="lpAddListDescription" @click="addListDescription">
                 + {{ $t('list.addListDescription') }}

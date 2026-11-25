@@ -60,9 +60,9 @@
                             {{ profile.bio }}
                         </p>
                         <div class="lpPublicStats">
-                            <span><strong>{{ lists.length }}</strong> {{ $t('public.statLists') }}</span>
-                            <span><strong>{{ followerCount }}</strong> {{ $t('public.statFollowers') }}</span>
-                            <span><strong>{{ followingCount }}</strong> {{ $t('public.statFollowing') }}</span>
+                            <span><strong>{{ lists.length }}</strong> {{ $tc('public.statListCount', lists.length) }}</span>
+                            <span><strong>{{ followerCount }}</strong> {{ $tc('public.statFollowers', followerCount) }}</span>
+                            <span><strong>{{ followingCount }}</strong> {{ $tc('public.statFollowing', followingCount) }}</span>
                         </div>
                         <ul v-if="safeLinks.length" class="lpPublicLinks">
                             <li v-for="link in safeLinks" :key="link.url">
@@ -91,35 +91,43 @@
             </div>
 
             <!-- Listes -->
-            <div v-if="lists && lists.length">
-                <div class="lpPublicListsHeader">
+            <section v-if="lists && lists.length" aria-labelledby="public-lists-heading">
+                <h2 id="public-lists-heading" class="lpPublicListsHeader">
                     {{ $t('public.publicLists') }}
-                </div>
-                <router-link
+                </h2>
+                <article
                     v-for="list in lists"
                     :key="list.externalId"
-                    :to="listTo(list.externalId)"
                     class="lpPublicListCard"
                 >
                     <div class="lpPublicListCardTop">
-                        <div class="lpPublicListName">
-                            {{ list.name }}
-                        </div>
+                        <h3 class="lpPublicListName">
+                            <router-link :to="listTo(list.externalId)" class="lpPublicListLink">
+                                {{ list.name }}
+                            </router-link>
+                        </h3>
                         <div class="lpPublicListMeta">
-                            <span v-if="list.totalBaseWeight">⚖ {{ formatWeight(list.totalBaseWeight) }}</span>
-                            <span v-if="list.totalQty">📦 {{ list.totalQty }}</span>
+                            <span v-if="list.totalBaseWeight" class="lpPublicListMetric">
+                                <icon name="scale" class="lpIconCompact" />
+                                <span class="lpInvisible">{{ $t('public.baseWeight') }} :</span>
+                                {{ formatWeight(list.totalBaseWeight) }}
+                            </span>
+                            <span v-if="list.totalQty" class="lpPublicListMetric">
+                                <icon name="package" class="lpIconCompact" />
+                                <span aria-hidden="true">{{ list.totalQty }}</span>
+                                <span class="lpInvisible">{{ $tc('community.metaItems', list.totalQty) }}</span>
+                            </span>
+                            <span v-if="list.viewCount">{{ $tc('community.metaViews', list.viewCount) }}</span>
+                            <span v-if="list.copyCount">{{ $tc('community.metaCopies', list.copyCount) }}</span>
+                            <time v-if="Date.parse(list.updatedAt) > 0" :datetime="list.updatedAt">{{ timeAgo(list.updatedAt) }}</time>
                         </div>
-                    </div>
-                    <div v-if="list.destination" class="lpPublicListDesc lpPublicListDestination">
-                        <icon name="map-pin" :size="12" />
-                        <span class="lpInvisible">{{ $t('list.destination') }} :</span>
-                        {{ list.destination }}
                     </div>
                     <div v-if="list.description" class="lpPublicListDesc">
                         {{ list.description }}
                     </div>
-                </router-link>
-            </div>
+                    <list-card-tags :list="list" class="lpPublicListTags" />
+                </article>
+            </section>
             <p v-else style="color: var(--color-text-muted); font-size: 14px;">
                 {{ $t('public.noPublicLists') }}
             </p>
@@ -145,6 +153,7 @@
 <script>
 import { useRoute } from 'vue-router';
 import { fetchJson } from '../utils/utils';
+import { formatRelativeTime } from '../utils/relative-time';
 import { useFollow } from '../composables/useFollow';
 import { useTheme } from '../composables/useTheme';
 import { tierLabel } from '../services/tier-labels.js';
@@ -153,13 +162,14 @@ import { avatarColor, avatarInitial } from '../utils/avatar.js';
 import ReportButton from '../components/report-button.vue';
 import HreflangLinks from '../components/hreflang-links.vue';
 import Icon from '../components/icon.vue';
+import ListCardTags from '../components/list-card-tags.vue';
 import ThemeToggle from '../components/theme-toggle.vue';
 import { SPONSORED_REL, USER_LINK_REL } from '../utils/linkify';
 
 export default {
     name: 'PublicProfile',
     components: {
-        HreflangLinks, Icon, ReportButton, ThemeToggle,
+        HreflangLinks, Icon, ListCardTags, ReportButton, ThemeToggle,
     },
     setup() {
         useTheme();
@@ -271,6 +281,9 @@ export default {
     },
     methods: {
         tierLabel,
+        timeAgo(date) {
+            return formatRelativeTime(date, this.$i18n.locale, (...args) => this.$t(...args));
+        },
         updateDocumentMeta() {
             if (!this.profile) return;
             document.title = `${this.profile.displayName || 'Public profile'} - ZenPak`;

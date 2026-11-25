@@ -19,6 +19,7 @@ test("the account keeps the language of the page", async ({ page }) => {
   const now = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
   await registerUser(page, `al${now}`, "testtest", `al+${now}@lighterpack.com`);
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
   expect(await storedLanguage(page)).toBe("en");
 
@@ -26,5 +27,6 @@ test("the account keeps the language of the page", async ({ page }) => {
   await page.evaluate(() => localStorage.setItem("zp-locale", "de"));
   await page.reload();
   await expect(page.locator("#header")).toBeVisible({ timeout: 35000 });
+  await expect(page.locator("html")).toHaveAttribute("lang", "de");
   await expect.poll(() => storedLanguage(page)).toBe("de");
 });

@@ -22,6 +22,7 @@ const dbStub = {
                 if (query.destinationKey && query.destinationKey !== list.destinationKey) return false;
                 if (query.totalBaseWeight) {
                     const weight = Number(list.totalBaseWeight) || 0;
+                    if (query.totalBaseWeight.$gt !== undefined && weight <= query.totalBaseWeight.$gt) return false;
                     if (query.totalBaseWeight.$gte !== undefined && weight < query.totalBaseWeight.$gte) return false;
                     if (query.totalBaseWeight.$lte !== undefined && weight > query.totalBaseWeight.$lte) return false;
                 }
@@ -210,6 +211,7 @@ async function run() {
         ownerUsername: 'carol',
         ownerTier: 'base',
         copyCount: 2,
+        totalBaseWeight: 1200,
         updatedAt: new Date('2026-06-05'),
     });
 
@@ -289,6 +291,7 @@ async function run() {
         ownerUsername: 'frank',
         ownerTier: 'base',
         seasons: ['3-season'],
+        totalBaseWeight: 1200,
         updatedAt: new Date('2026-06-06'),
     });
 
@@ -303,8 +306,8 @@ async function run() {
     // Test: a list without Items is not shown
     projectedLists.length = 0;
     projectedLists.push(
-        { externalId: 'full', name: 'Full', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 12, updatedAt: new Date('2026-06-02') },
-        { externalId: 'empty', name: 'New list', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 0, updatedAt: new Date('2026-06-03') },
+        { externalId: 'full', name: 'Full', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 12, totalBaseWeight: 1200, updatedAt: new Date('2026-06-02') },
+        { externalId: 'empty', name: 'New list', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', totalQty: 0, totalBaseWeight: 1200, updatedAt: new Date('2026-06-03') },
     );
     responseData = null;
     await new Promise(resolve => {
@@ -319,9 +322,9 @@ async function run() {
     const d2 = new Date('2026-06-02T12:00:00.000Z');
     const d3 = new Date('2026-06-01T12:00:00.000Z');
     projectedLists.push(
-        { externalId: 'r1', name: 'Recent 1', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, updatedAt: d1 },
-        { externalId: 'r2', name: 'Recent 2', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, updatedAt: d2 },
-        { externalId: 'r3', name: 'Recent 3', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, updatedAt: d3 },
+        { externalId: 'r1', name: 'Recent 1', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, totalBaseWeight: 1200, updatedAt: d1 },
+        { externalId: 'r2', name: 'Recent 2', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, totalBaseWeight: 1200, updatedAt: d2 },
+        { externalId: 'r3', name: 'Recent 3', visibility: 'discoverable', ownerUsername: 'eve', ownerTier: 'base', copyCount: 0, totalBaseWeight: 1200, updatedAt: d3 },
     );
 
     // cursor = d2.toISOString(): items with updatedAt >= d2 should be excluded (r1 and r2)

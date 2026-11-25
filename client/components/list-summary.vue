@@ -19,9 +19,10 @@
                     <span v-if="library.optionalFields['price']" class="lpCell">
                         {{ $t('public.price') }}
                     </span>
-                    <span class="lpCell">
+                    <span class="lpCell lpNumber">
                         {{ $t('public.weight') }}
                     </span>
+                    <span class="lpCell" />
                 </li>
                 <li v-for="category in categories" :key="category.id" :class="{'hover': hoveredCategoryId === category.id, 'lpTotalCategory lpRow': true}">
                     <span class="lpCell lpLegendCell">
@@ -34,8 +35,9 @@
                         {{ displayPrice(category.subtotalPrice, library.currencySymbol) }}
                     </span>
                     <span class="lpCell lpNumber">
-                        <span class="lpDisplaySubtotal" :mg="category.subtotalWeight">{{ displayWeight(category.subtotalWeight, displayUnit) }}</span> <span class="lpSubtotalUnit">{{ displayUnit }}</span>
+                        <span class="lpDisplaySubtotal" :mg="category.subtotalWeight">{{ displayWeight(category.subtotalWeight, displayUnit) }}</span>
                     </span>
+                    <span class="lpCell lpSummaryWeightUnit">{{ displayUnit }}</span>
                 </li>
                 <li class="lpRow lpFooter lpTotal">
                     <span class="lpCell" />
@@ -49,8 +51,8 @@
                         <span class="lpTotalValue" :title="list.totalQty + ' ' + $t('public.items')">
                             {{ displayWeight(list.totalWeight, displayUnit) }}
                         </span>
-                        <span class="lpTotalUnit">{{ displayUnit }}</span>
                     </span>
+                    <span class="lpCell lpSubtotal lpSummaryWeightUnit">{{ displayUnit }}</span>
                 </li>
                 <li v-if="list.totalConsumableWeight" data-weight-type="consumable" class="lpRow lpFooter lpBreakdown lpConsumableWeight">
                     <span class="lpCell" />
@@ -62,8 +64,8 @@
                     </span>
                     <span class="lpCell lpNumber lpSubtotal">
                         <span class="lpDisplaySubtotal" :mg="list.totalConsumableWeight">{{ displayWeight(list.totalConsumableWeight, displayUnit) }}</span>
-                        <span class="lpSubtotalUnit">{{ displayUnit }}</span>
                     </span>
+                    <span class="lpCell lpSubtotal lpSummaryWeightUnit">{{ displayUnit }}</span>
                 </li>
                 <li v-if="list.totalWornWeight" data-weight-type="worn" class="lpRow lpFooter lpBreakdown lpWornWeight">
                     <span class="lpCell" />
@@ -73,8 +75,8 @@
                     <span v-if="library.optionalFields['price']" class="lpCell lpNumber" />
                     <span class="lpCell lpNumber lpSubtotal">
                         <span class="lpDisplaySubtotal" :mg="list.totalWornWeight">{{ displayWeight(list.totalWornWeight, displayUnit) }}</span>
-                        <span class="lpSubtotalUnit">{{ displayUnit }}</span>
                     </span>
+                    <span class="lpCell lpSubtotal lpSummaryWeightUnit">{{ displayUnit }}</span>
                 </li>
                 <li v-if="list.totalWornWeight || list.totalConsumableWeight" data-weight-type="base" class="lpRow lpFooter lpBreakdown lpBaseWeight">
                     <span class="lpCell" />
@@ -86,8 +88,8 @@
                         <span class="lpDisplaySubtotal" :mg="list.totalBaseWeight" :title="displayWeight(list.totalPackWeight, displayUnit) + ' ' + displayUnit + ' ' + $t('public.packWeightHint')">
                             {{ displayWeight(list.totalBaseWeight, displayUnit) }}
                         </span>
-                        <span class="lpSubtotalUnit">{{ displayUnit }}</span>
                     </span>
+                    <span class="lpCell lpSubtotal lpSummaryWeightUnit">{{ displayUnit }}</span>
                 </li>
             </ul>
             <div v-if="$slots.default" class="lpTotalsActions">
@@ -297,6 +299,18 @@ export default {
     aspect-ratio: 1;
     height: auto !important;
     max-width: 100%;
+}
+
+.lpTotals {
+    .lpSummaryWeightUnit {
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .lpDisplaySubtotal,
+    .lpTotalValue {
+        padding-right: 0;
+    }
 }
 
 // Desktop reads the canvas tooltip; the readout is for phones only.

@@ -6,7 +6,7 @@
         :height="size"
         viewBox="0 0 24 24"
         :fill="solid ? 'currentColor' : 'none'"
-        stroke="currentColor"
+        :stroke="shape.stroke === false ? 'none' : 'currentColor'"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -42,8 +42,15 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/globals";
+
 .lpIcon {
     display: block;
     flex: none;
+}
+
+.lpIconCompact {
+    height: $icon-size-xs;
+    width: $icon-size-xs;
 }
 </style>

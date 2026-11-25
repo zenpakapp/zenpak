@@ -289,6 +289,15 @@ const longItem = (id, name, brand, description, weight) => ({
 // On a phone the public list squeezed the chart and its table side by side and let long
 // "brand · description" text run under the weight column and off the screen.
 test("public list fits a phone", async ({ page }) => {
+  await page.addInitScript(() => {
+    const fillText = CanvasRenderingContext2D.prototype.fillText;
+    const labels = new Set<string>();
+    Reflect.set(window, "publicChartLabels", labels);
+    CanvasRenderingContext2D.prototype.fillText = function (...args) {
+      if (this.canvas.classList.contains("lpPublicChartCanvas")) labels.add(args[0]);
+      return fillText.apply(this, args);
+    };
+  });
   await page.route("**/api/public/list/*", (route) =>
     route.fulfill({
       json: {
@@ -301,18 +310,20 @@ test("public list fits a phone", async ({ page }) => {
           name: "Long list",
           summary: "",
           description: "",
+          destination: "GR5",
           visibility: "shareable",
           copyable: false,
-          totalWeight: 1200,
-          totalWornWeight: 0,
+          totalWeight: 1300,
+          totalWornWeight: 100,
           totalConsumableWeight: 0,
           totalBaseWeight: 1200,
           totalPackWeight: 1200,
           totalPrice: 0,
           totalConsumablePrice: 0,
           totalQty: 3,
-          seasons: [],
-          listTypes: [],
+          seasons: ["3-season", "fall", "summer", "spring"],
+          durations: ["long"],
+          listTypes: ["hiking"],
         },
         forkedFrom: null,
         totalUnit: "kg",
@@ -329,6 +340,7 @@ test("public list fits a phone", async ({ page }) => {
             id: 1,
             name: "Shelter",
             subtotalWeight: 1200,
+            subtotalBaseWeight: 1200,
             subtotalWornWeight: 0,
             subtotalConsumableWeight: 0,
             subtotalPrice: 0,
@@ -362,7 +374,8 @@ test("public list fits a phone", async ({ page }) => {
             id: 2,
             name: "Sleep",
             subtotalWeight: 100,
-            subtotalWornWeight: 0,
+            subtotalBaseWeight: 0,
+            subtotalWornWeight: 100,
             subtotalConsumableWeight: 0,
             subtotalPrice: 0,
             subtotalConsumablePrice: 0,
@@ -375,8 +388,40 @@ test("public list fits a phone", async ({ page }) => {
       },
     }),
   );
-  await page.goto(`${testRoot}p/abc123`);
+  await page.goto(`${testRoot}p/abc123?from=community`);
   await expect(page.locator(".lpPublicListItem").first()).toBeVisible();
+  const tripInfo = page.locator(".lpPublicListTripTags");
+  await expect(tripInfo.locator(".lpListCardTag")).toHaveText([
+    /GR5/,
+    "3 saisons, Automne, Été, Printemps",
+    "Plus de 10 jours",
+    "Randonnée",
+  ]);
+  await expect(tripInfo.locator('svg[aria-hidden="true"]')).toHaveCount(4);
+  const baseWeight = page.locator(".lpPublicBaseWeight");
+  const chartCanvas = page.locator(".lpPublicChartCanvas");
+  await expect(baseWeight).toHaveText("Poids de base 0.0012 kg");
+  await expect(chartCanvas).toHaveCSS("width", "136px");
+  const toggle = page.getByRole("button", { name: "Catégories (2)" });
+  const chartRows = page.locator("#public-chart-categories");
+  const totals = page.locator(".lpPublicChartTable tfoot");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(chartRows).toBeHidden();
+  await expect(totals.getByText("Total", { exact: true })).toBeVisible();
+  await expect(totals.getByText("Porté", { exact: true })).toBeVisible();
+  const totalColor = await totals.getByText("Total", { exact: true }).evaluate((el) => getComputedStyle(el).color);
+  const wornColor = await page.locator(".lpPublicList").evaluate((el) => getComputedStyle(el).color);
+  await expect(baseWeight.locator("strong")).toHaveCSS("color", totalColor);
+  await expect(totals.getByText("Porté", { exact: true })).toHaveCSS("color", wornColor);
+  await toggle.tap();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(chartRows).toBeVisible();
+  await toggle.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(chartRows).toBeHidden();
+  expect((await baseWeight.boundingBox())!.y).toBeLessThan(
+    (await page.locator(".lpPublicChartCanvas").boundingBox())!.y,
+  );
 
   const m = await page.evaluate(() => {
     const box = (el) => el.getBoundingClientRect();
@@ -403,4 +448,21 @@ test("public list fits a phone", async ({ page }) => {
   expect(m.items.filter((i) => i.overlap)).toEqual([]);
   expect(m.items.every((i) => i.metaRight <= 375)).toBe(true);
   expect(m.stacked).toBe(true);
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(chartCanvas).toHaveCSS("width", "200px");
+  await expect(toggle).toBeHidden();
+  await expect(chartRows).toBeVisible();
+  const chart = (await page.locator(".lpPublicChart").boundingBox())!;
+  const canvas = (await chartCanvas.boundingBox())!;
+  const table = (await page.locator(".lpPublicChartTable").boundingBox())!;
+  expect(table.width).toBeLessThanOrEqual(420);
+  expect((canvas.x + table.x + table.width) / 2).toBeCloseTo(chart.x + chart.width / 2, 0);
+  await expect(baseWeight).toHaveCSS("justify-content", "flex-end");
+  const baseValue = (await baseWeight.locator("strong").boundingBox())!;
+  expect(baseValue.x + baseValue.width).toBeCloseTo(table.x + table.width, 0);
+  await page.getByRole("combobox", { name: "Unité de poids des totaux" }).selectOption("g");
+  await expect(baseWeight).toHaveText("Poids de base 1 g");
+  await chartCanvas.hover({ position: { x: 180, y: 100 } });
+  await expect.poll(() => page.evaluate(() => [...Reflect.get(window, "publicChartLabels")])).toContain("1 g (92%)");
 });

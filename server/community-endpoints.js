@@ -50,20 +50,17 @@ const SEARCH_CURSOR = /^o:(\d+)$/;
 // Everything but the date cursor runs in the database query, before any limit: filtering a
 // pre-cut list of the newest 200 would hide every older list from the search and the filters.
 function buildDiscoverQuery(filters, words) {
-    // A list without any Item has nothing to learn from: it stays out of Discover. A projection that
-    // predates the count (no field) stays in.
-    // A list without any Item has nothing to learn from: it stays out of Discover. A projection that
-    // predates the count (no field) stays in.
-    const query = { visibility: { $in: ['discoverable', 'indexable'] }, totalQty: { $ne: 0 } };
+    const query = {
+        visibility: { $in: ['discoverable', 'indexable'] },
+        totalQty: { $ne: 0 },
+        totalBaseWeight: { $gt: 0 },
+    };
     if (filters.season) query.seasons = filters.season;
     if (filters.type) query.listTypes = filters.type;
     if (filters.duration) query.durations = filters.duration;
     if (filters.destination) query.destinationKey = filters.destination;
-    if (filters.minWeight !== null || filters.maxWeight !== null) {
-        query.totalBaseWeight = {};
-        if (filters.minWeight !== null) query.totalBaseWeight.$gte = filters.minWeight;
-        if (filters.maxWeight !== null) query.totalBaseWeight.$lte = filters.maxWeight;
-    }
+    if (filters.minWeight !== null) query.totalBaseWeight.$gte = filters.minWeight;
+    if (filters.maxWeight !== null) query.totalBaseWeight.$lte = filters.maxWeight;
     if (words.length) {
         query.$and = prefixPatterns(words).map((pattern) => ({ searchTokens: pattern }));
     }

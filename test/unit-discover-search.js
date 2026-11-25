@@ -19,6 +19,7 @@ function matchesQuery(row, query) {
     if (typeof query.listTypes === 'string' && !(row.listTypes || []).includes(query.listTypes)) return false;
     if (query.totalBaseWeight) {
         const w = Number(row.totalBaseWeight) || 0;
+        if (query.totalBaseWeight.$gt !== undefined && w <= query.totalBaseWeight.$gt) return false;
         if (query.totalBaseWeight.$gte !== undefined && w < query.totalBaseWeight.$gte) return false;
         if (query.totalBaseWeight.$lte !== undefined && w > query.totalBaseWeight.$lte) return false;
     }
@@ -101,6 +102,16 @@ async function discover(query) {
 }
 
 async function run() {
+    addList(1, { externalId: 'weighed', name: 'Tent pack', totalQty: 2, viewCount: 1 });
+    addList(2, { externalId: 'zero', name: 'Tent pack at zero', totalBaseWeight: 0, totalQty: 2, viewCount: 100 });
+    for (const params of [{}, { sort: 'popular' }, { q: 'tent', minWeight: '0' }]) {
+        const result = await discover({ ...params, limit: '1' });
+        assert.deepStrictEqual(result.body.lists.map((list) => list.externalId), ['weighed'],
+            `exclude zero base weight before limiting ${JSON.stringify(params)}`);
+    }
+    assert.deepStrictEqual((await discover({ maxWeight: '0' })).body.lists, [], 'a maximum of zero returns no packs');
+
+    rows.length = 0;
     // 300 filler lists, then an OLD list that only a real search can reach.
     for (let i = 10; i < 310; i += 1) addList(i);
     addList(0, {
