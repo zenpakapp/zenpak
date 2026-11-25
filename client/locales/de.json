@@ -266,6 +266,7 @@
     "total": "Gesamt",
     "worn": "Getragen",
     "baseWeight": "Basisgewicht",
+    "totalWeightUnit": "Gewichtseinheit für Summen",
     "packWeight": "Packgewicht",
     "totalWeight": "Gesamtgewicht",
     "option": "Option",

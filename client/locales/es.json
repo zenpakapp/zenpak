@@ -266,6 +266,7 @@
     "total": "Total",
     "worn": "Llevado",
     "baseWeight": "Peso base",
+    "totalWeightUnit": "Unidad de peso para los totales",
     "packWeight": "Peso de mochila",
     "totalWeight": "Peso total",
     "option": "Opción",

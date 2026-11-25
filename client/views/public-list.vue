@@ -103,7 +103,12 @@
                 <a v-if="canDownloadCsv" class="lpPublicCsvLink noprint" :href="csvUrl" target="_blank" rel="noopener noreferrer">
                     {{ $t('share.exportToCsv') }}
                 </a>
-                <select class="lpPublicUnitSelect noprint" :value="totalUnit" @change="setDisplayUnit($event.target.value)">
+                <select
+                    class="lpPublicUnitSelect noprint"
+                    :aria-label="$t('public.totalWeightUnit')"
+                    :value="totalUnit"
+                    @change="setDisplayUnit($event.target.value)"
+                >
                     <option value="oz">
                         oz
                     </option>
@@ -124,9 +129,27 @@
             </p>
 
             <!-- Chart + tableau catégories -->
+            <p v-if="chartCategories.length" class="lpPublicBaseWeight">
+                {{ $t('public.baseWeight') }}
+                <strong>{{ displayWeight(list.totalBaseWeight) }} {{ totalUnit }}</strong>
+            </p>
             <div v-show="chartCategories.length" class="lpPublicChart">
-                <canvas ref="chartCanvas" class="lpPublicChartCanvas" width="200" height="200" />
-                <table class="lpPublicChartTable">
+                <div class="lpPublicChartPlot">
+                    <canvas ref="chartCanvas" class="lpPublicChartCanvas" width="200" height="200" />
+                </div>
+                <table class="lpPublicChartTable" :class="{ lpPublicChartTableFolded: !categoriesOpen }">
+                    <caption class="lpPublicChartCaption">
+                        <button
+                            type="button"
+                            class="lpPublicChartToggle"
+                            :aria-expanded="categoriesOpen"
+                            aria-controls="public-chart-categories"
+                            @click="categoriesOpen = !categoriesOpen"
+                        >
+                            {{ $t('list.categoriesToggle', { count: chartCategories.length }) }}
+                            <icon :name="categoriesOpen ? 'chevron-up' : 'chevron-down'" class="lpIconCompact" />
+                        </button>
+                    </caption>
                     <thead>
                         <tr>
                             <th>{{ $t('public.category') }}</th>
@@ -136,7 +159,7 @@
                             <th>{{ $t('public.weight') }}</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="public-chart-categories">
                         <tr v-for="(cat, i) in chartCategories" :key="cat.id || cat.name" :class="{ lpPublicChartRowActive: hoveredCategoryIdx === i }">
                             <td>
                                 <span class="lpPublicChartSwatch" :style="{ background: cat.color }" />
@@ -160,11 +183,6 @@
                             <td>{{ $t('public.worn') }}</td>
                             <td v-if="publicFields.price" />
                             <td><strong>{{ displayWeight(list.totalWornWeight) }}</strong> {{ totalUnit }}</td>
-                        </tr>
-                        <tr>
-                            <td>{{ $t('public.baseWeight') }}</td>
-                            <td v-if="publicFields.price" />
-                            <td><strong>{{ displayWeight(list.totalBaseWeight) }}</strong> {{ totalUnit }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -231,6 +249,7 @@
 import { useRouter } from 'vue-router';
 import { FEEDBACK_MS } from '../services/timings';
 import HreflangLinks from '../components/hreflang-links.vue';
+import Icon from '../components/icon.vue';
 import ListCardTags from '../components/list-card-tags.vue';
 import { fetchJson } from '../utils/utils';
 import { trackEvent } from '../utils/analytics';
@@ -265,7 +284,7 @@ async function loadChart() {
 export default {
     name: 'PublicList',
     components: {
-        HreflangLinks, ListCardTags, ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
+        HreflangLinks, Icon, ListCardTags, ReportButton, LinkifiedText, ThemeToggle, PersonAvatar,
     },
     setup() {
         useTheme();
@@ -291,6 +310,7 @@ export default {
                 price: false, links: false, images: false, downloadable: false,
             },
             categories: [],
+            categoriesOpen: false,
             affiliateDisclosure: null,
             creatorCodes: [],
             authorTier: null,
@@ -461,11 +481,6 @@ export default {
         formatPrice(value) {
             return value ? Number(value).toFixed(2).replace(/\.00$/, '') : '0';
         },
-        basePercent(cat) {
-            const baseTotal = this.list && this.list.totalBaseWeight;
-            if (!baseTotal) return '';
-            return `${Math.round((cat.subtotalBaseWeight / baseTotal) * 100)}%`;
-        },
         async renderChart() {
             const canvas = this.$refs.chartCanvas;
             const categories = this.chartCategories;
@@ -501,7 +516,6 @@ export default {
                     }],
                 },
                 options: {
-                    responsive: false,
                     ...donutOptions(),
                     plugins: {
                         legend: { display: false },
@@ -511,7 +525,8 @@ export default {
                             callbacks: {
                                 label: (context) => {
                                     const cat = categories[context.dataIndex];
-                                    return `${this.displayWeight(cat.subtotalWeight)} ${this.totalUnit} (${this.basePercent(cat)})`;
+                                    const percent = Math.round((cat.subtotalWeight / total) * 100);
+                                    return `${this.displayWeight(cat.subtotalWeight)} ${this.totalUnit} (${percent}%)`;
                                 },
                             },
                         },

@@ -266,6 +266,7 @@
     "total": "Total",
     "worn": "Porté",
     "baseWeight": "Poids de base",
+    "totalWeightUnit": "Unité de poids des totaux",
     "packWeight": "Poids du sac",
     "totalWeight": "Poids total",
     "option": "Option",

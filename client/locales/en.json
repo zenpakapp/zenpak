@@ -266,6 +266,7 @@
     "total": "Total",
     "worn": "Worn",
     "baseWeight": "Base Weight",
+    "totalWeightUnit": "Weight unit for totals",
     "packWeight": "Pack Weight",
     "totalWeight": "Total weight",
     "option": "Option",
