@@ -50,6 +50,17 @@ test("a 4 g category shows a nonzero subtotal in kg", async ({ page }) => {
   const footer = page.locator(".lpItemsFooter");
   await expect(footer.locator(".lpSubtotalUnit")).toHaveText("kg");
   await expect(footer.locator(".lpDisplaySubtotal")).toHaveText("0.004");
+
+  const summary = page.locator(".lpTotals");
+  const columns = await summary.locator(".lpHeader .lpNumber, .lpTotalCategory .lpDisplaySubtotal, .lpTotalValue").evaluateAll((elements) =>
+    elements.map((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getBoundingClientRect().right;
+    }),
+  );
+  expect(columns).toHaveLength(3);
+  expect(Math.max(...columns) - Math.min(...columns)).toBeLessThanOrEqual(1);
 });
 
 test("retyping the shown weight does not overwrite the stored one", async ({
